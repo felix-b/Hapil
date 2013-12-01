@@ -42,7 +42,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fluent\IAssignableOperand.cs" />
+    <Compile Include="Fluent\IAssignStatement.cs" />
+    <Compile Include="Fluent\IClassBody.cs" />
+    <Compile Include="Fluent\IField.cs" />
+    <Compile Include="Fluent\IMemberGroup.cs" />
+    <Compile Include="Fluent\IMethodBody.cs" />
+    <Compile Include="Fluent\IOperand.cs" />
+    <Compile Include="Fluent\IProperty.cs" />
+    <Compile Include="Fluent\IPropertyGetter.cs" />
+    <Compile Include="Fluent\IPropertySetter.cs" />
+    <Compile Include="Fluent\IStatement.cs" />
+    <Compile Include="HappilFactory.cs" />
     <Compile Include="HappyAssembly.cs" />
+    <Compile Include="Fluent\IClass.cs" />
+    <Compile Include="Fluent\IMember.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
