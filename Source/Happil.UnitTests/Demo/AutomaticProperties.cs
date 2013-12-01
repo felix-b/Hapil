@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Demo
@@ -18,49 +19,75 @@ namespace Happil.UnitTests.Demo
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private Type DefineClassMemberByMember()
+		[Test]
+		public void SuperDuperHappyPath()
 		{
-			var @class = _factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implements<IDemoInterface>(
-				c => c.DefaultConstructor(),
-				c => c.Property(i => i.Number,
-					getter: prop => prop.Get(
-						x => x.Return(prop.BackingField)
-					),
-					setter: prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
-					)
-				),
-				c => c.Property(i => i.Text,
-					getter: prop => prop.Get(
-						x => x.Return(prop.BackingField)
-					),
-					setter: prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
-					)
-				),
-				c => c.Property(i => i.OptionalInterval,
-					getter: prop => prop.Get(
-						x => x.Return(prop.BackingField)
-					),
-					setter: prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
-					)
-				)
+			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
+				impl => impl.AutomaticProperties()
 			);
-
-			return @class.CreateType();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private Type DefineClassAsWildcard()
+		[Test]
+		public void MemberByMember()
 		{
-			var @class = _factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implements<IDemoInterface>(
-				type => type.DefaultConstructor(),
-				type => type.AutomaticProperties()
-			);
+			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
 
-			return @class.CreateType();
+				impl => impl.Property(intf => intf.Number,
+					prop => prop.Get(
+						x => x.Return(prop.BackingField)
+					),
+					prop => prop.Set(
+						x => prop.BackingField.Assign(x.Argument("value"))
+					)
+				),
+
+				impl => impl.Property(intf => intf.Text,
+					prop => prop.Get(
+						x => x.Return(prop.BackingField)
+					),
+					prop => prop.Set(
+						x => prop.BackingField.Assign(x.Argument("value"))
+					)
+				),
+
+				impl => impl.Property(intf => intf.OptionalInterval,
+					prop => prop.Get(
+						x => x.Return(prop.BackingField)
+					),
+					prop => prop.Set(
+						x => prop.BackingField.Assign(x.Argument("value"))
+					)
+				)
+			);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void MultipleMembersByTemplate()
+		{
+			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
+				
+				impl => impl.AutomaticProperties(where: prop => !IsNullableProperty(prop)),
+				
+				impl => impl.Properties(where: IsNullableProperty,
+					getter: prop => prop.Get(
+						x => x.Return(prop.BackingField)
+					),
+					setter: prop => prop.Set(
+						x => x.Throw<InvalidOperationException>("Nullable values cannot be set on this object")
+					)
+				)
+			);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static bool IsNullableProperty(PropertyInfo property)
+		{
+			return property.PropertyType.Name.StartsWith("Nullable`1");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
