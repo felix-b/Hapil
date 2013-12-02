@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fluent\HappilClass.cs" />
     <Compile Include="Fluent\IAssignableOperand.cs" />
     <Compile Include="Fluent\IAssignStatement.cs" />
     <Compile Include="Fluent\IClassBody.cs" />
