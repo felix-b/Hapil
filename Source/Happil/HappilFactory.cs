@@ -12,7 +12,7 @@ namespace Happil
 	{
 	    private AssemblyBuilder m_AssemblyBuilder ;
 	    private ModuleBuilder m_ModuleBuilder;
-		private IDictionary<string, HappilClass> dic = new Dictionary<string, HappilClass>();
+		private IDictionary<string, HappilClass> definedClasses = new Dictionary<string, HappilClass>();
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +26,9 @@ namespace Happil
 	    
         public HappilClass DefineClass(string classFullName,TypeAttributes attributes=TypeAttributes.Public |TypeAttributes.Public)
         {
+            if ( definedClasses.ContainsKey(classFullName) )
+                return definedClasses[classFullName];
+            
             TypeBuilder tb = m_ModuleBuilder.DefineType(classFullName, attributes);
 			return new HappilClass(tb);
         }
