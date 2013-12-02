@@ -4,45 +4,35 @@ using NUnit.Framework;
 
 namespace Happil.UnitTests.Demo
 {
-	[TestFixture] //,Ignore("This is only demo")
+	[TestFixture, Ignore("This is only demo")]
 	public class AutomaticProperties
 	{
-		private HappilFactory _factoryUnderTest;
+		private HappilFactory m_FactoryUnderTest;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
 		public void SetUp()
 		{
-            _factoryUnderTest = new HappilFactory("Happil.Demo.Impl.dll");
+            m_FactoryUnderTest = new HappilFactory("Happil.Demo.Impl.dll");
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-	    [Test]
-	    public void CreateTypeAndInstanceOfSampleClass()
-	    {
-	        Type type = _factoryUnderTest.DefineClass("Happil.Demo.SampleClass").CreateType();
-            Assert.That(type.FullName, Is.EqualTo("Happil.Demo.SampleClass"));
-	        var obj= Assembly.GetAssembly(type).CreateInstance(type.FullName);
-	        Assert.That(obj, Is.Not.Null);
-            Assert.That(obj.GetType().FullName, Is.EqualTo("Happil.Demo.SampleClass"));
-	    }
-
 	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
-        [Test, Ignore("Not implemented")]
+        
+		[Test]
 		public void SuperDuperHappyPath()
 		{
-			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
+			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
 				impl => impl.AutomaticProperties()
 			);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Test, Ignore("Not implemented")]
+        [Test]
 		public void MemberByMember()
 		{
-			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
+			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
 
 				impl => impl.Property(intf => intf.Number,
 					prop => prop.Get(
@@ -75,10 +65,10 @@ namespace Happil.UnitTests.Demo
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Test, Ignore("Not implemented")]
+        [Test]
 		public void MultipleMembersByTemplate()
 		{
-			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
+			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
 				
 				impl => impl.AutomaticProperties(where: prop => !IsNullableProperty(prop)),
 				

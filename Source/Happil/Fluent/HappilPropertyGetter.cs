@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public interface IPropertyGetter
+	public class HappilPropertyGetter
 	{
 	}
 }

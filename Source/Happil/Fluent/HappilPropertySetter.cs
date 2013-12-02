@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public interface IAssignableOperand : IOperand
+	public class HappilPropertySetter
 	{
-		IAssignStatement Assign(IOperand operand);
 	}
 }
