@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Happil.UnitTests.Demo
 {
-	[TestFixture, Ignore("This is only demo")]
+	[TestFixture] //,Ignore("This is only demo")
 	public class AutomaticProperties
 	{
 		private HappilFactory _factoryUnderTest;
@@ -14,11 +14,21 @@ namespace Happil.UnitTests.Demo
 		[SetUp]
 		public void SetUp()
 		{
-			_factoryUnderTest = new HappilFactory();
+            _factoryUnderTest = new HappilFactory("Happil.Demo.Impl.dll");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    [Test]
+	    public void CreateTypeAndInstanceOfSampleClass()
+	    {
+	        Type type = _factoryUnderTest.DefineClass("Happil.Demo.SampleClass").CreateType();
+            Assert.That(type.FullName, Is.EqualTo("Happil.Demo.SampleClass"));
+	        var obj= Assembly.GetAssembly(type).CreateInstance(type.FullName);
+	        Assert.That(obj, Is.Not.Null);
+            Assert.That(obj.GetType().FullName, Is.EqualTo("Happil.Demo.SampleClass"));
+	    }
 
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 		[Test]
 		public void SuperDuperHappyPath()
 		{

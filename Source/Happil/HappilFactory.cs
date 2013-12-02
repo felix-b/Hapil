@@ -10,19 +10,24 @@ namespace Happil
 {
 	public class HappilFactory
 	{
-	    private AssemblyBuilder m_AssemblyBuilder;
+	    private AssemblyBuilder m_AssemblyBuilder ;
+	    private ModuleBuilder m_ModuleBuilder;
+        private IDictionary<string,HappilClass> dic= new Dictionary<string,HappilClass>();
 
-	    public HappilFactory(string fullName, AssemblyBuilderAccess access = AssemblyBuilderAccess.RunAndSave)
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public HappilFactory(string fileName, AssemblyBuilderAccess access = AssemblyBuilderAccess.RunAndSave)
 	    {
-	        m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(fullName), access);
+	        m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(fileName), access);
+	        m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule("DefaultModule");
 	    }
 
 	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 	    
-        public IClass DefineClass(string fullName)
-		{
-            
-			throw new NotImplementedException();
-		}
+        public IClass DefineClass(string classFullName,TypeAttributes attributes=TypeAttributes.Public |TypeAttributes.Public)
+        {
+            TypeBuilder tb = m_ModuleBuilder.DefineType(classFullName, attributes);
+            return new HappilClass(tb);
+        }
 	}
 }
