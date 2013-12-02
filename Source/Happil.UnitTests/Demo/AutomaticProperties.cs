@@ -29,7 +29,7 @@ namespace Happil.UnitTests.Demo
 	    }
 
 	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
-		[Test]
+        [Test, Ignore("Not implemented")]
 		public void SuperDuperHappyPath()
 		{
 			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
@@ -39,7 +39,7 @@ namespace Happil.UnitTests.Demo
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test]
+        [Test, Ignore("Not implemented")]
 		public void MemberByMember()
 		{
 			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
@@ -75,7 +75,7 @@ namespace Happil.UnitTests.Demo
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test]
+        [Test, Ignore("Not implemented")]
 		public void MultipleMembersByTemplate()
 		{
 			_factoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl").Implement<IDemoInterface>(
