@@ -1,55 +1,76 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Happil : A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy." />
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Happil by felix-b</title>
+    <title>Happil</title>
   </head>
 
   <body>
 
-    <header>
-      <div class="container">
-        <h1>Happil</h1>
-        <h2>A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy.</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/felix-b/Happil">View on GitHub</a>
 
-        <section id="downloads">
-          <a href="https://github.com/felix-b/Happil/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/felix-b/Happil/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/felix-b/Happil" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+          <h1 id="project_title">Happil</h1>
+          <h2 id="project_tagline">A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy.</h2>
 
-    <div class="container">
-      <section id="main_content">
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/felix-b/Happil/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/felix-b/Happil/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h3>
-<a name="welcome-to-happil" class="anchor" href="#welcome-to-happil"><span class="octicon octicon-link"></span></a>Welcome to Happil.</h3>
+<a name="welcome-to-happil" class="anchor" href="#welcome-to-happil"><span class="octicon octicon-link"></span></a>Welcome to Happil</h3>
 
-<p>This project is aimed to create a Reflection.Emit wrapper library, one that would precisely fit use cases of runtime type generation. We launched this project because we feel that existing alternatives don't fit that well.</p>
-
-<h3>
-<a name="use-cases" class="anchor" href="#use-cases"><span class="octicon octicon-link"></span></a>Use Cases</h3>
+<p>In this project we aim to create a wrapper library around .NET Reflection.Emit API. The library should precisely fit two use cases of run-time type generation, which we have in mind:</p>
 
 <ul>
-<li>Implementation: developers define interfaces, then you have to provide implementations of the interfaces at runtime.</li>
-<li>Interception: you need to decorate objects with implementation of cross-cutting concerns.</li>
+<li>
+<strong>Implementation</strong>: Given a compiled interface or an abstract class, generate its fully functional implementation at run-time.</li>
+<li>
+<strong>Interception</strong>: Decorate objects at run-time for the handling of cross-cutting concerns.</li>
+</ul><p>We also have two important qualities in mind:</p>
+
+<ul>
+<li>Being <strong>easy</strong>: provide happy path for the two use cases; make it hard to create an invalid program.</li>
+<li>Being <strong>lightweight</strong>: generated programs should contain no inherent overhead and consume as little CPU cycles and memory as possible, even in large applications having thousands of interfaces to implement or intercept.</li>
 </ul><h3>
-<a name="alternatives" class="anchor" href="#alternatives"><span class="octicon octicon-link"></span></a>Alternatives</h3>
+<a name="alternatives-to-happil" class="anchor" href="#alternatives-to-happil"><span class="octicon octicon-link"></span></a>Alternatives to Happil</h3>
+
+<p>The motivation to launch this project comes from our experience trying to get things done with existing alternatives, namely:</p>
 
 <ul>
-<li>RunSharp </li>
-<li>FluentIL</li>
-<li>Castle DynamicProxy</li>
+<li>
+<strong>Castle DynamicProxy</strong> is an awesome library which provides an elegant, simple, and yet powerful way of decorating objects at runtime. Unfortunately, it is only good for the interception use case; implementing interfaces from scratch is not its home ground. Another concern is that it generates an invocation class for each member of each decorated type. In a large application, this can lead to generating tens of thousands of types - which is not really that lightweight.</li>
+<li>
+<strong>RunSharp</strong> is another great tool which allows creation of arbitrary dynamic types and code at run-time. It allows too much freedom though, which in the bottom line, makes it harder to implement either of our two use cases. With RunSharp, we feel it is too easy to make a mistake and generate an incorrect program. This library also has stability issues, from our experience, and it also looks like it is not longer maintained.</li>
+<li>
+<strong>FluentIL</strong> is a cute library which wraps the Reflection.Emit API. But again, the API it provides is too a low level, and it again makes it harder to achieve the two use cases.</li>
 </ul>
       </section>
     </div>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Happil maintained by <a href="https://github.com/felix-b">felix-b</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
     
+
   </body>
 </html>
