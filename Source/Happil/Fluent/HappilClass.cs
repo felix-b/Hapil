@@ -6,6 +6,7 @@ namespace Happil.Fluent
 	public class HappilClass
 	{
 		private TypeBuilder m_TypeBuilder = null;
+		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -20,14 +21,30 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
+		public HappilClass Inherit(object baseType, params Func<HappilClassBody<object>, IMember>[] members)
+		{
+			throw new NotImplementedException();
+		}
+
 		public HappilClass Implement<TInterface>(params Func<HappilClassBody<TInterface>, IMember>[] members)
+		{
+			throw new NotImplementedException();
+		}
+
+		public HappilClass Implement(Type interfaceType, params Func<HappilClassBody<object>, IMember>[] members)
 		{
 			throw new NotImplementedException();
 		}
 
 		public Type CreateType()
 		{
-			return m_TypeBuilder.CreateType();
+			m_BuiltType = m_TypeBuilder.CreateType();
+			return m_BuiltType;
+		}
+
+		public Delegate[] GetFactoryMethods()
+		{
+			return new Delegate[0];
 		}
 	}
 }

@@ -54,6 +54,8 @@
     <Compile Include="HappilFactory.cs" />
     <Compile Include="Fluent\HappilClass.cs" />
     <Compile Include="Fluent\IMember.cs" />
+    <Compile Include="HappilObjectFactoryBase.cs" />
+    <Compile Include="HappilTypeKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
