@@ -63,7 +63,7 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public T CreateInstance<T>(int factoryMethodIndex)
+			public T CreateInstance<T>(int factoryMethodIndex = 0)
 			{
 				return ((Func<T>)FactoryMethods[factoryMethodIndex])();
 			}
