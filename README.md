@@ -25,6 +25,6 @@ For comparison of **Happil** with other similar libraries, see [**Alternatives**
 
 **Happil** library is developed uner the **MIT License**. 
 
-**NUnit** is licensed under [**zlib/libpng License (Zlib)**](http://nunit.org/index.php?p=license&r=2.5.10).
+[**NUnit**](http://www.nunit.org/) is licensed under [**zlib/libpng License (Zlib)**](http://nunit.org/index.php?p=license&r=2.5.10).
 
-**Moq** is licensed under the [**New BSD License**](http://opensource.org/licenses/BSD-3-Clause).
+[**Moq**](https://code.google.com/p/moq/) is licensed under the [**New BSD License**](http://opensource.org/licenses/BSD-3-Clause).
