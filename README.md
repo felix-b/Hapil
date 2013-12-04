@@ -23,7 +23,7 @@ For comparison of **Happil** with other similar libraries, see [**Alternatives**
 
 ### Licenses
 
-**Happil** library is developed uner the [**MIT License**](https://github.com/felix-b/Happil/blob/master/README.md). 
+**Happil** library is developed uner the [**MIT License**](https://github.com/felix-b/Happil/blob/master/LICENSE). 
 
 [**NUnit**](http://www.nunit.org/) is licensed under [**zlib/libpng License (Zlib)**](http://nunit.org/index.php?p=license&r=2.5.10).
 
