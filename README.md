@@ -7,7 +7,7 @@ Here we are building a **Reflection.Emit wrapper** library in **C#.NET**. We wan
 * Lets us build **from-scratch implementations** with **any members and code** we may want.
 * Lets us build **decorators** and **interceptors**.
 * Lets us use generated types **without any further Reflection**. 
-* Is **lighweight**, even in **large applications** with **thousands** of dynamic types.
+* Is **lightweight**, even in **large applications** with **thousands** of dynamic types.
 * Makes it **fun and easy** to follow the **happy path**.
 * Makes it hard to create an invalid program.
 * **Just works**.
@@ -24,3 +24,4 @@ For comparison of **Happil** with other similar libraries, see [**Alternatives**
 ### Licenses
 
 **Happil** library is developed uner the **MIT License**. 
+
