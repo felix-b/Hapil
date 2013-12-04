@@ -17,6 +17,10 @@ Here we are building a Reflection.Emit wrapper library in C#.NET. We want a libr
 
 The [**Wiki**](https://github.com/felix-b/Happil/wiki) is the ultimate source of information on the **Happil** project.
 
-### 
+### Why?
 
+For comparison of **Happil** with other similar libraries, see [**Alternatives**](https://github.com/felix-b/Happil/wiki/Alternatives).
 
+### Licenses
+
+**Happil** library is developed uner the **MIT License**. 
