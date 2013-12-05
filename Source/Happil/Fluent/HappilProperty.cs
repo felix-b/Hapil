@@ -17,7 +17,7 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public HappilField BackingField
+		public HappilField<object> BackingField
 		{
 			get
 			{

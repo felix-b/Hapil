@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Demo
 {
 	[TestFixture, Ignore("This is only a demo")]
-	public class UsingObjectFactoryBase
+	public class EndToEndDemo
 	{
 		private HappilFactory m_TypeFactory;
 		private DemoObjectFactory m_ObjectFactory;

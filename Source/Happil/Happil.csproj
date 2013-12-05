@@ -42,12 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fluent\AssignableHappilOperand.cs" />
+    <Compile Include="Fluent\AssignableOperand.cs" />
+    <Compile Include="Fluent\ConstantOperand.cs" />
     <Compile Include="Fluent\HappilClassBody.cs" />
     <Compile Include="Fluent\HappilField.cs" />
+    <Compile Include="Fluent\HappilLocal.cs" />
     <Compile Include="Fluent\IMemberGroup.cs" />
     <Compile Include="Fluent\HappilMethodBody.cs" />
-    <Compile Include="Fluent\HappilOperand.cs" />
+    <Compile Include="Fluent\Operand.cs" />
     <Compile Include="Fluent\HappilProperty.cs" />
     <Compile Include="Fluent\HappilPropertyGetter.cs" />
     <Compile Include="Fluent\HappilPropertySetter.cs" />

@@ -40,5 +40,14 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
+		public IMemberGroup Methods(Action<HappilMethodBody> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IMemberGroup Methods(Func<MethodInfo, bool> where, Action<HappilMethodBody> body)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
