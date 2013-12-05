@@ -55,10 +55,10 @@ namespace Happil
 
 		protected class TypeEntry
 		{
-			public TypeEntry(HappilClass builtClass)
+			public TypeEntry(HappilClass classDefinition)
 			{
-				this.DynamicType = builtClass.CreateType();
-				this.FactoryMethods = builtClass.GetFactoryMethods();
+				this.DynamicType = classDefinition.CreateType();
+				this.FactoryMethods = classDefinition.GetFactoryMethods();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

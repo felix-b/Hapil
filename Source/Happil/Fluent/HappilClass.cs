@@ -5,7 +5,7 @@ namespace Happil.Fluent
 {
 	public class HappilClass
 	{
-		private TypeBuilder m_TypeBuilder = null;
+		private readonly TypeBuilder m_TypeBuilder;
 		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -15,36 +15,63 @@ namespace Happil.Fluent
             m_TypeBuilder = typeBuilder;
         }
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilClass Inherit<TBase>(params Func<HappilClassBody<TBase>, IMember>[] members)
 		{
 			throw new NotImplementedException();
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilClass Inherit(object baseType, params Func<HappilClassBody<object>, IMember>[] members)
 		{
-			throw new NotImplementedException();
+			return this;
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilClass Implement<TInterface>(params Func<HappilClassBody<TInterface>, IMember>[] members)
 		{
-			throw new NotImplementedException();
+			m_TypeBuilder.AddInterfaceImplementation(typeof(TInterface));
+			//TODO: add members to member list
+			return this;
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilClass Implement(Type interfaceType, params Func<HappilClassBody<object>, IMember>[] members)
 		{
-			throw new NotImplementedException();
+			m_TypeBuilder.AddInterfaceImplementation(interfaceType);
+			//TODO: add members to member list
+			return this;
 		}
 
-		public Type CreateType()
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Called by HappilObjectFactoryBase.TypeEntry constructor.
+		/// </summary>
+		internal Type CreateType()
 		{
 			m_BuiltType = m_TypeBuilder.CreateType();
+			//TODO: add members to member list
 			return m_BuiltType;
 		}
 
-		public Delegate[] GetFactoryMethods()
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Called by HappilObjectFactoryBase.TypeEntry constructor.
+		/// </summary>
+		internal Delegate[] GetFactoryMethods()
 		{
-			return new Delegate[0];
+			//TODO: this is a temporary implementation; the real implementation must be Reflection-free as explained here:
+			//Factory method should be delegate to a static method in the generated type
+			//The static method should invoke correct constructor and return the created instance.
+			return new Delegate[] {
+				new Func<object>(() => Activator.CreateInstance(m_BuiltType))
+			};
 		}
 	}
 }

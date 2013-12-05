@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace Happil.UnitTests.Demo
 {
-	[TestFixture]
+	[TestFixture, Ignore("This is only a demo")]
 	public class UsingObjectFactoryBase
 	{
 		private HappilFactory m_TypeFactory;
@@ -55,7 +55,7 @@ namespace Happil.UnitTests.Demo
 			/// Each concrete factory is free to define arbitrary public methods according to the need.
 			/// </summary>
 			/// <typeparam name="T">
-			/// In this eample, it is the primary interface that will be implemented by the dynamic type.
+			/// In this example, it is the primary interface that will be implemented by the dynamic type.
 			/// </typeparam>
 			/// <returns>
 			/// A new instance of dynamic type implementing specified interface.
