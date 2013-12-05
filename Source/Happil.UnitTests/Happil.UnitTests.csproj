@@ -51,6 +51,7 @@
     <Compile Include="Demo\UsingObjectFactoryBase.cs" />
     <Compile Include="HappilFactoryTests.cs" />
     <Compile Include="HappilObjectFactoryBaseTests.cs" />
+    <Compile Include="HappilTypeKeyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Demo\AutomaticProperties.cs" />
   </ItemGroup>

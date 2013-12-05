@@ -15,7 +15,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilTypeKey(Type baseType, Type primaryInterface, params Type[] secondaryInterfaces)
+		public HappilTypeKey(Type baseType = null, Type primaryInterface = null, params Type[] secondaryInterfaces)
 		{
 			m_BaseType = (baseType ?? typeof(object));
 			m_PrimaryInterface = primaryInterface;
@@ -39,7 +39,7 @@ namespace Happil
 				return false;
 			}
 
-			if ( m_SecondaryInterfaces.SetEquals(other.m_SecondaryInterfaces) )
+			if ( !m_SecondaryInterfaces.SetEquals(other.m_SecondaryInterfaces) )
 			{
 				return false;
 			}
