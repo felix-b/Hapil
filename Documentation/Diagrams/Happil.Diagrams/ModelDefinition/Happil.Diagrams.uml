@@ -3,6 +3,54 @@
   dslVersion="1.0.0.0"
   Id="dd3e4df7-8296-4a40-b681-5aadd12251b4"
   name="Happil.Diagrams" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="9f76bf30-1607-417f-9404-e21cf00607a3">
+      <body>Call public factory method(s)</body>
+    </comment>
+    <comment
+      Id="78055f4b-ef61-44cc-ae11-822cdf4e4ed0">
+      <body>Create HappilClass to define a new dynamic type
+with fluent API</body>
+      <annotatedElements>
+        <classMoniker
+          Id="641ba49c-c83e-4b4d-a7c2-8cc546e300d9"
+          LastKnownName="HappilTypeFactory"
+          LastKnownLocation="Happil.Diagrams.uml" />
+        <classMoniker
+          Id="63b911fe-3807-4641-817b-0dbae9b944b9"
+          LastKnownName="HappilClass"
+          LastKnownLocation="Happil.Diagrams.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="2b54f626-ed91-431d-aff1-317f44980e8c">
+      <body>Implement BuildNewType()
+Define public factory method(s)</body>
+    </comment>
+    <comment
+      Id="f9582b08-0115-430a-b67a-1902dd59bff9">
+      <body>Call DefineClass when
+a new type needs to be
+generated</body>
+    </comment>
+    <comment
+      Id="65f062b8-3e4c-4f54-a41e-42da9f8457ac">
+      <body>TypeEntry calls:
+- CreateType()
+- GetFactoryMethods()</body>
+      <annotatedElements>
+        <classMoniker
+          Id="797c55dc-18c3-4e29-879f-15c72a7cdbac"
+          LastKnownName="TypeEntry"
+          LastKnownLocation="Happil.Diagrams.uml" />
+        <classMoniker
+          Id="63b911fe-3807-4641-817b-0dbae9b944b9"
+          LastKnownName="HappilClass"
+          LastKnownLocation="Happil.Diagrams.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
       Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
@@ -24,7 +72,60 @@
         name="AssemblyBuilder"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="fe266630-d53d-472a-ab40-1fef6ae11b6c"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="dfcc1bc4-0ae3-42aa-b5e0-28e3334235b4"
+              LastKnownName="ModuleBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="2a6936fd-d5a3-43b7-a7c4-2c44299e654e"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="94548541-fd65-4d28-8410-730c54553d75"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="b2155a01-b13f-465c-94a4-c486d4f7ab53"
+                      name="Lower"
+                      value="1" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="9365d542-5c79-4254-ac5b-4449f0d5b3fc"
+                      name="Upper"
+                      value="1" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -33,15 +134,58 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="8967fe5f-f80b-4c6d-a2d7-f895a9eeb0ae">
+        <targetEnds>
+          <association
+            Id="4c1630da-0c5f-4980-afc2-bf3dd3c85908"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
             <classMoniker
-              Id="565917f6-9fdf-4462-962f-ec38b50feedf"
-              LastKnownName="AssemblyBuilder"
+              Id="1decf537-f023-49ad-9567-20e30cd8d60a"
+              LastKnownName="TypeBuilder"
               LastKnownLocation="Happil.Diagrams.uml" />
-          </dependency>
-        </suppliersInternal>
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="bcdeb242-6604-44fc-abc6-8591beaf966a"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="234a958c-3a47-4902-96fb-31face2a471d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="d43750fa-4b7d-4e2c-b003-fbe1b123b27d"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="ccc5ba25-d94a-4fae-b1b0-6cc565130aa0"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -51,15 +195,45 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="e51a7cda-af88-468e-853b-c7c4401ce6ed">
+        <targetEnds>
+          <association
+            Id="a21cad33-ad4e-4f15-bb66-bba94a6c5131"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
             <classMoniker
               Id="565917f6-9fdf-4462-962f-ec38b50feedf"
               LastKnownName="AssemblyBuilder"
               LastKnownLocation="Happil.Diagrams.uml" />
-          </dependency>
-        </suppliersInternal>
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="84afb199-345f-4783-b68d-fe9b8f548b51"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9752c15d-7531-43cf-a98e-386b052bb7fb"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
         <ownedOperationsInternal>
           <operation
             Id="0697a249-cb85-4db2-bea6-c366806829ab"
@@ -79,15 +253,6 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="c530b0b7-dc67-43be-9518-e928906c1d67">
-            <classMoniker
-              Id="641ba49c-c83e-4b4d-a7c2-8cc546e300d9"
-              LastKnownName="HappilTypeFactory"
-              LastKnownLocation="Happil.Diagrams.uml" />
-          </dependency>
-        </suppliersInternal>
         <targetEnds>
           <association
             Id="f849631a-187a-4c6a-809c-1bd76ba86c39"
@@ -142,7 +307,7 @@
           <association
             Id="1cbf6a97-a910-47d4-84cc-92c39f9b6ccc"
             isDerived="false"
-            sourceEndRoleName=""
+            sourceEndRoleName="m_TypeBuilder"
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
@@ -154,6 +319,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="d2266a43-8ac6-45b2-abe5-22bb070f7b40"
+                  name="m_TypeBuilder"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -179,7 +345,7 @@
           <association
             Id="9fceb7e2-a429-4584-a785-719adfda1684"
             isDerived="false"
-            sourceEndRoleName=""
+            sourceEndRoleName="m_BuiltType"
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
@@ -191,6 +357,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="e4d9af02-f5f8-40c5-ad97-d5c0aee2b57d"
+                  name="m_BuiltType"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -214,10 +381,43 @@
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="8f7a7e1e-07d4-4ab5-9805-fb88cc31e754"
+            name="m_TypeBuilder"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="90395596-50e8-4ec5-b362-b4782b933986"
+            name="m_BuiltType"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
             Id="f563cd3b-5e70-41b8-8967-ab229db6a392"
             name="CreateType"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="3cca6a50-4da9-4385-8525-34d8157d16d3"
+            name="GetFactoryMethods"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -233,15 +433,258 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="c7cbb4cd-b746-47c8-b4f1-bee8a351d77e">
+        <targetEnds>
+          <association
+            Id="e158882b-ce69-418e-adfa-af5d6a881229"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
             <classMoniker
-              Id="dfcc1bc4-0ae3-42aa-b5e0-28e3334235b4"
-              LastKnownName="ModuleBuilder"
+              Id="253e91e9-1c14-4e1a-a777-ae2f30da307d"
+              LastKnownName="PropertyBuilder"
               LastKnownLocation="Happil.Diagrams.uml" />
-          </dependency>
-        </suppliersInternal>
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b08d89d7-6d02-4426-bf0b-97d023029d62"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f60106f1-a867-4d17-a6af-fed0148b55f5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="b34c56aa-cc25-42f8-b4b6-9f924b3c94a2"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="2b044d38-e62e-407a-8c40-ebcbcbd9f2dd"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="37168579-3d6e-4a9e-89f7-31b6747a94fa"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="184ad34e-6fb5-469f-8929-c7d98326f313"
+              LastKnownName="MethodBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9a4996d7-43fa-48a7-95c1-31fcb08ee6dd"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="de7139d7-72f1-4d12-aade-2493271e3cf3"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="59aa4c0e-64e2-45ed-a34a-3698478075ba"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="c5411bff-50bf-4028-8425-d69f7cd2f430"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="be00ef17-7885-4930-a2f1-377fb5cbabcd"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="4afddb3c-aac2-4ee9-83ec-b7720312e18f"
+              LastKnownName="ConstructorBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c014c8a7-bf21-4856-95fe-996b16f7c495"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7d2990e1-d310-425c-942b-83bc7136f0ae"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="8f124acd-0467-4f47-9b0c-57cb6c4cd91a"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="5fde05aa-a7c7-4214-afd4-753a1b1f1340"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="2c5b7b6a-e19f-40be-9e66-b13d1187f1da"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="82c76745-f91b-41b1-bb4f-cdda19e436bb"
+              LastKnownName="EventBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9aa3ffe1-cb83-4eee-9f66-330579c8bdd5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b212d72a-c0ef-4393-933b-20314d8cc3cc"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="d0a6a786-f67f-4d5d-a983-a5bd2aef8f5a"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="98dda0e7-1ce7-424d-9596-31ac89604d95"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="58dda738-d467-42d8-baa7-4bd287d145e1"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="f84b0f29-4c32-40ff-ba0d-2b0e6cb5c12e"
+              LastKnownName="FieldBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="83cc2d70-0ebb-4036-a83a-45444aa409fd"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6209ae16-c36e-4bf1-98f9-a0477c373933"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="e39a5e28-8bef-4ee4-8139-567f99bbd012"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="b2bda830-fa10-4244-a91c-29b907cdc225"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -257,7 +700,26 @@
         Id="aeeb963c-f354-423e-9253-6657a901d827"
         name="IMember"
         isAbstract="false"
-        isLeaf="false" />
+        isLeaf="false">
+        <ownedOperations>
+          <operation
+            Id="a27ebc83-b0e1-4897-83b8-6ab9ab0686e9"
+            name="Emit"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="7bc4a917-1955-4ce2-9171-f76a9121001c"
+            name="GetNestedMembers"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperations>
+      </Interface>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -274,22 +736,32 @@
         isAbstract="true"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="91ec1482-6f2b-44d2-8272-a08f3530bb69">
+            <classMoniker
+              Id="641ba49c-c83e-4b4d-a7c2-8cc546e300d9"
+              LastKnownName="HappilTypeFactory"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
         <targetEnds>
           <association
-            Id="04fb7943-661a-4e03-a5d7-fa943403afec"
+            Id="c20c741c-d9e4-4b26-9087-8f292804d4f8"
             isDerived="false"
-            sourceEndRoleName=""
+            sourceEndRoleName="cache"
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
             <classMoniker
-              Id="419d335a-cc7d-4852-a910-7880b9e940bd"
-              LastKnownName="RuntimeType"
+              Id="797c55dc-18c3-4e29-879f-15c72a7cdbac"
+              LastKnownName="TypeEntry"
               LastKnownLocation="Happil.Diagrams.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="9628020f-7823-473c-a100-1c35067d6994"
+                  Id="d6555e71-555b-418d-abee-09d894209bf5"
+                  name="cache"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -297,24 +769,11 @@
                   isDerivedUnion="false"
                   aggregation="Shared"
                   isComposite="false"
-                  isNavigableOwned="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="1746cbb4-5fbb-4ff3-a755-37858c87e0f9"
-                      name="Lower"
-                      value="1" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="7beb6eb7-4012-4887-9b9a-46eb362beb14"
-                      name="Upper"
-                      value="1" />
-                  </upperValueInternal>
-                </memberEnd>
+                  isNavigableOwned="false" />
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="251a15ad-f94d-4204-80b4-0c000ea9ab9b"
+                  Id="a973aed9-c582-45ec-a0c1-b971d6dd5878"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -324,13 +783,13 @@
                   isComposite="false">
                   <lowerValueInternal>
                     <literalString
-                      Id="79424bf9-1a8c-48b0-a260-964824483bcf"
+                      Id="44ea7a54-e203-4658-bcf2-288ed0508d48"
                       name="Lower"
                       value="*" />
                   </lowerValueInternal>
                   <upperValueInternal>
                     <literalString
-                      Id="1805fb52-d52a-42c9-8819-8c2264515089"
+                      Id="79429f41-5cf6-4479-a735-fd7813ad095f"
                       name="Upper"
                       value="*" />
                   </upperValueInternal>
@@ -368,15 +827,6 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <suppliersInternal>
-          <dependency
-            Id="7b8e2c33-b482-4c35-bd51-7844c98676ce">
-            <classMoniker
-              Id="63b911fe-3807-4641-817b-0dbae9b944b9"
-              LastKnownName="HappilClass"
-              LastKnownLocation="Happil.Diagrams.uml" />
-          </dependency>
-        </suppliersInternal>
         <generalsInternal>
           <generalization
             Id="22ca965d-0ede-45c9-bf4c-4a06a122cb3a"
@@ -413,6 +863,1057 @@
         Id="68c5d03e-ac8c-4cd4-a649-8626e202aca1"
         LastKnownName="User Code"
         LastKnownLocation="Package_2041.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="797c55dc-18c3-4e29-879f-15c72a7cdbac"
+        name="TypeEntry"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="259cb4e5-1d11-45a0-8d0c-559fe1c60854"
+            isDerived="false"
+            sourceEndRoleName="DynamicType"
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="419d335a-cc7d-4852-a910-7880b9e940bd"
+              LastKnownName="RuntimeType"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="dd863e7d-c62b-4d6b-9dd2-a28df92e21db"
+                  name="DynamicType"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8775d4a6-df4f-400d-a9bd-abcbb2a2c8c1"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="f37de8a7-fc98-4f29-8487-c6ee620b7cfa"
+            name="DynamicType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="e3a03b28-2da2-4796-8269-5b91fe115e8e"
+            name="FactoryMethods"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="c6a2ae14-f671-40a8-bda7-8abd031aea07"
+            name="CreateInstance"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="890b5289-5e48-4e55-8078-062abe261726"
+        name="HappilField"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="4afc915b-c449-4713-a311-db1651ccfd70">
+            <interfaceMoniker
+              Id="aeeb963c-f354-423e-9253-6657a901d827"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="7d3b8cf8-b5b6-4fcf-bad5-27697f30e150"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="f84b0f29-4c32-40ff-ba0d-2b0e6cb5c12e"
+              LastKnownName="FieldBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="76ef5078-c24c-4727-9374-6c4cb4098670"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="bbe66aac-c31a-43c8-8667-8085793a0bf5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="89fb9a07-499e-49c2-9fd6-b3b01585d266"
+            name="Emit"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="611d2df3-f1ab-45ca-a396-5ef252f68700"
+            name="GetNestedMembers"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="b1def673-b0e3-4f2d-abdf-f40745d31bc5"
+        name="HappilMethod"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="9a4410b8-7f52-44b1-8b08-500dd36c4620">
+            <interfaceMoniker
+              Id="aeeb963c-f354-423e-9253-6657a901d827"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="add1d995-49cc-4f2a-b715-e03a01cc5ae2"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="184ad34e-6fb5-469f-8929-c7d98326f313"
+              LastKnownName="MethodBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9815d232-d303-42d0-87ca-a1bed434c03e"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c7ddfd10-8bf9-4a6d-8a59-9a590dd64215"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="1745b9af-09a6-451e-96b5-a31021560635"
+            name="Emit"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="b4dfdee5-47dc-4fa6-a874-3171f8bf77ea"
+            name="GetNestedMembers"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="acba8a7e-d3ad-4716-9e60-07ed5fbcec6c"
+        name="HappilConstructor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="bb6db316-efd2-48de-b15a-8dbf61a9c446"
+            isSubstitutable="false">
+            <classMoniker
+              Id="b1def673-b0e3-4f2d-abdf-f40745d31bc5"
+              LastKnownName="HappilMethod"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="cf948600-ff7d-43d9-900f-4d6320398bc2"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="4afddb3c-aac2-4ee9-83ec-b7720312e18f"
+              LastKnownName="ConstructorBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="016dc8fa-38d5-44f7-888f-fbbb938e65b4"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6b97e2c9-463f-4b25-8088-c74d02086973"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3a7a42bf-6917-4892-a0cd-bb56a02a3742"
+        name="HappilEvent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="84b51162-6ee1-4d4c-9352-c38acb256969">
+            <interfaceMoniker
+              Id="aeeb963c-f354-423e-9253-6657a901d827"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="e94414f2-5afa-4505-b2eb-e7e9e5f6d852"
+            isDerived="false"
+            sourceEndRoleName="add &amp; remove"
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="b1def673-b0e3-4f2d-abdf-f40745d31bc5"
+              LastKnownName="HappilMethod"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="bb5e77f0-bf30-4bf5-a511-0dc30c2b96e2"
+                  name="add &amp; remove"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9350e20f-c43d-4310-b961-5ec1e3e5126a"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="e2f2f9c1-73c5-49bf-9c60-29b4e2e8e0b5"
+                      name="Lower"
+                      value="2" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="4eaa86d2-9ca2-42a2-b6bd-2a986d0c91b9"
+                      name="Upper"
+                      value="2" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="eb7613af-f94d-46b3-a0e3-fd0763774b50"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="82c76745-f91b-41b1-bb4f-cdda19e436bb"
+              LastKnownName="EventBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="570fcf9a-3c8e-45c7-8a0e-eb806769c0ac"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="01f1136a-23cc-458e-9de1-9a25c3fa1f08"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="559c3e91-9b37-49ba-adf5-bff942473ad0"
+            name="Emit"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="ba5f3eda-9b3a-4d44-8733-ce1cc864675b"
+            name="GetNestedMembers"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f84b0f29-4c32-40ff-ba0d-2b0e6cb5c12e"
+        name="FieldBuilder"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="184ad34e-6fb5-469f-8929-c7d98326f313"
+        name="MethodBuilder"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="4afddb3c-aac2-4ee9-83ec-b7720312e18f"
+        name="ConstructorBuilder"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9150264a-c392-4cf9-b323-8a59b3093263"
+        name="HappilProperty"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="10ae5680-4362-45d6-b7dc-b8065296fedf">
+            <interfaceMoniker
+              Id="aeeb963c-f354-423e-9253-6657a901d827"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="bbf66da4-cc36-4d44-b80a-d46ca375a009"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="get &amp; set"
+            isAbstract="false">
+            <classMoniker
+              Id="b1def673-b0e3-4f2d-abdf-f40745d31bc5"
+              LastKnownName="HappilMethod"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9f731e36-2c09-4d0f-a9a5-7fe1eabb51f5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5ce675de-1f70-4876-862c-1318296ae2f6"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="10b83cbb-e4bb-4bb5-93d7-4fcd6d99664e"
+                      name="Lower"
+                      value="2" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="098695e0-96b7-4759-aac6-35080593808e"
+                      name="Upper"
+                      value="2" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="d95e9174-437f-41b6-8d3f-3f2f6b0a00ee"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="253e91e9-1c14-4e1a-a777-ae2f30da307d"
+              LastKnownName="PropertyBuilder"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e51a8689-5b14-4403-a447-dcf763d0fe8b"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b21825d8-2f9d-4d62-b59f-58608402989f"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="44cdceb2-04c7-4288-bf12-becf5b9099f5"
+            name="Emit"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="c71791fe-4353-4477-b3de-ec528c6a583f"
+            name="GetNestedMembers"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="82c76745-f91b-41b1-bb4f-cdda19e436bb"
+        name="EventBuilder"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="253e91e9-1c14-4e1a-a777-ae2f30da307d"
+        name="PropertyBuilder"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="776b615e-8832-4d1e-b518-f13eae3ca77d"
+        name="Operand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+        name="Operand"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="90bb4486-2490-4254-b7ea-c9534f903110"
+            name="EmitLoad"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="4de4d001-0f85-4584-9bd7-f96762eac901"
+            name="EmitTarget"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="c2c2a59f-4b99-45f5-bcb0-591341a3aede"
+        name="AssignableOperand"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="8d51a33a-b452-437b-b30d-6a847696a668"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="05e8605c-19d4-49ad-9aa2-ad608e99f488"
+            name="EmitAddress"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="cd968e89-0651-493d-883b-1ab4f05c286f"
+            name="EmitStore"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7f648965-4969-4a1b-aae5-a3ba614fdca4"
+        name="ExpressionOperand"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="ad9de6bf-396a-4327-8979-3f5afb549b9e"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="29834fd4-b7dc-4081-9378-06d0ad860329"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="be65da29-6338-4390-9144-3962b8f7b4a5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="df74e365-dfd7-48b6-b7bb-3cd13cddd075"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="1c3e9e62-a02c-493f-8330-0f49643ed1ce"
+                      name="Lower"
+                      value="2" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="dd753c21-383d-41b1-9158-2c7046db85c8"
+                      name="Upper"
+                      value="2" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="aadadd3e-8a93-4030-985c-9ca1d45dd6b3"
+            name="Operator"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="b70da406-ad87-414d-8173-494c65b5e0fe"
+            name="LeftOperand"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="ea80cbb5-17b4-4a23-806b-3e4c3a8674fc"
+            name="RightOperand"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="06f2c840-457a-4486-95ed-ba7291a52cad"
+        name="HappilArgument"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="afc03353-b9da-4f39-9e71-b34cafe19955"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c2c2a59f-4b99-45f5-bcb0-591341a3aede"
+              LastKnownName="AssignableOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="351981f8-3ebc-4953-b001-275ba4199a9f"
+        name="HappilLocal"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9b60a734-1c37-45e1-bca4-fb4365ee9799"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c2c2a59f-4b99-45f5-bcb0-591341a3aede"
+              LastKnownName="AssignableOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="936d9ac7-1176-4dab-958e-531afad6b3c1"
+        name="HappilField"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="44691bbb-1705-4b50-8e39-408b77907501">
+            <interfaceMoniker
+              Id="2f8f9530-6592-4a01-b458-91817f74209f"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="e708023b-8197-4035-bb06-e55e77d464f6"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c2c2a59f-4b99-45f5-bcb0-591341a3aede"
+              LastKnownName="AssignableOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ba4e37bd-b626-47f9-bfe8-3e3352e111c5"
+        name="HappilProperty"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="08a18d88-be1a-4100-901e-0ab7b373dc51">
+            <interfaceMoniker
+              Id="2f8f9530-6592-4a01-b458-91817f74209f"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="a92aceb3-a282-41d9-9906-53db32e6784c"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c2c2a59f-4b99-45f5-bcb0-591341a3aede"
+              LastKnownName="AssignableOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="2f8f9530-6592-4a01-b458-91817f74209f"
+        name="IMember"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="01dc4c15-5206-4cb8-b841-5bd107c0e279"
+        name="HappilMethod"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="8ff830d2-ab43-4d20-ab42-14380075a548">
+            <interfaceMoniker
+              Id="2f8f9530-6592-4a01-b458-91817f74209f"
+              LastKnownName="IMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="5d676242-7c47-43c2-a1e4-d93b5bb283bf"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="06f2c840-457a-4486-95ed-ba7291a52cad"
+              LastKnownName="HappilArgument"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="11545278-947e-4ed8-a89f-60959b39cce2"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f570d043-9171-426d-bd0e-ceff04672784"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="52eee21e-ea57-4985-92b8-e7f31b71f235"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="154a3c06-2fee-4ef4-8fcf-51fe27c69867"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="305087e0-be2e-465b-95d9-559ab305bd32"
+        name="InvocationOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9d2c364e-7a0f-48c8-81d1-733df4c33738"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="038157f1-9b01-403c-8e2c-1a4da682adc0"
+            name="TargetOperand"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="4a7bcd13-db68-45d5-a1a8-867b72ccd606"
+            name="ArgumentOperands"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="a68eb0ca-ab68-4b05-b80c-b7836294401e"
+        name="ConstantOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="93b2f787-71fa-47db-a67a-17043d3e7b3b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="0b1ab9ad-4e18-4184-b8a4-4da1a666bee5"
+        name="TypeofOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="660e0159-1089-4440-85d0-3346a45c40b6"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d3f068c5-4190-4b72-921c-841e765fa1ec"
+              LastKnownName="Operand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="347d5502-b284-42cb-b655-45117c57793b"
+        name="NewObjectOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="4ba3c1b5-9e31-4a14-9bb8-6df407a5b5cf"
+            isSubstitutable="false">
+            <classMoniker
+              Id="305087e0-be2e-465b-95d9-559ab305bd32"
+              LastKnownName="InvocationOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7a962317-adcb-47b3-ab32-5e33365b99d7"
+        name="NewArrayOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="a900a9ff-9c83-41bd-9acb-2923ff946786"
+            isSubstitutable="false">
+            <classMoniker
+              Id="305087e0-be2e-465b-95d9-559ab305bd32"
+              LastKnownName="InvocationOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
