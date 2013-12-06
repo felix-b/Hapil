@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class HappilProperty
+	public class HappilProperty<T> : HappilOperand<T>
 	{
 		public HappilPropertyGetter Get(Action<HappilMethodBody> body)
 		{
@@ -17,7 +17,7 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public HappilField<object> BackingField
+		public HappilField<T> BackingField
 		{
 			get
 			{

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public interface IMemberGroup : IMember
+	public class HappilArgument<T> : HappilAssignableOperand<T>
 	{
 	}
 }

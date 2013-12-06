@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class Operand
+	public class HappilOperand
 	{
 	}
 
-	public class Operand<T> : Operand
+	public class HappilOperand<T> : HappilOperand
 	{
 	}
 }

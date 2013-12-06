@@ -17,21 +17,21 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Inherit<TBase>(params Func<HappilClassBody<TBase>, IMember>[] members)
+		public HappilClass Inherit<TBase>(params Func<HappilClassBody<TBase>, IHappilMember>[] members)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Inherit(object baseType, params Func<HappilClassBody<object>, IMember>[] members)
+		public HappilClass Inherit(object baseType, params Func<HappilClassBody<object>, IHappilMember>[] members)
 		{
 			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Implement<TInterface>(params Func<HappilClassBody<TInterface>, IMember>[] members)
+		public HappilClass Implement<TInterface>(params Func<HappilClassBody<TInterface>, IHappilMember>[] members)
 		{
 			m_TypeBuilder.AddInterfaceImplementation(typeof(TInterface));
 			//TODO: add members to member list
@@ -40,7 +40,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Implement(Type interfaceType, params Func<HappilClassBody<object>, IMember>[] members)
+		public HappilClass Implement(Type interfaceType, params Func<HappilClassBody<object>, IHappilMember>[] members)
 		{
 			m_TypeBuilder.AddInterfaceImplementation(interfaceType);
 			//TODO: add members to member list

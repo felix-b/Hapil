@@ -5,13 +5,13 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class AssignableOperand<T> : Operand<T>
+	public class HappilAssignableOperand<T> : HappilOperand<T>
 	{
-		public Operand Assign(Operand<T> operand)
+		public HappilOperand<T> Assign(HappilOperand<T> operand)
 		{
 			throw new NotImplementedException();
 		}
-		public Operand Assign(ConstantOperand<T> operand)
+		public HappilOperand<T> Assign(HappilConstant<T> operand)
 		{
 			throw new NotImplementedException();
 		}

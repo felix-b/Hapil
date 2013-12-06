@@ -5,27 +5,27 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class ConstantOperand<T> : Operand
+	public class HappilConstant<T> : HappilOperand<T>
 	{
 		private readonly T m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ConstantOperand(T value)
+		public HappilConstant(T value)
 		{
 			m_Value = value;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static implicit operator ConstantOperand<T>(T value)
+		public static implicit operator HappilConstant<T>(T value)
 		{
-			return new ConstantOperand<T>(value);			
+			return new HappilConstant<T>(value);			
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static implicit operator T(ConstantOperand<T> operand)
+		public static implicit operator T(HappilConstant<T> operand)
 		{
 			return operand.m_Value;
 		}

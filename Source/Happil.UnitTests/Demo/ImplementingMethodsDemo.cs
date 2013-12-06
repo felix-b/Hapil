@@ -33,7 +33,7 @@ namespace Happil.UnitTests.Demo
 						var methodName = m.Local<string>("methodName");
 						methodName.Assign(m.MethodInfo.Name);
 						m.Emit(() => Console.WriteLine(methodName));
-					})		
+					})
 				);
 
 				return null;

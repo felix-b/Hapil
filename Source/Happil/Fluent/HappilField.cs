@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class HappilField<T> : AssignableOperand<T>, IMember
+	public class HappilField<T> : HappilAssignableOperand<T>, IHappilMember
 	{
 		#region IMember Members
 
-		public IMember[] Ungroup()
+		public IHappilMember[] Flatten()
 		{
 			throw new NotImplementedException();
 		}

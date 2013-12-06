@@ -14,12 +14,12 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public HappilLocal<T> Local<T>(string name, Operand initialValue)
+		public HappilLocal<T> Local<T>(string name, HappilOperand initialValue)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Return(Operand operand)
+		public void Return(HappilOperand operand)
 		{
 			throw new NotImplementedException();
 		}
@@ -34,12 +34,22 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public Operand Argument(string name)
+		public HappilOperand Argument(string name)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Operand Argument(int index)
+		public HappilOperand Argument(int index)
+		{
+			throw new NotImplementedException();
+		}
+
+		public HappilArgument<T> Argument<T>(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		public HappilArgument<T> Argument<T>(int index)
 		{
 			throw new NotImplementedException();
 		}

@@ -39,7 +39,7 @@ namespace Happil.UnitTests.Demo
 						x => x.Return(prop.BackingField)
 					),
 					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
+						x => prop.BackingField.Assign(x.Argument<int>("value"))
 					)
 				),
 
@@ -48,7 +48,7 @@ namespace Happil.UnitTests.Demo
 						x => x.Return(prop.BackingField)
 					),
 					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
+						x => prop.BackingField.Assign(x.Argument<string>("value"))
 					)
 				),
 
@@ -57,7 +57,7 @@ namespace Happil.UnitTests.Demo
 						x => x.Return(prop.BackingField)
 					),
 					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument("value"))
+						x => prop.BackingField.Assign(x.Argument<TimeSpan?>("value"))
 					)
 				)
 			);

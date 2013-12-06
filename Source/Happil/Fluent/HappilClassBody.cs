@@ -9,43 +9,43 @@ namespace Happil.Fluent
 {
 	public class HappilClassBody<TBase>
 	{
-		public IMember DefaultConstructor()
+		public IHappilMember DefaultConstructor()
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup AutomaticProperties()
+		public IHappilMember AutomaticProperties()
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup AutomaticProperties(Func<PropertyInfo, bool> where)
+		public IHappilMember AutomaticProperties(Func<PropertyInfo, bool> where)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup Property<T>(
+		public IHappilMember Property<T>(
 			Expression<Func<TBase, T>> selector, 
-			Func<HappilProperty, HappilPropertyGetter> getter, 
-			Func<HappilProperty, HappilPropertySetter> setter = null)
+			Func<HappilProperty<T>, HappilPropertyGetter> getter, 
+			Func<HappilProperty<T>, HappilPropertySetter> setter = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup Properties(
+		public IHappilMember Properties(
 			Func<PropertyInfo, bool> where,
-			Func<HappilProperty, HappilPropertyGetter> getter,
-			Func<HappilProperty, HappilPropertySetter> setter = null)
+			Func<HappilProperty<object>, HappilPropertyGetter> getter,
+			Func<HappilProperty<object>, HappilPropertySetter> setter = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup Methods(Action<HappilMethodBody> body)
+		public IHappilMember Methods(Action<HappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IMemberGroup Methods(Func<MethodInfo, bool> where, Action<HappilMethodBody> body)
+		public IHappilMember Methods(Func<MethodInfo, bool> where, Action<HappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}
