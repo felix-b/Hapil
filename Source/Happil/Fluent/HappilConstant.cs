@@ -18,6 +18,14 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override string ToString()
+		{
+			bool isNull = object.ReferenceEquals(null, m_Value);
+			return string.Format("Const<{0}>{{{1}}}", typeof(T).Name, isNull ? "null" : m_Value.ToString());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static implicit operator HappilConstant<T>(T value)
 		{
 			return new HappilConstant<T>(value);			

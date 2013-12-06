@@ -42,11 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\BinaryOperators.cs" />
+    <Compile Include="Expressions\UnaryOperators.cs" />
     <Compile Include="Fluent\HappilAssignable.cs" />
+    <Compile Include="Expressions\HappilBinaryExpression.cs" />
     <Compile Include="Fluent\HappilConstant.cs" />
     <Compile Include="Fluent\HappilArgument.cs" />
     <Compile Include="Fluent\HappilClassBody.cs" />
-    <Compile Include="Fluent\HappilExpression.cs" />
+    <Compile Include="Expressions\HappilExpression.cs" />
     <Compile Include="Fluent\HappilField.cs" />
     <Compile Include="Fluent\HappilLocal.cs" />
     <Compile Include="Fluent\HappilMethodBody.cs" />
@@ -54,14 +57,18 @@
     <Compile Include="Fluent\HappilProperty.cs" />
     <Compile Include="Fluent\HappilPropertyGetter.cs" />
     <Compile Include="Fluent\HappilPropertySetter.cs" />
+    <Compile Include="Expressions\HappilUnaryExpression.cs" />
     <Compile Include="Fluent\IHappilOperand.cs" />
     <Compile Include="HappilFactory.cs" />
     <Compile Include="Fluent\HappilClass.cs" />
     <Compile Include="Fluent\IHappilMember.cs" />
     <Compile Include="HappilObjectFactoryBase.cs" />
     <Compile Include="HappilTypeKey.cs" />
+    <Compile Include="Expressions\IBinaryOperator.cs" />
+    <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

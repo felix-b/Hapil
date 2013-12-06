@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
@@ -37,147 +39,270 @@ namespace Happil.Fluent
 
 		public HappilOperand<TCast> CastTo<TCast>()
 		{
-			return new HappilExpression<TCast>();
+			return new HappilBinaryExpression<T, Type, TCast>(
+				@operator: new BinaryOperators.OperatorCastOrThrow<T>(), 
+				left: this, 
+				right: new HappilConstant<Type>(typeof(TCast)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TCast> As<TCast>()
+		{
+			return new HappilBinaryExpression<T, Type, TCast>(
+				@operator: new BinaryOperators.OperatorTryCast<T>(),
+				left: this,
+				right: new HappilConstant<Type>(typeof(TCast)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator ==(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorEqual<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator !=(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorNotEqual<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator >(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorGreaterThan<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator <(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorLessThan<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator >=(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorGreaterThanOrEqual<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<bool> operator <=(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<bool>();
+			return new HappilBinaryExpression<T, bool>(
+				@operator: new BinaryOperators.OperatorLessThanOrEqual<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilOperand<T> y)
+		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilOperand<T> y) 
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, T>(
+				@operator: new BinaryOperators.OperatorAdd<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, T>(
+				@operator: new BinaryOperators.OperatorSubtract<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator *(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, T>(
+				@operator: new BinaryOperators.OperatorMultiply<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator /(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, T>(
+				@operator: new BinaryOperators.OperatorDivide<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator %(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, T>(
+				@operator: new BinaryOperators.OperatorModulo<T>(),
+				left: x,
+				right: y);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator &(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			object result;
+
+			if ( typeof(T) == typeof(bool) )
+			{
+				result = new HappilBinaryExpression<bool, bool>(
+					@operator: new BinaryOperators.OperatorLogicalAnd(),
+					left: (IHappilOperand<bool>)x,
+					right: (IHappilOperand<bool>)y);
+			}
+			else
+			{
+				result = new HappilBinaryExpression<T, T>(
+					@operator: new BinaryOperators.OperatorBitwiseAnd<T>(),
+					left: x,
+					right: y);
+			}
+
+			return (HappilOperand<T>)result;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator |(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			object result;
+
+			if ( typeof(T) == typeof(bool) )
+			{
+				result = new HappilBinaryExpression<bool, bool>(
+					@operator: new BinaryOperators.OperatorLogicalOr(),
+					left: (IHappilOperand<bool>)x,
+					right: (IHappilOperand<bool>)y);
+			}
+			else
+			{
+				result = new HappilBinaryExpression<T, T>(
+					@operator: new BinaryOperators.OperatorBitwiseOr<T>(),
+					left: x,
+					right: y);
+			}
+
+			return (HappilOperand<T>)result;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool operator true(HappilOperand<T> x)
+		{
+			return false;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool operator false(HappilOperand<T> x)
+		{
+			return false;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator ^(HappilOperand<T> x, HappilOperand<T> y)
 		{
-			return new HappilExpression<T>();
+			object result;
+
+			if ( typeof(T) == typeof(bool) )
+			{
+				result = new HappilBinaryExpression<bool, bool>(
+					@operator: new BinaryOperators.OperatorLogicalXor(),
+					left: (IHappilOperand<bool>)x,
+					right: (IHappilOperand<bool>)y);
+			}
+			else
+			{
+				result = new HappilBinaryExpression<T, T>(
+					@operator: new BinaryOperators.OperatorBitwiseXor<T>(),
+					left: x,
+					right: y);
+			}
+
+			return (HappilOperand<T>)result;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator <<(HappilOperand<T> x, int y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, int, T>(
+				@operator: new BinaryOperators.OperatorLeftShift<T>(),
+				left: x,
+				right: new HappilConstant<int>(y));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator >>(HappilOperand<T> x, int y)
 		{
-			return new HappilExpression<T>();
+			return new HappilBinaryExpression<T, int, T>(
+				@operator: new BinaryOperators.OperatorRightShift<T>(),
+				left: x,
+				right: new HappilConstant<int>(y));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator !(HappilOperand<T> x)
 		{
-			return new HappilExpression<T>();
+			ValidateIsBooleanFor("!");
+
+			object result = new HappilUnaryExpression<bool, bool>(
+				@operator: new UnaryOperators.OperatorLogicalNot(),
+				operand: (IHappilOperand<bool>)x);
+
+			return (HappilOperand<T>)result;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator ~(HappilOperand<T> x)
 		{
-			return new HappilExpression<T>();
+			return new HappilUnaryExpression<T, T>(
+				@operator: new UnaryOperators.OperatorBitwiseNot<T>(),
+				operand: x);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<T> operator ++(HappilOperand<T> x)
+		
+		private static void ValidateIsBooleanFor(string operatorName)
 		{
-			return new HappilExpression<T>();
-		}
-
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<T> operator --(HappilOperand<T> x)
-		{
-			return new HappilExpression<T>();
+			if ( typeof(T) != typeof(bool) )
+			{
+				throw new ArgumentException(string.Format(
+					"Operator {0} cannot be applied to operand of type {1}. It can only be applied to boolean operands.", 
+					operatorName, typeof(T).FullName));
+			}
 		}
 	}
 }

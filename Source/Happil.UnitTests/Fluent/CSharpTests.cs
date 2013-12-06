@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Fluent
 {
 	[TestFixture]
-	public class FluentCSharpTests
+	public class CSharpTests
 	{
 		[Test]
 		public void CanAssignDerivedToBase()
@@ -73,11 +73,15 @@ namespace Happil.UnitTests.Fluent
 			int2.Assign(456);
 			int3.Assign(789);
 
-			Field<bool> result1 = new Field<bool>("result1");
-			Field<bool> result2 = new Field<bool>("result2");
+			Field<bool> result = new Field<bool>("result1");
+			
+			var expr1 = result.Assign(int1 > int2);
+			var expr2 = result.Assign((int1 > int2) && (int2 > int3));
+			var expr3 = result.Assign((int1 > int2) || (int2 > int3));
 
-			result1.Assign(int1 > int2);
-			result2.Assign((int1 > int2) && (int2 > int3));
+			Console.WriteLine(expr1.ToString());
+			Console.WriteLine(expr2.ToString());
+			Console.WriteLine(expr3.ToString());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -92,28 +96,28 @@ namespace Happil.UnitTests.Fluent
 		{
 			public Operand<TCast> CastTo<TCast>()
 			{
-				return new Expression<TCast>();
+				return new Expression<T, T, TCast>(this, this, "cast");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public static Operand<T> operator +(Operand<T> x, Operand<T> y)
 			{
-				return new Expression<T>();
+				return new Expression<T, T, T>(x, y, "+");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public static Operand<bool> operator |(Operand<T> x, Operand<T> y)
 			{
-				return new Expression<bool>();
+				return new Expression<T, T, bool>(x, y, "|");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public static Operand<bool> operator &(Operand<T> x, Operand<T> y)
 			{
-				return new Expression<bool>();
+				return new Expression<T, T, bool>(x, y, "&");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -127,21 +131,21 @@ namespace Happil.UnitTests.Fluent
 
 			public static bool operator false(Operand<T> x)
 			{
-				return true;
+				return false;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public static Operand<bool> operator >(Operand<T> x, Operand<T> y)
 			{
-				return new Expression<bool>();
+				return new Expression<T, T, bool>(x, y, ">");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public static Operand<bool> operator <(Operand<T> x, Operand<T> y)
 			{
-				return new Expression<bool>();
+				return new Expression<T, T, bool>(x, y, "<");
 			}
 		}
 
@@ -193,6 +197,14 @@ namespace Happil.UnitTests.Fluent
 			{
 				return new Constant<T>(value);
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				var isNull = object.ReferenceEquals(null, m_Value);
+				return string.Format("Const<{0}>{{{1}}}", typeof(T).Name, isNull ? "null" : m_Value.ToString());
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -207,12 +219,66 @@ namespace Happil.UnitTests.Fluent
 			{
 				m_FieldName = fieldName;
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return string.Format("Field<{0}>{{{1}}}", typeof(T).Name, m_FieldName);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Expression<T> : Operand<T>, IOperand<T>
+		private class Expression<TLeft, TRight, TExpr> : Operand<TExpr>, IOperand<TExpr>
 		{
+			private readonly IOperand<TLeft> m_Left;
+			private readonly IOperand<TRight> m_Right;
+			private readonly string m_Operation;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public Expression(IOperand<TLeft> left, IOperand<TRight> right, string operation)
+			{
+				m_Left = left;
+				m_Right = right;
+				m_Operation = operation;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return string.Format(
+					"Expr<{0}>{{({1}) {2} ({3})}}", 
+					typeof(TExpr).Name,
+					m_Left != null ? m_Left.ToString() : "null",
+					m_Operation,
+					m_Right != null ? m_Right.ToString() : "null");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IOperand<TLeft> Left
+			{
+				get { return m_Left; }
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IOperand<TRight> Right
+			{
+				get { return m_Right; }
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string Operation
+			{
+				get { return m_Operation; }
+			}
+
+
 		}
 	}
 }

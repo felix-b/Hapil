@@ -50,7 +50,8 @@
   <ItemGroup>
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />
     <Compile Include="Demo\EndToEndDemo.cs" />
-    <Compile Include="Fluent\FluentCSharpTests.cs" />
+    <Compile Include="Fluent\CSharpTests.cs" />
+    <Compile Include="Fluent\HappilOperandTests.cs" />
     <Compile Include="HappilFactoryTests.cs" />
     <Compile Include="HappilObjectFactoryBaseTests.cs" />
     <Compile Include="HappilTypeKeyTests.cs" />
