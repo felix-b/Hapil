@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class HappilField<T> : HappilAssignableOperand<T>, IHappilMember
+	public class HappilField<T> : HappilAssignable<T>, IHappilMember
 	{
 		#region IMember Members
 
