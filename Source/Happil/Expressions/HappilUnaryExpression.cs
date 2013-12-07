@@ -10,20 +10,30 @@ namespace Happil.Expressions
 	{
 		private readonly IUnaryOperator<TOperand> m_Operator;
 		private readonly IHappilOperand<TOperand> m_Operand;
+		private readonly UnaryOperatorPosition m_Position;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilUnaryExpression(IUnaryOperator<TOperand> @operator, IHappilOperand<TOperand> operand)
+		public HappilUnaryExpression(
+			IUnaryOperator<TOperand> @operator, 
+			IHappilOperand<TOperand> operand, 
+			UnaryOperatorPosition position = UnaryOperatorPosition.Prefix)
 		{
 			m_Operand = operand;
 			m_Operator = @operator;
+			m_Position = position;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override string ToString()
 		{
-			return string.Format("Expr<{0}>{{{1} {2}}}", typeof(TExpr).Name, m_Operator.ToString(), m_Operand.ToString());
+			var formatString = (
+				m_Position == UnaryOperatorPosition.Prefix ?
+				"Expr<{0}>{{{1} {2}}}" :
+				"Expr<{0}>{{{2} {1}}}");
+
+			return string.Format(formatString, typeof(TExpr).Name, m_Operator.ToString(), m_Operand.ToString());
 		}
 	}
 }

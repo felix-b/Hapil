@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expressions\BinaryOperators.cs" />
+    <Compile Include="Expressions\UnaryOperatorPosition.cs" />
     <Compile Include="Expressions\UnaryOperators.cs" />
     <Compile Include="Fluent\HappilAssignable.cs" />
     <Compile Include="Expressions\HappilBinaryExpression.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Fluent\HappilPropertySetter.cs" />
     <Compile Include="Expressions\HappilUnaryExpression.cs" />
     <Compile Include="Fluent\IHappilOperand.cs" />
+    <Compile Include="Fluent\Prefix.cs" />
     <Compile Include="HappilFactory.cs" />
     <Compile Include="Fluent\HappilClass.cs" />
     <Compile Include="Fluent\IHappilMember.cs" />

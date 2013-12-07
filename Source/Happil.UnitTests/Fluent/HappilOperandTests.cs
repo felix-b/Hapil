@@ -243,22 +243,88 @@ namespace Happil.UnitTests.Fluent
 				Is.EqualTo("Expr<String>{Field{f1} + Expr<String>{Field{f2} as Const<Type>{System.String}}}"));
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//[Test]
-		//public void UnaryPlusPlusOperator()
-		//{
-		//	//-- Arrange
+		[Test]
+		public void PostfixPlusPlusOperator()
+		{
+			//-- Arrange
 
-		//	var field1 = new HappilField<int>("f1");
+			var field1 = new HappilField<int>("f1");
 
-		//	//-- Act
+			//-- Act
 
-		//	var expression = field1++;
+			var expression = field1.PostfixPlusPlus();
 
-		//	//-- Assert
+			//-- Assert
 
-		//	Assert.That(expression, Is.SameAs(field1));
-		//}
+			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(
+				expression.ToString(),
+				Is.EqualTo("Expr<Int32>{Field{f1} ++}"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void PostfixMinusMinusOperator()
+		{
+			//-- Arrange
+
+			var field1 = new HappilField<int>("f1");
+
+			//-- Act
+
+			var expression = field1.PostfixMinusMinus();
+
+			//-- Assert
+
+			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(
+				expression.ToString(),
+				Is.EqualTo("Expr<Int32>{Field{f1} --}"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void PrefixPlusPlusOperator()
+		{
+			//-- Arrange
+
+			var field1 = new HappilField<int>("f1");
+
+			//-- Act
+
+			var expression = Prefix.PlusPlus(field1);
+
+			//-- Assert
+
+			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(
+				expression.ToString(),
+				Is.EqualTo("Expr<Int32>{++ Field{f1}}"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void PrefixMinusMinusOperator()
+		{
+			//-- Arrange
+
+			var field1 = new HappilField<int>("f1");
+
+			//-- Act
+
+			var expression = Prefix.MinusMinus(field1);
+
+			//-- Assert
+
+			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(
+				expression.ToString(),
+				Is.EqualTo("Expr<Int32>{-- Field{f1}}"));
+		}
 	}
 }
