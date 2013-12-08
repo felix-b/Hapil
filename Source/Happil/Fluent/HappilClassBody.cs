@@ -14,15 +14,21 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilMember AutomaticProperties()
 		{
 			throw new NotImplementedException();
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilMember AutomaticProperties(Func<PropertyInfo, bool> where)
 		{
 			throw new NotImplementedException();
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilMember Property<T>(
 			Expression<Func<TBase, T>> selector, 
@@ -32,6 +38,8 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilMember Properties(
 			Func<PropertyInfo, bool> where,
 			Func<HappilProperty<object>, HappilPropertyGetter> getter,
@@ -40,12 +48,16 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public IHappilMember Methods(Action<HappilMethodBody> body)
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilMember Methods(Action<IHappilMethodBody> body)
 		{
-			throw new NotImplementedException();
+			return Methods(mi => true, body);
 		}
 
-		public IHappilMember Methods(Func<MethodInfo, bool> where, Action<HappilMethodBody> body)
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilMember Methods(Func<MethodInfo, bool> where, Action<IHappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}

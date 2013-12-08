@@ -7,12 +7,12 @@ namespace Happil.Fluent
 {
 	public class HappilProperty<T> : HappilOperand<T>
 	{
-		public HappilPropertyGetter Get(Action<HappilMethodBody> body)
+		public HappilPropertyGetter Get(Action<IHappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}
 
-		public HappilPropertySetter Set(Action<HappilMethodBody> body)
+		public HappilPropertySetter Set(Action<IHappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}

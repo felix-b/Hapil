@@ -32,7 +32,7 @@ namespace Happil.UnitTests.Demo
 					cls => cls.Methods(m => {
 						var methodName = m.Local<string>("methodName");
 						methodName.Assign(m.MethodInfo.Name);
-						m.Emit(() => Console.WriteLine(methodName));
+						m.EmitByExample(() => Console.WriteLine(methodName));
 					})
 				);
 

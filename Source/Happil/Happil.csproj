@@ -53,7 +53,8 @@
     <Compile Include="Expressions\HappilExpression.cs" />
     <Compile Include="Fluent\HappilField.cs" />
     <Compile Include="Fluent\HappilLocal.cs" />
-    <Compile Include="Fluent\HappilMethodBody.cs" />
+    <Compile Include="Fluent\HappilMethod.cs" />
+    <Compile Include="Fluent\IHappilMethodBody.cs" />
     <Compile Include="Fluent\HappilOperand.cs" />
     <Compile Include="Fluent\HappilProperty.cs" />
     <Compile Include="Fluent\HappilPropertyGetter.cs" />
