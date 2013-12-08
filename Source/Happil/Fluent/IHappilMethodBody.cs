@@ -7,17 +7,37 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public interface IHappilMethodBody
+	public interface IHappilMethodBodyBase
 	{
 		HappilLocal<T> Local<T>(string name);
 		HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue);
-		void Return<T>(HappilOperand<T> operand);
 		void Throw<TException>(string message) where TException : Exception;
 		void EmitByExample(Expression<Action> action);
 		HappilArgument<T> Argument<T>(string name);
 		HappilArgument<T> Argument<T>(int index);
 		MethodInfo MethodInfo { get; }
 		int ArgumentCount { get; }
-		Type ReturnValue { get; }
+		Type ReturnType { get; }
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IHappilMethodBody : IHappilMethodBodyBase
+	{
+		void Return(HappilOperand<object> operand);
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
+	{
+		void Return(HappilOperand<TReturn> operand);
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IVoidHappilMethodBody : IHappilMethodBodyBase
+	{
+		void Return();
 	}
 }

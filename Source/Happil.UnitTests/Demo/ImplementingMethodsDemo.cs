@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Happil.Fluent;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Demo
@@ -26,17 +27,15 @@ namespace Happil.UnitTests.Demo
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override TypeEntry BuildNewType(HappilTypeKey key)
+			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				var classDefinition = TypeFactory.DefineClass("ImplementingMethodsDemo.Impl" + key.PrimaryInterface.Name).Implement(key.PrimaryInterface, 
-					cls => cls.Methods(m => {
+				return TypeFactory.DefineClass(key, namespaceName: "ImplementingMethodsDemo")
+					.Implement(key.PrimaryInterface)
+					.Methods(m => {
 						var methodName = m.Local<string>("methodName");
 						methodName.Assign(m.MethodInfo.Name);
 						m.EmitByExample(() => Console.WriteLine(methodName));
-					})
-				);
-
-				return null;
+					});
 			}
 		}
 		

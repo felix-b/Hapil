@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 
 namespace Happil.Fluent
 {
-	public class HappilClass
+	internal class HappilClass
 	{
 		private readonly TypeBuilder m_TypeBuilder;
 		private Type m_BuiltType = null;
@@ -17,35 +17,40 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Inherit<TBase>(params Func<HappilClassBody<TBase>, IHappilMember>[] members)
+		public IHappilClassBody<TBase> GetBody<TBase>()
 		{
-			throw new NotImplementedException();
+			return new HappilClassBody<TBase>(happilClass: this);
 		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilClass Inherit<TBase>(params Func<IHappilClassBody<TBase>, IHappilMember>[] members)
+		//{
+		//	throw new NotImplementedException();
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilClass Inherit(object baseType, params Func<IHappilClassBody<object>, IHappilMember>[] members)
+		//{
+		//	return this;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass Inherit(object baseType, params Func<HappilClassBody<object>, IHappilMember>[] members)
-		{
-			return this;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilClass Implement<TInterface>(params Func<HappilClassBody<TInterface>, IHappilMember>[] members)
-		{
-			m_TypeBuilder.AddInterfaceImplementation(typeof(TInterface));
-			//TODO: add members to member list
-			return this;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilClass Implement(Type interfaceType, params Func<HappilClassBody<object>, IHappilMember>[] members)
+		public void Implement(Type interfaceType)
 		{
 			m_TypeBuilder.AddInterfaceImplementation(interfaceType);
-			//TODO: add members to member list
-			return this;
 		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilClass Implement(Type interfaceType, params Func<IHappilClassBody<object>, IHappilMember>[] members)
+		//{
+		//	m_TypeBuilder.AddInterfaceImplementation(interfaceType);
+		//	//TODO: add members to member list
+		//	return this;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -73,5 +78,9 @@ namespace Happil.Fluent
 				new Func<object>(() => Activator.CreateInstance(m_BuiltType))
 			};
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 	}
 }

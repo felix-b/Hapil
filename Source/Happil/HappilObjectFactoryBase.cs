@@ -12,10 +12,10 @@ namespace Happil
 	/// </summary>
 	/// <remarks>
 	/// This base class should be subclassed for each different kind of responsibilities of dynamic types. 
-	/// When subclassing, one should implement the <see cref="BuildNewType"/> method. 
+	/// When subclassing, one should implement the <see cref="DefineNewClass"/> method. 
 	/// In this method, a new type for the passed key should be created using Happil type factory instance provided by the <see cref="TypeFactory"/> property.
 	/// The base class manages a read-through cache of built types. 
-	/// The cache is backed by the <see cref="BuildNewType"/> method, which it falls back to if the type of the requested object was not already built.
+	/// The cache is backed by the <see cref="DefineNewClass"/> method, which it falls back to if the type of the requested object was not already built.
 	/// </remarks>
 	public abstract class HappilObjectFactoryBase
 	{
@@ -34,12 +34,12 @@ namespace Happil
 
 		protected TypeEntry GetOrBuildType(HappilTypeKey key)
 		{
-			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewType);
+			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected abstract TypeEntry BuildNewType(HappilTypeKey key);
+		protected abstract IHappilClassDefinition DefineNewClass(HappilTypeKey key);
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -53,12 +53,20 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private TypeEntry BuildNewTypeEntry(HappilTypeKey key)
+		{
+			var classDefinition = DefineNewClass(key);
+			return new TypeEntry((IHappilClassDefinitionInternals)classDefinition);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected class TypeEntry
 		{
-			public TypeEntry(HappilClass classDefinition)
+			internal TypeEntry(IHappilClassDefinitionInternals classDefinition)
 			{
-				this.DynamicType = classDefinition.CreateType();
-				this.FactoryMethods = classDefinition.GetFactoryMethods();
+				this.DynamicType = classDefinition.HappilClass.CreateType();
+				this.FactoryMethods = classDefinition.HappilClass.GetFactoryMethods();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

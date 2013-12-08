@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Happil.Fluent;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Milestones
@@ -89,17 +90,13 @@ namespace Happil.UnitTests.Milestones
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override TypeEntry BuildNewType(HappilTypeKey key)
+			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				var classDefinition = base.TypeFactory.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name);
-
-				classDefinition.Implement(key.PrimaryInterface, 
-					cls => cls.Methods(m => {
+				return TypeFactory.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
+					.Implement(key.PrimaryInterface)
+					.Methods(m => {
 						m.EmitByExample(() => Console.WriteLine(m.MethodInfo.Name));
-					})
-				);
-
-				return new TypeEntry(classDefinition);
+					});
 			}
 		}
 	}

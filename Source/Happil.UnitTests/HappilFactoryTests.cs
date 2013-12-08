@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Happil.Fluent;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
@@ -31,7 +32,8 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			Type type = m_FactoryUnderTest.DefineClass(typeFullName).CreateType();
+			var classBody = m_FactoryUnderTest.DefineClass(typeFullName);
+			var type = ((IHappilClassDefinitionInternals)classBody).HappilClass.CreateType();
 			var instance = Assembly.GetAssembly(type).CreateInstance(type.FullName);
 
 			//-- Assert

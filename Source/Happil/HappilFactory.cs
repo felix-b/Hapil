@@ -23,14 +23,21 @@ namespace Happil
 	    }
 
 	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
-	    
-        public HappilClass DefineClass(string classFullName,TypeAttributes attributes=TypeAttributes.Public |TypeAttributes.Public)
+
+		public IHappilClassBody<object> DefineClass(string classFullName, TypeAttributes attributes = TypeAttributes.Public |TypeAttributes.Public)
         {
             if ( definedClasses.ContainsKey(classFullName) )
-                return definedClasses[classFullName];
+                return definedClasses[classFullName].GetBody<object>();
             
             TypeBuilder tb = m_ModuleBuilder.DefineType(classFullName, attributes);
-			return new HappilClass(tb);
+			return new HappilClass(tb).GetBody<object>();
         }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<object> DefineClass(HappilTypeKey key, string namespaceName)
+		{
+			return DefineClass(namespaceName + "ImplOf" + key.PrimaryInterface.Name);
+		}
 	}
 }

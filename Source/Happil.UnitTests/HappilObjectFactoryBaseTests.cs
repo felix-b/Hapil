@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Fluent;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
@@ -105,14 +106,12 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override TypeEntry BuildNewType(HappilTypeKey key)
+			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				var classDefinition = base.TypeFactory.DefineClass(
+				return TypeFactory.DefineClass(
 					"HappilObjectFactoryBaseTests.Impl" + key.PrimaryInterface.Name)
 					.Inherit(key.BaseType)
 					.Implement(key.PrimaryInterface);
-
-				return new TypeEntry(classDefinition);
 			}
 		}
 
