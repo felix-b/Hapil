@@ -7,17 +7,20 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	internal class HappilMethod<TReturn> : IHappilMember, IHappilMethodBody<TReturn>
+	internal class HappilMethod : IHappilMember
 	{
-		//private MethodBuilder m_MethodBuilder;
+		private readonly HappilClass m_HappilClass;
+		private readonly MethodBuilder m_MethodBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilMethod(HappilClass owner, MethodInfo prototypeMethod)
+		public HappilMethod(HappilClass happilClass, MethodBuilder methodBuilder)
 		{
-				
+			m_HappilClass = happilClass;
+			m_MethodBuilder = methodBuilder;
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		#region IHappilMember Members
 
@@ -32,82 +35,8 @@ namespace Happil.Fluent
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return m_MethodBuilder.Name;
 			}
-		}
-
-		#endregion
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region IHappilMethodBody Members
-
-		public HappilLocal<T> Local<T>(string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void Return(HappilOperand<TReturn> operand)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void Throw<TException>(string message) where TException : Exception
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void EmitByExample(System.Linq.Expressions.Expression<Action> action)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilArgument<T> Argument<T>(string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilArgument<T> Argument<T>(int index)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public System.Reflection.MethodInfo MethodInfo
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public int ArgumentCount
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public Type ReturnType
-		{
-			get { throw new NotImplementedException(); }
 		}
 
 		#endregion

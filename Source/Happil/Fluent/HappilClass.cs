@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Happil.Fluent
@@ -38,9 +39,27 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Implement(Type interfaceType)
+		public void ImplementInterface(Type interfaceType)
 		{
 			m_TypeBuilder.AddInterfaceImplementation(interfaceType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilMethod DefineMethod(MethodInfo declaration)
+		{
+			var implementation = m_TypeBuilder.DefineMethod(declaration.Name, 
+				MethodAttributes.Final |
+				MethodAttributes.HideBySig | 
+				MethodAttributes.NewSlot |
+				MethodAttributes.Public |
+				MethodAttributes.Virtual);
+
+			implementation.GetILGenerator().Emit(OpCodes.Ret);
+
+			m_TypeBuilder.DefineMethodOverride(implementation, declaration);
+
+			return new HappilMethod(this, implementation);
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------

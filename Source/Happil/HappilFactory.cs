@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,34 +11,70 @@ namespace Happil
 {
 	public class HappilFactory
 	{
-	    private AssemblyBuilder m_AssemblyBuilder ;
-	    private ModuleBuilder m_ModuleBuilder;
-		private IDictionary<string, HappilClass> definedClasses = new Dictionary<string, HappilClass>();
+	    private readonly AssemblyBuilder m_AssemblyBuilder;
+		private readonly ModuleBuilder m_ModuleBuilder;
+		private readonly AssemblyName m_AssemblyName;
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-	    public HappilFactory(string fileName, AssemblyBuilderAccess access = AssemblyBuilderAccess.RunAndSave)
+	    public HappilFactory(
+			string assemblySimpleName = "Happil.EmittedTypes", 
+			bool allowSave = false, 
+			string saveDirectory = null)
 	    {
-	        m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(fileName), access);
-	        m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule("DefaultModule");
+			m_AssemblyName = new AssemblyName(assemblySimpleName);
+
+		    if ( allowSave )
+		    {
+				m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+					m_AssemblyName, 
+					AssemblyBuilderAccess.RunAndSave,
+					dir: saveDirectory ?? Environment.CurrentDirectory);
+				
+				m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule(
+					name: assemblySimpleName + ".dll", 
+					fileName: assemblySimpleName + ".dll", 
+					emitSymbolInfo: true);
+		    }
+		    else
+		    {
+				m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+					m_AssemblyName, 
+					AssemblyBuilderAccess.Run);
+				
+				m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule(
+					name: assemblySimpleName + ".dll", 
+					emitSymbolInfo: false);
+			}
 	    }
 
 	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<object> DefineClass(string classFullName, TypeAttributes attributes = TypeAttributes.Public |TypeAttributes.Public)
-        {
-            if ( definedClasses.ContainsKey(classFullName) )
-                return definedClasses[classFullName].GetBody<object>();
-            
-            TypeBuilder tb = m_ModuleBuilder.DefineType(classFullName, attributes);
-			return new HappilClass(tb).GetBody<object>();
+		public IHappilClassBody<object> DefineClass(string classFullName)
+		{
+			var typeAtributes = 
+				TypeAttributes.Public | 
+				TypeAttributes.Class | 
+				TypeAttributes.BeforeFieldInit | 
+				TypeAttributes.AutoClass | 
+				TypeAttributes.AnsiClass;
+
+			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes);
+			return new HappilClass(typeBuilder).GetBody<object>();
         }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<object> DefineClass(HappilTypeKey key, string namespaceName)
 		{
-			return DefineClass(namespaceName + "ImplOf" + key.PrimaryInterface.Name);
+			return DefineClass(namespaceName + ".ImplOf" + key.PrimaryInterface.Name);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void SaveAssembly()
+		{
+			m_AssemblyBuilder.Save(m_AssemblyName.Name + ".dll");
 		}
 	}
 }

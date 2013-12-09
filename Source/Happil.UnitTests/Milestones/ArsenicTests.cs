@@ -11,6 +11,10 @@ namespace Happil.UnitTests.Milestones
 	[TestFixture]
 	public class ArsenicTests
 	{
+		private const string DynamicAssemblyName = "Happil.EmittedTypes.ArsenicTests";
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private TextWriter m_SaveConsoleOut;
 		private StringWriter m_TestConsoleOut;
 		private HappilFactory m_TypeFactory;
@@ -18,15 +22,30 @@ namespace Happil.UnitTests.Milestones
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[TestFixtureSetUp]
+		public void TestFixtureSetUp()
+		{
+			m_TypeFactory = new HappilFactory(DynamicAssemblyName, allowSave: true);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown()
+		{
+			m_TypeFactory.SaveAssembly();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[SetUp]
 		public void SetUp()
 		{
+			m_FactoryUnderTest = new ArsenicTestFactory(m_TypeFactory);
+
 			m_SaveConsoleOut = Console.Out;
 			m_TestConsoleOut = new StringWriter();
 			Console.SetOut(m_TestConsoleOut);
-
-			m_TypeFactory = new HappilFactory("ArsenicTests");
-			m_FactoryUnderTest = new ArsenicTestFactory(m_TypeFactory);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,22 +59,43 @@ namespace Happil.UnitTests.Milestones
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not Yet Implemented")]
+		[Test]
 		public void CanImplementInterfaceWithVoidParameterlessMethods()
 		{
 			//-- Act
 
-			var obj = m_FactoryUnderTest.CreateObject<IArsenicTestInterface>();
-			
+			IArsenicTestInterface obj = m_FactoryUnderTest.CreateObject<IArsenicTestInterface>();
+
 			obj.First();
 			obj.Second();
 			obj.Third();
 
 			//-- Assert
 
-			string expectedOutput = 
-				"First" + Environment.NewLine + 
-				"Second" + Environment.NewLine + 
+			Assert.That(obj.GetType().IsClass);
+			Assert.That(obj.GetType().BaseType, Is.SameAs(typeof(object)));
+			Assert.That(obj.GetType().Assembly.IsDynamic);
+			Assert.That(obj.GetType().Assembly.GetName().Name, Is.EqualTo(DynamicAssemblyName));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void CanEmitVoidMethodsThatPrintTheirNameToConsole()
+		{
+			//-- Act
+
+			var obj = m_FactoryUnderTest.CreateObject<IArsenicTestInterface>();
+
+			obj.First();
+			obj.Second();
+			obj.Third();
+
+			//-- Assert
+
+			string expectedOutput =
+				"First" + Environment.NewLine +
+				"Second" + Environment.NewLine +
 				"Third" + Environment.NewLine;
 
 			Assert.That(m_TestConsoleOut.ToString(), Is.EqualTo(expectedOutput));
@@ -85,7 +125,9 @@ namespace Happil.UnitTests.Milestones
 			{
 				var key = new HappilTypeKey(primaryInterface: typeof(T));
 				var type = base.GetOrBuildType(key);
-				return type.CreateInstance<T>();
+
+				//TODO: replace the following line with 'return type.CreateInstance<T>()'
+				return (T)type.CreateInstance<object>();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

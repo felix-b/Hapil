@@ -9,10 +9,10 @@ namespace Happil.Fluent
 {
 	public interface IHappilClassBody<TBase> : IHappilClassDefinition
 	{
-		IHappilClassBody<TBase> Inherit(object baseType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
+		IHappilClassBody<TBase> Inherit(Type baseType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TBase> Implement(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TClass> Inherit<TClass>(params Func<IHappilClassBody<TClass>, IHappilClassBody<TBase>>[] members);
-		IHappilClassBody<TClass> Inherit<TClass>(object baseType, params Func<IHappilClassBody<TClass>, IHappilClassBody<TBase>>[] members);
+		IHappilClassBody<TClass> Inherit<TClass>(Type baseType, params Func<IHappilClassBody<TClass>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TInterface> Implement<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TInterface> Implement<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 
