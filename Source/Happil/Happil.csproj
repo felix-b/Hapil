@@ -64,10 +64,10 @@
     <Compile Include="Expressions\HappilUnaryExpression.cs" />
     <Compile Include="Fluent\IHappilOperand.cs" />
     <Compile Include="Fluent\Prefix.cs" />
-    <Compile Include="HappilFactory.cs" />
+    <Compile Include="HappilModule.cs" />
     <Compile Include="Fluent\HappilClass.cs" />
     <Compile Include="Fluent\IHappilMember.cs" />
-    <Compile Include="HappilObjectFactoryBase.cs" />
+    <Compile Include="HappilFactoryBase.cs" />
     <Compile Include="HappilTypeKey.cs" />
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\IUnaryOperator.cs" />

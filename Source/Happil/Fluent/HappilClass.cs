@@ -74,7 +74,7 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Called by HappilObjectFactoryBase.TypeEntry constructor.
+		/// Called by HappilFactoryBase.TypeEntry constructor.
 		/// </summary>
 		internal Type CreateType()
 		{
@@ -86,7 +86,7 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Called by HappilObjectFactoryBase.TypeEntry constructor.
+		/// Called by HappilFactoryBase.TypeEntry constructor.
 		/// </summary>
 		internal Delegate[] GetFactoryMethods()
 		{

@@ -11,10 +11,10 @@ namespace Happil.UnitTests.Demo
 	[TestFixture]
 	public class ImplementingMethodsDemo
 	{
-		public class DemoCalcObjectFactory : HappilObjectFactoryBase
+		public class DemoCalcFactory : HappilFactoryBase
 		{
-			public DemoCalcObjectFactory(HappilFactory typeFactory)
-				: base(typeFactory)
+			public DemoCalcFactory(HappilModule module)
+				: base(module)
 			{
 				TestFunc(() => Console.WriteLine("AAA"));
 			}
@@ -29,7 +29,7 @@ namespace Happil.UnitTests.Demo
 
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				return TypeFactory.DefineClass(key, namespaceName: "ImplementingMethodsDemo")
+				return Module.DefineClass(key, namespaceName: "ImplementingMethodsDemo")
 					.Implement(key.PrimaryInterface)
 					.Methods(m => {
 						var methodName = m.Local<string>("methodName");

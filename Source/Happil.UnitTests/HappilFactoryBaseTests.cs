@@ -11,18 +11,18 @@ namespace Happil.UnitTests
 	/// Contains tests on HappilTypeCache class
 	/// </summary>
 	[TestFixture]
-	public class HappilObjectFactoryBaseTests
+	public class HappilFactoryBaseTests
 	{
-		private HappilFactory m_TypeFactory;
-		private TestObjectFactory m_ObjectFactoryUnderTest;
+		private HappilModule m_Module;
+		private TestFactory m_FactoryUnderTest;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_TypeFactory = new HappilFactory("HappilObjectFactoryBaseTests.dll");
-			m_ObjectFactoryUnderTest = new TestObjectFactory(m_TypeFactory);
+			m_Module = new HappilModule("HappilFactoryBaseTests");
+			m_FactoryUnderTest = new TestFactory(m_Module);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ namespace Happil.UnitTests
 		{
 			//-- Act
 
-			ITestOne one = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one = m_FactoryUnderTest.CreateObject<ITestOne>();
 
 			//-- Assert
 
@@ -46,7 +46,7 @@ namespace Happil.UnitTests
 		{
 			//-- Act
 
-			ITestOne one = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one = m_FactoryUnderTest.CreateObject<ITestOne>();
 
 			//-- Assert
 
@@ -60,8 +60,8 @@ namespace Happil.UnitTests
 		{
 			//-- Act
 
-			ITestOne one1 = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
-			ITestOne one2 = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one1 = m_FactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one2 = m_FactoryUnderTest.CreateObject<ITestOne>();
 
 			//-- Assert
 
@@ -75,8 +75,8 @@ namespace Happil.UnitTests
 		{
 			//-- Act
 
-			ITestOne one1 = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
-			ITestOne one2 = m_ObjectFactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one1 = m_FactoryUnderTest.CreateObject<ITestOne>();
+			ITestOne one2 = m_FactoryUnderTest.CreateObject<ITestOne>();
 
 			//-- Assert
 
@@ -85,9 +85,9 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class TestObjectFactory : HappilObjectFactoryBase
+		private class TestFactory : HappilFactoryBase
 		{
-			public TestObjectFactory(HappilFactory factory)
+			public TestFactory(HappilModule factory)
 				: base(factory)
 			{
 			}
@@ -108,8 +108,8 @@ namespace Happil.UnitTests
 
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				return TypeFactory.DefineClass(
-					"HappilObjectFactoryBaseTests.Impl" + key.PrimaryInterface.Name)
+				return Module.DefineClass(
+					"HappilFactoryBaseTests.Impl" + key.PrimaryInterface.Name)
 					.Inherit(key.BaseType)
 					.Implement(key.PrimaryInterface);
 			}

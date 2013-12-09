@@ -10,16 +10,16 @@ namespace Happil.UnitTests.Demo
 	[TestFixture, Ignore("This is only a demo")]
 	public class EndToEndDemo
 	{
-		private HappilFactory m_TypeFactory;
-		private DemoObjectFactory m_ObjectFactory;
+		private HappilModule m_Module;
+		private DemoFactory m_Factory;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_TypeFactory = new HappilFactory("UsingObjectFactoryBase.dll");
-			m_ObjectFactory = new DemoObjectFactory(m_TypeFactory);
+			m_Module = new HappilModule("UsingFactoryBase");
+			m_Factory = new DemoFactory(m_Module);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ namespace Happil.UnitTests.Demo
 		[Test]
 		public void CreateObjectByInterface()
 		{
-			IDemoInterface demoObj = m_ObjectFactory.CreateDemoObject<IDemoInterface>();
+			IDemoInterface demoObj = m_Factory.CreateDemoObject<IDemoInterface>();
 
 			demoObj.Number = 123;
 			demoObj.Text = demoObj.Number.ToString() + "ABC";
@@ -43,10 +43,10 @@ namespace Happil.UnitTests.Demo
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class DemoObjectFactory : HappilObjectFactoryBase
+		private class DemoFactory : HappilFactoryBase
 		{
-			public DemoObjectFactory(HappilFactory typeFactory)
-				: base(typeFactory)
+			public DemoFactory(HappilModule module)
+				: base(module)
 			{
 			}
 
@@ -72,7 +72,7 @@ namespace Happil.UnitTests.Demo
 
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				return TypeFactory.DefineClass(key, namespaceName: "EndToEndDemo")
+				return Module.DefineClass(key, namespaceName: "EndToEndDemo")
 					.Implement(key.PrimaryInterface)
 					.AutomaticProperties();
 			}

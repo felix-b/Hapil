@@ -53,7 +53,7 @@
     <Compile Include="Fluent\CSharpTests.cs" />
     <Compile Include="Fluent\HappilOperandTests.cs" />
     <Compile Include="HappilFactoryTests.cs" />
-    <Compile Include="HappilObjectFactoryBaseTests.cs" />
+    <Compile Include="HappilFactoryBaseTests.cs" />
     <Compile Include="HappilTypeKeyTests.cs" />
     <Compile Include="Milestones\ArsenicTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

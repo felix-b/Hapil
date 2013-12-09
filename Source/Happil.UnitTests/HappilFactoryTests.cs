@@ -11,14 +11,14 @@ namespace Happil.UnitTests
 	[TestFixture]
 	public class HappilFactoryTests
 	{
-		private HappilFactory m_FactoryUnderTest;
+		private HappilModule m_FactoryUnderTest;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_FactoryUnderTest = new HappilFactory("Happil.Demo.Impl.dll");
+			m_FactoryUnderTest = new HappilModule("Happil.Demo.Impl");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

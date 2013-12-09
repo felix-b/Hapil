@@ -17,7 +17,7 @@ namespace Happil.UnitTests.Milestones
 
 		private TextWriter m_SaveConsoleOut;
 		private StringWriter m_TestConsoleOut;
-		private HappilFactory m_TypeFactory;
+		private HappilModule m_Module;
 		private ArsenicTestFactory m_FactoryUnderTest;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ namespace Happil.UnitTests.Milestones
 		[TestFixtureSetUp]
 		public void TestFixtureSetUp()
 		{
-			m_TypeFactory = new HappilFactory(DynamicAssemblyName, allowSave: true);
+			m_Module = new HappilModule(DynamicAssemblyName, allowSave: true);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ namespace Happil.UnitTests.Milestones
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			m_TypeFactory.SaveAssembly();
+			m_Module.SaveAssembly();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace Happil.UnitTests.Milestones
 		[SetUp]
 		public void SetUp()
 		{
-			m_FactoryUnderTest = new ArsenicTestFactory(m_TypeFactory);
+			m_FactoryUnderTest = new ArsenicTestFactory(m_Module);
 
 			m_SaveConsoleOut = Console.Out;
 			m_TestConsoleOut = new StringWriter();
@@ -112,10 +112,10 @@ namespace Happil.UnitTests.Milestones
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ArsenicTestFactory : HappilObjectFactoryBase
+		private class ArsenicTestFactory : HappilFactoryBase
 		{
-			public ArsenicTestFactory(HappilFactory typeFactory)
-				: base(typeFactory)
+			public ArsenicTestFactory(HappilModule module)
+				: base(module)
 			{
 			}
 
@@ -134,7 +134,7 @@ namespace Happil.UnitTests.Milestones
 
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				return TypeFactory.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
+				return Module.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
 					.Implement(key.PrimaryInterface)
 					.Methods(m => {
 						m.EmitByExample(() => Console.WriteLine(m.MethodInfo.Name));

@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 
 namespace Happil
 {
-	public class HappilFactory
+	public class HappilModule
 	{
 	    private readonly AssemblyBuilder m_AssemblyBuilder;
 		private readonly ModuleBuilder m_ModuleBuilder;
@@ -17,7 +17,7 @@ namespace Happil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-	    public HappilFactory(
+	    public HappilModule(
 			string assemblySimpleName = "Happil.EmittedTypes", 
 			bool allowSave = false, 
 			string saveDirectory = null)

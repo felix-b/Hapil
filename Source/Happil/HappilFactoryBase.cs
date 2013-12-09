@@ -13,20 +13,20 @@ namespace Happil
 	/// <remarks>
 	/// This base class should be subclassed for each different kind of responsibilities of dynamic types. 
 	/// When subclassing, one should implement the <see cref="DefineNewClass"/> method. 
-	/// In this method, a new type for the passed key should be created using Happil type factory instance provided by the <see cref="TypeFactory"/> property.
+	/// In this method, a new type for the passed key should be created using Happil type factory instance provided by the <see cref="Module"/> property.
 	/// The base class manages a read-through cache of built types. 
 	/// The cache is backed by the <see cref="DefineNewClass"/> method, which it falls back to if the type of the requested object was not already built.
 	/// </remarks>
-	public abstract class HappilObjectFactoryBase
+	public abstract class HappilFactoryBase
 	{
-		private readonly HappilFactory m_TypeFactory;
+		private readonly HappilModule m_Module;
 		private readonly ConcurrentDictionary<HappilTypeKey, TypeEntry> m_BuiltTypes;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected HappilObjectFactoryBase(HappilFactory typeFactory)
+		protected HappilFactoryBase(HappilModule module)
 		{
-			m_TypeFactory = typeFactory;
+			m_Module = module;
 			m_BuiltTypes = new ConcurrentDictionary<HappilTypeKey, TypeEntry>(concurrencyLevel: 2, capacity: 512);
 		}
 
@@ -43,11 +43,11 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected HappilFactory TypeFactory
+		protected HappilModule Module
 		{
 			get
 			{
-				return m_TypeFactory;
+				return m_Module;
 			}
 		}
 
