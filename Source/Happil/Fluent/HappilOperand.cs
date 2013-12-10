@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 
@@ -17,7 +18,7 @@ namespace Happil.Fluent
 	/// In addition to <see cref="IHappilOperand{T}"/> interface, this class defines all possible kinds of operators 
 	/// on Happil operands, for the fluent API.
 	/// </remarks>
-	public class HappilOperand<T> : IHappilOperand<T>
+	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals 
 	{
 		#region Overrides of Object
 
@@ -34,6 +35,45 @@ namespace Happil.Fluent
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IHappilOperandInternals Members
+
+		void IHappilOperandInternals.EmitTarget(ILGenerator il)
+		{
+			OnEmitTarget(il);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		void IHappilOperandInternals.EmitLoad(ILGenerator il)
+		{
+			OnEmitLoad(il);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		void IHappilOperandInternals.EmitStore(ILGenerator il)
+		{
+			OnEmitStore(il);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		void IHappilOperandInternals.EmitAddress(ILGenerator il)
+		{
+			OnEmitAddress(il);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected abstract void OnEmitTarget(ILGenerator il);
+		protected abstract void OnEmitLoad(ILGenerator il);
+		protected abstract void OnEmitStore(ILGenerator il);
+		protected abstract void OnEmitAddress(ILGenerator il);
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

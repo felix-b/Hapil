@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -7,6 +8,7 @@ namespace Happil.Fluent
 	internal class HappilClass
 	{
 		private readonly TypeBuilder m_TypeBuilder;
+		private readonly List<IHappilMember> m_Members;
 		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -14,6 +16,7 @@ namespace Happil.Fluent
 		public HappilClass(TypeBuilder typeBuilder)
         {
             m_TypeBuilder = typeBuilder;
+			m_Members = new List<IHappilMember>();
         }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -46,20 +49,18 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilMethod DefineMethod(MethodInfo declaration)
+		public string TakeMemberName(string proposedName)
 		{
-			var implementation = m_TypeBuilder.DefineMethod(declaration.Name, 
-				MethodAttributes.Final |
-				MethodAttributes.HideBySig | 
-				MethodAttributes.NewSlot |
-				MethodAttributes.Public |
-				MethodAttributes.Virtual);
+			//TODO: check for duplicate names and add suffix if necessary
+			return proposedName;
+		}
 
-			implementation.GetILGenerator().Emit(OpCodes.Ret);
 
-			m_TypeBuilder.DefineMethodOverride(implementation, declaration);
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			return new HappilMethod(this, implementation);
+		public void RegisterMember(IHappilMember member)
+		{
+			m_Members.Add(member);
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,8 +77,13 @@ namespace Happil.Fluent
 		/// <summary>
 		/// Called by HappilFactoryBase.TypeEntry constructor.
 		/// </summary>
-		internal Type CreateType()
+		public Type CreateType()
 		{
+			foreach ( var member in m_Members )
+			{
+				member.EmitBody();
+			}
+
 			m_BuiltType = m_TypeBuilder.CreateType();
 			//TODO: add members to member list
 			return m_BuiltType;
@@ -88,9 +94,9 @@ namespace Happil.Fluent
 		/// <summary>
 		/// Called by HappilFactoryBase.TypeEntry constructor.
 		/// </summary>
-		internal Delegate[] GetFactoryMethods()
+		public Delegate[] GetFactoryMethods()
 		{
-			//TODO: this is a temporary implementation; the real implementation must be Reflection-free as explained here:
+			//TODO:TASK#5 this is a temporary implementation; the real implementation must be Reflection-free as explained here:
 			//Factory method should be delegate to a static method in the generated type
 			//The static method should invoke correct constructor and return the created instance.
 			return new Delegate[] {
@@ -100,6 +106,12 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+		public TypeBuilder TypeBuilder
+		{
+			get
+			{
+				return m_TypeBuilder;
+			}
+		}
 	}
 }

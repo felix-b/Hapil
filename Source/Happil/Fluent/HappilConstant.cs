@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace Happil.Fluent
@@ -36,6 +37,34 @@ namespace Happil.Fluent
 		public static implicit operator T(HappilConstant<T> operand)
 		{
 			return operand.m_Value;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitTarget(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitLoad(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitStore(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitAddress(ILGenerator il)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

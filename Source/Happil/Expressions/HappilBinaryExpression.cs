@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
 
@@ -26,6 +27,34 @@ namespace Happil.Expressions
 		public override string ToString()
 		{
 			return string.Format("Expr<{0}>{{{1} {2} {3}}}", typeof(TExpr).Name, m_Left.ToString(), m_Operator.ToString(), m_Right.ToString());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitTarget(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitLoad(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitStore(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitAddress(ILGenerator il)
+		{
+			throw new NotImplementedException();
 		}
 	}
 

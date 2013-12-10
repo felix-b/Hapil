@@ -126,9 +126,13 @@ namespace Happil.Fluent
 
 		public IHappilClassBody<TBase> Methods(Action<IVoidHappilMethodBody> body)
 		{
-			foreach ( var methodInfo in m_ReflectedType.GetMethods() )//.Where(m => m.ReturnType == typeof(void)) )
+			foreach ( var methodInfo in m_ReflectedType.GetMethods().Where(m => m.ReturnType == typeof(void)) )
 			{
-				m_HappilClass.DefineMethod(methodInfo);
+				var method = new VoidHappilMethod(m_HappilClass, methodInfo);
+				m_HappilClass.RegisterMember(method);
+
+				//TODO:TASK#6 uncomment the following line
+				//body(method);
 			}
 
 			return this;

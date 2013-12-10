@@ -12,7 +12,7 @@ namespace Happil.Fluent
 		HappilLocal<T> Local<T>(string name);
 		HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue);
 		void Throw<TException>(string message) where TException : Exception;
-		void EmitByExample(Expression<Action> action);
+		void EmitFromLambda(Expression<Action> lambda);
 		HappilArgument<T> Argument<T>(string name);
 		HappilArgument<T> Argument<T>(int index);
 		MethodInfo MethodInfo { get; }
@@ -24,14 +24,14 @@ namespace Happil.Fluent
 
 	public interface IHappilMethodBody : IHappilMethodBodyBase
 	{
-		void Return(HappilOperand<object> operand);
+		void Return(IHappilOperand<object> operand);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
 	{
-		void Return(HappilOperand<TReturn> operand);
+		void Return(IHappilOperand<TReturn> operand);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ namespace Happil.UnitTests.Demo
 					.Methods(m => {
 						var methodName = m.Local<string>("methodName");
 						methodName.Assign(m.MethodInfo.Name);
-						m.EmitByExample(() => Console.WriteLine(methodName));
+						m.EmitFromLambda(() => Console.WriteLine(methodName));
 					});
 			}
 		}

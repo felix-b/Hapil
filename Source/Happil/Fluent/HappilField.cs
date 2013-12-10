@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 
@@ -21,14 +22,13 @@ namespace Happil.Fluent
 
 		#region IMember Members
 
-		public IHappilMember[] Flatten()
+		void IHappilMember.EmitBody()
 		{
-			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public string Name
+		string IHappilMember.Name
 		{
 			get
 			{
@@ -43,6 +43,34 @@ namespace Happil.Fluent
 		public override string ToString()
 		{
 			return string.Format("Field{{{0}}}", m_Name);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		protected override void OnEmitTarget(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitLoad(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitStore(ILGenerator il)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitAddress(ILGenerator il)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

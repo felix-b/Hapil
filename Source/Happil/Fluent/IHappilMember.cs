@@ -1,8 +1,9 @@
-﻿namespace Happil.Fluent
+﻿using System.Reflection.Emit;
+namespace Happil.Fluent
 {
-	public interface IHappilMember
+	internal interface IHappilMember
 	{
-		IHappilMember[] Flatten();
+		void EmitBody();
 		string Name { get; }
 	}
 }

@@ -99,7 +99,7 @@ namespace Happil.UnitTests
 				var key = new HappilTypeKey(primaryInterface: typeof(T));
 				var type = base.GetOrBuildType(key);
 
-				//TODO: should be able to replace the following line with 'return type.CreateInstance<T>();'
+				//TODO:TASK#5 should be able to replace the following line with 'return type.CreateInstance<T>();'
 				//this depends on implementation of the factory methods.
 				return (T)type.CreateInstance<object>();
 			}

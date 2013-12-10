@@ -63,6 +63,7 @@
     <Compile Include="Fluent\HappilPropertySetter.cs" />
     <Compile Include="Expressions\HappilUnaryExpression.cs" />
     <Compile Include="Fluent\IHappilOperand.cs" />
+    <Compile Include="Fluent\IHappilOperandInternals.cs" />
     <Compile Include="Fluent\Prefix.cs" />
     <Compile Include="HappilModule.cs" />
     <Compile Include="Fluent\HappilClass.cs" />
@@ -72,6 +73,9 @@
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statements\CompositeStatement.cs" />
+    <Compile Include="Statements\ReturnStatement.cs" />
+    <Compile Include="Statements\Statement.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
