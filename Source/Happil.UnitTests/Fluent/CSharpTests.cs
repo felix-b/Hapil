@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace Happil.UnitTests.Fluent
 {
@@ -82,6 +86,97 @@ namespace Happil.UnitTests.Fluent
 			Console.WriteLine(expr1.ToString());
 			Console.WriteLine(expr2.ToString());
 			Console.WriteLine(expr3.ToString());
+		}
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanExtractCallFromLambdaWithIntLocal()
+		{
+			//-- Arrange
+
+			int x = 1234;
+			Expression<Action> lambda = () => Console.WriteLine(x.ToString("#,###"));
+
+			//-- Act
+
+			var call1 = (MethodCallExpression)lambda.Body;
+			var method1 = call1.Method;
+			var argument1 = call1.Arguments[0];
+			var call2 = (MethodCallExpression)argument1;
+			var method12 = call2.Method;
+			var argument2 = call2.Arguments[0];
+			var argument2Value = ((ConstantExpression)argument2).Value;
+
+			//-- Assert
+
+			Assert.That(method1.Name, Is.EqualTo("WriteLine"));
+			Assert.That(method1.DeclaringType, Is.SameAs(typeof(Console)));
+			Assert.That(argument2Value, Is.EqualTo("#,###"));
+		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//[Test]
+		//public void CanExtractCallFromLambdaExpressionWithMethodInfo()
+		//{
+		//	//-- Arrange
+
+		//	MethodInfo m = (MethodInfo)MethodInfo.GetCurrentMethod();
+		//	Expression<Action> lambda = () => Console.WriteLine(m.Name);
+
+		//	//-- Act
+
+		//	var call1 = (MethodCallExpression)lambda.Body;
+		//	var method1 = call1.Method;
+		//	var argument1 = call1.Arguments[0];
+		//	var member1 = (MemberExpression)argument1;
+
+		//	//-- Assert
+
+		//	Assert.That(method1.Name, Is.EqualTo("WriteLine"));
+		//	Assert.That(method1.DeclaringType, Is.SameAs(typeof(Console)));
+		//	Assert.That(member1.Member.Name, Is.EqualTo("Name"));
+		//	Assert.That(member1.Member.DeclaringType, Is.SameAs(typeof(MemberInfo)));
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanExtractCallFromLambdaWithMethodInfoArgument()
+		{
+			//-- Arrange
+
+			var methodInfo = (MethodInfo)MethodInfo.GetCurrentMethod();
+
+			//-- Act & Assert
+
+			ExtractCallFromLambdaWithMethodInfo(() => Console.WriteLine(methodInfo.Name));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void ExtractCallFromLambdaWithMethodInfo(Expression<Action> lambda)
+		{
+			//-- Act
+
+			var call1 = (MethodCallExpression)lambda.Body;
+			var method1 = call1.Method;
+			var argument1 = call1.Arguments[0];
+			var member1 = (MemberExpression)argument1;
+			var member1TargetField = (FieldInfo)(((MemberExpression)member1.Expression).Member);
+			var member1Target = ((ConstantExpression)(((MemberExpression)member1.Expression).Expression)).Value;
+			var member1Value = member1TargetField.GetValue(member1Target);
+
+			//-- Assert
+
+			Assert.That(method1.Name, Is.EqualTo("WriteLine"));
+			Assert.That(method1.DeclaringType, Is.SameAs(typeof(Console)));
+			Assert.That(member1.Member.Name, Is.EqualTo("Name"));
+			Assert.That(member1.Member.DeclaringType, Is.SameAs(typeof(MemberInfo)));
+			Assert.That(member1Value, Is.Not.Null);
+			Assert.That(member1Value, Is.SameAs(typeof(CSharpTests).GetMethod("CanExtractCallFromLambdaWithMethodInfoArgument")));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -277,8 +372,6 @@ namespace Happil.UnitTests.Fluent
 			{
 				get { return m_Operation; }
 			}
-
-
 		}
 	}
 }
