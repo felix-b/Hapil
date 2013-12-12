@@ -137,6 +137,7 @@ namespace Happil.UnitTests.Milestones
 				return Module.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
 					.Implement(key.PrimaryInterface)
 					.Methods(m => {
+						
 						m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
 					});
 			}

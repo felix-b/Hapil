@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Happil.Expressions;
@@ -11,6 +12,29 @@ namespace Happil.UnitTests.Fluent
 	[TestFixture]
 	public class HappilOperandTests
 	{
+		private HappilModule m_Module;
+		private HappilClass m_Class;
+		private IHappilClassBody<TestBase> m_ClassBody;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp()
+		{
+			m_Module = new HappilModule("HappilOperandTests");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[SetUp]
+		public void SetUp()
+		{
+			m_ClassBody = m_Module.DefineClass("_" + Guid.NewGuid().ToString("X")).Inherit<TestBase>();
+			m_Class = ((IHappilClassDefinitionInternals)m_ClassBody).HappilClass;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test]
 		public void ArithmeticalExpression()
 		{
@@ -325,6 +349,64 @@ namespace Happil.UnitTests.Fluent
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{-- Field{f1}}"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void InvokeVoidMethodPassesCompilation()
+		{
+			//-- Arrange
+
+			var field1 = m_ClassBody.Field<TestBase>("m_Next");
+
+			//-- Act
+
+			field1.Invoke(x => x.VoidMethod);
+			field1.Invoke(x => x.VoidMethodWithOneArg, new HappilConstant<int>(123));
+			field1.Invoke(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"));
+			field1.Invoke(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<DateTime>(DateTime.Now));
+			field1.Invoke(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"), new HappilConstant<DateTime>(DateTime.Now));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class TestBase
+		{
+			public virtual void TestMethod()
+			{
+			}
+			public void VoidMethod()
+			{
+			}
+			public void VoidMethodWithOneArg(int number)
+			{
+			}
+			public void VoidMethodWithManyArgs(int number, string text)
+			{
+			}
+			public void VoidMethodWithManyArgs(int number, DateTime date)
+			{
+			}
+			public void VoidMethodWithManyArgs(int number, string text, DateTime date)
+			{
+			}
+			public int FuncWithNoArgs()
+			{
+				return 123;
+			}
+			public int FuncWithOneArg(int number)
+			{
+				return 123;
+			}
+			public int FuncWithManyArgs(int number, string text)
+			{
+				return 123;
+			}
+			public int FuncWithManyArgs(int number, string text, DateTime date)
+			{
+				return 123;
+			}
 		}
 	}
 }

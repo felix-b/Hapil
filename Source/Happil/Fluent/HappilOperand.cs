@@ -344,5 +344,30 @@ namespace Happil.Fluent
 					operatorName, typeof(T).FullName));
 			}
 		}
+
+
+		#region IHappilOperand<T> Members
+
+		public void Invoke(Func<T, Action> member)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Invoke<TArg1>(Func<T, Action<TArg1>> member, IHappilOperand<TArg1> arg1)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Invoke<TArg1, TArg2>(Func<T, Action<TArg1, TArg2>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Invoke<TArg1, TArg2, TArg3>(Func<T, Action<TArg1, TArg2, TArg3>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }

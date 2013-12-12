@@ -69,6 +69,13 @@ namespace Happil.Fluent
 			return new HappilClassBody<TInterface>(m_HappilClass, interfaceType);
 		}
 
+		public HappilField<T> Field<T>(string name)
+		{
+			var field = new HappilField<T>(m_HappilClass, name);
+			m_HappilClass.RegisterMember(field);
+			return field;
+		}
+
 		public IHappilClassBody<TBase> DefaultConstructor()
 		{
 			throw new NotImplementedException();

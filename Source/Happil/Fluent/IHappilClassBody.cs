@@ -16,6 +16,8 @@ namespace Happil.Fluent
 		IHappilClassBody<TInterface> Implement<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TInterface> Implement<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 
+		HappilField<T> Field<T>(string name);
+
 		IHappilClassBody<TBase> DefaultConstructor();
 
 		IHappilClassBody<TBase> Property<T>(

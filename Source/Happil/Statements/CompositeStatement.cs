@@ -6,34 +6,34 @@ using System.Text;
 
 namespace Happil.Statements
 {
-	internal class CompositeStatement : Statement
+	internal class CompositeStatement : IHappilStatement
 	{
-		private readonly List<Statement> m_ContainedStatements;
+		private readonly List<IHappilStatement> m_ContainedStatements;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public CompositeStatement()
 		{
-			m_ContainedStatements = new List<Statement>();
+			m_ContainedStatements = new List<IHappilStatement>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CompositeStatement(IEnumerable<Statement> containedStatements)
+		public CompositeStatement(IEnumerable<IHappilStatement> containedStatements)
 		{
-			m_ContainedStatements = new List<Statement>(containedStatements);
+			m_ContainedStatements = new List<IHappilStatement>(containedStatements);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Add(Statement statement)
+		public void Add(IHappilStatement statement)
 		{
 			m_ContainedStatements.Add(statement);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+		public void Emit(ILGenerator il)
 		{
 			foreach ( var statement in m_ContainedStatements )
 			{

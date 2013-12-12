@@ -55,6 +55,17 @@ namespace Happil.UnitTests.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void CanAssignValueTypeToObject()
+		{
+			Field<object> objectField = new Field<object>("m_Obj");
+			Field<int> intField = new Field<int>("m_Int");
+			
+			objectField.Assign(intField);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void CanCastOperandTypes()
 		{
 			Constant<long> x = 123L;

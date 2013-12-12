@@ -1,21 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 
 namespace Happil.Fluent
 {
+	//TODO: this class only implements instance fields; should implement static fields as well
 	public class HappilField<T> : HappilAssignable<T>, IHappilMember
 	{
+		private readonly HappilClass m_HappilClass;
+		private readonly FieldBuilder m_FieldBuilder;
+		
+		//TODO: remove this field
 		private readonly string m_Name;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField(string name)
+		//TODO: remove this constructor (update unit tests)
+		internal HappilField(string name)
 		{
+			m_HappilClass = null;
 			m_Name = name;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilField(HappilClass happilClass, string name)
+		{
+			m_HappilClass = happilClass;
+			m_Name = happilClass.TakeMemberName(name);
+			m_FieldBuilder = happilClass.TypeBuilder.DefineField(m_Name, typeof(T), FieldAttributes.Private);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -24,6 +41,7 @@ namespace Happil.Fluent
 
 		void IHappilMember.EmitBody()
 		{
+			// nothing - a field does not have a body
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,28 +67,28 @@ namespace Happil.Fluent
 		
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldarg_0); // push 'this' reference onto stack
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldfld, m_FieldBuilder);  // push field value onto stack
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Stfld, m_FieldBuilder);  // pop value from stack into field
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldflda, m_FieldBuilder);  // push field address onto stack
 		}
 	}
 }

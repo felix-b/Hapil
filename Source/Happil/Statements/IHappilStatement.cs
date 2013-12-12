@@ -6,8 +6,8 @@ using System.Text;
 
 namespace Happil.Statements
 {
-	internal abstract class Statement
+	internal interface IHappilStatement
 	{
-		public abstract void Emit(ILGenerator il);
+		void Emit(ILGenerator il);
 	}
 }

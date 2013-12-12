@@ -13,7 +13,7 @@ namespace Happil.Fluent
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly MethodBuilder m_MethodBuilder;
-		private readonly List<Statement> m_Statements;
+		private readonly List<IHappilStatement> m_Statements;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ namespace Happil.Fluent
 				MethodAttributes.NewSlot |
 				MethodAttributes.Public |
 				MethodAttributes.Virtual);
-			m_Statements = new List<Statement>();
+			m_Statements = new List<IHappilStatement>();
 
 			//TODO: copy parameters and return type definition from declaration
 			
@@ -145,7 +145,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AddStamement(Statement statement)
+		public void AddStamement(IHappilStatement statement)
 		{
 			m_Statements.Add(statement);
 		}

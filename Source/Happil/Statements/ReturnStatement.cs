@@ -7,9 +7,12 @@ using Happil.Fluent;
 
 namespace Happil.Statements
 {
-	internal class ReturnStatement : Statement
+	/// <summary>
+	/// Return statement for void methods
+	/// </summary>
+	internal class ReturnStatement : IHappilStatement
 	{
-		public override void Emit(ILGenerator il)
+		public void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ret);
 		}
@@ -17,7 +20,13 @@ namespace Happil.Statements
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class ReturnStatement<T> : Statement
+	/// <summary>
+	/// Return statement for non-void methods
+	/// </summary>
+	/// <typeparam name="T">
+	/// The type of the return value.
+	/// </typeparam>
+	internal class ReturnStatement<T> : IHappilStatement
 	{
 		private IHappilOperand<T> m_Operand;
 
@@ -30,7 +39,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+		public void Emit(ILGenerator il)
 		{
 			//TODO: push operand onto stack
 			il.Emit(OpCodes.Ret);
