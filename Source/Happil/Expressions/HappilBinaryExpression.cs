@@ -15,7 +15,12 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilBinaryExpression(IBinaryOperator<TLeft, TRight> @operator, IHappilOperand<TLeft> left, IHappilOperand<TRight> right)
+		public HappilBinaryExpression(
+			HappilMethod ownerMethod, 
+			IBinaryOperator<TLeft, TRight> @operator, 
+			IHappilOperand<TLeft> left, 
+			IHappilOperand<TRight> right)
+			: base(ownerMethod)
 		{
 			m_Left = left;
 			m_Right = right;
@@ -62,8 +67,12 @@ namespace Happil.Expressions
 
 	internal class HappilBinaryExpression<TOperand, TExpr> : HappilBinaryExpression<TOperand, TOperand, TExpr>
 	{
-		public HappilBinaryExpression(IBinaryOperator<TOperand, TOperand> @operator, IHappilOperand<TOperand> left, IHappilOperand<TOperand> right)
-			: base(@operator, left, right)
+		public HappilBinaryExpression(
+			HappilMethod ownerMethod,
+			IBinaryOperator<TOperand, TOperand> @operator, 
+			IHappilOperand<TOperand> left, 
+			IHappilOperand<TOperand> right)
+			: base(ownerMethod, @operator, left, right)
 		{
 		}
 	}

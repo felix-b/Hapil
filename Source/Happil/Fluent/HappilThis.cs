@@ -1,52 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
-using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	public abstract class HappilAssignable<T> : HappilOperand<T>
+	public class HappilThis<T> : HappilOperand<T>
 	{
-		internal HappilAssignable(HappilMethod ownerMethod)
+		internal HappilThis(HappilMethod ownerMethod)
 			: base(ownerMethod)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<T> Assign(HappilOperand<T> operand)
+		protected override void OnEmitTarget(System.Reflection.Emit.ILGenerator il)
 		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		public HappilOperand<T> Assign(HappilConstant<T> operand)
-		{
-			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<T> PostfixPlusPlus()
+		protected override void OnEmitLoad(System.Reflection.Emit.ILGenerator il)
 		{
-			return new HappilUnaryExpression<T, T>(
-				base.OwnerMethod,
-				@operator: new UnaryOperators.OperatorPlusPlus<T>(),
-				operand: this,
-				position: UnaryOperatorPosition.Postfix);
+			il.Emit(OpCodes.Ldarg_0);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<T> PostfixMinusMinus()
+		protected override void OnEmitStore(System.Reflection.Emit.ILGenerator il)
 		{
-			return new HappilUnaryExpression<T, T>(
-				base.OwnerMethod,
-				@operator: new UnaryOperators.OperatorMinusMinus<T>(),
-				operand: this,
-				position: UnaryOperatorPosition.Postfix);
+			throw new NotSupportedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitAddress(System.Reflection.Emit.ILGenerator il)
+		{
+			throw new NotSupportedException();
 		}
 	}
 }

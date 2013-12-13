@@ -16,9 +16,11 @@ namespace Happil.Expressions
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilUnaryExpression(
+			HappilMethod ownerMethod,
 			IUnaryOperator<TOperand> @operator, 
 			IHappilOperand<TOperand> operand, 
 			UnaryOperatorPosition position = UnaryOperatorPosition.Prefix)
+			: base(ownerMethod)
 		{
 			m_Operand = operand;
 			m_Operator = @operator;

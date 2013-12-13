@@ -11,6 +11,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> PlusPlus<T>(HappilAssignable<T> assignable)
 		{
 			return new HappilUnaryExpression<T, T>(
+				assignable.OwnerMethod,
 				@operator: new UnaryOperators.OperatorPlusPlus<T>(),
 				operand: assignable,
 				position: UnaryOperatorPosition.Prefix);
@@ -21,6 +22,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> MinusMinus<T>(HappilAssignable<T> assignable)
 		{
 			return new HappilUnaryExpression<T, T>(
+				assignable.OwnerMethod,
 				@operator: new UnaryOperators.OperatorMinusMinus<T>(),
 				operand: assignable,
 				position: UnaryOperatorPosition.Prefix);

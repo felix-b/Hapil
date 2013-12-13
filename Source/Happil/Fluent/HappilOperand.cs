@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
@@ -18,8 +19,52 @@ namespace Happil.Fluent
 	/// In addition to <see cref="IHappilOperand{T}"/> interface, this class defines all possible kinds of operators 
 	/// on Happil operands, for the fluent API.
 	/// </remarks>
-	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals 
+	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals
 	{
+		private HappilMethod m_OwnerMethod;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilOperand(HappilMethod ownerMethod)
+		{
+			m_OwnerMethod = ownerMethod;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IHappilOperand<T> Members
+
+		public void Invoke(Expression<Func<T, Action>> member)
+		{
+			var method = ValidateMemberIsMethodOfType(((MemberExpression)member.Body).Member);
+			
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Invoke<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Invoke<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Invoke<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
 		#region Overrides of Object
 
 		public override bool Equals(object obj)
@@ -70,16 +115,10 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected abstract void OnEmitTarget(ILGenerator il);
-		protected abstract void OnEmitLoad(ILGenerator il);
-		protected abstract void OnEmitStore(ILGenerator il);
-		protected abstract void OnEmitAddress(ILGenerator il);
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public HappilOperand<TCast> CastTo<TCast>()
 		{
 			return new HappilBinaryExpression<T, Type, TCast>(
+				OwnerMethod,
 				@operator: new BinaryOperators.OperatorCastOrThrow<T>(), 
 				left: this, 
 				right: new HappilConstant<Type>(typeof(TCast)));
@@ -90,6 +129,7 @@ namespace Happil.Fluent
 		public HappilOperand<TCast> As<TCast>()
 		{
 			return new HappilBinaryExpression<T, Type, TCast>(
+				OwnerMethod,
 				@operator: new BinaryOperators.OperatorTryCast<T>(),
 				left: this,
 				right: new HappilConstant<Type>(typeof(TCast)));
@@ -97,9 +137,27 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected abstract void OnEmitTarget(ILGenerator il);
+		protected abstract void OnEmitLoad(ILGenerator il);
+		protected abstract void OnEmitStore(ILGenerator il);
+		protected abstract void OnEmitAddress(ILGenerator il);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilMethod OwnerMethod
+		{
+			get
+			{
+				return m_OwnerMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static HappilOperand<bool> operator ==(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorEqual<T>(),
 				left: x,
 				right: y);
@@ -110,6 +168,7 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator !=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorNotEqual<T>(),
 				left: x,
 				right: y);
@@ -120,6 +179,7 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator >(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorGreaterThan<T>(),
 				left: x,
 				right: y);
@@ -130,6 +190,7 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator <(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLessThan<T>(),
 				left: x,
 				right: y);
@@ -140,6 +201,7 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator >=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorGreaterThanOrEqual<T>(),
 				left: x,
 				right: y);
@@ -150,6 +212,7 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator <=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLessThanOrEqual<T>(),
 				left: x,
 				right: y);
@@ -160,6 +223,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilOperand<T> y) 
 		{
 			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorAdd<T>(),
 				left: x,
 				right: y);
@@ -170,6 +234,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorSubtract<T>(),
 				left: x,
 				right: y);
@@ -180,6 +245,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator *(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorMultiply<T>(),
 				left: x,
 				right: y);
@@ -190,6 +256,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator /(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorDivide<T>(),
 				left: x,
 				right: y);
@@ -200,6 +267,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator %(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorModulo<T>(),
 				left: x,
 				right: y);
@@ -214,6 +282,7 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalAnd(),
 					left: (IHappilOperand<bool>)x,
 					right: (IHappilOperand<bool>)y);
@@ -221,6 +290,7 @@ namespace Happil.Fluent
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseAnd<T>(),
 					left: x,
 					right: y);
@@ -238,6 +308,7 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalOr(),
 					left: (IHappilOperand<bool>)x,
 					right: (IHappilOperand<bool>)y);
@@ -245,6 +316,7 @@ namespace Happil.Fluent
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseOr<T>(),
 					left: x,
 					right: y);
@@ -276,6 +348,7 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalXor(),
 					left: (IHappilOperand<bool>)x,
 					right: (IHappilOperand<bool>)y);
@@ -283,6 +356,7 @@ namespace Happil.Fluent
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
+					x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseXor<T>(),
 					left: x,
 					right: y);
@@ -296,6 +370,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator <<(HappilOperand<T> x, int y)
 		{
 			return new HappilBinaryExpression<T, int, T>(
+				x.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLeftShift<T>(),
 				left: x,
 				right: new HappilConstant<int>(y));
@@ -306,6 +381,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator >>(HappilOperand<T> x, int y)
 		{
 			return new HappilBinaryExpression<T, int, T>(
+				x.OwnerMethod,
 				@operator: new BinaryOperators.OperatorRightShift<T>(),
 				left: x,
 				right: new HappilConstant<int>(y));
@@ -318,6 +394,7 @@ namespace Happil.Fluent
 			ValidateIsBooleanFor("!");
 
 			object result = new HappilUnaryExpression<bool, bool>(
+				x.OwnerMethod,
 				@operator: new UnaryOperators.OperatorLogicalNot(),
 				operand: (IHappilOperand<bool>)x);
 
@@ -329,6 +406,7 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator ~(HappilOperand<T> x)
 		{
 			return new HappilUnaryExpression<T, T>(
+				x.OwnerMethod,
 				@operator: new UnaryOperators.OperatorBitwiseNot<T>(),
 				operand: x);
 		}
@@ -345,29 +423,34 @@ namespace Happil.Fluent
 			}
 		}
 
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilOperand<T> Members
-
-		public void Invoke(Func<T, Action> member)
+		private static MethodInfo ValidateMemberIsMethodOfType(MemberInfo member)
 		{
-			throw new NotImplementedException();
-		}
+			var method = (member as MethodInfo);
 
-		public void Invoke<TArg1>(Func<T, Action<TArg1>> member, IHappilOperand<TArg1> arg1)
-		{
-			throw new NotImplementedException();
-		}
+			if ( method == null )
+			{
+				throw new ArgumentException(string.Format(
+					"Member {0} cannot be invoked because it is not a method. Invoke can only be applied to methods.",
+					member.Name));
+			}
 
-		public void Invoke<TArg1, TArg2>(Func<T, Action<TArg1, TArg2>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
-		{
-			throw new NotImplementedException();
-		}
+			var declaringType = typeof(T);
 
-		public void Invoke<TArg1, TArg2, TArg3>(Func<T, Action<TArg1, TArg2, TArg3>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
-		{
-			throw new NotImplementedException();
-		}
+			while ( declaringType != null )
+			{
+				if ( member.DeclaringType == declaringType )
+				{
+					return method;
+				}
 
-		#endregion
+				declaringType = declaringType.BaseType;
+			}
+
+			throw new ArgumentException(string.Format(
+				"Member {0} cannot be invoked because it is not a method of type {1}. Invoke can only be applied to the methods of the operand.",
+				member.Name, typeof(T).FullName));
+		}
 	}
 }

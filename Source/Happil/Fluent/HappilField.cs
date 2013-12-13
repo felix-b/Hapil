@@ -21,6 +21,7 @@ namespace Happil.Fluent
 
 		//TODO: remove this constructor (update unit tests)
 		internal HappilField(string name)
+			: base(ownerMethod: null)
 		{
 			m_HappilClass = null;
 			m_Name = name;
@@ -29,6 +30,7 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal HappilField(HappilClass happilClass, string name)
+			: base(ownerMethod: null)
 		{
 			m_HappilClass = happilClass;
 			m_Name = happilClass.TakeMemberName(name);

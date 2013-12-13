@@ -13,7 +13,8 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CallOperand(IHappilOperand<object> target, MethodInfo method, params IHappilOperand<object>[] arguments)
+		public CallOperand(HappilMethod ownerMethod, IHappilOperand<object> target, MethodInfo method, params IHappilOperand<object>[] arguments)
+			: base(ownerMethod)
 		{
 			m_Target = target;
 			m_Method = method;

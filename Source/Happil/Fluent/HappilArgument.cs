@@ -12,7 +12,8 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilArgument(string name)
+		internal HappilArgument(string name, HappilMethod ownerMethod)
+			: base(ownerMethod)
 		{
 			m_Name = name;
 		}

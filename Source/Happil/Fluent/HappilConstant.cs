@@ -13,6 +13,7 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilConstant(T value)
+			: base(ownerMethod: null)
 		{
 			m_Value = value;
 		}

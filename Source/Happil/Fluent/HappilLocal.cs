@@ -12,7 +12,8 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilLocal(string name)
+		internal HappilLocal(string name, HappilMethod ownerMethod)
+			: base(ownerMethod)
 		{
 			m_Name = name;
 		}

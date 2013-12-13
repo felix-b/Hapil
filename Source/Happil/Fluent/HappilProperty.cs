@@ -8,6 +8,13 @@ namespace Happil.Fluent
 {
 	public class HappilProperty<T> : HappilOperand<T>
 	{
+		internal HappilProperty()
+			: base(ownerMethod: null)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilPropertyGetter Get(Action<IHappilMethodBody<T>> body)
 		{
 			throw new NotImplementedException();

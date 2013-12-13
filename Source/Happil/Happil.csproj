@@ -50,6 +50,7 @@
     <Compile Include="Fluent\HappilClassBody.cs" />
     <Compile Include="Fluent\HappilConstant.cs" />
     <Compile Include="Fluent\HappilArgument.cs" />
+    <Compile Include="Fluent\HappilThis.cs" />
     <Compile Include="Fluent\IHappilClassDefinition.cs" />
     <Compile Include="Fluent\IHappilClassBody.cs" />
     <Compile Include="Expressions\HappilExpression.cs" />
