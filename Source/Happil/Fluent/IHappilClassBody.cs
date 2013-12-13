@@ -65,11 +65,4 @@ namespace Happil.Fluent
 			Func<MethodInfo, bool> where, 
 			Action<IHappilMethodBody<TReturn>> body);
 	}
-
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	internal interface IHappilClassBody
-	{
-		HappilClass OwnerClass { get; }
-	}
 }
