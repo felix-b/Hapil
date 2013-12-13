@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Happil.Fluent
@@ -106,7 +107,7 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public IHappilClassBody<TBase> Method(Action<TBase> method, Action<IVoidHappilMethodBody> body)
+		public IHappilClassBody<TBase> Method(Expression<Func<TBase, Action>> method, Action<IVoidHappilMethodBody> body)
 		{
 			throw new NotImplementedException();
 		}

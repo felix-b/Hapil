@@ -145,6 +145,26 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			var text = new StringBuilder();
+			text.Append("{");
+
+			foreach ( var statement in m_Statements )
+			{
+				text.Append(statement.ToString() + ";");
+			}
+
+			text.Append("}");
+			return text.ToString();
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void AddStamement(IHappilStatement statement)
 		{
 			m_Statements.Add(statement);

@@ -39,7 +39,7 @@ namespace Happil.Fluent
 		IHappilClassBody<TBase> AutomaticProperties(Func<PropertyInfo, bool> where);
 
 		IHappilClassBody<TBase> Method(
-			Action<TBase> method, 
+			Expression<Func<TBase, Action>> method, 
 			Action<IVoidHappilMethodBody> body);
 		IHappilClassBody<TBase> Method<T1>(
 			Action<TBase, T1> method,

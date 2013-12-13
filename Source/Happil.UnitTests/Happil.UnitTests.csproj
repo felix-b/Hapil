@@ -51,13 +51,16 @@
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />
     <Compile Include="Demo\EndToEndDemo.cs" />
     <Compile Include="Fluent\CSharpTests.cs" />
-    <Compile Include="Fluent\HappilOperandTests.cs" />
+    <Compile Include="Fluent\InvocationTests.cs" />
+    <Compile Include="Fluent\OperandTests.cs" />
+    <Compile Include="Fluent\StatementTests.cs" />
     <Compile Include="HappilFactoryTests.cs" />
     <Compile Include="HappilFactoryBaseTests.cs" />
     <Compile Include="HappilTypeKeyTests.cs" />
     <Compile Include="Milestones\ArsenicTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Demo\AutomaticPropertiesDemo.cs" />
+    <Compile Include="TestBaseOne.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">
