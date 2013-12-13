@@ -10,13 +10,13 @@
       <body>Create HappilClass to define a new dynamic type
 with fluent API</body>
       <annotatedElements>
-        <classMoniker Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" LastKnownName="HappilTypeFactory" />
+        <classMoniker Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" LastKnownName="HappilModule" />
         <classMoniker Id="94f6abb1-281d-4e9e-a46a-cc9bb966671a" LastKnownName="HappilClass" />
       </annotatedElements>
     </comment>
     <comment Id="a399cf64-8586-405a-86ea-4862f0d29ae1">
       <elementDefinition Id="2b54f626-ed91-431d-aff1-317f44980e8c" />
-      <body>Implement BuildNewType()
+      <body>Implement DefineNewClass()
 Define public factory method(s)</body>
     </comment>
     <comment Id="c72b86b2-b5de-49cd-a92a-efc0723f5f7d">
@@ -104,7 +104,7 @@ generated</body>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" name="HappilTypeFactory" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" name="HappilModule" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="641ba49c-c83e-4b4d-a7c2-8cc546e300d9" />
         <targetEnds>
           <association Id="79714b7b-ce2e-49a1-bdd0-08333fd8234e" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
@@ -353,11 +353,8 @@ generated</body>
       <Interface Id="ab70e441-e0bc-4e5b-95d8-3d3f50f200c7" name="IMember" isAbstract="false" isLeaf="false">
         <elementDefinition Id="aeeb963c-f354-423e-9253-6657a901d827" />
         <ownedOperations>
-          <operation Id="49002c65-7e05-4d40-bf01-f93055eb78e5" name="Emit" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+          <operation Id="49002c65-7e05-4d40-bf01-f93055eb78e5" name="EmitBody" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="a27ebc83-b0e1-4897-83b8-6ab9ab0686e9" />
-          </operation>
-          <operation Id="f1243bd0-106c-4ed1-91e0-baf8b101fcf2" name="GetNestedMembers" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="7bc4a917-1955-4ce2-9171-f76a9121001c" />
           </operation>
         </ownedOperations>
       </Interface>
@@ -368,11 +365,11 @@ generated</body>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="73d98784-d974-4532-8e4b-80a9cf70214b" name="HappilObjectFactoryBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="73d98784-d974-4532-8e4b-80a9cf70214b" name="HappilFactoryBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="94cb67a6-33db-4fe8-b59f-80e4e53fd206" />
         <suppliersInternal>
           <dependency Id="56b26fec-c9f1-47ec-9096-ac49c58ab8da">
-            <classMoniker Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" LastKnownName="HappilTypeFactory" />
+            <classMoniker Id="0527b9cd-9dc9-431b-966f-78ecf41cd9f5" LastKnownName="HappilModule" />
             <elementDefinition Id="91ec1482-6f2b-44d2-8272-a08f3530bb69" />
           </dependency>
         </suppliersInternal>
@@ -408,23 +405,29 @@ generated</body>
           <operation Id="b0e5b9e7-f1d1-43eb-a0cf-b457da04cdc8" name="GetOrBuildType" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="4bd562bb-c0d1-451e-aaf8-4c6022a05580" />
           </operation>
-          <operation Id="dc1e0cbd-c3f3-4723-9562-f1f0f85845d1" name="BuildNewType" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+          <operation Id="dc1e0cbd-c3f3-4723-9562-f1f0f85845d1" name="DefineNewClass" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="f091d3cf-f5f1-4e98-9b81-fe654b6ea834" />
           </operation>
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="581f88cd-7f94-4ff6-9b64-24018155b7a5" name="A Concrete Object Factory" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="581f88cd-7f94-4ff6-9b64-24018155b7a5" name="A Concrete Factory" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="445d2f09-0b19-4f00-abcf-9da063a46d32" />
+        <suppliersInternal>
+          <dependency Id="1ae521da-7a76-46ad-adb4-c439613aa12c">
+            <interfaceMoniker Id="a3479533-a6a3-4ed8-9642-82bd92a607bf" LastKnownName="IHappilClassBody&lt;TBase&gt;" />
+            <elementDefinition Id="2590f146-6556-4e3d-a34c-c61caa0d4245" />
+          </dependency>
+        </suppliersInternal>
         <generalsInternal>
           <generalization Id="12a31158-df65-4dce-9e52-54a3d5720a8d" isSubstitutable="false">
-            <classMoniker Id="73d98784-d974-4532-8e4b-80a9cf70214b" LastKnownName="HappilObjectFactoryBase" />
+            <classMoniker Id="73d98784-d974-4532-8e4b-80a9cf70214b" LastKnownName="HappilFactoryBase" />
             <elementDefinition Id="22ca965d-0ede-45c9-bf4c-4a06a122cb3a" />
           </generalization>
         </generalsInternal>
         <ownedOperationsInternal>
-          <operation Id="a6611f2d-0e59-4b9f-b629-a163d3b26de7" name="BuildNewType" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="a6611f2d-0e59-4b9f-b629-a163d3b26de7" name="DefineNewClass" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="beec41d1-9c57-4910-98db-30134c07bc58" />
           </operation>
           <operation Id="4ef18e0d-9d25-4e80-a726-c482647e6216" name="CustomPublicFactoryMethod" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
@@ -438,7 +441,7 @@ generated</body>
         <elementDefinition Id="68c5d03e-ac8c-4cd4-a649-8626e202aca1" />
         <suppliersInternal>
           <dependency Id="4c85a068-7127-4cfa-b0b6-dcbc5e858b25">
-            <classMoniker Id="581f88cd-7f94-4ff6-9b64-24018155b7a5" LastKnownName="A Concrete Object Factory" />
+            <classMoniker Id="581f88cd-7f94-4ff6-9b64-24018155b7a5" LastKnownName="A Concrete Factory" />
             <elementDefinition Id="81bda057-2b1e-4c65-9e27-df3acb0b8f09" />
           </dependency>
         </suppliersInternal>
@@ -508,11 +511,8 @@ generated</body>
           </association>
         </targetEnds>
         <ownedOperationsInternal>
-          <operation Id="99f14e4a-311b-4274-a0d9-fac5b9a600bc" name="Emit" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="99f14e4a-311b-4274-a0d9-fac5b9a600bc" name="EmitBody" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="89fb9a07-499e-49c2-9fd6-b3b01585d266" />
-          </operation>
-          <operation Id="b5db8efa-8ebe-478b-9c0f-72f2a421dfed" name="GetNestedMembers" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="611d2df3-f1ab-45ca-a396-5ef252f68700" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -545,11 +545,8 @@ generated</body>
           </association>
         </targetEnds>
         <ownedOperationsInternal>
-          <operation Id="d7d3fe58-9d46-4b9d-82c1-5e10c620034f" name="Emit" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="d7d3fe58-9d46-4b9d-82c1-5e10c620034f" name="EmitBody" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="1745b9af-09a6-451e-96b5-a31021560635" />
-          </operation>
-          <operation Id="f29535f0-2002-49a3-951d-571c53b4c699" name="GetNestedMembers" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="b4dfdee5-47dc-4fa6-a874-3171f8bf77ea" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -637,11 +634,8 @@ generated</body>
           </association>
         </targetEnds>
         <ownedOperationsInternal>
-          <operation Id="5276337a-73ba-4d67-8631-0006ddf36637" name="Emit" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="5276337a-73ba-4d67-8631-0006ddf36637" name="EmitBody" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="559c3e91-9b37-49ba-adf5-bff942473ad0" />
-          </operation>
-          <operation Id="76ce8df2-8b31-4017-a4ae-b84c6bea8b5f" name="GetNestedMembers" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="ba5f3eda-9b3a-4d44-8733-ce1cc864675b" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -715,11 +709,8 @@ generated</body>
           </association>
         </targetEnds>
         <ownedOperationsInternal>
-          <operation Id="7943f912-273d-4909-8d45-92a12cd8ccc0" name="Emit" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="7943f912-273d-4909-8d45-92a12cd8ccc0" name="EmitBody" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="44cdceb2-04c7-4288-bf12-becf5b9099f5" />
-          </operation>
-          <operation Id="10cde4d9-47cf-4d8c-a334-d0f293a0ba18" name="GetNestedMembers" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="c71791fe-4353-4477-b3de-ec528c6a583f" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -733,6 +724,50 @@ generated</body>
       <class Id="de56fe53-ca35-4570-a2b1-a473c3f364b5" name="PropertyBuilder" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="253e91e9-1c14-4e1a-a777-ae2f30da307d" />
       </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="2b8c296b-a1ef-4248-b144-0d8e03c13cec" name="HappilClassBody&lt;TBase&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2ce36845-3ae6-4be7-bb50-183e4ffd5600" />
+        <suppliersInternal>
+          <interfaceRealization Id="4f392d14-7e4a-4841-88cb-a4125a3946ec">
+            <interfaceMoniker Id="a3479533-a6a3-4ed8-9642-82bd92a607bf" LastKnownName="IHappilClassBody&lt;TBase&gt;" />
+            <elementDefinition Id="53f63d01-54fc-462d-9306-135a7f12e492" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <targetEnds>
+          <association Id="1dd718eb-05e8-46c7-b906-8fd8e84af551" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="94f6abb1-281d-4e9e-a46a-cc9bb966671a" LastKnownName="HappilClass" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="bc23b089-b2ef-440b-8eb0-a258ceafbf9d" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString Id="e9df0242-b4b2-4466-ada4-cd35e398d31d" name="Lower" value="*">
+                      <elementDefinition Id="b1fd6d12-d314-4216-b6ec-41c8bb514ce2" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="7f90e4fe-4ca8-4fb5-b73e-790fbd31360a" name="Upper" value="*">
+                      <elementDefinition Id="47f2512d-1f8d-41cb-b654-9dda074bb0ef" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="629d4c5f-1799-4572-9f95-24c77bba26d7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="242eb584-1dfb-42ca-beff-0d3a5f87e722" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="f7fd602a-5c51-4d5e-ae3f-49c389801d8a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="0061a05f-65a5-4fdf-b2bd-efcf8abac3d9" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="a3479533-a6a3-4ed8-9642-82bd92a607bf" name="IHappilClassBody&lt;TBase&gt;" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="98c12c32-98e5-42c1-aa5b-2e67f77b5ce8" />
+      </Interface>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="4671aa6b-c7d9-40b6-8675-0f0ef1e68307" name="Happil.Diagrams">
