@@ -66,6 +66,20 @@ namespace Happil.Fluent
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of HappilOperand<T>
+
+		internal override HappilClass OwnerClass
+		{
+			get
+			{
+				return m_HappilClass;
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		protected override void OnEmitTarget(ILGenerator il)
 		{

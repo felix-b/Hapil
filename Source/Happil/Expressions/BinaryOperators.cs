@@ -380,11 +380,21 @@ namespace Happil.Expressions
 
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
+				var leftInternals = (IHappilOperandInternals)left;
+				var rightInternals = (IHappilOperandInternals)right;
+
+				leftInternals.EmitTarget(il);
+				
+				rightInternals.EmitTarget(il);
+				rightInternals.EmitLoad(il);
+				
+				leftInternals.EmitStore(il);
+
 				if ( m_ForceLeaveFalueOnStack )
 				{
+					leftInternals.EmitTarget(il);
+					leftInternals.EmitLoad(il);
 				}
-
-				throw new NotImplementedException();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

@@ -111,6 +111,16 @@ namespace Happil.Fluent
 			OnEmitAddress(il);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		HappilClass IHappilOperandInternals.OwnerClass
+		{
+			get
+			{
+				return this.OwnerClass;
+			}
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,6 +159,23 @@ namespace Happil.Fluent
 			get
 			{
 				return m_OwnerMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual HappilClass OwnerClass
+		{
+			get
+			{
+				if ( m_OwnerMethod != null )
+				{
+					return m_OwnerMethod.HappilClass;
+				}
+				else
+				{
+					return null;
+				}
 			}
 		}
 

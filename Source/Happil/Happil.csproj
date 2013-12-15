@@ -82,6 +82,7 @@
     <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\IHappilStatement.cs" />
+    <Compile Include="Statements\StatementScope.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

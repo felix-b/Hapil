@@ -26,13 +26,17 @@ namespace Happil.Expressions
 			m_Right = right;
 			m_Operator = @operator;
 
-			if ( ownerMethod != null )
+			var scope = TryGetCurrrentScope();
+
+			if ( scope != null )
 			{
-				ownerMethod.UnregisterExpressionStatement(left as IHappilExpression);
-				ownerMethod.UnregisterExpressionStatement(right as IHappilExpression);
-				ownerMethod.UnregisterExpressionStatement(left as IHappilExpression); // do not depend on the order of left and right registration
-				
-				ownerMethod.RegisterExpressionStatement(this);
+				scope.UnregisterExpressionStatement(left as IHappilExpression);
+				scope.UnregisterExpressionStatement(right as IHappilExpression);
+				// since the unregister method only checks the last statement, the following line is 
+				// required to remove dependency on the order of left and right registration:
+				scope.UnregisterExpressionStatement(left as IHappilExpression);
+
+				scope.RegisterExpressionStatement(this);
 			}
 		}
 
@@ -42,6 +46,30 @@ namespace Happil.Expressions
 		{
 			return string.Format("Expr<{0}>{{{1} {2} {3}}}", typeof(TExpr).Name, m_Left.ToString(), m_Operator.ToString(), m_Right.ToString());
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of HappilOperand<TExpr>
+
+		internal override HappilClass OwnerClass
+		{
+			get
+			{
+				var ownerClass = base.OwnerClass;
+
+				if ( ownerClass != null )
+				{
+					return ownerClass;
+				}
+
+				var leftOwnerClass = ((IHappilOperandInternals)m_Left).OwnerClass;
+				var rightOwnerClass = ((IHappilOperandInternals)m_Right).OwnerClass;
+
+				return (leftOwnerClass ?? rightOwnerClass);
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

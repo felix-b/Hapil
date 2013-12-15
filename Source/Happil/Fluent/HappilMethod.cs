@@ -166,33 +166,18 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AddStatement(IHappilStatement statement)
+		public StatementScope CreateBodyScope()
 		{
-			m_Statements.Add(statement);
+			return new StatementScope(m_HappilClass, this, m_Statements);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterExpressionStatement(IHappilExpression expression)
+		public HappilClass HappilClass
 		{
-			if ( expression != null )
+			get
 			{
-				m_Statements.Add(new ExpressionStatement(expression));
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void UnregisterExpressionStatement(IHappilExpression expression)
-		{
-			if ( expression != null )
-			{
-				var lastExpressionStatement = (m_Statements.LastOrDefault() as ExpressionStatement);
-
-				if ( lastExpressionStatement != null && object.ReferenceEquals(lastExpressionStatement.Expression, expression) )
-				{
-					m_Statements.RemoveAt(m_Statements.Count - 1);
-				}
+				return m_HappilClass;
 			}
 		}
 	}

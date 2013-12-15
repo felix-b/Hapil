@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Happil.Statements;
 
 namespace Happil.Fluent
 {
@@ -10,7 +11,8 @@ namespace Happil.Fluent
 	{
 		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<IHappilMember> m_Members;
-		private readonly List<Action> m_MemberBodyDefinitions;
+		private readonly List<Tuple<IHappilMember, Action>> m_MemberBodyDefinitions;
+		private readonly Stack<StatementScope> m_StatementScopeStack;
 		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -19,7 +21,8 @@ namespace Happil.Fluent
         {
             m_TypeBuilder = typeBuilder;
 			m_Members = new List<IHappilMember>();
-			m_MemberBodyDefinitions = new List<Action>();
+			m_MemberBodyDefinitions = new List<Tuple<IHappilMember, Action>>();
+			m_StatementScopeStack = new Stack<StatementScope>();
         }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -66,7 +69,7 @@ namespace Happil.Fluent
 
 			if ( bodyDefinition != null )
 			{
-				m_MemberBodyDefinitions.Add(bodyDefinition);
+				m_MemberBodyDefinitions.Add(new Tuple<IHappilMember, Action>(member, bodyDefinition));
 			}
 		}
 
@@ -93,9 +96,19 @@ namespace Happil.Fluent
 		/// </summary>
 		public Type CreateType()
 		{
-			foreach ( var definition in m_MemberBodyDefinitions )
+			foreach ( var tuple in m_MemberBodyDefinitions )
 			{
-				definition();
+				var member = tuple.Item1;
+				var bodyDefinitionAction = tuple.Item2;
+
+				bodyDefinitionAction();
+
+				if ( m_StatementScopeStack.Count > 0 )
+				{
+					throw new InvalidOperationException(string.Format(
+						"Scope stack is not empty after body definition of member '{0}' ({1}).",
+						member.Name, member.GetType().Name));
+				}
 			}
 
 			foreach ( var member in m_Members )
@@ -121,6 +134,40 @@ namespace Happil.Fluent
 			return new Delegate[] {
 				new Func<object>(() => Activator.CreateInstance(m_BuiltType))
 			};
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void PushScope(StatementScope scope)
+		{
+			m_StatementScopeStack.Push(scope);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void PopScope(StatementScope scope)
+		{
+			if ( m_StatementScopeStack.Count == 0 || m_StatementScopeStack.Peek() != scope )
+			{
+				throw new InvalidOperationException("Specified scope is not the current scope.");
+			}
+
+			m_StatementScopeStack.Pop();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope CurrentScope
+		{
+			get
+			{
+				if ( m_StatementScopeStack.Count == 0 )
+				{
+					throw new InvalidOperationException("There is no active scope at the moment.");
+				}
+				
+				return m_StatementScopeStack.Peek();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

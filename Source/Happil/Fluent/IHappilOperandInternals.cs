@@ -12,5 +12,6 @@ namespace Happil.Fluent
 		void EmitLoad(ILGenerator il);
 		void EmitStore(ILGenerator il);
 		void EmitAddress(ILGenerator il);
+		HappilClass OwnerClass { get; }
 	}
 }

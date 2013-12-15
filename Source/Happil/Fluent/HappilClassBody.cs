@@ -104,7 +104,9 @@ namespace Happil.Fluent
 			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
 			
 			var methodMember = new VoidHappilMethod(m_HappilClass, methodDeclaration);
-			m_HappilClass.RegisterMember(methodMember, bodyDefinition: () => body(methodMember));
+			m_HappilClass.RegisterMember(
+				methodMember,
+				bodyDefinition: () => DefineMethodBodyInScope(methodMember, body));
 			
 			return this;
 		}
@@ -134,10 +136,9 @@ namespace Happil.Fluent
 			foreach ( var methodInfo in m_ReflectedType.GetMethods().Where(m => m.ReturnType == typeof(void)) )
 			{
 				var method = new VoidHappilMethod(m_HappilClass, methodInfo);
-				m_HappilClass.RegisterMember(method);
-
-				//TODO:TASK#6 uncomment the following line
-				//body(method);
+				m_HappilClass.RegisterMember(
+					method, 
+					bodyDefinition: () => DefineMethodBodyInScope(method, body));
 			}
 
 			return this;
@@ -154,5 +155,16 @@ namespace Happil.Fluent
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void DefineMethodBodyInScope<T>(HappilMethod method, Action<T> userDefinition)
+			where T : IHappilMethodBodyBase
+		{
+			using ( method.CreateBodyScope() )
+			{
+				userDefinition((T)(object)method);
+			}
+		}
 	}
 }

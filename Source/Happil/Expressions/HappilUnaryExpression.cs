@@ -26,10 +26,12 @@ namespace Happil.Expressions
 			m_Operator = @operator;
 			m_Position = position;
 
-			if ( ownerMethod != null )
+			var scope = TryGetCurrrentScope();
+
+			if ( scope != null )
 			{
-				ownerMethod.UnregisterExpressionStatement(operand as IHappilExpression);
-				ownerMethod.RegisterExpressionStatement(this);
+				scope.UnregisterExpressionStatement(operand as IHappilExpression);
+				scope.RegisterExpressionStatement(this);
 			}
 		}
 
@@ -44,6 +46,20 @@ namespace Happil.Expressions
 
 			return string.Format(formatString, typeof(TExpr).Name, m_Operator.ToString(), m_Operand.ToString());
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of HappilOperand<TExpr>
+
+		internal override HappilClass OwnerClass
+		{
+			get
+			{
+				return (base.OwnerClass ?? ((IHappilOperandInternals)m_Operand).OwnerClass);
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -63,14 +79,14 @@ namespace Happil.Expressions
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 	}
 }

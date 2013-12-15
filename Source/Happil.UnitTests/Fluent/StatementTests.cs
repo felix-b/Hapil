@@ -55,7 +55,7 @@ namespace Happil.UnitTests.Fluent
 
 			Assert.That(
 				method.ToString(), 
-				Is.EqualTo("{Field<Int32>{f1} = Field<Int32>{f2};}"));
+				Is.EqualTo("{Expr<Int32>{Field{f1} = Field{f2}};}"));
 		}
 	}
 }

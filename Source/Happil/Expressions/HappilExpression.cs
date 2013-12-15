@@ -1,4 +1,5 @@
 ﻿using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -24,5 +25,21 @@ namespace Happil.Expressions
 		public bool ShouldLeaveValueOnStack { get; set; }
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected StatementScope TryGetCurrrentScope()
+		{
+			var happilClass = this.OwnerClass;
+
+			if ( happilClass != null )
+			{
+				return happilClass.CurrentScope;
+			}
+			else
+			{
+				return null;
+			}
+		}
 	}
 }
