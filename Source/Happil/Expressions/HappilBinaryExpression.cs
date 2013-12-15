@@ -25,6 +25,15 @@ namespace Happil.Expressions
 			m_Left = left;
 			m_Right = right;
 			m_Operator = @operator;
+
+			if ( ownerMethod != null )
+			{
+				ownerMethod.UnregisterExpressionStatement(left as IHappilExpression);
+				ownerMethod.UnregisterExpressionStatement(right as IHappilExpression);
+				ownerMethod.UnregisterExpressionStatement(left as IHappilExpression); // do not depend on the order of left and right registration
+				
+				ownerMethod.RegisterExpressionStatement(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -38,28 +47,27 @@ namespace Happil.Expressions
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			m_Operator.Emit(il, m_Left, m_Right);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 	}
 

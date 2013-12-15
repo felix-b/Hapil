@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Happil.Fluent
@@ -37,25 +38,15 @@ namespace Happil.Fluent
 
 		#region IHappilClassBody<TBase> Members
 
-		public IHappilClassBody<TBase> Inherit(Type baseType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members)
+		public IHappilClassBody<T> AsBase<T>()
 		{
-			return new HappilClassBody<TBase>(m_HappilClass, baseType);
+			return new HappilClassBody<T>(m_HappilClass, typeof(T));
 		}
 
 		public IHappilClassBody<TBase> Implement(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members)
 		{
 			m_HappilClass.ImplementInterface(interfaceType);
 			return new HappilClassBody<TBase>(m_HappilClass, interfaceType);
-		}
-
-		public IHappilClassBody<TClass> Inherit<TClass>(params Func<IHappilClassBody<TClass>, IHappilClassBody<TBase>>[] members)
-		{
-			return new HappilClassBody<TClass>(m_HappilClass);
-		}
-
-		public IHappilClassBody<TClass> Inherit<TClass>(Type baseType, params Func<IHappilClassBody<TClass>, IHappilClassBody<TBase>>[] members)
-		{
-			return new HappilClassBody<TClass>(m_HappilClass);
 		}
 
 		public IHappilClassBody<TInterface> Implement<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members)
@@ -109,7 +100,13 @@ namespace Happil.Fluent
 
 		public IHappilClassBody<TBase> Method(Expression<Func<TBase, Action>> method, Action<IVoidHappilMethodBody> body)
 		{
-			throw new NotImplementedException();
+			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)method.Body).Operand);
+			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			
+			var methodMember = new VoidHappilMethod(m_HappilClass, methodDeclaration);
+			m_HappilClass.RegisterMember(methodMember, bodyDefinition: () => body(methodMember));
+			
+			return this;
 		}
 
 		public IHappilClassBody<TBase> Method<T1>(Action<TBase, T1> method, Action<IVoidHappilMethodBody, HappilArgument<T1>> body)

@@ -15,16 +15,24 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<T> Assign(HappilOperand<T> operand)
+		public HappilOperand<T> Assign(IHappilOperand<T> value)
 		{
-			throw new NotImplementedException();
+			return new HappilBinaryExpression<T, T>(
+				base.OwnerMethod,
+				@operator: new BinaryOperators.OperatorAssign<T>(),
+				left: this,
+				right: value);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		public HappilOperand<T> Assign(HappilConstant<T> operand)
+		public HappilOperand<T> Assign(HappilConstant<T> value)
 		{
-			throw new NotImplementedException();
+			return new HappilBinaryExpression<T, T>(
+				base.OwnerMethod,
+				@operator: new BinaryOperators.OperatorAssign<T>(),
+				left: this,
+				right: value);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

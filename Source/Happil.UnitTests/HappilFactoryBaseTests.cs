@@ -109,8 +109,7 @@ namespace Happil.UnitTests
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
 				return Module.DefineClass(
-					"HappilFactoryBaseTests.Impl" + key.PrimaryInterface.Name)
-					.Inherit(key.BaseType)
+					"HappilFactoryBaseTests.Impl" + key.PrimaryInterface.Name, key.BaseType)
 					.Implement(key.PrimaryInterface);
 			}
 		}

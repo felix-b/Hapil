@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -9,6 +10,7 @@ namespace Happil.Fluent
 	{
 		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<IHappilMember> m_Members;
+		private readonly List<Action> m_MemberBodyDefinitions;
 		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,6 +19,7 @@ namespace Happil.Fluent
         {
             m_TypeBuilder = typeBuilder;
 			m_Members = new List<IHappilMember>();
+			m_MemberBodyDefinitions = new List<Action>();
         }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -55,12 +58,23 @@ namespace Happil.Fluent
 			return proposedName;
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void RegisterMember(IHappilMember member, Action bodyDefinition = null)
+		{
+			m_Members.Add(member);
+
+			if ( bodyDefinition != null )
+			{
+				m_MemberBodyDefinitions.Add(bodyDefinition);
+			}
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterMember(IHappilMember member)
+		public TMember FindMember<TMember>(string name) where TMember : IHappilMember
 		{
-			m_Members.Add(member);
+			return m_Members.OfType<TMember>().Where(m => m.Name == name).First();
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -79,6 +93,11 @@ namespace Happil.Fluent
 		/// </summary>
 		public Type CreateType()
 		{
+			foreach ( var definition in m_MemberBodyDefinitions )
+			{
+				definition();
+			}
+
 			foreach ( var member in m_Members )
 			{
 				member.EmitBody();

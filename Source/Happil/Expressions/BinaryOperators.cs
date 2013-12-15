@@ -369,5 +369,41 @@ namespace Happil.Expressions
 				return "as";
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorAssign<T> : IBinaryOperator<T>, IDontLeaveValueOnStack
+		{
+			private bool m_ForceLeaveFalueOnStack = false;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			{
+				if ( m_ForceLeaveFalueOnStack )
+				{
+				}
+
+				throw new NotImplementedException();
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IDontLeaveValueOnStack Members
+
+			public void ForceLeaveFalueOnStack()
+			{
+				m_ForceLeaveFalueOnStack = true;
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return "=";
+			}
+		}
 	}
 }

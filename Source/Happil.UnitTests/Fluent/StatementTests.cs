@@ -27,7 +27,7 @@ namespace Happil.UnitTests.Fluent
 		[SetUp]
 		public void SetUp()
 		{
-			m_ClassBody = m_Module.DefineClass("_" + Guid.NewGuid().ToString("X")).Inherit<TestBaseOne>();
+			m_ClassBody = m_Module.DeriveClassFrom<TestBaseOne>("_" + Guid.NewGuid().ToString("N"));
 			m_Class = ((IHappilClassDefinitionInternals)m_ClassBody).HappilClass;
 		}
 
@@ -36,16 +36,26 @@ namespace Happil.UnitTests.Fluent
 		[Test]
 		public void AssignStatement()
 		{
-			//var field1 = m_ClassBody.Field<int>("f1");
-			//var field2 = m_ClassBody.Field<int>("f2");
-			//HappilMethod method = null;
+			//-- Arrange
 
-			//m_ClassBody.Method(cls => cls.VoidVirtualMethod, m => {
-			//	method = (IHappilMethodBodyI)
-			//	field1.Assign(field2);
-			//});
+			var field1 = m_ClassBody.Field<int>("f1");
+			var field2 = m_ClassBody.Field<int>("f2");
 
-			
+			//-- Act
+
+			m_ClassBody.Method(cls => cls.VoidVirtualMethod, m => {
+				field1.Assign(field2);
+			});
+
+			m_Class.CreateType();
+
+			//-- Assert
+
+			var method = m_Class.FindMember<HappilMethod>("VoidVirtualMethod");
+
+			Assert.That(
+				method.ToString(), 
+				Is.EqualTo("{Field<Int32>{f1} = Field<Int32>{f2};}"));
 		}
 	}
 }

@@ -52,22 +52,44 @@ namespace Happil
 
 		public IHappilClassBody<object> DefineClass(string classFullName)
 		{
-			var typeAtributes = 
-				TypeAttributes.Public | 
-				TypeAttributes.Class | 
-				TypeAttributes.BeforeFieldInit | 
-				TypeAttributes.AutoClass | 
+			return DefineClass(classFullName, baseType: typeof(object));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<object> DefineClass(string classFullName, Type baseType)
+		{
+			var typeAtributes =
+				TypeAttributes.Public |
+				TypeAttributes.Class |
+				TypeAttributes.BeforeFieldInit |
+				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
 
-			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes);
+			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, baseType);
 			return new HappilClass(typeBuilder).GetBody<object>();
-        }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> DeriveClassFrom<TBase>(string classFullName)
+		{
+			var typeAtributes =
+				TypeAttributes.Public |
+				TypeAttributes.Class |
+				TypeAttributes.BeforeFieldInit |
+				TypeAttributes.AutoClass |
+				TypeAttributes.AnsiClass;
+
+			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, parent: typeof(TBase));
+			return new HappilClass(typeBuilder).GetBody<TBase>();
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<object> DefineClass(HappilTypeKey key, string namespaceName)
 		{
-			return DefineClass(namespaceName + ".ImplOf" + key.PrimaryInterface.Name);
+			return DefineClass(namespaceName + ".ImplOf" + key.PrimaryInterface.Name, key.BaseType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

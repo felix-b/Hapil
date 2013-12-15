@@ -27,7 +27,7 @@ namespace Happil.UnitTests.Fluent
 		[SetUp]
 		public void SetUp()
 		{
-			m_ClassBody = m_Module.DefineClass("_" + Guid.NewGuid().ToString("X")).Inherit<TestBaseOne>();
+			m_ClassBody = m_Module.DeriveClassFrom<TestBaseOne>("_" + Guid.NewGuid().ToString("X"));
 			m_Class = ((IHappilClassDefinitionInternals)m_ClassBody).HappilClass;
 		}
 

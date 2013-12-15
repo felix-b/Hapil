@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 using Happil.Statements;
 
 namespace Happil.Fluent
@@ -165,9 +166,34 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AddStamement(IHappilStatement statement)
+		public void AddStatement(IHappilStatement statement)
 		{
 			m_Statements.Add(statement);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void RegisterExpressionStatement(IHappilExpression expression)
+		{
+			if ( expression != null )
+			{
+				m_Statements.Add(new ExpressionStatement(expression));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void UnregisterExpressionStatement(IHappilExpression expression)
+		{
+			if ( expression != null )
+			{
+				var lastExpressionStatement = (m_Statements.LastOrDefault() as ExpressionStatement);
+
+				if ( lastExpressionStatement != null && object.ReferenceEquals(lastExpressionStatement.Expression, expression) )
+				{
+					m_Statements.RemoveAt(m_Statements.Count - 1);
+				}
+			}
 		}
 	}
 

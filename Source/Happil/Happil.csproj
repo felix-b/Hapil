@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expressions\BinaryOperators.cs" />
+    <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
+    <Compile Include="Expressions\IOperator.cs" />
     <Compile Include="Expressions\UnaryOperatorPosition.cs" />
     <Compile Include="Expressions\UnaryOperators.cs" />
     <Compile Include="Fluent\HappilAssignable.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Statements\CallOperand.cs" />
     <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\CompositeStatement.cs" />
+    <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\IHappilStatement.cs" />
   </ItemGroup>

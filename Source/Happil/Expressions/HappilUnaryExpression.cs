@@ -25,6 +25,12 @@ namespace Happil.Expressions
 			m_Operand = operand;
 			m_Operator = @operator;
 			m_Position = position;
+
+			if ( ownerMethod != null )
+			{
+				ownerMethod.UnregisterExpressionStatement(operand as IHappilExpression);
+				ownerMethod.RegisterExpressionStatement(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
