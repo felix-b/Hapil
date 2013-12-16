@@ -44,28 +44,29 @@ namespace Happil.Fluent
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			// constants have no target
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			//TODO: the following line only works for Int32; need to provide a general solution.
+			il.Emit(OpCodes.Ldc_I4, (int)(object)m_Value);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException("Constants are not assignabble.");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException("Constants are not assignabble.");
 		}
 	}
 }

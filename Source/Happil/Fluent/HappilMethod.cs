@@ -23,11 +23,7 @@ namespace Happil.Fluent
 			m_HappilClass = happilClass;
 			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
 				happilClass.TakeMemberName(declaration.Name),
-				MethodAttributes.Final |
-				MethodAttributes.HideBySig |
-				MethodAttributes.NewSlot |
-				MethodAttributes.Public |
-				MethodAttributes.Virtual);
+				GetMethodAttributesFor(declaration));
 			m_Statements = new List<IHappilStatement>();
 
 			//TODO: copy parameters and return type definition from declaration
@@ -179,6 +175,24 @@ namespace Happil.Fluent
 			{
 				return m_HappilClass;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration)
+		{
+			var attributes =
+				MethodAttributes.Final |
+				MethodAttributes.HideBySig |
+				MethodAttributes.Public |
+				MethodAttributes.Virtual;
+
+			if ( declaration.DeclaringType.IsInterface )
+			{
+				attributes |= MethodAttributes.NewSlot;
+			}
+
+			return attributes;
 		}
 	}
 

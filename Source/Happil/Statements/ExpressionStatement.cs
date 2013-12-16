@@ -25,6 +25,7 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
+			m_Expression.ShouldLeaveValueOnStack = false;
 			m_Expression.EmitTarget(il);
 			m_Expression.EmitLoad(il);
 		}

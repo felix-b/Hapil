@@ -258,6 +258,17 @@ namespace Happil.Fluent
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilConstant<T> y)
+		{
+			return new HappilBinaryExpression<T, T>(
+				x.OwnerMethod ?? y.OwnerMethod,
+				@operator: new BinaryOperators.OperatorAdd<T>(),
+				left: x,
+				right: y);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(

@@ -81,7 +81,25 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
+			var dontLeaveValueOnStack = (m_Operator as IDontLeaveValueOnStack);
+
+			if ( ShouldLeaveValueOnStack )
+			{
+				EnsureOperandLeavesValueOnStack(m_Left as IHappilExpression);
+				EnsureOperandLeavesValueOnStack(m_Right as IHappilExpression);
+
+				if ( dontLeaveValueOnStack != null )
+				{
+					dontLeaveValueOnStack.ForceLeaveFalueOnStack();
+				}
+			}
+
 			m_Operator.Emit(il, m_Left, m_Right);
+
+			if ( !ShouldLeaveValueOnStack && dontLeaveValueOnStack == null )
+			{
+				il.Emit(OpCodes.Pop);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

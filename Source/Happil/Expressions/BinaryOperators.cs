@@ -19,7 +19,11 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				((IHappilOperandInternals)left).EmitTarget(il);
+				((IHappilOperandInternals)left).EmitLoad(il);
+				((IHappilOperandInternals)right).EmitTarget(il);
+				((IHappilOperandInternals)right).EmitLoad(il);
+				il.Emit(OpCodes.Add);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

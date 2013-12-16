@@ -41,5 +41,15 @@ namespace Happil.Expressions
 				return null;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void EnsureOperandLeavesValueOnStack(IHappilExpression expressionOperand)
+		{
+			if ( expressionOperand != null )
+			{
+				expressionOperand.ShouldLeaveValueOnStack = true;
+			}
+		}
 	}
 }

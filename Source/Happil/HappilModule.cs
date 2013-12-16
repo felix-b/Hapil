@@ -29,7 +29,7 @@ namespace Happil
 				m_AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
 					m_AssemblyName, 
 					AssemblyBuilderAccess.RunAndSave,
-					dir: saveDirectory ?? Environment.CurrentDirectory);
+					dir: saveDirectory ?? Path.GetDirectoryName(this.GetType().Assembly.Location));
 				
 				m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule(
 					name: assemblySimpleName + ".dll", 
