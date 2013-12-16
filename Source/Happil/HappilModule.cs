@@ -18,11 +18,11 @@ namespace Happil
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 	    public HappilModule(
-			string assemblySimpleName = "Happil.EmittedTypes", 
+			string simpleName = "Happil.EmittedTypes", 
 			bool allowSave = false, 
 			string saveDirectory = null)
 	    {
-			m_AssemblyName = new AssemblyName(assemblySimpleName);
+			m_AssemblyName = new AssemblyName(simpleName);
 
 		    if ( allowSave )
 		    {
@@ -32,8 +32,8 @@ namespace Happil
 					dir: saveDirectory ?? Path.GetDirectoryName(this.GetType().Assembly.Location));
 				
 				m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule(
-					name: assemblySimpleName + ".dll", 
-					fileName: assemblySimpleName + ".dll", 
+					name: simpleName + ".dll", 
+					fileName: simpleName + ".dll", 
 					emitSymbolInfo: true);
 		    }
 		    else
@@ -43,7 +43,7 @@ namespace Happil
 					AssemblyBuilderAccess.Run);
 				
 				m_ModuleBuilder = m_AssemblyBuilder.DefineDynamicModule(
-					name: assemblySimpleName + ".dll", 
+					name: simpleName + ".dll", 
 					emitSymbolInfo: false);
 			}
 	    }
@@ -62,6 +62,7 @@ namespace Happil
 			var typeAtributes =
 				TypeAttributes.Public |
 				TypeAttributes.Class |
+				TypeAttributes.Sealed |
 				TypeAttributes.BeforeFieldInit |
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
@@ -77,6 +78,7 @@ namespace Happil
 			var typeAtributes =
 				TypeAttributes.Public |
 				TypeAttributes.Class |
+				TypeAttributes.Sealed |
 				TypeAttributes.BeforeFieldInit |
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
@@ -97,6 +99,16 @@ namespace Happil
 		public void SaveAssembly()
 		{
 			m_AssemblyBuilder.Save(m_AssemblyName.Name + ".dll");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public string SimpleName
+		{
+			get
+			{
+				return m_AssemblyBuilder.GetName().Name;
+			}
 		}
 	}
 }

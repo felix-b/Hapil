@@ -15,8 +15,15 @@ namespace Happil.Fluent
 		IHappilClassBody<TInterface> Implement<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 
 		HappilField<T> Field<T>(string name);
+		IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field);
 
 		IHappilClassBody<TBase> DefaultConstructor();
+
+		IHappilClassBody<TBase> Constructor(Action<IHappilMethodBodyBase> body);
+		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilMethodBodyBase, HappilArgument<TArg1>> body);
+		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
+		IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
+			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
 
 		IHappilClassBody<TBase> Property<T>(
 			Expression<Func<TBase, T>> selector,
@@ -36,22 +43,33 @@ namespace Happil.Fluent
 
 		IHappilClassBody<TBase> AutomaticProperties(Func<PropertyInfo, bool> where);
 
-		IHappilClassBody<TBase> Method(
+		IHappilClassBody<TBase> VoidMethod(
 			Expression<Func<TBase, Action>> method, 
 			Action<IVoidHappilMethodBody> body);
-		IHappilClassBody<TBase> Method<T1>(
-			Action<TBase, T1> method,
-			Action<IVoidHappilMethodBody, HappilArgument<T1>> body);
-		IHappilClassBody<TBase> Method<T1, T2>(
-			Action<TBase, T1, T2> method,
-			Action<IVoidHappilMethodBody, HappilArgument<T1>, HappilArgument<T2>> body);
-		IHappilClassBody<TBase> Method<T1, T2, T3>(
-			Action<TBase, T1, T2, T3> method,
-			Action<IVoidHappilMethodBody, HappilArgument<T1>, HappilArgument<T2>, HappilArgument<T3>> body);
-	
-		IHappilClassBody<TBase> Method<TReturn>(
-			Func<TBase, TReturn> method, 
+		
+		IHappilClassBody<TBase> VoidMethod<TArg1>(
+			Expression<Func<TBase, Action<TArg1>>> method,
+			Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body);
+
+		IHappilClassBody<TBase> VoidMethod<TArg1, TArg2>(
+			Expression<Func<TBase, Action<TArg1, TArg2>>> method,
+			Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
+
+		IHappilClassBody<TBase> VoidMethod<TArg1, TArg2, TArg3>(
+			Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method,
+			Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
+
+		IHappilClassBody<TBase> Function<TReturn>(
+			Expression<Func<TBase, Func<TReturn>>> method,
 			Action<IHappilMethodBody<TReturn>> body);
+
+		IHappilClassBody<TBase> Function<TArg1, TReturn>(
+			Expression<Func<TBase, Func<TArg1, TReturn>>> method,
+			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
+
+		IHappilClassBody<TBase> Function<TArg1, TArg2, TReturn>(
+			Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> method,
+			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg1>> body);
 
 		IHappilClassBody<TBase> Methods(
 			Action<IVoidHappilMethodBody> body);

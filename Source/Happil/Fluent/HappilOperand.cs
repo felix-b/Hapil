@@ -34,7 +34,7 @@ namespace Happil.Fluent
 
 		#region IHappilOperand<T> Members
 
-		public void Invoke(Expression<Func<T, Action>> member)
+		public void InvokeVoid(Expression<Func<T, Action>> member)
 		{
 			var method = ValidateMemberIsMethodOfType(((MemberExpression)member.Body).Member);
 			
@@ -42,21 +42,50 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Invoke<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
+		public void InvokeVoid<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Invoke<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		public void InvokeVoid<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Invoke<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		public void InvokeVoid<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> InvokeFunc<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> InvokeFunc<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> InvokeFunc<TArg1, TArg2, TReturn>(
+			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TProp> Get<TProp>(Expression<Func<T, TProp>> property)
 		{
 			throw new NotImplementedException();
 		}

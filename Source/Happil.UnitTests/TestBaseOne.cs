@@ -38,8 +38,12 @@ namespace Happil.UnitTests
 		{
 			return 123;
 		}
-		public virtual void VoidVirtualMethod()
+		public virtual void VirtualVoidMethod()
 		{
+		}
+		public virtual int VirtualFuncWithNoArgs()
+		{
+			return Int32.MaxValue;
 		}
 	}
 }

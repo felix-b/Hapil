@@ -68,9 +68,10 @@ namespace Happil.Fluent
 			return field;
 		}
 
-		public IHappilClassBody<TBase> DefaultConstructor()
+		public IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field)
 		{
-			throw new NotImplementedException();
+			field = this.Field<T>(name);
+			return this;
 		}
 
 		public IHappilClassBody<TBase> Property<T>(System.Linq.Expressions.Expression<Func<TBase, T>> selector, Func<HappilProperty<T>, HappilPropertyGetter> getter, Func<HappilProperty<T>, HappilPropertySetter> setter = null)
@@ -98,7 +99,36 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
-		public IHappilClassBody<TBase> Method(Expression<Func<TBase, Action>> method, Action<IVoidHappilMethodBody> body)
+		public IHappilClassBody<TBase> DefaultConstructor()
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Constructor(
+			Action<IHappilMethodBodyBase> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Constructor<TArg1>(
+			Action<IHappilMethodBodyBase, HappilArgument<TArg1>> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Constructor<TArg1, TArg2>(
+			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
+			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> VoidMethod(Expression<Func<TBase, Action>> method, Action<IVoidHappilMethodBody> body)
 		{
 			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)method.Body).Operand);
 			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
@@ -111,22 +141,32 @@ namespace Happil.Fluent
 			return this;
 		}
 
-		public IHappilClassBody<TBase> Method<T1>(Action<TBase, T1> method, Action<IVoidHappilMethodBody, HappilArgument<T1>> body)
+		public IHappilClassBody<TBase> VoidMethod<TArg1>(Expression<Func<TBase, Action<TArg1>>> method, Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IHappilClassBody<TBase> Method<T1, T2>(Action<TBase, T1, T2> method, Action<IVoidHappilMethodBody, HappilArgument<T1>, HappilArgument<T2>> body)
+		public IHappilClassBody<TBase> VoidMethod<TArg1, TArg2>(Expression<Func<TBase, Action<TArg1, TArg2>>> method, Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IHappilClassBody<TBase> Method<T1, T2, T3>(Action<TBase, T1, T2, T3> method, Action<IVoidHappilMethodBody, HappilArgument<T1>, HappilArgument<T2>, HappilArgument<T3>> body)
+		public IHappilClassBody<TBase> VoidMethod<TArg1, TArg2, TArg3>(Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method, Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IHappilClassBody<TBase> Method<TReturn>(Func<TBase, TReturn> method, Action<IHappilMethodBody<TReturn>> body)
+		public IHappilClassBody<TBase> Function<TReturn>(Expression<Func<TBase, Func<TReturn>>> method, Action<IHappilMethodBody<TReturn>> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Function<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> method, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IHappilClassBody<TBase> Function<TArg1, TArg2, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> method, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg1>> body)
 		{
 			throw new NotImplementedException();
 		}

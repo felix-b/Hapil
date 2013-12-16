@@ -55,7 +55,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.Method(cls => cls.VoidVirtualMethod, m => {
+			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
 				field1.Assign(field2);
 			});
 
@@ -63,7 +63,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Assert
 
-			var method = m_Class.FindMember<HappilMethod>("VoidVirtualMethod");
+			var method = m_Class.FindMember<HappilMethod>("VirtualVoidMethod");
 
 			Assert.That(
 				method.ToString(), 
@@ -82,7 +82,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.Method(cls => cls.VoidVirtualMethod, m => {
+			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
 				field1.Assign(const1);
 			});
 
@@ -90,7 +90,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Assert
 
-			var method = m_Class.FindMember<HappilMethod>("VoidVirtualMethod");
+			var method = m_Class.FindMember<HappilMethod>("VirtualVoidMethod");
 
 			Assert.That(
 				method.ToString(),
@@ -109,7 +109,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.Method(cls => cls.VoidVirtualMethod, m => {
+			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
 				field1.Assign(field2 + 123);
 			});
 
@@ -117,7 +117,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Assert
 
-			var method = m_Class.FindMember<HappilMethod>("VoidVirtualMethod");
+			var method = m_Class.FindMember<HappilMethod>("VirtualVoidMethod");
 
 			Assert.That(
 				method.ToString(),
@@ -132,7 +132,7 @@ namespace Happil.UnitTests.Fluent
 
 			#region Overrides of TestBaseOne
 
-			public override void VoidVirtualMethod()
+			public override void VirtualVoidMethod()
 			{
 				f1 = 123;
 			}
@@ -157,7 +157,7 @@ namespace Happil.UnitTests.Fluent
 
 			#region Overrides of TestBaseOne
 
-			public override void VoidVirtualMethod()
+			public override void VirtualVoidMethod()
 			{
 				f1 = f2 + 123;
 			}
