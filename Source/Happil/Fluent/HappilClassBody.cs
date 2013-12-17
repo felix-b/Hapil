@@ -22,6 +22,20 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IHappilClassDefinition Members
+
+		public Type BaseType
+		{
+			get
+			{
+				return m_HappilClass.TypeBuilder.BaseType;
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region IHappilClassDefinitionInternals Members
 
 		public HappilClass HappilClass

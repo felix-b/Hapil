@@ -61,7 +61,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected class TypeEntry
+		internal protected class TypeEntry
 		{
 			internal TypeEntry(IHappilClassDefinitionInternals classDefinition)
 			{
