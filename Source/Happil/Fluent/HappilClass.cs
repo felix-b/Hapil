@@ -12,6 +12,7 @@ namespace Happil.Fluent
 		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<IHappilMember> m_Members;
 		private readonly List<Tuple<IHappilMember, Action>> m_MemberBodyDefinitions;
+		private readonly List<MethodInfo> m_FactoryMethods;
 		private readonly Stack<StatementScope> m_StatementScopeStack;
 		private Type m_BuiltType = null;
 
@@ -22,6 +23,7 @@ namespace Happil.Fluent
             m_TypeBuilder = typeBuilder;
 			m_Members = new List<IHappilMember>();
 			m_MemberBodyDefinitions = new List<Tuple<IHappilMember, Action>>();
+			m_FactoryMethods = new List<MethodInfo>();
 			m_StatementScopeStack = new Stack<StatementScope>();
         }
 
@@ -31,20 +33,6 @@ namespace Happil.Fluent
 		{
 			return new HappilClassBody<TBase>(happilClass: this);
 		}
-
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//public HappilClass Inherit<TBase>(params Func<IHappilClassBody<TBase>, IHappilMember>[] members)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//public HappilClass Inherit(object baseType, params Func<IHappilClassBody<object>, IHappilMember>[] members)
-		//{
-		//	return this;
-		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -80,14 +68,33 @@ namespace Happil.Fluent
 			return m_Members.OfType<TMember>().Where(m => m.Name == name).First();
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilClass Implement(Type interfaceType, params Func<IHappilClassBody<object>, IHappilMember>[] members)
-		//{
-		//	m_TypeBuilder.AddInterfaceImplementation(interfaceType);
-		//	//TODO: add members to member list
-		//	return this;
-		//}
+		public void DefineFactoryMethod(ConstructorInfo constructor, Type[] parameterTypes)
+		{
+			var factoryMethodName = TakeMemberName("FactoryMethod" + (m_FactoryMethods.Count + 1).ToString());
+			var factoryMethod = m_TypeBuilder.DefineMethod(
+				factoryMethodName,
+				MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static,
+				CallingConventions.Standard,
+				typeof(object),
+				parameterTypes);
+
+			var il = factoryMethod.GetILGenerator();
+			il.DeclareLocal(typeof(object));
+
+			for ( int i = 0 ; i < parameterTypes.Length ; i++ )
+			{
+				il.Emit(OpCodes.Ldarg, i);
+			}
+
+			il.Emit(OpCodes.Newobj, constructor);
+			il.Emit(OpCodes.Stloc_0);
+			il.Emit(OpCodes.Ldloc_0);
+			il.Emit(OpCodes.Ret);
+
+			m_FactoryMethods.Add(factoryMethod);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -96,28 +103,13 @@ namespace Happil.Fluent
 		/// </summary>
 		public Type CreateType()
 		{
-			foreach ( var tuple in m_MemberBodyDefinitions )
-			{
-				var member = tuple.Item1;
-				var bodyDefinitionAction = tuple.Item2;
-
-				bodyDefinitionAction();
-
-				if ( m_StatementScopeStack.Count > 0 )
-				{
-					throw new InvalidOperationException(string.Format(
-						"Scope stack is not empty after body definition of member '{0}' ({1}).",
-						member.Name, member.GetType().Name));
-				}
-			}
-
-			foreach ( var member in m_Members )
-			{
-				member.EmitBody();
-			}
+			DefineMemberBodies();
+			EmitMemberBodies();
 
 			m_BuiltType = m_TypeBuilder.CreateType();
-			//TODO: add members to member list
+
+			FixupFactoryMethods();
+			
 			return m_BuiltType;
 		}
 
@@ -128,12 +120,7 @@ namespace Happil.Fluent
 		/// </summary>
 		public Delegate[] GetFactoryMethods()
 		{
-			//TODO:TASK#5 this is a temporary implementation; the real implementation must be Reflection-free as explained here:
-			//Factory method should be delegate to a static method in the generated type
-			//The static method should invoke correct constructor and return the created instance.
-			return new Delegate[] {
-				new Func<object>(() => Activator.CreateInstance(m_BuiltType))
-			};
+			return m_FactoryMethods.Select(CreateFactoryMethodDelegate).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -179,5 +166,71 @@ namespace Happil.Fluent
 				return m_TypeBuilder;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private Delegate CreateFactoryMethodDelegate(MethodInfo factoryMethod)
+		{
+			var parameters = factoryMethod.GetParameters();
+			var openDelegateType = s_DelegatePrototypesByArgumentCount[parameters.Length];
+			var delegateTypeParameters = parameters.Select(p => p.ParameterType).Concat(new[] { factoryMethod.ReturnType });
+			var closedDelegateType = openDelegateType.MakeGenericType(delegateTypeParameters.ToArray());
+
+			return Delegate.CreateDelegate(closedDelegateType, factoryMethod);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void FixupFactoryMethods()
+		{
+			for ( int i = 0 ; i < m_FactoryMethods.Count ; i++ )
+			{
+				var runtimeMethod = m_BuiltType.GetMethod(m_FactoryMethods[i].Name, BindingFlags.Public | BindingFlags.Static);
+				m_FactoryMethods[i] = runtimeMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitMemberBodies()
+		{
+			foreach ( var member in m_Members )
+			{
+				member.EmitBody();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void DefineMemberBodies()
+		{
+			foreach ( var tuple in m_MemberBodyDefinitions )
+			{
+				var member = tuple.Item1;
+				var bodyDefinitionAction = tuple.Item2;
+
+				bodyDefinitionAction();
+
+				if ( m_StatementScopeStack.Count > 0 )
+				{
+					throw new InvalidOperationException(
+						string.Format("Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static readonly Type[] s_DelegatePrototypesByArgumentCount = new Type[] {
+			typeof(Func<>), 
+			typeof(Func<,>), 
+			typeof(Func<,,>), 
+			typeof(Func<,,,>), 
+			typeof(Func<,,,,>), 
+			typeof(Func<,,,,,>), 
+			typeof(Func<,,,,,,>), 
+			typeof(Func<,,,,,,,>), 
+			typeof(Func<,,,,,,,,>)
+		};
 	}
 }

@@ -97,10 +97,10 @@ namespace Happil.UnitTests
 
 		internal interface IConstructors<TBase>
 		{
-			TBase UsingDefaultConstructor();
-			TBase UsingConstructor<T>(T arg);
-			TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2);
-			TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3);
+			TBase UsingDefaultConstructor(int constructorIndex = 0);
+			TBase UsingConstructor<T>(T arg, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -153,28 +153,28 @@ namespace Happil.UnitTests
 
 			#region ICreateObjectSyntax<TBase> Members
 
-			public TBase UsingDefaultConstructor()
+			public TBase UsingDefaultConstructor(int constructorIndex = 0)
+			{
+				return m_Factory.ClassTypeEntry.CreateInstance<TBase>(constructorIndex);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T>(T arg, int constructorIndex = 0)
 			{
 				throw new NotImplementedException();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public TBase UsingConstructor<T>(T arg)
+			public TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0)
 			{
-				throw new NotImplementedException();
+				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2>(constructorIndex, arg1, arg2);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3)
+			public TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0)
 			{
 				throw new NotImplementedException();
 			}

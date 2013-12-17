@@ -19,11 +19,11 @@ namespace Happil.Fluent
 
 		IHappilClassBody<TBase> DefaultConstructor();
 
-		IHappilClassBody<TBase> Constructor(Action<IHappilMethodBodyBase> body);
-		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilMethodBodyBase, HappilArgument<TArg1>> body);
-		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
+		IHappilClassBody<TBase> Constructor(Action<IHappilConstructorBody> body);
+		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilConstructorBody, HappilArgument<TArg1>> body);
+		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
 		IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
-			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
 
 		IHappilClassBody<TBase> Property<T>(
 			Expression<Func<TBase, T>> selector,

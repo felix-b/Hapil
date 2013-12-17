@@ -41,7 +41,12 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			//TODO: push operand onto stack
+			if ( m_Operand != null )
+			{
+				((IHappilOperandInternals)m_Operand).EmitTarget(il);
+				((IHappilOperandInternals)m_Operand).EmitLoad(il);
+			}
+
 			il.Emit(OpCodes.Ret);
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Happil.Fluent;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ namespace Happil.UnitTests.Fluent
 	[TestFixture]
 	public class ConstructorTests : ClassPerTestCaseFixtureBase
 	{
-		[Test, Ignore("Not yet completed")]
+		[Test]
 		public void CanCreateObjectUsingNonDefaultConstructor()
 		{
 			//-- Arrange
@@ -21,15 +22,16 @@ namespace Happil.UnitTests.Fluent
 			DeriveClassFrom<TestBaseOne>()
 				.Field<int>("m_IntField", out intField)
 				.Field<string>("m_StringField", out stringField)
-				//.Constructor<int, string>((ctor, intValue, stringValue) => {
-				//	intField.Assign(intValue);
-				//	stringField.Assign(stringValue);
-				//})
+				.Constructor<int, string>((ctor, intValue, stringValue) => {
+					ctor.Base();
+					intField.Assign(intValue);
+					stringField.Assign(stringValue);
+				})
 				.Implement<IMyFieldValues>()
-				.Function<int>(x => x.GetIntFieldValue, f => {
+				.Function<int>(intf => intf.GetIntFieldValue, f => {
 					f.Return(intField);
 				})
-				.Function<string>(x => x.GetStringFieldValue, f => {
+				.Function<string>(intf => intf.GetStringFieldValue, f => {
 					f.Return(stringField);
 				});
 
@@ -49,6 +51,43 @@ namespace Happil.UnitTests.Fluent
 		{
 			int GetIntFieldValue();
 			string GetStringFieldValue();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class MyFieldValuesExample : TestBaseOne, IMyFieldValues
+		{
+			private int m_IntField;
+			private string m_StringField;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public MyFieldValuesExample(int intValue, string stringValue)
+			{
+				m_IntField = intValue;
+				m_StringField = stringValue;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int GetIntFieldValue()
+			{
+				return m_IntField;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string GetStringFieldValue()
+			{
+				return m_StringField;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static IMyFieldValues FactoryMethod1(int arg1, string arg2)
+			{
+				return new MyFieldValuesExample(arg1, arg2);
+			}
 		}
 	}
 }

@@ -73,42 +73,42 @@ namespace Happil
 
 			public T CreateInstance<T>(int factoryMethodIndex = 0)
 			{
-				return ((Func<T>)FactoryMethods[factoryMethodIndex])();
+				return (T)((Func<object>)FactoryMethods[factoryMethodIndex])();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public T CreateInstance<T, TA1>(int factoryMethodIndex, TA1 arg1)
 			{
-				return ((Func<TA1, T>)FactoryMethods[factoryMethodIndex])(arg1);
+				return (T)((Func<TA1, object>)FactoryMethods[factoryMethodIndex])(arg1);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public T CreateInstance<T, TA1, TA2>(int factoryMethodIndex, TA1 arg1, TA2 arg2)
 			{
-				return ((Func<TA1, TA2, T>)FactoryMethods[factoryMethodIndex])(arg1, arg2);
+				return (T)((Func<TA1, TA2, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public T CreateInstance<T, TA1, TA2, TA3>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3)
 			{
-				return ((Func<TA1, TA2, TA3, T>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3);
+				return (T)((Func<TA1, TA2, TA3, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public T CreateInstance<T, TA1, TA2, TA3, TA4>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3, TA4 arg4)
 			{
-				return ((Func<TA1, TA2, TA3, TA4, T>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4);
+				return (T)((Func<TA1, TA2, TA3, TA4, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public T CreateInstance<T, TA1, TA2, TA3, TA4, TA5>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3, TA4 arg4, TA5 arg5)
 			{
-				return ((Func<TA1, TA2, TA3, TA4, TA5, T>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4, arg5);
+				return (T)((Func<TA1, TA2, TA3, TA4, TA5, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4, arg5);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

@@ -40,4 +40,18 @@ namespace Happil.Fluent
 	{
 		void Return();
 	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IHappilConstructorBody : IHappilMethodBodyBase
+	{
+		void Base();
+		void Base<TArg1>(IHappilOperand<TArg1> arg1);
+		void Base<TArg1, TArg2>(IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2);
+		void Base<TArg1, TArg2, TArg3>(IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3);
+		void This();
+		void This<TArg1>(IHappilOperand<TArg1> arg1);
+		void This<TArg1, TArg2>(IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2);
+		void This<TArg1, TArg2, TArg3>(IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3);
+	}
 }

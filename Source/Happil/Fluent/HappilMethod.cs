@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using Happil.Expressions;
 using Happil.Statements;
@@ -19,16 +20,23 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilMethod(HappilClass happilClass, MethodInfo declaration)
+			: this(happilClass)
 		{
-			m_HappilClass = happilClass;
 			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
 				happilClass.TakeMemberName(declaration.Name),
-				GetMethodAttributesFor(declaration));
-			m_Statements = new List<IHappilStatement>();
+				GetMethodAttributesFor(declaration),
+				declaration.ReturnType, 
+				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
-			//TODO: copy parameters and return type definition from declaration
-			
 			happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected HappilMethod(HappilClass happilClass)
+		{
+			m_HappilClass = happilClass;
+			m_Statements = new List<IHappilStatement>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -115,14 +123,14 @@ namespace Happil.Fluent
 
 		void IHappilMember.EmitBody()
 		{
-			var il = m_MethodBuilder.GetILGenerator();
+			var il = GetILGenerator();
 
 			foreach ( var statement in m_Statements )
 			{
 				statement.Emit(il);
 			}
 
-			if ( m_MethodBuilder.ReturnType == null )
+			if ( IsVoidMethod() )
 			{
 				il.Emit(OpCodes.Ret);
 			}
@@ -134,7 +142,7 @@ namespace Happil.Fluent
 		{
 			get
 			{
-				return m_MethodBuilder.Name;
+				return GetName();
 			}
 		}
 
@@ -179,6 +187,35 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected virtual ILGenerator GetILGenerator()
+		{
+			return m_MethodBuilder.GetILGenerator();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual Type GetReturnType()
+		{
+			return m_MethodBuilder.ReturnType;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual string GetName()
+		{
+			return m_MethodBuilder.Name;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected bool IsVoidMethod()
+		{
+			var returnType = GetReturnType();
+			return (returnType == null || returnType == typeof(void));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration)
 		{
 			var attributes =
@@ -211,7 +248,8 @@ namespace Happil.Fluent
 
 		public void Return(IHappilOperand<TReturn> operand)
 		{
-			throw new NotImplementedException();
+			//TODO: verify that current scope belongs to this method
+			HappilClass.CurrentScope.AddStatement(new ReturnStatement<TReturn>(operand));
 		}
 
 		#endregion

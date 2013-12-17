@@ -126,8 +126,7 @@ namespace Happil.UnitTests.Milestones
 				var key = new HappilTypeKey(primaryInterface: typeof(T));
 				var type = base.GetOrBuildType(key);
 
-				//TODO:TASK#5 replace the following line with 'return type.CreateInstance<T>()'
-				return (T)type.CreateInstance<object>();
+				return type.CreateInstance<T>();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -136,8 +135,9 @@ namespace Happil.UnitTests.Milestones
 			{
 				return Module.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
 					.Implement(key.PrimaryInterface)
+					.DefaultConstructor()
 					.Methods(m => {
-						//TODO: uncomment this
+						//TODO:MILESTONE-ARSENIC uncomment this
 						//m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
 					});
 			}

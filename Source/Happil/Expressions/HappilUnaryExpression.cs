@@ -10,7 +10,7 @@ namespace Happil.Expressions
 	internal class HappilUnaryExpression<TOperand, TExpr> : HappilExpression<TExpr>
 	{
 		private readonly IUnaryOperator<TOperand> m_Operator;
-		private readonly IHappilOperand<TOperand> m_Operand;
+		private readonly IHappilOperandInternals m_Operand;
 		private readonly UnaryOperatorPosition m_Position;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ namespace Happil.Expressions
 			UnaryOperatorPosition position = UnaryOperatorPosition.Prefix)
 			: base(ownerMethod)
 		{
-			m_Operand = operand;
+			m_Operand = (IHappilOperandInternals)operand;
 			m_Operator = @operator;
 			m_Position = position;
 
@@ -55,7 +55,7 @@ namespace Happil.Expressions
 		{
 			get
 			{
-				return (base.OwnerClass ?? ((IHappilOperandInternals)m_Operand).OwnerClass);
+				return (base.OwnerClass ?? m_Operand.OwnerClass);
 			}
 		}
 
@@ -65,14 +65,31 @@ namespace Happil.Expressions
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			// expression has no target
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			var dontLeaveValueOnStack = (m_Operator as IDontLeaveValueOnStack);
+
+			if ( ShouldLeaveValueOnStack )
+			{
+				EnsureOperandLeavesValueOnStack(m_Operand as IHappilExpression);
+
+				if ( dontLeaveValueOnStack != null )
+				{
+					dontLeaveValueOnStack.ForceLeaveFalueOnStack();
+				}
+			}
+
+			m_Operator.Emit(il, (IHappilOperand<TOperand>)m_Operand);
+
+			if ( !ShouldLeaveValueOnStack && dontLeaveValueOnStack == null )
+			{
+				il.Emit(OpCodes.Pop);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

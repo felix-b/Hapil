@@ -8,35 +8,54 @@ namespace Happil.Fluent
 {
 	public class HappilArgument<T> : HappilAssignable<T>
 	{
-		private readonly string m_Name;
+		private readonly byte m_Index;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilArgument(string name, HappilMethod ownerMethod)
+		internal HappilArgument(HappilMethod ownerMethod, byte index)
 			: base(ownerMethod)
 		{
-			m_Name = name;
+			if ( index < 1 )
+			{
+				throw new ArgumentOutOfRangeException("index", "Argument index is 1-based.");
+			}
+
+			m_Index = index;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override string ToString()
 		{
-			return string.Format("Arg<{0}>{{{1}}}", typeof(T).Name, m_Name);
+			return string.Format("Arg<{0}>{{#{1}}}", typeof(T).Name, m_Index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			// arguments have no target
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			switch ( m_Index )
+			{
+				case 1:
+					il.Emit(OpCodes.Ldarg_1);
+					break;
+				case 2:
+					il.Emit(OpCodes.Ldarg_2);
+					break;
+				case 3:
+					il.Emit(OpCodes.Ldarg_3);
+					break;
+				default:
+					il.Emit(OpCodes.Ldarg_S, m_Index);
+					break;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

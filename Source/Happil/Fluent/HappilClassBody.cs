@@ -115,39 +115,69 @@ namespace Happil.Fluent
 
 		public IHappilClassBody<TBase> DefaultConstructor()
 		{
-			throw new NotImplementedException();
+			return DefineConstructor(ctor => ctor.Base());
 		}
 
 		public IHappilClassBody<TBase> Constructor(
-			Action<IHappilMethodBodyBase> body)
+			Action<IHappilConstructorBody> body)
 		{
-			throw new NotImplementedException();
+			return DefineConstructor(body);
 		}
 
 		public IHappilClassBody<TBase> Constructor<TArg1>(
-			Action<IHappilMethodBodyBase, HappilArgument<TArg1>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>> body)
 		{
-			throw new NotImplementedException();
+			return DefineConstructor(
+				(ctor) => body(ctor, new HappilArgument<TArg1>(ctor, 1)),
+				typeof(TArg1));
 		}
 
 		public IHappilClassBody<TBase> Constructor<TArg1, TArg2>(
-			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
 		{
-			throw new NotImplementedException();
+			return DefineConstructor(
+				(ctor) => body(ctor, new HappilArgument<TArg1>(ctor, 1), new HappilArgument<TArg2>(ctor, 2)),
+				typeof(TArg1), typeof(TArg2));
+
+			//var argumentTypes = new[] { typeof(TArg1), typeof(TArg2) };
+			//var constructorMember = new HappilConstructor(m_HappilClass, argumentTypes);
+
+			//m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+			//	using ( constructorMember.CreateBodyScope() )
+			//	{
+			//		body(constructorMember, new HappilArgument<TArg1>(constructorMember, 1), new HappilArgument<TArg2>(constructorMember, 2));
+			//	}
+			//});
+
+			//m_HappilClass.DefineFactoryMethod(constructorMember.ConstructorInfo, argumentTypes);
+			//return this;
+		}
+
+		private IHappilClassBody<TBase> DefineConstructor(Action<HappilConstructor> invokeBodyDefinition, params Type[] argumentTypes)
+		{
+			var constructorMember = new HappilConstructor(m_HappilClass, argumentTypes);
+
+			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+				using ( constructorMember.CreateBodyScope() )
+				{
+					invokeBodyDefinition(constructorMember);
+				}
+			});
+
+			m_HappilClass.DefineFactoryMethod(constructorMember.ConstructorInfo, argumentTypes);
+			return this;
 		}
 
 		public IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
-			Action<IHappilMethodBodyBase, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
 		{
 			throw new NotImplementedException();
 		}
 
 		public IHappilClassBody<TBase> VoidMethod(Expression<Func<TBase, Action>> method, Action<IVoidHappilMethodBody> body)
 		{
-			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)method.Body).Operand);
-			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			var methodMember = new VoidHappilMethod(m_HappilClass, GetMethodInfoFromLambda(method));
 			
-			var methodMember = new VoidHappilMethod(m_HappilClass, methodDeclaration);
 			m_HappilClass.RegisterMember(
 				methodMember,
 				bodyDefinition: () => DefineMethodBodyInScope(methodMember, body));
@@ -172,7 +202,16 @@ namespace Happil.Fluent
 
 		public IHappilClassBody<TBase> Function<TReturn>(Expression<Func<TBase, Func<TReturn>>> method, Action<IHappilMethodBody<TReturn>> body)
 		{
-			throw new NotImplementedException();
+			var methodMember = new HappilMethod<TReturn>(m_HappilClass, GetMethodInfoFromLambda(method));
+
+			m_HappilClass.RegisterMember(methodMember, bodyDefinition: () => {
+				using ( methodMember.CreateBodyScope() )
+				{
+					body(methodMember);
+				}
+			});					
+
+			return this;
 		}
 
 		public IHappilClassBody<TBase> Function<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> method, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
@@ -190,9 +229,13 @@ namespace Happil.Fluent
 			foreach ( var methodInfo in m_ReflectedType.GetMethods().Where(m => m.ReturnType == typeof(void)) )
 			{
 				var method = new VoidHappilMethod(m_HappilClass, methodInfo);
-				m_HappilClass.RegisterMember(
-					method, 
-					bodyDefinition: () => DefineMethodBodyInScope(method, body));
+				
+				m_HappilClass.RegisterMember(method, bodyDefinition: () => {
+					using ( method.CreateBodyScope() )
+					{
+						body(method);
+					}
+				});
 			}
 
 			return this;
@@ -219,6 +262,15 @@ namespace Happil.Fluent
 			{
 				userDefinition((T)(object)method);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private static MethodInfo GetMethodInfoFromLambda(LambdaExpression lambda)
+		{
+			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
+			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			return methodDeclaration;
 		}
 	}
 }
