@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -28,20 +29,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static implicit operator HappilConstant<T>(T value)
-		{
-			return new HappilConstant<T>(value);			
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static implicit operator T(HappilConstant<T> operand)
-		{
-			return operand.m_Value;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		protected override void OnEmitTarget(ILGenerator il)
 		{
 			// constants have no target
@@ -51,8 +38,20 @@ namespace Happil.Fluent
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			//TODO: the following line only works for Int32; need to provide a general solution.
-			il.Emit(OpCodes.Ldc_I4, (int)(object)m_Value);
+			var convertible = m_Value as IConvertible;
+
+			if ( convertible != null )
+			{
+				EmitConvertible(il, convertible);
+			}
+			else if ( object.ReferenceEquals(null, m_Value) )
+			{
+				EmitNull(il);
+			}
+			else
+			{
+				throw CreateTypeNotSupportedException();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,6 +66,55 @@ namespace Happil.Fluent
 		protected override void OnEmitAddress(ILGenerator il)
 		{
 			throw new NotSupportedException("Constants are not assignabble.");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitConvertible(ILGenerator il, IConvertible convertible)
+		{
+			var formatProvider = CultureInfo.CurrentCulture;
+
+			switch ( convertible.GetTypeCode() )
+			{
+				case TypeCode.Int32:
+					il.Emit(OpCodes.Ldc_I4, convertible.ToInt32(formatProvider));
+					break;
+				case TypeCode.String:
+					il.Emit(OpCodes.Ldstr, convertible.ToString());
+					break;
+				default:
+					throw CreateTypeNotSupportedException();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitNull(ILGenerator il)
+		{
+			il.Emit(OpCodes.Ldnull);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private Exception CreateTypeNotSupportedException()
+		{
+			return new NotSupportedException(string.Format(
+				"Constants of type '{0}' are not supported.",
+				typeof(T).FullName));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static implicit operator HappilConstant<T>(T value)
+		{
+			return new HappilConstant<T>(value);			
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static implicit operator T(HappilConstant<T> operand)
+		{
+			return operand.m_Value;
 		}
 	}
 }

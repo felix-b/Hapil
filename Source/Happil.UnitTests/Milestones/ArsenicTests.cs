@@ -9,40 +9,20 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Milestones
 {
 	[TestFixture]
-	public class ArsenicTests
+	public class ArsenicTests : ClassPerTestCaseFixtureBase
 	{
-		private const string DynamicAssemblyName = "Happil.EmittedTypes.ArsenicTests";
+		private const string DynamicAssemblyName = "Happil.UnitTests.EmittedByArsenicTests";
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private TextWriter m_SaveConsoleOut;
 		private StringWriter m_TestConsoleOut;
-		private HappilModule m_Module;
-		private ArsenicTestFactory m_FactoryUnderTest;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[TestFixtureSetUp]
-		public void TestFixtureSetUp()
-		{
-			m_Module = new HappilModule(DynamicAssemblyName, allowSave: true);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			m_Module.SaveAssembly();
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_FactoryUnderTest = new ArsenicTestFactory(m_Module);
-
 			m_SaveConsoleOut = Console.Out;
 			m_TestConsoleOut = new StringWriter();
 			Console.SetOut(m_TestConsoleOut);
@@ -62,9 +42,18 @@ namespace Happil.UnitTests.Milestones
 		[Test]
 		public void CanImplementInterfaceWithVoidParameterlessMethods()
 		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.Implement<IArsenicTestInterface>()
+				.DefaultConstructor()
+				.Methods(m => {
+					m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
+				});
+
 			//-- Act
 
-			IArsenicTestInterface obj = m_FactoryUnderTest.CreateObject<IArsenicTestInterface>();
+			IArsenicTestInterface obj = base.CreateClassInstanceAs<IArsenicTestInterface>().UsingDefaultConstructor();
 
 			obj.First();
 			obj.Second();
@@ -80,12 +69,21 @@ namespace Happil.UnitTests.Milestones
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void CanEmitVoidMethodsThatPrintTheirNameToConsole()
 		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.Implement<IArsenicTestInterface>()
+				.DefaultConstructor()
+				.Methods(m => {
+					m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
+				});
+
 			//-- Act
 
-			var obj = m_FactoryUnderTest.CreateObject<IArsenicTestInterface>();
+			IArsenicTestInterface obj = base.CreateClassInstanceAs<IArsenicTestInterface>().UsingDefaultConstructor();
 
 			obj.First();
 			obj.Second();
@@ -108,39 +106,6 @@ namespace Happil.UnitTests.Milestones
 			void First();
 			void Second();
 			void Third();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private class ArsenicTestFactory : HappilFactoryBase
-		{
-			public ArsenicTestFactory(HappilModule module)
-				: base(module)
-			{
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public T CreateObject<T>()
-			{
-				var key = new HappilTypeKey(primaryInterface: typeof(T));
-				var type = base.GetOrBuildType(key);
-
-				return type.CreateInstance<T>();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
-			{
-				return Module.DefineClass("ArsenicTests.Impl" + key.PrimaryInterface.Name)
-					.Implement(key.PrimaryInterface)
-					.DefaultConstructor()
-					.Methods(m => {
-						//TODO:MILESTONE-ARSENIC uncomment this
-						//m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
-					});
-			}
 		}
 	}
 }

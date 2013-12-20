@@ -18,7 +18,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[TestFixtureSetUp]
-		public void FixtureSetUp()
+		public void BaseFixtureSetUp()
 		{
 			m_Module = new HappilModule(
 				"Happil.UnitTests.EmittedBy" + this.GetType().Name,
@@ -29,7 +29,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[TestFixtureTearDown]
-		public void FixtureTearDown()
+		public void BaseFixtureTearDown()
 		{
 			try
 			{
@@ -44,7 +44,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[SetUp]
-		public void SetUp()
+		public void BaseSetUp()
 		{
 			m_Factory = null;
 		}

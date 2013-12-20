@@ -15,6 +15,7 @@ namespace Happil.Fluent
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly MethodBuilder m_MethodBuilder;
+		private readonly MethodInfo m_Declaration;
 		private readonly List<IHappilStatement> m_Statements;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,6 +23,7 @@ namespace Happil.Fluent
 		public HappilMethod(HappilClass happilClass, MethodInfo declaration)
 			: this(happilClass)
 		{
+			m_Declaration = declaration;
 			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
 				happilClass.TakeMemberName(declaration.Name),
 				GetMethodAttributesFor(declaration),
@@ -66,8 +68,31 @@ namespace Happil.Fluent
 
 		public void EmitFromLambda(Expression<Action> lambda)
 		{
-			throw new NotImplementedException();
+			var callInfo = (MethodCallExpression)lambda.Body;
+			var methodInfo = callInfo.Method;
+			var arguments = callInfo.Arguments.Select(Helpers.GetLambdaArgumentAsConstant).ToArray();
+			var happilExpression = new HappilUnaryExpression<object, object>(
+				ownerMethod: this, 
+				@operator: new UnaryOperators.OperatorCall<object>(methodInfo, arguments), 
+				operand: null);
+
+			//var arguments = new IHappilOperandInternals[callInfo.Arguments.Count];
+
+			//for ( int i = 0 ; i < arguments.Length ; i++ )
+			//{
+			//	//var argument = callInfo.Arguments[i];
+
+
+			//	//Expression<Func<object>> argumentLambda = Expression.Lambda<Func<object>>(argument);
+			//	//var argumentValueFunc = argumentLambda.Compile();
+			//	//var argumentValue = argumentValueFunc();
+
+			//	arguments[i] = Helpers.GetLambdaArgumentAsConstant(callInfo.Arguments[i]);
+			//}
+
+			//m_HappilClass.CurrentScope.AddStatement();
 		}
+
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,23 +110,53 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodInfo MethodInfo
+		public virtual MethodInfo MethodInfo
 		{
-			get { throw new NotImplementedException(); }
+			get
+			{
+				if ( m_Declaration != null )
+				{
+					return (MethodInfo)m_MethodBuilder;
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public int ArgumentCount
+		public virtual int ArgumentCount
 		{
-			get { throw new NotImplementedException(); }
+			get
+			{
+				if ( m_Declaration != null )
+				{
+					return m_Declaration.GetParameters().Length;
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Type ReturnType
+		public virtual Type ReturnType
 		{
-			get { throw new NotImplementedException(); }
+			get
+			{
+				if ( m_Declaration != null )
+				{
+					return m_Declaration.ReturnType;
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 		}
 
 		#endregion

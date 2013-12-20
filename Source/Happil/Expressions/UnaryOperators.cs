@@ -153,27 +153,7 @@ namespace Happil.Expressions
 
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				((IHappilOperandInternals)operand).EmitTarget(il);
-				((IHappilOperandInternals)operand).EmitLoad(il);
-
-				foreach ( var argument in m_Arguments )
-				{
-					argument.EmitTarget(il);
-					argument.EmitLoad(il);
-				}
-
-				var methodInfo = (m_Method as MethodInfo);
-				var constructorInfo = (m_Method as ConstructorInfo);
-				var callOpcode = (m_Method.IsVirtual || m_Method.DeclaringType.IsInterface ? OpCodes.Callvirt : OpCodes.Call);
-
-				if ( methodInfo != null )
-				{
-					il.Emit(callOpcode, methodInfo);
-				}
-				else
-				{
-					il.Emit(callOpcode, constructorInfo);
-				}
+				Helpers.EmitCall(il, (IHappilOperandInternals)operand, m_Method, m_Arguments);
 
 				if ( !IsVoidCall() && !m_ShouldLeaveValueOnStack )
 				{

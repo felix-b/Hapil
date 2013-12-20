@@ -29,30 +29,7 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			if ( m_Target != null )
-			{
-				m_Target.EmitTarget(il);
-				m_Target.EmitLoad(il);
-			}
-
-			foreach ( var argument in m_Arguments )
-			{
-				argument.EmitTarget(il);
-				argument.EmitLoad(il);
-			}
-
-			var methodInfo = (m_Method as MethodInfo);
-			var constructorInfo = (m_Method as ConstructorInfo);
-			var opCode = (m_Method.IsVirtual || m_Method.DeclaringType.IsInterface ? OpCodes.Callvirt : OpCodes.Call);
-
-			if ( methodInfo != null )
-			{
-				il.Emit(opCode, methodInfo);
-			}
-			else
-			{
-				il.Emit(opCode, constructorInfo);
-			}
+			Helpers.EmitCall(il, m_Target, m_Method, m_Arguments);
 		}
 
 		#endregion

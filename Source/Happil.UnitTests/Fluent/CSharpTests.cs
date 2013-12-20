@@ -99,7 +99,6 @@ namespace Happil.UnitTests.Fluent
 			Console.WriteLine(expr3.ToString());
 		}
 
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
@@ -125,6 +124,31 @@ namespace Happil.UnitTests.Fluent
 			Assert.That(method1.Name, Is.EqualTo("WriteLine"));
 			Assert.That(method1.DeclaringType, Is.SameAs(typeof(Console)));
 			Assert.That(argument2Value, Is.EqualTo("#,###"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanEvaluateArgumentInLambdaExpression()
+		{
+			//-- Arrange
+
+			int x = 1234;
+			Expression<Action> lambda = () => Console.WriteLine(x.ToString("#,###"));
+
+			//-- Act
+
+			var call1 = (MethodCallExpression)lambda.Body;
+			var method1 = call1.Method;
+			var argument1 = call1.Arguments[0];
+
+			Expression<Func<object>> argument1Lambda = Expression.Lambda<Func<object>>(argument1);
+			var argument1Delegate = argument1Lambda.Compile();
+			var argument1Value = argument1Delegate();
+
+			//-- Assert
+
+			Assert.That(argument1Value, Is.EqualTo("1,234"));
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
