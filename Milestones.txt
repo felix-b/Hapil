@@ -1,7 +1,7 @@
 http://www.lenntech.com/periodic/name/alphabetic.htm
 
-Arsenic
-Bismuth
+Arsenic [closed]
+Bismuth [current]
 Cesium
 Dubnium
 Europium
