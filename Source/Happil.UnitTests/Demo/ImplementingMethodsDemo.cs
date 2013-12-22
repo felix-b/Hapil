@@ -30,8 +30,8 @@ namespace Happil.UnitTests.Demo
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
 				return Module.DefineClass(key, namespaceName: "ImplementingMethodsDemo")
-					.Implement(key.PrimaryInterface)
-					.Methods(m => {
+					.ImplementInterface(key.PrimaryInterface)
+					.VoidMethods().Implement(m => {
 						var methodName = m.Local<string>("methodName");
 						methodName.Assign(m.MethodInfo.Name);
 						m.EmitFromLambda(() => Console.WriteLine(methodName));

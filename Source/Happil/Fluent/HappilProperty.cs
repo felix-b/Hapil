@@ -33,11 +33,6 @@ namespace Happil.Fluent
 			}
 		}
 
-		internal HappilPropertyGetter Get(Action<IHappilMethodBody<int>> action)
-		{
-			throw new NotImplementedException();
-		}
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(ILGenerator il)

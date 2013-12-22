@@ -27,11 +27,11 @@ namespace Happil.UnitTests.Fluent
 					intField.Assign(intValue);
 					stringField.Assign(stringValue);
 				})
-				.Implement<IMyFieldValues>()
-				.Function<int>(intf => intf.GetIntFieldValue, f => {
+				.ImplementInterface<IMyFieldValues>()
+				.Method<int>(intf => intf.GetIntFieldValue).Implement(f => {
 					f.Return(intField);
 				})
-				.Function<string>(intf => intf.GetStringFieldValue, f => {
+				.Method<string>(intf => intf.GetStringFieldValue).Implement(f => {
 					f.Return(stringField);
 				});
 

@@ -42,6 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="MemberInfoExtensions.cs" />
+    <Compile Include="Selectors\EventSelectors.cs" />
+    <Compile Include="Selectors\MethodSelectors.cs" />
+    <Compile Include="Selectors\PropertySelectors.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
@@ -78,6 +83,7 @@
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Fluent\IHappilPropertyBody.cs" />
     <Compile Include="Statements\CallOperand.cs" />
     <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\CompositeStatement.cs" />

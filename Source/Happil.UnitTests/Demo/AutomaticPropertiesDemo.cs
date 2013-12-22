@@ -23,8 +23,8 @@ namespace Happil.UnitTests.Demo
 		public void SuperDuperHappyPath()
 		{
 			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl")
-				.Implement<IDemoInterface>()
-				.AutomaticProperties();
+				.ImplementInterface<IDemoInterface>()
+				.AllProperties().ImplementAutomatic();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,29 +33,29 @@ namespace Happil.UnitTests.Demo
 		public void MemberByMember()
 		{
 			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl")
-				.Implement<IDemoInterface>()
-				.Property(intf => intf.Number,
+				.ImplementInterface<IDemoInterface>()
+				.Property(intf => intf.Number).Implement(
+					prop => prop.Get(m => {
+						m.Return(prop.BackingField);
+					}),
+					prop => prop.Set((m, value) => {
+						prop.BackingField.Assign(value);
+					})
+				)
+				.Property(intf => intf.Text).Implement(
 					prop => prop.Get(
-						x => x.Return(prop.BackingField)
+						(m) => m.Return(prop.BackingField)
 					),
 					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument<int>("value"))
+						(m, value) => prop.BackingField.Assign(value)
 					)
 				)
-				.Property(intf => intf.Text,
+				.Property(intf => intf.OptionalInterval).Implement(
 					prop => prop.Get(
-						x => x.Return(prop.BackingField)
+						(m) => m.Return(prop.BackingField)
 					),
 					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument<string>("value"))
-					)
-				)
-				.Property(intf => intf.OptionalInterval,
-					prop => prop.Get(
-						x => x.Return(prop.BackingField)
-					),
-					prop => prop.Set(
-						x => prop.BackingField.Assign(x.Argument<TimeSpan?>("value"))
+						(m, value) => prop.BackingField.Assign(value)
 					)
 				);
 		}
@@ -66,14 +66,14 @@ namespace Happil.UnitTests.Demo
 		public void MultipleMembersByTemplate()
 		{
 			m_FactoryUnderTest.DefineClass("Happil.Demo.AutomaticProperties.Impl")
-				.Implement<IDemoInterface>()
-				.AutomaticProperties(where: prop => !IsNullableProperty(prop))
-				.Properties<object>(where: IsNullableProperty,
+				.ImplementInterface<IDemoInterface>()
+				.AllProperties(where: prop => !IsNullableProperty(prop)).ImplementAutomatic()
+				.AllProperties(where: IsNullableProperty).Implement(
 					getter: prop => prop.Get(
-						x => x.Return(prop.BackingField)
+						(m) => m.Return(prop.BackingField)
 					),
 					setter: prop => prop.Set(
-						x => x.Throw<InvalidOperationException>("Nullable values cannot be set on this object")
+						(m, value) => m.Throw<InvalidOperationException>("Nullable values cannot be set on this object")
 					)
 				);
 		}

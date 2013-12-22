@@ -45,9 +45,9 @@ namespace Happil.UnitTests.Milestones
 			//-- Arrange
 
 			DeriveClassFrom<object>()
-				.Implement<IArsenicTestInterface>()
+				.ImplementInterface<IArsenicTestInterface>()
 				.DefaultConstructor()
-				.Methods(m => {
+				.VoidMethods().Implement(m => {
 					m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
 				});
 
@@ -75,9 +75,9 @@ namespace Happil.UnitTests.Milestones
 			//-- Arrange
 
 			DeriveClassFrom<object>()
-				.Implement<IArsenicTestInterface>()
+				.ImplementInterface<IArsenicTestInterface>()
 				.DefaultConstructor()
-				.Methods(m => {
+				.VoidMethods().Implement(m => {
 					m.EmitFromLambda(() => Console.WriteLine(m.MethodInfo.Name));
 				});
 

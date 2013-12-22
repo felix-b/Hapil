@@ -108,7 +108,7 @@ namespace Happil.UnitTests
 			{
 				return Module.DefineClass(
 					"HappilFactoryBaseTests.Impl" + key.PrimaryInterface.Name, key.BaseType)
-					.Implement(key.PrimaryInterface)
+					.ImplementInterface(key.PrimaryInterface)
 					.DefaultConstructor();
 			}
 		}

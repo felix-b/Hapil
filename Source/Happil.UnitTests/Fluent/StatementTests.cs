@@ -55,7 +55,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
+			m_ClassBody.Method(cls => cls.VirtualVoidMethod).Implement(m => {
 				field1.Assign(field2);
 			});
 
@@ -82,7 +82,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
+			m_ClassBody.Method(cls => cls.VirtualVoidMethod).Implement(m => {
 				field1.Assign(const1);
 			});
 
@@ -109,7 +109,7 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			m_ClassBody.VoidMethod(cls => cls.VirtualVoidMethod, m => {
+			m_ClassBody.Method(cls => cls.VirtualVoidMethod).Implement(m => {
 				field1.Assign(field2 + 123);
 			});
 

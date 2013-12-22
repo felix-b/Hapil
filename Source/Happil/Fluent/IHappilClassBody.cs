@@ -4,81 +4,55 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Happil.Selectors;
 
 namespace Happil.Fluent
 {
 	public interface IHappilClassBody<TBase> : IHappilClassDefinition
 	{
 		IHappilClassBody<T> AsBase<T>();
-		IHappilClassBody<TBase> Implement(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
-		IHappilClassBody<TInterface> Implement<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
-		IHappilClassBody<TInterface> Implement<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
+		IHappilClassBody<TBase> ImplementInterface(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
+		IHappilClassBody<TInterface> ImplementInterface<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
+		IHappilClassBody<TInterface> ImplementInterface<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 
 		HappilField<T> Field<T>(string name);
 		IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field);
 
 		IHappilClassBody<TBase> DefaultConstructor();
-
 		IHappilClassBody<TBase> Constructor(Action<IHappilConstructorBody> body);
 		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilConstructorBody, HappilArgument<TArg1>> body);
 		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
 		IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
 			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
 
-		IHappilClassBody<TBase> Property<T>(
-			Expression<Func<TBase, T>> selector,
-			Func<HappilProperty<T>, HappilPropertyGetter> getter,
-			Func<HappilProperty<T>, HappilPropertySetter> setter = null);
+		MethodSelectors.Void<TBase> Method(Expression<Func<TBase, Action>> method);
+		MethodSelectors.Void1Arg<TBase, TArg1> Method<TArg1>(Expression<Func<TBase, Action<TArg1>>> method);
+		MethodSelectors.Void2Args<TBase, TArg1, TArg2> Method<TArg1, TArg2>(Expression<Func<TBase, Action<TArg1, TArg2>>> method);
+		MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3> Method<TArg1, TArg2, TArg3>(Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method);
+		MethodSelectors.Functions<TBase, TReturn> Method<TReturn>(Expression<Func<TBase, Func<TReturn>>> function);
+		MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> Method<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> function);
+		MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> Method<TArg1, TArg2, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> function);
+		MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> Method<TArg1, TArg2, TArg3, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TArg3, TReturn>>> function);
+		MethodSelectors.Untyped<TBase> AllMethods(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Void<TBase> VoidMethods(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Void1Arg<TBase, TArg1> VoidMethods<TArg1>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Void2Args<TBase, TArg1, TArg2> VoidMethods<TArg1, TArg2>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3> VoidMethods<TArg1, TArg2, TArg3>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Functions<TBase, TReturn> NonVoidMethods<TReturn>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> NonVoidMethods<TArg1, TReturn>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> NonVoidMethods<TArg1, TArg2, TReturn>(Func<MethodInfo, bool> where = null);
+		MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> NonVoidMethods<TArg1, TArg2, TArg3, TReturn>(Func<MethodInfo, bool> where = null);
 
-		IHappilClassBody<TBase> Properties<T>(
-			Func<HappilProperty<T>, HappilPropertyGetter> getter,
-			Func<HappilProperty<T>, HappilPropertySetter> setter = null);
+		PropertySelectors.Typed<TBase, TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property);
+		PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>();
+		PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>();
+		PropertySelectors.Untyped<TBase> AllProperties(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Typed<TBase, TProperty> Properties<TProperty>(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> Properties<TIndex, TProperty>(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> Properties<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null);
 
-		IHappilClassBody<TBase> Properties<T>(
-			Func<PropertyInfo, bool> where,
-			Func<HappilProperty<T>, HappilPropertyGetter> getter,
-			Func<HappilProperty<T>, HappilPropertySetter> setter = null);
-
-		IHappilClassBody<TBase> AutomaticProperties();
-
-		IHappilClassBody<TBase> AutomaticProperties(Func<PropertyInfo, bool> where);
-
-		IHappilClassBody<TBase> VoidMethod(
-			Expression<Func<TBase, Action>> method, 
-			Action<IVoidHappilMethodBody> body);
-		
-		IHappilClassBody<TBase> VoidMethod<TArg1>(
-			Expression<Func<TBase, Action<TArg1>>> method,
-			Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body);
-
-		IHappilClassBody<TBase> VoidMethod<TArg1, TArg2>(
-			Expression<Func<TBase, Action<TArg1, TArg2>>> method,
-			Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
-
-		IHappilClassBody<TBase> VoidMethod<TArg1, TArg2, TArg3>(
-			Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method,
-			Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
-
-		IHappilClassBody<TBase> Function<TReturn>(
-			Expression<Func<TBase, Func<TReturn>>> method,
-			Action<IHappilMethodBody<TReturn>> body);
-
-		IHappilClassBody<TBase> Function<TArg1, TReturn>(
-			Expression<Func<TBase, Func<TArg1, TReturn>>> method,
-			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
-
-		IHappilClassBody<TBase> Function<TArg1, TArg2, TReturn>(
-			Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> method,
-			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg1>> body);
-
-		IHappilClassBody<TBase> Methods(
-			Action<IVoidHappilMethodBody> body);
-
-		IHappilClassBody<TBase> Methods<TReturn>(
-			Action<IHappilMethodBody<TReturn>> body);
-
-		IHappilClassBody<TBase> Methods<TReturn>(
-			Func<MethodInfo, bool> where, 
-			Action<IHappilMethodBody<TReturn>> body);
+		EventSelectors.Typed<TBase, TDelegate> Event<TDelegate>(Expression<Func<TBase, TDelegate>> property);
+		EventSelectors.Untyped<TBase> AllEvents(Func<EventInfo, bool> where = null);
+		EventSelectors.Typed<TBase, TDelegate> Events<TDelegate>(Func<EventInfo, bool> where = null);
 	}
 }
