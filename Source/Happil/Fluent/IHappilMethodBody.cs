@@ -11,6 +11,9 @@ namespace Happil.Fluent
 	{
 		HappilLocal<T> Local<T>(string name);
 		HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue);
+		HappilConstant<T> Const<T>(T value);
+		HappilConstant<T> Default<T>();
+		HappilConstant<object> Default(Type type);
 		void Throw<TException>(string message) where TException : Exception;
 		void EmitFromLambda(Expression<Action> lambda);
 		HappilArgument<T> Argument<T>(string name);
@@ -25,6 +28,7 @@ namespace Happil.Fluent
 	public interface IHappilMethodBody : IHappilMethodBodyBase
 	{
 		void Return(IHappilOperand<object> operand);
+		void Return();
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -32,6 +36,7 @@ namespace Happil.Fluent
 	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
 	{
 		void Return(IHappilOperand<TReturn> operand);
+		void Return(HappilConstant<TReturn> operand);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

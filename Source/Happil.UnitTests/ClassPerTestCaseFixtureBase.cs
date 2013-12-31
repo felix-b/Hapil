@@ -22,7 +22,7 @@ namespace Happil.UnitTests
 		{
 			m_Module = new HappilModule(
 				"Happil.UnitTests.EmittedBy" + this.GetType().Name,
-				allowSave: true,
+				allowSave: this.ShouldSaveAssembly,
 				saveDirectory: TestContext.CurrentContext.TestDirectory);
 		}
 
@@ -31,13 +31,16 @@ namespace Happil.UnitTests
 		[TestFixtureTearDown]
 		public void BaseFixtureTearDown()
 		{
-			try
+			if ( ShouldSaveAssembly )
 			{
-				m_Module.SaveAssembly();
-			}
-			catch ( Exception e )
-			{
-				Console.WriteLine("FAILED TO SAVE EMITTED ASSEMBLY: {0}", e.Message);
+				try
+				{
+					m_Module.SaveAssembly();
+				}
+				catch ( Exception e )
+				{
+					Console.WriteLine("FAILED TO SAVE EMITTED ASSEMBLY: {0}", e.Message);
+				}
 			}
 		}
 
@@ -58,6 +61,26 @@ namespace Happil.UnitTests
 			
 			m_Class = ((IHappilClassDefinitionInternals)m_ClassDefinition).HappilClass;
 			return ((IHappilClassBody<TBase>)m_ClassDefinition);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual bool ShouldSaveAssembly
+		{
+			get
+			{
+				return this.AllClassesAreCompleteTypes;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual bool AllClassesAreCompleteTypes
+		{
+			get
+			{
+				return true;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

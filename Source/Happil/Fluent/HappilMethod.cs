@@ -59,6 +59,34 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilConstant<T> Const<T>(T value)
+		{
+			return new HappilConstant<T>(value);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilConstant<T> Default<T>()
+		{
+			return new HappilConstant<T>(default(T));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilConstant<object> Default(Type type)
+		{
+			if ( type.IsValueType )
+			{
+				return Activator.CreateInstance(type);
+			}
+			else
+			{
+				return new HappilConstant<object>(null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Throw<TException>(string message) where TException : Exception
 		{
 			throw new NotImplementedException();
@@ -167,7 +195,14 @@ namespace Happil.Fluent
 
 		public void Return(IHappilOperand<object> operand)
 		{
-			throw new NotImplementedException();
+			m_HappilClass.CurrentScope.AddStatement(new ReturnStatement<object>(operand));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Return()
+		{
+			m_HappilClass.CurrentScope.AddStatement(new ReturnStatement());
 		}
 
 		#endregion
@@ -307,6 +342,14 @@ namespace Happil.Fluent
 			HappilClass.CurrentScope.AddStatement(new ReturnStatement<TReturn>(operand));
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Return(HappilConstant<TReturn> operand)
+		{
+			//TODO: verify that current scope belongs to this method
+			HappilClass.CurrentScope.AddStatement(new ReturnStatement<TReturn>(operand));
+		}
+
 		#endregion
 	}
 
@@ -318,16 +361,5 @@ namespace Happil.Fluent
 			: base(happilClass, declaration)
 		{
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region IVoidHappilMethodBody Members
-
-		public void Return()
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
 	}
 }

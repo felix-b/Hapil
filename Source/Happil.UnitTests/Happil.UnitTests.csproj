@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AncestorRepository.cs" />
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />
     <Compile Include="Demo\EndToEndDemo.cs" />
     <Compile Include="Fluent\ConstructorTests.cs" />
@@ -61,8 +62,9 @@
     <Compile Include="Milestones\ArsenicTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Demo\AutomaticPropertiesDemo.cs" />
-    <Compile Include="TestBaseOne.cs" />
+    <Compile Include="Selectors\MethodSelectorsTests.cs" />
     <Compile Include="ClassPerTestCaseFixtureBase.cs" />
+    <Compile Include="SignatureTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">

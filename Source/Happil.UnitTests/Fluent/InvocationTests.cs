@@ -12,7 +12,7 @@ namespace Happil.UnitTests.Fluent
 	{
 		private HappilModule m_Module;
 		private HappilClass m_Class;
-		private IHappilClassBody<TestBaseOne> m_ClassBody;
+		private IHappilClassBody<AncestorRepository.BaseOne> m_ClassBody;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ namespace Happil.UnitTests.Fluent
 		[SetUp]
 		public void SetUp()
 		{
-			m_ClassBody = m_Module.DeriveClassFrom<TestBaseOne>("_" + Guid.NewGuid().ToString("X"));
+			m_ClassBody = m_Module.DeriveClassFrom<AncestorRepository.BaseOne>("_" + Guid.NewGuid().ToString("X"));
 			m_Class = ((IHappilClassDefinitionInternals)m_ClassBody).HappilClass;
 		}
 
@@ -38,7 +38,7 @@ namespace Happil.UnitTests.Fluent
 		{
 			//-- Arrange
 
-			var field1 = m_ClassBody.Field<TestBaseOne>("m_Next");
+			var field1 = m_ClassBody.Field<AncestorRepository.BaseOne>("m_Next");
 
 			//-- Act
 

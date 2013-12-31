@@ -19,7 +19,7 @@ namespace Happil.UnitTests.Fluent
 			HappilField<int> intField;
 			HappilField<string> stringField;
 
-			DeriveClassFrom<TestBaseOne>()
+			DeriveClassFrom<AncestorRepository.BaseOne>()
 				.Field<int>("m_IntField", out intField)
 				.Field<string>("m_StringField", out stringField)
 				.Constructor<int, string>((ctor, intValue, stringValue) => {
@@ -55,7 +55,7 @@ namespace Happil.UnitTests.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class MyFieldValuesExample : TestBaseOne, IMyFieldValues
+		public class MyFieldValuesExample : AncestorRepository.BaseOne, IMyFieldValues
 		{
 			private int m_IntField;
 			private string m_StringField;

@@ -58,7 +58,7 @@ namespace Happil.Fluent
 
 		public IHappilClassBody<T> AsBase<T>()
 		{
-			return new HappilClassBody<T>(m_HappilClass, typeof(T));
+			return m_HappilClass.GetBody<T>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ namespace Happil.Fluent
 		public IHappilClassBody<TBase> ImplementInterface(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members)
 		{
 			m_HappilClass.ImplementInterface(interfaceType);
-			return new HappilClassBody<TBase>(m_HappilClass, interfaceType);
+			return m_HappilClass.GetBody<TBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ namespace Happil.Fluent
 		public IHappilClassBody<TInterface> ImplementInterface<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members)
 		{
 			m_HappilClass.ImplementInterface(typeof(TInterface));
-			return new HappilClassBody<TInterface>(m_HappilClass);
+			return m_HappilClass.GetBody<TInterface>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ namespace Happil.Fluent
 		public IHappilClassBody<TInterface> ImplementInterface<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members)
 		{
 			m_HappilClass.ImplementInterface(interfaceType);
-			return new HappilClassBody<TInterface>(m_HappilClass, interfaceType);
+			return m_HappilClass.GetBody<TInterface>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -151,49 +151,49 @@ namespace Happil.Fluent
 
 		public MethodSelectors.Void<TBase> Method(Expression<Func<TBase, Action>> method)
 		{
-			return new MethodSelectors.Void<TBase>(this, new[] { GetMethodInfoFromLambda(method) });
+			return new MethodSelectors.Void<TBase>(this, GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void1Arg<TBase, TArg1> Method<TArg1>(Expression<Func<TBase, Action<TArg1>>> method)
 		{
-			return new MethodSelectors.Void1Arg<TBase, TArg1>(this, new[] { GetMethodInfoFromLambda(method) });
+			return new MethodSelectors.Void1Arg<TBase, TArg1>(this, GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void2Args<TBase, TArg1, TArg2> Method<TArg1, TArg2>(Expression<Func<TBase, Action<TArg1, TArg2>>> method)
 		{
-			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(this, new[] { GetMethodInfoFromLambda(method) });
+			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(this, GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3> Method<TArg1, TArg2, TArg3>(Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method)
 		{
-			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(this, new[] { GetMethodInfoFromLambda(method) });
+			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(this, GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions<TBase, TReturn> Method<TReturn>(Expression<Func<TBase, Func<TReturn>>> function)
 		{
-			return new MethodSelectors.Functions<TBase, TReturn>(this, new[] { GetMethodInfoFromLambda(function) });
+			return new MethodSelectors.Functions<TBase, TReturn>(this, GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> Method<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(this, new[] { GetMethodInfoFromLambda(function) });
+			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(this, GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> Method<TArg1, TArg2, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(this, new[] { GetMethodInfoFromLambda(function) });
+			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(this, GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ namespace Happil.Fluent
 		public MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> Method<TArg1, TArg2, TArg3, TReturn>(
 			Expression<Func<TBase, Func<TArg1, TArg2, TArg3, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(this, new[] { GetMethodInfoFromLambda(function) });
+			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(this, GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -271,55 +271,66 @@ namespace Happil.Fluent
 
 		public PropertySelectors.Untyped<TBase> AllProperties(Func<PropertyInfo, bool> where = null)
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Untyped<TBase>(this, typeof(TBase).GetProperties().SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Typed<TBase, TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property)
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Typed<TBase, TProperty>(this, GetPropertyInfoFromLambda(property));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>()
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty>(
+				this, 
+				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>()
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty>(
+				this,
+				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 2));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Typed<TBase, TProperty> Properties<TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Typed<TBase, TProperty>(
+				this,
+				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 0).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> Properties<TIndex, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty>(
+				this,
+				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> Properties<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			throw new NotImplementedException();
+			return new PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty>(
+				this,
+				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public EventSelectors.Typed<TBase, TDelegate> Event<TDelegate>(Expression<Func<TBase, TDelegate>> property)
+		public EventSelectors.Typed<TBase, TDelegate> Event<TDelegate>(Expression<Func<TBase, TDelegate>> @event)
 		{
+			//return new EventSelectors.Typed<TBase, TDelegate>(this, typeof(TBase).GetEvents().SelectIf(where));
 			throw new NotImplementedException();
 		}
 
@@ -338,6 +349,110 @@ namespace Happil.Fluent
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MemberInfo[] GatherImplementableMembers()
+		{
+			var members = new HashSet<MemberInfo>();
+			var visitedTypes = new HashSet<Type>();
+
+			GatherImplementableMembers(typeof(TBase), members, visitedTypes);
+
+			return members.ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void GatherImplementableMembers(Type type, HashSet<MemberInfo> members, HashSet<Type> visitedTypes)
+		{
+			if ( !visitedTypes.Add(type) )
+			{
+				return;
+			}
+
+			var implementableBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+			var methods = type.GetMethods(implementableBindingFlags).Where(IsImplementableMethod).Cast<MemberInfo>();
+			var properties = type.GetProperties(implementableBindingFlags).Where(IsImplementableProperty).Cast<MemberInfo>();
+			var events = type.GetEvents(implementableBindingFlags).Where(IsImplementableEvent).Cast<MemberInfo>();
+
+			foreach ( var singleMember in methods.Concat(properties).Concat(events) )
+			{
+				members.Add(singleMember);
+			}
+
+			if ( type.IsClass && type.BaseType != null )
+			{
+				GatherImplementableMembers(type.BaseType, members, visitedTypes);
+			}
+			else if ( type.IsInterface )
+			{
+				foreach ( var baseInterface in type.GetInterfaces() )
+				{
+					GatherImplementableMembers(baseInterface, members, visitedTypes);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool IsImplementableMethod(MethodInfo method)
+		{
+			return (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool IsImplementableProperty(PropertyInfo property)
+		{
+			if ( property.DeclaringType.IsInterface )
+			{
+				return true;
+			}
+
+			var getter = property.GetGetMethod();
+
+			if ( getter != null && (getter.IsAbstract || getter.IsVirtual) )
+			{
+				return true;
+			}
+
+			var setter = property.GetSetMethod();
+
+			if ( setter != null && (setter.IsAbstract || setter.IsVirtual) )
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool IsImplementableEvent(EventInfo @event)
+		{
+			if ( @event.DeclaringType.IsInterface )
+			{
+				return true;
+			}
+
+			var add = @event.GetAddMethod();
+
+			if ( add != null && (add.IsVirtual || add.IsAbstract) )
+			{
+				return true;
+			}
+
+			var remove = @event.GetRemoveMethod();
+
+			if ( remove != null && (remove.IsVirtual || remove.IsAbstract) )
+			{
+				return true;
+			}
+
+			return false;
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -369,11 +484,19 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		private static MethodInfo GetMethodInfoFromLambda(LambdaExpression lambda)
+		private static MethodInfo[] GetMethodInfoFromLambda(LambdaExpression lambda)
 		{
 			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
 			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
-			return methodDeclaration;
+			return new[] { methodDeclaration };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static PropertyInfo[] GetPropertyInfoFromLambda(LambdaExpression lambda)
+		{
+			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
+			return new[] { propertyInfo };
 		}
 	}
 }

@@ -9,13 +9,35 @@ namespace Happil.Selectors
 {
 	public static class MethodSelectors
 	{
-		public abstract class Base<TBase>
+		public abstract class Base<TBase> : IEnumerable<MethodInfo>
 		{
 			internal Base(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
 			{
 				this.OwnerBody = ownerBody;
 				this.SelectedMethods = selectedMethods.ToArray();
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IEnumerable<MethodInfo> Members
+
+			public IEnumerator<MethodInfo> GetEnumerator()
+			{
+				return SelectedMethods.AsEnumerable().GetEnumerator();
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IEnumerable Members
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return SelectedMethods.GetEnumerator();
+			}
+
+			#endregion
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,9 +48,23 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public IHappilClassBody<TBase> ForEach(Action<MethodInfo> action)
+			{
+				foreach ( var method in SelectedMethods )
+				{
+					action(method);
+				}
+
+				return OwnerBody;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			internal IHappilClassBody<TBase> DefineMembers<TReturn>(Action<HappilMethod> invokeBodyDefinition)
 			{
-				foreach ( var declaration in SelectedMethods )
+				var methodsToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods);
+
+				foreach ( var declaration in methodsToImplement )
 				{
 					HappilMethod methodMember = (
 						declaration.IsVoid()

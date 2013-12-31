@@ -14,6 +14,9 @@ namespace Happil.Fluent
 		private readonly List<Tuple<IHappilMember, Action>> m_MemberBodyDefinitions;
 		private readonly List<MethodInfo> m_FactoryMethods;
 		private readonly Stack<StatementScope> m_StatementScopeStack;
+		private readonly Dictionary<Type, IHappilClassDefinition> m_BodiesByBaseType;
+		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
+		private readonly HashSet<MemberInfo> m_ImplementedMembers;
 		private Type m_BuiltType = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,13 +28,24 @@ namespace Happil.Fluent
 			m_MemberBodyDefinitions = new List<Tuple<IHappilMember, Action>>();
 			m_FactoryMethods = new List<MethodInfo>();
 			m_StatementScopeStack = new Stack<StatementScope>();
-        }
+			m_BodiesByBaseType = new Dictionary<Type, IHappilClassDefinition>();
+			m_NotImplementedMembers = new HashSet<MemberInfo>();
+			m_ImplementedMembers = new HashSet<MemberInfo>();
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> GetBody<TBase>()
 		{
-			return new HappilClassBody<TBase>(happilClass: this);
+			IHappilClassDefinition body;
+
+			if ( !m_BodiesByBaseType.TryGetValue(typeof(TBase), out body) )
+			{
+				body = CreateNewBody<TBase>();
+				m_BodiesByBaseType.Add(typeof(TBase), body);
+			}
+
+			return (IHappilClassBody<TBase>)body;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,6 +73,19 @@ namespace Happil.Fluent
 			{
 				m_MemberBodyDefinitions.Add(new Tuple<IHappilMember, Action>(member, bodyDefinition));
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TInfo[] TakeNotImplementedMembers<TInfo>(TInfo[] members) where TInfo : MemberInfo
+		{
+			var membersToImplement = new HashSet<MemberInfo>(members);
+			membersToImplement.IntersectWith(m_NotImplementedMembers);
+			
+			m_NotImplementedMembers.ExceptWith(membersToImplement);
+			m_ImplementedMembers.UnionWith(membersToImplement);
+			
+			return membersToImplement.Cast<TInfo>().ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -165,6 +192,24 @@ namespace Happil.Fluent
 			{
 				return m_TypeBuilder;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private HappilClassBody<TBase> CreateNewBody<TBase>()
+		{
+			var newBody = new HappilClassBody<TBase>(happilClass: this);
+			var implementableMembers = newBody.GatherImplementableMembers();
+
+			foreach ( var member in implementableMembers )
+			{
+				if ( !m_ImplementedMembers.Contains(member) )
+				{
+					m_NotImplementedMembers.Add(member);
+				}
+			}
+
+			return newBody;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
