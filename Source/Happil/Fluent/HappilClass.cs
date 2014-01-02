@@ -199,7 +199,7 @@ namespace Happil.Fluent
 		private HappilClassBody<TBase> CreateNewBody<TBase>()
 		{
 			var newBody = new HappilClassBody<TBase>(happilClass: this);
-			var implementableMembers = newBody.GatherImplementableMembers();
+			var implementableMembers = newBody.GetImplementableMembers();
 
 			foreach ( var member in implementableMembers )
 			{

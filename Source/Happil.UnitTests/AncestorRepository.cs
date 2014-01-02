@@ -51,7 +51,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public interface IInterfaceOne
+		public interface IFewMethods
 		{
 			void One();
 			void Two(int n);
@@ -62,7 +62,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public interface IInterfaceTwo
+		public interface IMoreMethods
 		{
 			void One();
 			void Two();
@@ -80,6 +80,15 @@ namespace Happil.UnitTests
 			string Sixteen(int n, TimeSpan t);
 			object Seventeen(TimeSpan t, string s, int n);
 			IEnumerable<int> Eighteen(string s, int n, TimeSpan t);
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IFewReadWriteProperties
+		{
+			int AnInt { get; set; }
+			string AString { get; set; }
+			object AnObject { get; set; }
 		}
 	}
 }

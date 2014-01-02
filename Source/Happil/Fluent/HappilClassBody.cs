@@ -15,6 +15,10 @@ namespace Happil.Fluent
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly Type m_ReflectedType;
+		private readonly MemberInfo[] m_ImplementableMembers;
+		private readonly MethodInfo[] m_ImplementableMethods;
+		private readonly PropertyInfo[] m_ImplementableProperties;
+		private readonly EventInfo[] m_ImplementableEvents;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -22,6 +26,10 @@ namespace Happil.Fluent
 		{
 			m_HappilClass = happilClass;
 			m_ReflectedType = reflectedType ?? typeof(TBase);
+			m_ImplementableMembers = GatherImplementableMembers();
+			m_ImplementableMethods = m_ImplementableMembers.OfType<MethodInfo>().ToArray();
+			m_ImplementableProperties = m_ImplementableMembers.OfType<PropertyInfo>().ToArray();
+			m_ImplementableEvents = m_ImplementableMembers.OfType<EventInfo>().ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,63 +216,81 @@ namespace Happil.Fluent
 
 		public MethodSelectors.Untyped<TBase> AllMethods(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Untyped<TBase>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Untyped<TBase>(
+				this, 
+				m_ImplementableMethods.SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void<TBase> VoidMethods(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Void<TBase>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Void<TBase>(
+				this, 
+				m_ImplementableMethods.OfSignature(typeof(void)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void1Arg<TBase, TArg1> VoidMethods<TArg1>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Void1Arg<TBase, TArg1>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Void1Arg<TBase, TArg1>(
+				this, 
+				m_ImplementableMethods.OfSignature(typeof(void), typeof(TArg1)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void2Args<TBase, TArg1, TArg2> VoidMethods<TArg1, TArg2>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(
+				this, 
+				m_ImplementableMethods.OfSignature(typeof(void), typeof(TArg1), typeof(TArg2)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3> VoidMethods<TArg1, TArg2, TArg3>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(
+				this,
+				m_ImplementableMethods.OfSignature(typeof(void), typeof(TArg1), typeof(TArg2), typeof(TArg3)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions<TBase, TReturn> NonVoidMethods<TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Functions<TBase, TReturn>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Functions<TBase, TReturn>(
+				this, 
+				m_ImplementableMethods.OfSignature(typeof(TReturn)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> NonVoidMethods<TArg1, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(
+				this,
+				m_ImplementableMethods.OfSignature(typeof(TReturn), typeof(TArg1)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> NonVoidMethods<TArg1, TArg2, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(
+				this,
+				m_ImplementableMethods.OfSignature(typeof(TReturn), typeof(TArg1), typeof(TArg2)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> NonVoidMethods<TArg1, TArg2, TArg3, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(this, typeof(TBase).GetMethods().SelectIf(where));
+			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(
+				this,
+				m_ImplementableMethods.OfSignature(typeof(TReturn), typeof(TArg1), typeof(TArg2), typeof(TArg3)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -352,7 +378,42 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MemberInfo[] GatherImplementableMembers()
+		public MemberInfo[] GetImplementableMembers()
+		{
+			return m_ImplementableMembers;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void DefineMethodBodyInScope<T>(HappilMethod method, Action<T> userDefinition)
+			where T : IHappilMethodBodyBase
+		{
+			using ( method.CreateBodyScope() )
+			{
+				userDefinition((T)(object)method);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private IHappilClassBody<TBase> DefineConstructor(Action<HappilConstructor> invokeBodyDefinition, params Type[] argumentTypes)
+		{
+			var constructorMember = new HappilConstructor(m_HappilClass, argumentTypes);
+
+			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+				using ( constructorMember.CreateBodyScope() )
+				{
+					invokeBodyDefinition(constructorMember);
+				}
+			});
+
+			m_HappilClass.DefineFactoryMethod(constructorMember.ConstructorInfo, argumentTypes);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MemberInfo[] GatherImplementableMembers()
 		{
 			var members = new HashSet<MemberInfo>();
 			var visitedTypes = new HashSet<Type>();
@@ -364,7 +425,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void GatherImplementableMembers(Type type, HashSet<MemberInfo> members, HashSet<Type> visitedTypes)
+		private static void GatherImplementableMembers(Type type, HashSet<MemberInfo> members, HashSet<Type> visitedTypes)
 		{
 			if ( !visitedTypes.Add(type) )
 			{
@@ -397,14 +458,14 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool IsImplementableMethod(MethodInfo method)
+		private static bool IsImplementableMethod(MethodInfo method)
 		{
 			return (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool IsImplementableProperty(PropertyInfo property)
+		private static bool IsImplementableProperty(PropertyInfo property)
 		{
 			if ( property.DeclaringType.IsInterface )
 			{
@@ -430,7 +491,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool IsImplementableEvent(EventInfo @event)
+		private static bool IsImplementableEvent(EventInfo @event)
 		{
 			if ( @event.DeclaringType.IsInterface )
 			{
@@ -452,34 +513,6 @@ namespace Happil.Fluent
 			}
 
 			return false;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private void DefineMethodBodyInScope<T>(HappilMethod method, Action<T> userDefinition)
-			where T : IHappilMethodBodyBase
-		{
-			using ( method.CreateBodyScope() )
-			{
-				userDefinition((T)(object)method);
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private IHappilClassBody<TBase> DefineConstructor(Action<HappilConstructor> invokeBodyDefinition, params Type[] argumentTypes)
-		{
-			var constructorMember = new HappilConstructor(m_HappilClass, argumentTypes);
-
-			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
-				using ( constructorMember.CreateBodyScope() )
-				{
-					invokeBodyDefinition(constructorMember);
-				}
-			});
-
-			m_HappilClass.DefineFactoryMethod(constructorMember.ConstructorInfo, argumentTypes);
-			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

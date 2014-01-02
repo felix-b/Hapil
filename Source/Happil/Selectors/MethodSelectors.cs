@@ -94,8 +94,8 @@ namespace Happil.Selectors
 
 		public class Untyped<TBase> : Base<TBase>
 		{
-			internal Untyped(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods)
+			internal Untyped(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -111,8 +111,8 @@ namespace Happil.Selectors
 		
 		public class Void<TBase> : Base<TBase>
 		{
-			internal Void(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => m.IsVoid() && m.GetParameters().Length == 0))
+			internal Void(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -128,8 +128,8 @@ namespace Happil.Selectors
 		
 		public class Void1Arg<TBase, TArg1> : Base<TBase>
 		{
-			internal Void1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => m.IsVoid() && m.GetParameters().Length == 1))
+			internal Void1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -147,8 +147,8 @@ namespace Happil.Selectors
 
 		public class Void2Args<TBase, TArg1, TArg2> : Base<TBase>
 		{
-			internal Void2Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => m.IsVoid() && m.GetParameters().Length == 2))
+			internal Void2Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -167,8 +167,8 @@ namespace Happil.Selectors
 
 		public class Void3Args<TBase, TArg1, TArg2, TArg3> : Base<TBase>
 		{
-			internal Void3Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => m.IsVoid() && m.GetParameters().Length == 3))
+			internal Void3Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -188,8 +188,8 @@ namespace Happil.Selectors
 
 		public class Functions<TBase, TReturn> : Base<TBase>
 		{
-			internal Functions(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => !m.IsVoid() && m.GetParameters().Length == 0))
+			internal Functions(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -205,8 +205,8 @@ namespace Happil.Selectors
 
 		public class Functions1Arg<TBase, TArg1, TReturn> : Base<TBase>
 		{
-			internal Functions1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => !m.IsVoid() && m.GetParameters().Length == 1))
+			internal Functions1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -224,8 +224,8 @@ namespace Happil.Selectors
 
 		public class Functions2Args<TBase, TArg1, TArg2, TReturn> : Base<TBase>
 		{
-			internal Functions2Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => !m.IsVoid() && m.GetParameters().Length == 2))
+			internal Functions2Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 
@@ -244,8 +244,8 @@ namespace Happil.Selectors
 
 		public class Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> : Base<TBase>
 		{
-			internal Functions3Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> allBaseMethods)
-				: base(ownerBody, allBaseMethods.Where(m => !m.IsVoid() && m.GetParameters().Length == 3))
+			internal Functions3Args(HappilClassBody<TBase> ownerBody, IEnumerable<MethodInfo> selectedMethods)
+				: base(ownerBody, selectedMethods)
 			{
 			}
 

@@ -20,10 +20,14 @@ namespace Happil.Fluent
 			throw new NotImplementedException();
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilPropertySetter Set(Action<IHappilMethodBody<T>> body)
 		{
 			throw new NotImplementedException();
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilField<T> BackingField
 		{

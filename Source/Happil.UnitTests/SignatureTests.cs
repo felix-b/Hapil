@@ -17,7 +17,7 @@ namespace Happil.UnitTests
 
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
-				.ImplementInterface<AncestorRepository.IInterfaceOne>()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.Method(intf => intf.One).Implement(m => { })
 				.Method<int>(intf => intf.Two).Implement((m, n) => { })
 				.Method<int>(intf => intf.Three).Implement(m => m.Return(123))
@@ -26,7 +26,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = CreateClassInstanceAs<AncestorRepository.IInterfaceOne>().UsingDefaultConstructor();
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -47,7 +47,7 @@ namespace Happil.UnitTests
 
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
-				.ImplementInterface<AncestorRepository.IInterfaceTwo>()
+				.ImplementInterface<AncestorRepository.IMoreMethods>()
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods(m => !m.IsVoid()).Implement( 
 					m => {
@@ -56,7 +56,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = CreateClassInstanceAs<AncestorRepository.IInterfaceTwo>().UsingDefaultConstructor();
+			var obj = CreateClassInstanceAs<AncestorRepository.IMoreMethods>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -80,7 +80,7 @@ namespace Happil.UnitTests
 
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
-				.ImplementInterface<AncestorRepository.IInterfaceTwo>()
+				.ImplementInterface<AncestorRepository.IMoreMethods>()
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods().Implement(   // this selects all methods, but only non-void methods will be implemented, 
 					m => {                 // because void methods were already implemented earlier.
@@ -89,7 +89,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = CreateClassInstanceAs<AncestorRepository.IInterfaceTwo>().UsingDefaultConstructor();
+			var obj = CreateClassInstanceAs<AncestorRepository.IMoreMethods>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -98,14 +98,14 @@ namespace Happil.UnitTests
 		}
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void InterfaceMethods_SelectBySignature()
 		{
 			//-- Arrange
 
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
-				.ImplementInterface<AncestorRepository.IInterfaceTwo>()
+				.ImplementInterface<AncestorRepository.IMoreMethods>()
 				.VoidMethods().Implement(m => { })
 				.VoidMethods<int>().Implement((m, n) => { })
 				.VoidMethods<string>().Implement((m, s) => { })
@@ -122,12 +122,12 @@ namespace Happil.UnitTests
 				.NonVoidMethods<string, int>().Implement((m, s) => m.Return(456))
 				.NonVoidMethods<TimeSpan, string, int>().Implement((m, t, s) => m.Return(789))
 				.NonVoidMethods<int, TimeSpan, string>().Implement((m, n, t) => m.Return("GHI"))
-				.NonVoidMethods<TimeSpan, string, int, object>().Implement((m, t, s, n) => m.Return(null))
-				.NonVoidMethods<string, int, TimeSpan, IEnumerable<int>>().Implement((m, s, n, t) => m.Return(null));
+				.NonVoidMethods<TimeSpan, string, int, object>().Implement((m, t, s, n) => m.Return(m.Const<object>(null)))
+				.NonVoidMethods<string, int, TimeSpan, IEnumerable<int>>().Implement((m, s, n, t) => m.Return(m.Const<IEnumerable<int>>(null)));
 
 			//-- Act
 
-			var obj = CreateClassInstanceAs<AncestorRepository.IInterfaceTwo>().UsingDefaultConstructor();
+			var obj = CreateClassInstanceAs<AncestorRepository.IMoreMethods>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -140,6 +140,41 @@ namespace Happil.UnitTests
 			Assert.That(obj.Fifteen(TimeSpan.Zero, null), Is.EqualTo(789));
 			Assert.That(obj.Sixteen(0, TimeSpan.Zero), Is.EqualTo("GHI"));
 			Assert.That(obj.Eighteen(null, 0, TimeSpan.Zero), Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void InterfaceProperties_OnyByOne()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
+				.Property(intf => intf.AnInt).Implement(
+					p => p.Get(m => m.Return(123)),
+					p => p.Set((m, value) => { }))
+				.Property(intf => intf.AString).Implement(
+					p => p.Get(m => m.Return("ABC")),
+					p => p.Set((m, value) => { }))
+				.Property(intf => intf.AnObject).Implement(
+					p => p.Get(m => m.Return(m.Const<object>(null))),
+					p => p.Set((m, value) => { }));
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
+
+			//-- Assert
+
+			Assert.That(obj.AnInt, Is.EqualTo(123));
+			Assert.That(obj.AString, Is.EqualTo("ABC"));
+			Assert.That(obj.AnObject, Is.Null);
+
+			obj.AnInt = 0;
+			obj.AString = null;
+			obj.AnObject = null;
 		}
 	}
 }
