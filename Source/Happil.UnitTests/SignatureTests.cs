@@ -144,7 +144,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void InterfaceProperties_OnyByOne()
 		{
 			//-- Arrange

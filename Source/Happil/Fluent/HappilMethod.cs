@@ -155,6 +155,23 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public virtual MethodBuilder MethodBuilder
+		{
+			get
+			{
+				if ( m_Declaration != null )
+				{
+					return m_MethodBuilder;
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public virtual int ArgumentCount
 		{
 			get

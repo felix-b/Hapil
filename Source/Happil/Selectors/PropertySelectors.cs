@@ -61,28 +61,17 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			internal IHappilClassBody<TBase> DefineMembers<TReturn>(
-				Action<HappilMethod> invokeGetterBodyDefinition, 
-				Action<HappilMethod> invokeSetterBodyDefinition)
+			internal IHappilClassBody<TBase> DefineMembers<TProperty>(Action<HappilProperty<TProperty>.BodyBase> invokeAccessorBodyDefinitions)
 			{
-				//var propertiesToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedProperties);
+				var propertiesToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedProperties);
 
-				//foreach ( var declaration in propertiesToImplement )
-				//{
-				//	HappilMethod methodMember = (
-				//		declaration.IsVoid()
-				//		? (HappilMethod)new VoidHappilMethod(OwnerBody.HappilClass, declaration)
-				//		: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration));
-
-				//	OwnerBody.HappilClass.RegisterMember(
-				//		methodMember,
-				//		bodyDefinition: () => {
-				//			using ( methodMember.CreateBodyScope() )
-				//			{
-				//				invokeBodyDefinition(methodMember);
-				//			}
-				//		});
-				//}
+				foreach ( var declaration in propertiesToImplement )
+				{
+					var propertyMember = new HappilProperty<TProperty>(OwnerBody.HappilClass, declaration);
+					OwnerBody.HappilClass.RegisterMember(propertyMember, propertyMember.BodyDefinitionAction);
+					
+					invokeAccessorBodyDefinitions(propertyMember.Body);
+				}
 
 				return OwnerBody;
 			}
@@ -92,56 +81,124 @@ namespace Happil.Selectors
 			internal HappilClassBody<TBase> OwnerBody { get; private set; }
 			internal PropertyInfo[] SelectedProperties { get; private set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public class Untyped<TBase> : Base<TBase>
 		{
 			internal Untyped(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public IHappilClassBody<TBase> Implement(
 				Func<IHappilPropertyBody<object>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<object>, IHappilPropertySetter> setter = null)
 			{
-				throw new NotImplementedException();
+				DefineMembers<object>(body => {
+					if ( getter != null )
+					{
+						getter((IHappilPropertyBody<object>)body);
+					}
+					if ( setter != null )
+					{
+						setter((IHappilPropertyBody<object>)body);
+					}
+				});
+
+				return OwnerBody;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public class Typed<TBase, TProperty> : Base<TBase>
 		{
 			internal Typed(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public IHappilClassBody<TBase> Implement(
 				Func<IHappilPropertyBody<TProperty>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TProperty>, IHappilPropertySetter> setter = null)
 			{
-				throw new NotImplementedException();
+				DefineMembers<TProperty>(body => {
+					if ( getter != null )
+					{
+						getter((IHappilPropertyBody<TProperty>)body);
+					}
+					if ( setter != null )
+					{
+						setter((IHappilPropertyBody<TProperty>)body);
+					}
+				});
+
+				return OwnerBody;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public class Indexer1Arg<TBase, TProperty, TIndex> : Base<TBase>
 		{
 			internal Indexer1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public IHappilClassBody<TBase> Implement(
 				Func<IHappilPropertyBody<TProperty, TIndex>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TProperty, TIndex>, IHappilPropertySetter> setter = null)
 			{
-				throw new NotImplementedException();
+				DefineMembers<TProperty>(body => {
+					if ( getter != null )
+					{
+						getter((IHappilPropertyBody<TProperty, TIndex>)body);
+					}
+					if ( setter != null )
+					{
+						setter((IHappilPropertyBody<TProperty, TIndex>)body);
+					}
+				});
+
+				return OwnerBody;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public class Indexer2Args<TBase, TProperty, TIndex1, TIndex2> : Base<TBase>
 		{
 			internal Indexer2Args(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public IHappilClassBody<TBase> Implement(
 				Func<IHappilPropertyBody<TProperty, TIndex1, TIndex2>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TProperty, TIndex1, TIndex2>, IHappilPropertySetter> setter = null)
 			{
-				throw new NotImplementedException();
+				DefineMembers<TProperty>(body => {
+					if ( getter != null )
+					{
+						getter((IHappilPropertyBody<TProperty, TIndex1, TIndex2>)body);
+					}
+					if ( setter != null )
+					{
+						setter((IHappilPropertyBody<TProperty, TIndex1, TIndex2>)body);
+					}
+				});
+
+				return OwnerBody;
 			}
 		}
 	}

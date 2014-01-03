@@ -69,8 +69,6 @@
     <Compile Include="Fluent\IHappilMethodBody.cs" />
     <Compile Include="Fluent\HappilOperand.cs" />
     <Compile Include="Fluent\HappilProperty.cs" />
-    <Compile Include="Fluent\HappilPropertyGetter.cs" />
-    <Compile Include="Fluent\HappilPropertySetter.cs" />
     <Compile Include="Expressions\HappilUnaryExpression.cs" />
     <Compile Include="Fluent\IHappilOperand.cs" />
     <Compile Include="Fluent\IHappilOperandInternals.cs" />
