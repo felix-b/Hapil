@@ -90,5 +90,28 @@ namespace Happil.UnitTests
 			string AString { get; set; }
 			object AnObject { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IReadOnlyAndReadWriteProperties
+		{
+			int AnInt { get; }
+			string AString { get; }
+			object AnObject { get; }
+			int AnotherInt { get; set; }
+			string AnotherString { get; set; }
+			object AnotherObject { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IFewPropertiesWithIndexers
+		{
+			int AnInt { get; set; }
+			string AString { get; set; }
+			object AnObject { get; set; }
+			int this[string  s] { get; set; }
+			string this[int n, string s] { get; set; }
+		}
 	}
 }

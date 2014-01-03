@@ -146,9 +146,11 @@ namespace Happil.Fluent
 				case 0:
 					return new BodyNoArgs(this);
 				case 1:
-					return (BodyBase)Activator.CreateInstance(typeof(Body1Arg<>).MakeGenericType(indexArgTypes[0]), this);
+					var closed1ArgType = typeof(Body1Arg<>).MakeGenericType(typeof(T), indexArgTypes[0]);
+					return (BodyBase)Activator.CreateInstance(closed1ArgType, this);
 				case 2:
-					return (BodyBase)Activator.CreateInstance(typeof(Body2Args<,>).MakeGenericType(indexArgTypes[0], indexArgTypes[1]), this);
+					var closed2ArgsType = typeof(Body2Args<,>).MakeGenericType(typeof(T), indexArgTypes[0], indexArgTypes[1]);
+					return (BodyBase)Activator.CreateInstance(closed2ArgsType, this);
 				default:
 					throw new NotSupportedException("Indexer properties with more than 2 arguments are not supported.");
 			}
@@ -180,7 +182,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal abstract class BodyBase
+		internal abstract class BodyBase : IHappilPropertyBody
 		{
 			private Delegate m_GetterBodyDefinition;
 			private Delegate m_SetterBodyDefinition;
@@ -191,6 +193,40 @@ namespace Happil.Fluent
 			{
 				this.OwnerProperty = ownerProperty;
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IHappilPropertyBody Members
+
+			public PropertyInfo Declaration
+			{
+				get
+				{
+					return OwnerProperty.m_Declaration;
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string Name
+			{
+				get
+				{
+					return OwnerProperty.m_PropertyBuilder.Name;
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public Type Type
+			{
+				get
+				{
+					return OwnerProperty.m_Declaration.PropertyType;
+				}
+			}
+
+			#endregion
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -296,7 +332,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Body1Arg<TIndex1> : BodyBase, IHappilPropertyBody<T, TIndex1>
+		private class Body1Arg<TIndex1> : BodyBase, IHappilPropertyBody<TIndex1, T>
 		{
 			public Body1Arg(HappilProperty<T> ownerProperty)
 				: base(ownerProperty)
@@ -350,7 +386,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Body2Args<TIndex1, TIndex2> : BodyBase, IHappilPropertyBody<T, TIndex1, TIndex2>
+		private class Body2Args<TIndex1, TIndex2> : BodyBase, IHappilPropertyBody<TIndex1, TIndex2, T>
 		{
 			public Body2Args(HappilProperty<T> ownerProperty)
 				: base(ownerProperty)

@@ -44,9 +44,11 @@ namespace Happil.Fluent
 		MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> NonVoidMethods<TArg1, TArg2, TArg3, TReturn>(Func<MethodInfo, bool> where = null);
 
 		PropertySelectors.Typed<TBase, TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property);
-		PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>();
-		PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>();
+		PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null);
 		PropertySelectors.Untyped<TBase> AllProperties(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Untyped<TBase> ReadOnlyProperties(Func<PropertyInfo, bool> where = null);
+		PropertySelectors.Untyped<TBase> ReadWriteProperties(Func<PropertyInfo, bool> where = null);
 		PropertySelectors.Typed<TBase, TProperty> Properties<TProperty>(Func<PropertyInfo, bool> where = null);
 		PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> Properties<TIndex, TProperty>(Func<PropertyInfo, bool> where = null);
 		PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> Properties<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null);

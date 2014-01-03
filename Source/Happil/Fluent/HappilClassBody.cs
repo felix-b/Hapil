@@ -297,7 +297,25 @@ namespace Happil.Fluent
 
 		public PropertySelectors.Untyped<TBase> AllProperties(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelectors.Untyped<TBase>(this, typeof(TBase).GetProperties().SelectIf(where));
+			return new PropertySelectors.Untyped<TBase>(this, m_ImplementableProperties.SelectIf(where));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public PropertySelectors.Untyped<TBase> ReadOnlyProperties(Func<PropertyInfo, bool> where = null)
+		{
+			return new PropertySelectors.Untyped<TBase>(
+				this, 
+				m_ImplementableProperties.Where(p => p.CanRead && !p.CanWrite).SelectIf(where));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public PropertySelectors.Untyped<TBase> ReadWriteProperties(Func<PropertyInfo, bool> where = null)
+		{
+			return new PropertySelectors.Untyped<TBase>(
+				this,
+				m_ImplementableProperties.Where(p => p.CanRead && p.CanWrite).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -309,20 +327,20 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>()
+		public PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty> This<TIndex, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
 			return new PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty>(
-				this, 
-				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1));
+				this,
+				m_ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>()
+		public PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
 			return new PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty>(
 				this,
-				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 2));
+				m_ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex1), typeof(TIndex2)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -331,7 +349,7 @@ namespace Happil.Fluent
 		{
 			return new PropertySelectors.Typed<TBase, TProperty>(
 				this,
-				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 0).SelectIf(where));
+				m_ImplementableProperties.OfSignature(typeof(TProperty)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -340,7 +358,7 @@ namespace Happil.Fluent
 		{
 			return new PropertySelectors.Indexer1Arg<TBase, TIndex, TProperty>(
 				this,
-				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1).SelectIf(where));
+				m_ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -349,7 +367,7 @@ namespace Happil.Fluent
 		{
 			return new PropertySelectors.Indexer2Args<TBase, TIndex1, TIndex2, TProperty>(
 				this,
-				typeof(TBase).GetProperties().Where(p => p.GetIndexParameters().Length == 1).SelectIf(where));
+				m_ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex1), typeof(TIndex2)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

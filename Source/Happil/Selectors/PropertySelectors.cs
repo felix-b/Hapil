@@ -144,7 +144,7 @@ namespace Happil.Selectors
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class Indexer1Arg<TBase, TProperty, TIndex> : Base<TBase>
+		public class Indexer1Arg<TBase, TIndex, TProperty> : Base<TBase>
 		{
 			internal Indexer1Arg(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
@@ -154,17 +154,17 @@ namespace Happil.Selectors
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public IHappilClassBody<TBase> Implement(
-				Func<IHappilPropertyBody<TProperty, TIndex>, IHappilPropertyGetter> getter,
-				Func<IHappilPropertyBody<TProperty, TIndex>, IHappilPropertySetter> setter = null)
+				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertySetter> setter = null)
 			{
 				DefineMembers<TProperty>(body => {
 					if ( getter != null )
 					{
-						getter((IHappilPropertyBody<TProperty, TIndex>)body);
+						getter((IHappilPropertyBody<TIndex, TProperty>)body);
 					}
 					if ( setter != null )
 					{
-						setter((IHappilPropertyBody<TProperty, TIndex>)body);
+						setter((IHappilPropertyBody<TIndex, TProperty>)body);
 					}
 				});
 
@@ -174,7 +174,7 @@ namespace Happil.Selectors
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class Indexer2Args<TBase, TProperty, TIndex1, TIndex2> : Base<TBase>
+		public class Indexer2Args<TBase, TIndex1, TIndex2, TProperty> : Base<TBase>
 		{
 			internal Indexer2Args(HappilClassBody<TBase> ownerBody, IEnumerable<PropertyInfo> selectedProperties)
 				: base(ownerBody, selectedProperties)
@@ -184,17 +184,17 @@ namespace Happil.Selectors
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public IHappilClassBody<TBase> Implement(
-				Func<IHappilPropertyBody<TProperty, TIndex1, TIndex2>, IHappilPropertyGetter> getter,
-				Func<IHappilPropertyBody<TProperty, TIndex1, TIndex2>, IHappilPropertySetter> setter = null)
+				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertySetter> setter = null)
 			{
 				DefineMembers<TProperty>(body => {
 					if ( getter != null )
 					{
-						getter((IHappilPropertyBody<TProperty, TIndex1, TIndex2>)body);
+						getter((IHappilPropertyBody<TIndex1, TIndex2, TProperty>)body);
 					}
 					if ( setter != null )
 					{
-						setter((IHappilPropertyBody<TProperty, TIndex1, TIndex2>)body);
+						setter((IHappilPropertyBody<TIndex1, TIndex2, TProperty>)body);
 					}
 				});
 

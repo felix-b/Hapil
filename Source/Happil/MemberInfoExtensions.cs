@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Happil
 {
-	internal static class MemberInfoExtensions
+	public static class MemberInfoExtensions
 	{
 		public static bool IsVoid(this MethodInfo method)
 		{
@@ -18,6 +18,13 @@ namespace Happil
 		public static IEnumerable<MethodInfo> OfSignature(this IEnumerable<MethodInfo> methods, Type returnType, params Type[] parameterTypes)
 		{
 			return methods.Where(m => m.IsOfSignature(returnType, parameterTypes));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IEnumerable<PropertyInfo> OfSignature(this IEnumerable<PropertyInfo> properties, Type propertyType, params Type[] indexParameterTypes)
+		{
+			return properties.Where(p => p.IsOfSignature(propertyType, indexParameterTypes));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -45,6 +52,40 @@ namespace Happil
 			}
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsOfSignature(this PropertyInfo property, Type propertyType, params Type[] indexParameterTypes)
+		{
+			if ( property.PropertyType != propertyType )
+			{
+				return false;
+			}
+
+			var actualParameterTypes = property.GetIndexParameters().Select(p => p.ParameterType).ToArray();
+
+			if ( actualParameterTypes.Length != indexParameterTypes.Length )
+			{
+				return false;
+			}
+
+			for ( int i = 0 ; i < indexParameterTypes.Length ; i++ )
+			{
+				if ( indexParameterTypes[i] != actualParameterTypes[i] )
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsIndexer(this PropertyInfo property)
+		{
+			return (property.GetIndexParameters().Length > 0);
 		}
 	}
 }
