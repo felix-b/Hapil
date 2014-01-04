@@ -55,8 +55,17 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> ImplementAutomatic()
 			{
-				throw new NotImplementedException();
-				//return OwnerBody;
+				if ( SelectedProperties.Any(p => p.IsIndexer() || !p.CanRead || !p.CanWrite) )
+				{
+					throw new NotSupportedException("Automatic properties cannot be read-only or indexers");
+				}
+
+				DefineMembers<object>(body => {
+					((IHappilPropertyBody<object>)body).Get(m => m.Return(body.BackingField));
+					((IHappilPropertyBody<object>)body).Set((m, value) => body.BackingField.Assign(value));
+				});
+
+				return OwnerBody;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

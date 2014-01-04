@@ -117,6 +117,36 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal override HappilClass OwnerClass
+		{
+			get
+			{
+				return m_HappilClass;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal PropertyInfo Declaration
+		{
+			get
+			{
+				return m_Declaration;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal PropertyBuilder PropertyBuilder
+		{
+			get
+			{
+				return m_PropertyBuilder;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal BodyBase Body
 		{
 			get
@@ -186,6 +216,7 @@ namespace Happil.Fluent
 		{
 			private Delegate m_GetterBodyDefinition;
 			private Delegate m_SetterBodyDefinition;
+			private HappilField<T> m_BackingField;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -236,7 +267,15 @@ namespace Happil.Fluent
 
 			public HappilField<T> BackingField
 			{
-				get { throw new NotImplementedException(); }
+				get
+				{
+					if ( object.ReferenceEquals(m_BackingField, null) )
+					{
+						m_BackingField = OwnerProperty.OwnerClass.GetBody<object>().Field<T>("m_" + OwnerProperty.PropertyBuilder.Name);
+					}
+
+					return m_BackingField;
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

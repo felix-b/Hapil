@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Happil.Selectors;
 
 namespace Happil.Fluent
 {
@@ -25,18 +26,18 @@ namespace Happil.Fluent
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	public interface IHappilMethodBody : IHappilMethodBodyBase
+	public interface IHappilMethodBodyTemplate : IHappilMethodBodyBase
 	{
-		void Return(IHappilOperand<object> operand);
+		void Return(IHappilOperand<TypeTemplate> operand);
 		void Return();
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
+	public interface IHappilMethodBody<in TReturn> : IHappilMethodBodyBase
 	{
 		void Return(IHappilOperand<TReturn> operand);
-		void Return(HappilConstant<TReturn> operand);
+		void Return(TReturn constantValue);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

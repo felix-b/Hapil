@@ -78,7 +78,7 @@ namespace Happil.UnitTests.Fluent
 			//-- Arrange
 
 			var field1 = m_ClassBody.Field<int>("f1");
-			var const1 = new HappilConstant<int>(123);
+			IHappilOperand<int> const1 = new HappilConstant<int>(123);
 
 			//-- Act
 

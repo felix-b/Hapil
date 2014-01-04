@@ -333,5 +333,32 @@ namespace Happil.UnitTests
 			obj["ZZZ"] = 0;
 			obj[999, "ZZZ"] = null;
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceProperties_ImplementAutomatic()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
+				.AllProperties().ImplementAutomatic();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
+
+			//-- Assert
+
+			Assert.That(obj.AnInt, Is.EqualTo(0));
+			Assert.That(obj.AString, Is.Null);
+			Assert.That(obj.AnObject, Is.Null);
+
+			obj.AnInt = 0;
+			obj.AString = null;
+			obj.AnObject = null;
+		}
 	}
 }

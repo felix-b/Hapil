@@ -101,7 +101,7 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBody> body)
+			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBodyTemplate> body)
 			{
 				return DefineMembers<object>(body);
 			}

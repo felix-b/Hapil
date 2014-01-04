@@ -7,11 +7,12 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using Happil.Expressions;
+using Happil.Selectors;
 using Happil.Statements;
 
 namespace Happil.Fluent
 {
-	internal class HappilMethod : IHappilMethodBody, IHappilMember
+	internal class HappilMethod : IHappilMethodBodyTemplate, IHappilMember
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly MethodBuilder m_MethodBuilder;
@@ -75,14 +76,7 @@ namespace Happil.Fluent
 
 		public HappilConstant<object> Default(Type type)
 		{
-			if ( type.IsValueType )
-			{
-				return Activator.CreateInstance(type);
-			}
-			else
-			{
-				return new HappilConstant<object>(null);
-			}
+			return new HappilConstant<object>(type.GetDefaultValue());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,11 +202,11 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilMethodBody Members
+		#region IHappilMethodBodyTemplate Members
 
-		public void Return(IHappilOperand<object> operand)
+		public void Return(IHappilOperand<TypeTemplate> operand)
 		{
-			m_HappilClass.CurrentScope.AddStatement(new ReturnStatement<object>(operand));
+			m_HappilClass.CurrentScope.AddStatement(new ReturnStatement<TypeTemplate>(operand));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -361,10 +355,10 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Return(HappilConstant<TReturn> operand)
+		public void Return(TReturn constantValue)
 		{
 			//TODO: verify that current scope belongs to this method
-			HappilClass.CurrentScope.AddStatement(new ReturnStatement<TReturn>(operand));
+			HappilClass.CurrentScope.AddStatement(new ReturnStatement<TReturn>(new HappilConstant<TReturn>(constantValue)));
 		}
 
 		#endregion

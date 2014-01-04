@@ -26,13 +26,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		public HappilOperand<T> Assign(HappilConstant<T> value)
+		public HappilOperand<T> Assign(T constantValue)
 		{
 			return new HappilBinaryExpression<T, T>(
 				base.OwnerMethod,
 				@operator: new BinaryOperators.OperatorAssign<T>(),
 				left: this,
-				right: value);
+				right: new HappilConstant<T>(constantValue));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

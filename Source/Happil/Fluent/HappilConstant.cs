@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Selectors;
 
 namespace Happil.Fluent
 {
@@ -38,13 +39,14 @@ namespace Happil.Fluent
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			var convertible = m_Value as IConvertible;
+			var actualValue = ResolveActualValue();
+			var convertible = actualValue as IConvertible;
 
 			if ( convertible != null )
 			{
 				EmitConvertible(il, convertible);
 			}
-			else if ( object.ReferenceEquals(null, m_Value) )
+			else if ( object.ReferenceEquals(null, actualValue) )
 			{
 				EmitNull(il);
 			}
@@ -66,6 +68,22 @@ namespace Happil.Fluent
 		protected override void OnEmitAddress(ILGenerator il)
 		{
 			throw new NotSupportedException("Constants are not assignabble.");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private object ResolveActualValue()
+		{
+			var template = (m_Value as TypeTemplate);
+
+			if ( template != null )
+			{
+				return template.CastValue;
+			}
+			else
+			{
+				return m_Value;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
