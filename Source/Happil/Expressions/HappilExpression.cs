@@ -28,22 +28,6 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected StatementScope TryGetCurrrentScope()
-		{
-			var happilClass = this.OwnerClass;
-
-			if ( happilClass != null )
-			{
-				return happilClass.CurrentScope;
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		protected void EnsureOperandLeavesValueOnStack(IHappilExpression expressionOperand)
 		{
 			if ( expressionOperand != null )

@@ -13,7 +13,6 @@ namespace Happil.Fluent
 		private readonly List<IHappilMember> m_Members;
 		private readonly List<Tuple<IHappilMember, Action>> m_MemberBodyDefinitions;
 		private readonly List<MethodInfo> m_FactoryMethods;
-		private readonly Stack<StatementScope> m_StatementScopeStack;
 		private readonly Dictionary<Type, IHappilClassDefinition> m_BodiesByBaseType;
 		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
 		private readonly HashSet<MemberInfo> m_ImplementedMembers;
@@ -27,7 +26,6 @@ namespace Happil.Fluent
 			m_Members = new List<IHappilMember>();
 			m_MemberBodyDefinitions = new List<Tuple<IHappilMember, Action>>();
 			m_FactoryMethods = new List<MethodInfo>();
-			m_StatementScopeStack = new Stack<StatementScope>();
 			m_BodiesByBaseType = new Dictionary<Type, IHappilClassDefinition>();
 			m_NotImplementedMembers = new HashSet<MemberInfo>();
 			m_ImplementedMembers = new HashSet<MemberInfo>();
@@ -152,40 +150,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void PushScope(StatementScope scope)
-		{
-			m_StatementScopeStack.Push(scope);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void PopScope(StatementScope scope)
-		{
-			if ( m_StatementScopeStack.Count == 0 || m_StatementScopeStack.Peek() != scope )
-			{
-				throw new InvalidOperationException("Specified scope is not the current scope.");
-			}
-
-			m_StatementScopeStack.Pop();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public StatementScope CurrentScope
-		{
-			get
-			{
-				if ( m_StatementScopeStack.Count == 0 )
-				{
-					throw new InvalidOperationException("There is no active scope at the moment.");
-				}
-				
-				return m_StatementScopeStack.Peek();
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public TypeBuilder TypeBuilder
 		{
 			get
@@ -256,7 +220,7 @@ namespace Happil.Fluent
 
 				bodyDefinitionAction();
 
-				if ( m_StatementScopeStack.Count > 0 )
+				if ( StatementScope.Exists )
 				{
 					throw new InvalidOperationException(
 						string.Format("Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));

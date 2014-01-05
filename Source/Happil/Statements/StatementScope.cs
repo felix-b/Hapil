@@ -9,6 +9,7 @@ namespace Happil.Statements
 {
 	internal class StatementScope : IDisposable
 	{
+		private readonly StatementScope m_Previous;
 		private readonly HappilClass m_OwnerClass;
 		private readonly HappilMethod m_OwnerMethod;
 		private readonly List<IHappilStatement> m_StatementList;
@@ -17,11 +18,35 @@ namespace Happil.Statements
 
 		public StatementScope(HappilClass ownerClass, HappilMethod ownerMethod, List<IHappilStatement> statementList)
 		{
+			if ( s_Current != null )
+			{
+				throw new InvalidOperationException("Root scope already exists.");
+			}
+
 			m_StatementList = statementList;
 			m_OwnerMethod = ownerMethod;
 			m_OwnerClass = ownerClass;
 
-			m_OwnerClass.PushScope(this);
+			m_Previous = null;
+			s_Current = this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope()
+		{
+			m_Previous = s_Current;
+
+			if ( m_Previous == null )
+			{
+				throw new InvalidOperationException("Parent scope is not present.");
+			}
+
+			m_StatementList = new List<IHappilStatement>();
+			m_OwnerMethod = m_Previous.m_OwnerMethod;
+			m_OwnerClass = m_Previous.m_OwnerClass;
+
+			s_Current = this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -30,7 +55,12 @@ namespace Happil.Statements
 
 		public void Dispose()
 		{
-			m_OwnerClass.PopScope(this);
+			if ( s_Current != this )
+			{
+				throw new InvalidOperationException("Specified scope is not the current scope.");
+			}
+
+			s_Current = m_Previous;
 		}
 
 		#endregion
@@ -64,6 +94,38 @@ namespace Happil.Statements
 				{
 					m_StatementList.RemoveAt(m_StatementList.Count - 1);
 				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[ThreadStatic]
+		private static StatementScope s_Current;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static StatementScope Current
+		{
+			get
+			{
+				var current = s_Current;
+
+				if ( current == null )
+				{
+					throw new InvalidOperationException("There is no active scope at the moment.");
+				}
+
+				return current;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool Exists
+		{
+			get
+			{
+				return (s_Current != null);
 			}
 		}
 	}

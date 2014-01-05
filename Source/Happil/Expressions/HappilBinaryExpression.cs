@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -26,18 +27,15 @@ namespace Happil.Expressions
 			m_Right = right;
 			m_Operator = @operator;
 
-			var scope = TryGetCurrrentScope();
+			var scope = StatementScope.Current;
 
-			if ( scope != null )
-			{
-				scope.UnregisterExpressionStatement(left as IHappilExpression);
-				scope.UnregisterExpressionStatement(right as IHappilExpression);
-				// since the unregister method only checks the last statement, the following line is 
-				// required to remove dependency on the order of left and right registration:
-				scope.UnregisterExpressionStatement(left as IHappilExpression);
-
-				scope.RegisterExpressionStatement(this);
-			}
+			scope.UnregisterExpressionStatement(left as IHappilExpression);
+			scope.UnregisterExpressionStatement(right as IHappilExpression);
+			// since the unregister method only checks the last statement, the following line is 
+			// required to remove dependency on the order of left and right registration:
+			scope.UnregisterExpressionStatement(left as IHappilExpression);
+			
+			scope.RegisterExpressionStatement(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

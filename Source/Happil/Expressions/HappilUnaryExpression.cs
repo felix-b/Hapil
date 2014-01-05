@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -26,13 +27,10 @@ namespace Happil.Expressions
 			m_Operator = @operator;
 			m_Position = position;
 
-			var scope = TryGetCurrrentScope();
+			var scope = StatementScope.Current; 
 
-			if ( scope != null )
-			{
-				scope.UnregisterExpressionStatement(operand as IHappilExpression);
-				scope.RegisterExpressionStatement(this);
-			}
+			scope.UnregisterExpressionStatement(operand as IHappilExpression);
+			scope.RegisterExpressionStatement(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

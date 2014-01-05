@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Happil.Expressions;
 using Happil.Fluent;
+using Happil.Statements;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Fluent
@@ -12,6 +13,26 @@ namespace Happil.UnitTests.Fluent
 	[TestFixture]
 	public class OperandTests
 	{
+		private StatementScope m_StatementScope;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[SetUp]
+		public void SetUp()
+		{
+			m_StatementScope = new StatementScope(null, null, new List<IHappilStatement>());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[TearDown]
+		public void TearDown()
+		{
+			m_StatementScope.Dispose();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test]
 		public void ArithmeticalExpression()
 		{
