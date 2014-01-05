@@ -53,23 +53,6 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public IHappilClassBody<TBase> ImplementAutomatic()
-			{
-				if ( SelectedProperties.Any(p => p.IsIndexer() || !p.CanRead || !p.CanWrite) )
-				{
-					throw new NotSupportedException("Automatic properties cannot be read-only or indexers");
-				}
-
-				DefineMembers<object>(body => {
-					((IHappilPropertyBody<object>)body).Get(m => m.Return(body.BackingField));
-					((IHappilPropertyBody<object>)body).Set((m, value) => body.BackingField.Assign(value));
-				});
-
-				return OwnerBody;
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
 			internal IHappilClassBody<TBase> DefineMembers<TProperty>(Action<HappilProperty<TProperty>.BodyBase> invokeAccessorBodyDefinitions)
 			{
 				var propertiesToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedProperties);
@@ -87,8 +70,39 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			internal IHappilClassBody<TBase> DefineAutomaticImplementation<TProperty>()
+			{
+				DefineMembers<TProperty>(body => {
+					ValidateAutomaticImplementation(body.Declaration);
+					
+					((IHappilPropertyBody<TProperty>)body).Get(m => m.Return(body.BackingField));
+					((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.Assign(value));
+				});
+
+				return OwnerBody;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			internal HappilClassBody<TBase> OwnerBody { get; private set; }
 			internal PropertyInfo[] SelectedProperties { get; private set; }
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void ValidateAutomaticImplementation(PropertyInfo declaration)
+			{
+				if ( !declaration.CanRead || !declaration.CanWrite )
+				{
+					throw new NotSupportedException(string.Format(
+						"Property '{0}' cannot have automatic implementation because it is not read-write.", declaration.Name));
+				}
+
+				if ( declaration.IsIndexer() )
+				{
+					throw new NotSupportedException(string.Format(
+						"Property '{0}' cannot have automatic implementation because it is an indexer.", declaration.Name));
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,21 +117,28 @@ namespace Happil.Selectors
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public IHappilClassBody<TBase> Implement(
-				Func<IHappilPropertyBody<object>, IHappilPropertyGetter> getter,
-				Func<IHappilPropertyBody<object>, IHappilPropertySetter> setter = null)
+				Func<IHappilPropertyBody<TypeTemplate>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TypeTemplate>, IHappilPropertySetter> setter = null)
 			{
-				DefineMembers<object>(body => {
+				DefineMembers<TypeTemplate>(body => {
 					if ( getter != null )
 					{
-						getter((IHappilPropertyBody<object>)body);
+						getter((IHappilPropertyBody<TypeTemplate>)body);
 					}
 					if ( setter != null )
 					{
-						setter((IHappilPropertyBody<object>)body);
+						setter((IHappilPropertyBody<TypeTemplate>)body);
 					}
 				});
 
 				return OwnerBody;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic()
+			{
+				return DefineAutomaticImplementation<TypeTemplate>();
 			}
 		}
 
@@ -148,6 +169,13 @@ namespace Happil.Selectors
 				});
 
 				return OwnerBody;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic()
+			{
+				return DefineAutomaticImplementation<TypeTemplate>();
 			}
 		}
 

@@ -79,16 +79,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<T> BackingField
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		protected override void OnEmitTarget(ILGenerator il)
 		{
 			throw new NotImplementedException();
@@ -350,20 +340,25 @@ namespace Happil.Fluent
 			{
 				var typedGetterDefinition = (GetterBodyDefinition as Action<IHappilMethodBody<T>>);
 				var typedSetterDefinition = (SetterBodyDefinition as Action<IVoidHappilMethodBody, HappilArgument<T>>);
+				
+				var typeTemplateScope = (typeof(T) == typeof(TypeTemplate) ? TypeTemplate.CreateScope(OwnerProperty.Declaration.PropertyType) : null);
 
-				if ( typedGetterDefinition != null )
+				using ( typeTemplateScope )
 				{
-					using ( GetterMethod.CreateBodyScope() )
+					if ( typedGetterDefinition != null )
 					{
-						typedGetterDefinition(GetterMethod);
+						using ( GetterMethod.CreateBodyScope() )
+						{
+							typedGetterDefinition(GetterMethod);
+						}
 					}
-				}
 
-				if ( typedSetterDefinition != null )
-				{
-					using ( SetterMethod.CreateBodyScope() )
+					if ( typedSetterDefinition != null )
 					{
-						typedSetterDefinition(SetterMethod, new HappilArgument<T>(SetterMethod, 1));
+						using ( SetterMethod.CreateBodyScope() )
+						{
+							typedSetterDefinition(SetterMethod, new HappilArgument<T>(SetterMethod, 1));
+						}
 					}
 				}
 			}

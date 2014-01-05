@@ -222,8 +222,8 @@ namespace Happil.Fluent
 
 				if ( StatementScope.Exists )
 				{
-					throw new InvalidOperationException(
-						string.Format("Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));
+					throw new InvalidOperationException(string.Format(
+						"Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));
 				}
 			}
 		}

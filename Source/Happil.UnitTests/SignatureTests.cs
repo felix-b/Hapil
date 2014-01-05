@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Selectors;
 using Moq;
 using NUnit.Framework;
 
@@ -51,7 +52,7 @@ namespace Happil.UnitTests
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods(m => !m.IsVoid()).Implement( 
 					m => {
-						m.Return(m.Default(m.ReturnType));
+						m.Return(TypeTemplate.DefaultValue);
 					});
 
 			//-- Act
@@ -84,7 +85,7 @@ namespace Happil.UnitTests
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods().Implement(   // this selects all methods, but only non-void methods will be implemented, 
 					m => {                 // because void methods were already implemented earlier.
-						m.Return(m.Default(m.ReturnType));
+						m.Return(TypeTemplate.DefaultValue);
 					});
 
 			//-- Act
@@ -189,10 +190,10 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IReadOnlyAndReadWriteProperties>()
 				.ReadOnlyProperties().Implement( 
-					p => p.Get(m => m.Return(m.Default(p.Type)))
+					p => p.Get(m => m.Return(TypeTemplate.DefaultValue))
 				)
 				.ReadWriteProperties().Implement(
-					p => p.Get(m => m.Return(m.Default(p.Type))),
+					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
 					p => p.Set((m, value) => { })
 				);
 
@@ -226,10 +227,10 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IReadOnlyAndReadWriteProperties>()
 				.ReadOnlyProperties().Implement(
-					p => p.Get(m => m.Return(m.Default(p.Type)))
+					p => p.Get(m => m.Return(TypeTemplate.DefaultValue))
 				)
 				.AllProperties().Implement(  // the Implement method only takes properties that were not implemented earlier
-					p => p.Get(m => m.Return(m.Default(p.Type))),
+					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
 					p => p.Set((m, value) => { })
 				);
 
@@ -301,7 +302,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IFewPropertiesWithIndexers>()
 				.AllProperties(where: p => !p.IsIndexer()).Implement(
-					p => p.Get(m => m.Return(m.Default(p.Type))),
+					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
 					p => p.Set((m, value) => { })
 				)
 				.This<string, int>().Implement(
@@ -350,15 +351,17 @@ namespace Happil.UnitTests
 
 			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
 
+			obj.AnInt = 321;
+			obj.AString = "DEF";
+			
+			var anObjectValue = new object();
+			obj.AnObject = anObjectValue;
+
 			//-- Assert
 
-			Assert.That(obj.AnInt, Is.EqualTo(0));
-			Assert.That(obj.AString, Is.Null);
-			Assert.That(obj.AnObject, Is.Null);
-
-			obj.AnInt = 0;
-			obj.AString = null;
-			obj.AnObject = null;
+			Assert.That(obj.AnInt, Is.EqualTo(321));
+			Assert.That(obj.AString, Is.EqualTo("DEF"));
+			Assert.That(obj.AnObject, Is.SameAs(anObjectValue));
 		}
 	}
 }

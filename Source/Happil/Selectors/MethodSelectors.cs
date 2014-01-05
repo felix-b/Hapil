@@ -103,7 +103,12 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBodyTemplate> body)
 			{
-				return DefineMembers<object>(body);
+				return DefineMembers<TypeTemplate>(methodMember => {
+					using ( TypeTemplate.CreateScope(methodMember.ReturnType) )
+					{
+						body(methodMember);
+					}
+				});
 			}
 		}
 

@@ -54,10 +54,10 @@ namespace Happil.UnitTests.Selectors
 					m.Return();
 				})
 				.AllMethods(where: m => m.ReturnType.IsValueType).Implement(m => {
-					m.Return(m.Default(m.ReturnType));		
+					m.Return(TypeTemplate.DefaultValue);		
 				})
 				.AllMethods().Implement(m => {
-					m.Return(m.Const<object>(null));
+					m.Return(TypeTemplate.DefaultValue);
 				});
 
 			//-- Act

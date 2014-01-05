@@ -128,11 +128,11 @@ namespace Happil.Fluent
 			return new HappilConstant<T>(value);			
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static implicit operator T(HappilConstant<T> operand)
-		{
-			return operand.m_Value;
-		}
+		//public static implicit operator T(HappilConstant<T> operand)
+		//{
+		//	return operand.m_Value;
+		//}
 	}
 }
