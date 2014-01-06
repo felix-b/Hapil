@@ -11,8 +11,8 @@ namespace Happil.Fluent
 	public interface IHappilMethodBodyBase
 	{
 		HappilOperand<TBase> This<TBase>();
-		HappilLocal<T> Local<T>(string name);
-		HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue);
+		HappilLocal<T> Local<T>();
+		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);
 		HappilConstant<T> Const<T>(T value);
 		HappilConstant<T> Default<T>();
 		HappilConstant<object> Default(Type type);

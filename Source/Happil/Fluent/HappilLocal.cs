@@ -8,21 +8,21 @@ namespace Happil.Fluent
 {
 	public class HappilLocal<T> : HappilAssignable<T>
 	{
-		private readonly string m_Name;
+		private readonly LocalBuilder m_LocalBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilLocal(string name, HappilMethod ownerMethod)
+		internal HappilLocal(HappilMethod ownerMethod)
 			: base(ownerMethod)
 		{
-			m_Name = name;
+			m_LocalBuilder = ownerMethod.MethodBuilder.GetILGenerator().DeclareLocal(TypeTemplate.ResolveActualType<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override string ToString()
 		{
-			return string.Format("Arg<{0}>{{{1}}}", typeof(T).Name, m_Name);
+			return string.Format("Local<{0}>{{#{1}}}", m_LocalBuilder.LocalType.Name, m_LocalBuilder.LocalIndex);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,21 +35,21 @@ namespace Happil.Fluent
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldloc, m_LocalBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Stloc, m_LocalBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldloca, (short)m_LocalBuilder.LocalIndex);
 		}
 	}
 }

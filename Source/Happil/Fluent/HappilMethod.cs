@@ -53,16 +53,18 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilLocal<T> Local<T>(string name)
+		public HappilLocal<T> Local<T>()
 		{
-			throw new NotImplementedException();
+			return new HappilLocal<T>(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue)
+		public HappilLocal<T> Local<T>(IHappilOperand<T> initialValue)
 		{
-			return new HappilLocal<T>(name, this);
+			var local = new HappilLocal<T>(this);
+			local.Assign(initialValue);
+			return local;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

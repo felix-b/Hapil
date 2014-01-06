@@ -42,15 +42,15 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
-		public void CanWriteImplementedProperties()
+		[Test]
+		public void CanReadAndWriteImplementedProperties()
 		{
 			//-- Arrange
 
 			DeriveClassFrom<IntPropertiesBase2>()
 				.DefaultConstructor()
 				.Method(cls => cls.SwapPropertyValues).Implement(m => {
-					var temp = m.Local<int>("temp");
+					var temp = m.Local<int>();
 					var @this = m.This<AncestorRepository.ITwoProperties>();
 					
 					temp.Assign(@this.Property(x => x.PropertyOne));
@@ -77,6 +77,39 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CanReadAndWriteInheritedProperties()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<IntPropertiesBase3>()
+				.DefaultConstructor()
+				.Method(cls => cls.SwapPropertyValues).Implement(m => {
+					var temp = m.Local<int>();
+					var @this = m.This<IntPropertiesBase3>();
+
+					temp.Assign(@this.Property(x => x.PropertyOne));
+					@this.Property(x => x.PropertyOne).Assign(@this.Property(x => x.PropertyTwo));
+					@this.Property(x => x.PropertyTwo).Assign(temp);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<IntPropertiesBase3>().UsingDefaultConstructor();
+
+			obj.PropertyOne = 11;
+			obj.PropertyTwo = 22;
+
+			obj.SwapPropertyValues();
+
+			//-- Assert
+
+			Assert.That(obj.PropertyOne, Is.EqualTo(22));
+			Assert.That(obj.PropertyTwo, Is.EqualTo(11));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class IntPropertiesBase1
 		{
 			public abstract int SumPropertiesAndNumber(int number);
@@ -87,6 +120,15 @@ namespace Happil.UnitTests
 		public abstract class IntPropertiesBase2
 		{
 			public abstract void SwapPropertyValues();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class IntPropertiesBase3
+		{
+			public abstract void SwapPropertyValues();
+			public int PropertyOne { get; set; }
+			public int PropertyTwo { get; set; }
 		}
 	}
 }

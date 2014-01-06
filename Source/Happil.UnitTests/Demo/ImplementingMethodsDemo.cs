@@ -32,7 +32,7 @@ namespace Happil.UnitTests.Demo
 				return Module.DefineClass(key, namespaceName: "ImplementingMethodsDemo")
 					.ImplementInterface(key.PrimaryInterface)
 					.VoidMethods().Implement(m => {
-						var methodName = m.Local<string>("methodName");
+						var methodName = m.Local<string>();
 						methodName.Assign(m.MethodInfo.Name);
 						m.EmitFromLambda(() => Console.WriteLine(methodName));
 					});
