@@ -27,13 +27,7 @@ namespace Happil.Fluent
 
 		public void Base()
 		{
-			//TODO: handle non-public base constructors
-			var baseConstructor = HappilClass.TypeBuilder.BaseType.GetConstructor(new Type[0]);
-
-			if ( baseConstructor == null )
-			{
-				throw new InvalidOperationException("Base constructor not found.");
-			}
+			var baseConstructor = FindBaseConstructor();
 
 			new HappilUnaryExpression<object, object>(
 				this, 
@@ -126,5 +120,26 @@ namespace Happil.Fluent
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	
+		private ConstructorInfo FindBaseConstructor(params Type[] argumentTypes)
+		{
+			for ( var baseType = HappilClass.TypeBuilder.BaseType ; baseType != null ; baseType = baseType.BaseType )
+			{
+				var constructor = baseType.GetConstructor(
+					BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+					binder: null,
+					types: argumentTypes,
+					modifiers: null);
+
+				if ( constructor != null )
+				{
+					return constructor;
+				}
+			}
+
+			throw new InvalidOperationException("Base constructor not found.");
+		}
 	}
 }

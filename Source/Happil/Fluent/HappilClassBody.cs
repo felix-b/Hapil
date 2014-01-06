@@ -159,49 +159,49 @@ namespace Happil.Fluent
 
 		public MethodSelectors.Void<TBase> Method(Expression<Func<TBase, Action>> method)
 		{
-			return new MethodSelectors.Void<TBase>(this, GetMethodInfoFromLambda(method));
+			return new MethodSelectors.Void<TBase>(this, Helpers.GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void1Arg<TBase, TArg1> Method<TArg1>(Expression<Func<TBase, Action<TArg1>>> method)
 		{
-			return new MethodSelectors.Void1Arg<TBase, TArg1>(this, GetMethodInfoFromLambda(method));
+			return new MethodSelectors.Void1Arg<TBase, TArg1>(this, Helpers.GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void2Args<TBase, TArg1, TArg2> Method<TArg1, TArg2>(Expression<Func<TBase, Action<TArg1, TArg2>>> method)
 		{
-			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(this, GetMethodInfoFromLambda(method));
+			return new MethodSelectors.Void2Args<TBase, TArg1, TArg2>(this, Helpers.GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3> Method<TArg1, TArg2, TArg3>(Expression<Func<TBase, Action<TArg1, TArg2, TArg3>>> method)
 		{
-			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(this, GetMethodInfoFromLambda(method));
+			return new MethodSelectors.Void3Args<TBase, TArg1, TArg2, TArg3>(this, Helpers.GetMethodInfoFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions<TBase, TReturn> Method<TReturn>(Expression<Func<TBase, Func<TReturn>>> function)
 		{
-			return new MethodSelectors.Functions<TBase, TReturn>(this, GetMethodInfoFromLambda(function));
+			return new MethodSelectors.Functions<TBase, TReturn>(this, Helpers.GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> Method<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(this, GetMethodInfoFromLambda(function));
+			return new MethodSelectors.Functions1Arg<TBase, TArg1, TReturn>(this, Helpers.GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> Method<TArg1, TArg2, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(this, GetMethodInfoFromLambda(function));
+			return new MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn>(this, Helpers.GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ namespace Happil.Fluent
 		public MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> Method<TArg1, TArg2, TArg3, TReturn>(
 			Expression<Func<TBase, Func<TArg1, TArg2, TArg3, TReturn>>> function)
 		{
-			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(this, GetMethodInfoFromLambda(function));
+			return new MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn>(this, Helpers.GetMethodInfoFromLambda(function));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -322,7 +322,7 @@ namespace Happil.Fluent
 
 		public PropertySelectors.Typed<TBase, TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property)
 		{
-			return new PropertySelectors.Typed<TBase, TProperty>(this, GetPropertyInfoFromLambda(property));
+			return new PropertySelectors.Typed<TBase, TProperty>(this, Helpers.GetPropertyInfoFromLambda(property));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -531,23 +531,6 @@ namespace Happil.Fluent
 			}
 
 			return false;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		private static MethodInfo[] GetMethodInfoFromLambda(LambdaExpression lambda)
-		{
-			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
-			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
-			return new[] { methodDeclaration };
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private static PropertyInfo[] GetPropertyInfoFromLambda(LambdaExpression lambda)
-		{
-			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
-			return new[] { propertyInfo };
 		}
 	}
 }

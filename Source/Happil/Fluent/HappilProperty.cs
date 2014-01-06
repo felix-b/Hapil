@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class HappilProperty<T> : HappilOperand<T>, IHappilMember
+	public class HappilProperty<T> : HappilAssignable<T>, IHappilMember
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly PropertyInfo m_Declaration;

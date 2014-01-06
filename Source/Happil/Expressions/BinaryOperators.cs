@@ -386,12 +386,20 @@ namespace Happil.Expressions
 			{
 				var leftInternals = (IHappilOperandInternals)left;
 				var rightInternals = (IHappilOperandInternals)right;
+				var nonPostfix = (left as INonPostfixNotation);
 
 				leftInternals.EmitTarget(il);
-				
-				rightInternals.EmitTarget(il);
-				rightInternals.EmitLoad(il);
-				
+
+				if ( nonPostfix != null )
+				{
+					nonPostfix.RightSide = rightInternals;
+				}
+				else
+				{
+					rightInternals.EmitTarget(il);
+					rightInternals.EmitLoad(il);
+				}
+
 				leftInternals.EmitStore(il);
 
 				if ( m_ForceLeaveFalueOnStack )

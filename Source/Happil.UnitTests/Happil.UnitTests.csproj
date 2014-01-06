@@ -51,6 +51,7 @@
     <Compile Include="AncestorRepository.cs" />
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />
     <Compile Include="Demo\EndToEndDemo.cs" />
+    <Compile Include="ExpressionTests.cs" />
     <Compile Include="Fluent\ConstructorTests.cs" />
     <Compile Include="Fluent\CSharpTests.cs" />
     <Compile Include="Fluent\InvocationTests.cs" />

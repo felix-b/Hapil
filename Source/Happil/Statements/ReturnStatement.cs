@@ -35,6 +35,7 @@ namespace Happil.Statements
 		public ReturnStatement(IHappilOperand<T> operand)
 		{
 			m_Operand = operand;
+			StatementScope.Current.UnregisterExpressionStatement(operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

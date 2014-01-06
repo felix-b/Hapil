@@ -32,8 +32,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilOperand<T> Members
-
 		public void InvokeVoid(Expression<Func<T, Action>> member)
 		{
 			var method = ValidateMemberIsMethodOfType(((MemberExpression)member.Body).Member);
@@ -85,12 +83,12 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TProp> Get<TProp>(Expression<Func<T, TProp>> property)
+		public HappilAssignable<TProp> Property<TProp>(Expression<Func<T, TProp>> property)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<TProp>(
+				target: this, 
+				property: Helpers.GetPropertyInfoFromLambda(property).First());
 		}
-
-		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		

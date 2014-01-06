@@ -10,6 +10,7 @@ namespace Happil.Fluent
 {
 	public interface IHappilMethodBodyBase
 	{
+		HappilOperand<TBase> This<TBase>();
 		HappilLocal<T> Local<T>(string name);
 		HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue);
 		HappilConstant<T> Const<T>(T value);

@@ -84,6 +84,18 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void UnregisterExpressionStatement<T>(IHappilOperand<T> operand)
+		{
+			var expression = (operand as IHappilExpression);
+
+			if ( expression != null )
+			{
+				UnregisterExpressionStatement(expression);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void UnregisterExpressionStatement(IHappilExpression expression)
 		{
 			if ( expression != null )

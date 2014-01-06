@@ -57,5 +57,22 @@ namespace Happil
 
 			return CreateConstant(argument.Type, argumentValue);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static MethodInfo[] GetMethodInfoFromLambda(LambdaExpression lambda)
+		{
+			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
+			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			return new[] { methodDeclaration };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static PropertyInfo[] GetPropertyInfoFromLambda(LambdaExpression lambda)
+		{
+			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
+			return new[] { propertyInfo };
+		}
 	}
 }

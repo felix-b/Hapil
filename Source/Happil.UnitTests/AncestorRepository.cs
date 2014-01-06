@@ -113,5 +113,19 @@ namespace Happil.UnitTests
 			int this[string  s] { get; set; }
 			string this[int n, string s] { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IOneProperty
+		{
+			int PropertyOne { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface ITwoProperties : IOneProperty
+		{
+			int PropertyTwo { get; set; }
+		}
 	}
 }

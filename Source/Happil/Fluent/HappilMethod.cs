@@ -46,6 +46,13 @@ namespace Happil.Fluent
 
 		#region IHappilMethodBodyBase Members
 
+		public HappilOperand<TBase> This<TBase>()
+		{
+			return new HappilThis<TBase>(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilLocal<T> Local<T>(string name)
 		{
 			throw new NotImplementedException();
@@ -55,7 +62,7 @@ namespace Happil.Fluent
 
 		public HappilLocal<T> Local<T>(string name, HappilOperand<T> initialValue)
 		{
-			throw new NotImplementedException();
+			return new HappilLocal<T>(name, this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
