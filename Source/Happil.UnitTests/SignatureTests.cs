@@ -82,6 +82,7 @@ namespace Happil.UnitTests
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IMoreMethods>()
+				.Method<string, int, TimeSpan>(intf => intf.Eight).Implement((m, s, n, t) => { })
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods().Implement(   // this selects all methods, but only non-void methods will be implemented, 
 					m => {                 // because void methods were already implemented earlier.

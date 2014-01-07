@@ -127,5 +127,33 @@ namespace Happil.UnitTests
 		{
 			int PropertyTwo { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyContainerOne
+		{
+			IOneProperty One { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyContainerTwo
+		{
+			ITwoProperties Two { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyContainersReader
+		{
+			int SumAll(IPropertyContainerOne container1, IPropertyContainerTwo container2);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyContainersWriter
+		{
+			void SetAll(IPropertyContainerOne container1, IPropertyContainerTwo container2, int value);
+		}
 	}
 }

@@ -83,6 +83,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilAssignable<TProp> P<TProp>(Expression<Func<T, TProp>> property)
+		{
+			return Property<TProp>(property);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilAssignable<TProp> Property<TProp>(Expression<Func<T, TProp>> property)
 		{
 			return new PropertyAccessOperand<TProp>(
