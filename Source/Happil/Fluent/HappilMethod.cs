@@ -359,7 +359,7 @@ namespace Happil.Fluent
 		public void Return(IHappilOperand<TReturn> operand)
 		{
 			//TODO: verify that current scope belongs to this method
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand));
+			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand.OrNullConstant()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

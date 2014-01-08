@@ -29,11 +29,11 @@ namespace Happil.Expressions
 
 			var scope = StatementScope.Current;
 
-			scope.UnregisterExpressionStatement(left as IHappilExpression);
-			scope.UnregisterExpressionStatement(right as IHappilExpression);
+			scope.Consume(left as IHappilExpression);
+			scope.Consume(right as IHappilExpression);
 			// since the unregister method only checks the last statement, the following line is 
 			// required to remove dependency on the order of left and right registration:
-			scope.UnregisterExpressionStatement(left as IHappilExpression);
+			scope.Consume(left as IHappilExpression);
 			
 			scope.RegisterExpressionStatement(this);
 		}

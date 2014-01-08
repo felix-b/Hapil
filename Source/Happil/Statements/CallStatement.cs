@@ -16,11 +16,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CallStatement(IHappilOperand<object> target, MethodBase method, params IHappilOperand<object>[] arguments)
+		public CallStatement(IHappilOperandInternals target, MethodBase method, params IHappilOperandInternals[] arguments)
 		{
-			m_Target = target as IHappilOperandInternals;
+			StatementScope.Current.Consume((IHappilOperand<object>)target);
+
+			m_Target = target;
 			m_Method = method;
-			m_Arguments = arguments.Cast<IHappilOperandInternals>().ToArray();
+			m_Arguments = arguments;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

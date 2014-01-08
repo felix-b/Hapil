@@ -35,7 +35,7 @@ namespace Happil.Fluent
 			m_HappilClass = happilClass;
 			m_Name = happilClass.TakeMemberName(name);
 
-			var actualType = TypeTemplate.ResolveActualType<T>();
+			var actualType = TypeTemplate.Resolve<T>();
 			m_FieldBuilder = happilClass.TypeBuilder.DefineField(m_Name, actualType, FieldAttributes.Private);
 		}
 

@@ -19,5 +19,16 @@ namespace Happil
 				return null;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsNullableValueType(this Type type)
+		{
+			return (
+				type.IsValueType &&
+				type.IsGenericType && 
+				!type.IsGenericTypeDefinition && 
+				type.GetGenericTypeDefinition() == typeof(Nullable<>));
+		}
 	}
 }

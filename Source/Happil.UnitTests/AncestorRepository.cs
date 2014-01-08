@@ -155,5 +155,19 @@ namespace Happil.UnitTests
 		{
 			void SetAll(IPropertyContainerOne container1, IPropertyContainerTwo container2, int value);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface ITargetObjectCaller
+		{
+			object CallTheTarget(object target);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface ITargetValueTypeCaller
+		{
+			object CallTheTarget(int value);
+		}
 	}
 }

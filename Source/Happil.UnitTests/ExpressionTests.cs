@@ -225,6 +225,82 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CanCallVoidMethodOnReferenceTypeTarget()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, target) => {
+					target.CastTo<TargetOne>().M(x => x.CallMe);
+					m.Return(null);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var targetObj = new TargetOne();
+			
+			obj.CallTheTarget(targetObj);
+			obj.CallTheTarget(targetObj);
+
+			//-- Assert
+
+			Assert.That(targetObj.TimesCalled, Is.EqualTo(2));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanCallNonVoidMethodOnReferenceTypeTarget()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, target) => {
+					m.Return(target.M<string>(x => x.ToString));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var returnValue = obj.CallTheTarget(123);
+
+			//-- Assert
+
+			Assert.That(returnValue, Is.EqualTo("123"));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanCallMethodOnValueTypeTarget()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetValueTypeCaller>()
+				.Method<int, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					m.Return(value.M<string>(x => x.ToString));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetValueTypeCaller>().UsingDefaultConstructor();
+			var returnValue = obj.CallTheTarget(123);
+
+			//-- Assert
+
+			Assert.That(returnValue, Is.EqualTo("123"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class IntPropertiesBase1
 		{
 			public abstract int SumPropertiesAndNumber(int number);
@@ -273,6 +349,30 @@ namespace Happil.UnitTests
 		private class PropertyContainerTwoImpl : AncestorRepository.IPropertyContainerTwo
 		{
 			public AncestorRepository.ITwoProperties Two { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class TargetOne
+		{
+			public void CallMe()
+			{
+				this.TimesCalled++;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int TimesCalled { get; private set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class ExampleTargetObjectCaller
+		{
+			public string TargetToString(int target)
+			{
+				return target.ToString();
+			}
 		}
 	}
 }

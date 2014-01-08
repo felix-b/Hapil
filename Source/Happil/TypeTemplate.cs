@@ -101,15 +101,43 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal static Type ResolveActualType<T>()
+		internal static Type Resolve<T>()
 		{
-			if ( typeof(T) == typeof(TypeTemplate) )
+			return Resolve(typeof(T));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal static Type Resolve(Type type)
+		{
+			if ( type == typeof(TypeTemplate) )
 			{
 				return TypeTemplate.Type;
 			}
 			else
 			{
-				return typeof(T);
+				return type;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal static Type TryResolve<T>()
+		{
+			return TryResolve(typeof(T));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal static Type TryResolve(Type type)
+		{
+			if ( type == typeof(TypeTemplate) )
+			{
+				return (TypeTemplate.IsDefined ? TypeTemplate.Type : null);
+			}
+			else
+			{
+				return type;
 			}
 		}
 

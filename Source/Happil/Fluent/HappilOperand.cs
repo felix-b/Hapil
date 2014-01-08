@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
+using Happil.Statements;
 
 namespace Happil.Fluent
 {
@@ -22,63 +23,115 @@ namespace Happil.Fluent
 	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals
 	{
 		private HappilMethod m_OwnerMethod;
+		private readonly Type m_OperandType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal HappilOperand(HappilMethod ownerMethod)
 		{
 			m_OwnerMethod = ownerMethod;
+			m_OperandType = TypeTemplate.TryResolve<T>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void InvokeVoid(Expression<Func<T, Action>> member)
+		public void Method(Expression<Func<T, Action>> member)
 		{
-			var method = ValidateMemberIsMethodOfType(((MemberExpression)member.Body).Member);
-			
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void InvokeVoid<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
+		public void M(Expression<Func<T, Action>> member)
 		{
-			throw new NotImplementedException();
+			Method(member);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void InvokeVoid<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		public void Method<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
-			throw new NotImplementedException();
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			StatementScope.Current.AddStatement(new CallStatement(this, method, (IHappilOperandInternals)arg1));
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void InvokeVoid<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		public void M<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
-			throw new NotImplementedException();
+			Method(member, arg1);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TReturn> InvokeFunc<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		public void Method<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
-			throw new NotImplementedException();
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			StatementScope.Current.AddStatement(new CallStatement(
+				this, 
+				method, 
+				(IHappilOperandInternals)arg1,
+				(IHappilOperandInternals)arg2));
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilOperand<TReturn> InvokeFunc<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
+		public void M<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
-			throw new NotImplementedException();
+			Method(member, arg1, arg2);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TReturn> InvokeFunc<TArg1, TArg2, TReturn>(
+		public void Method<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			StatementScope.Current.AddStatement(new CallStatement(
+				this,
+				method,
+				(IHappilOperandInternals)arg1,
+				(IHappilOperandInternals)arg2,
+				(IHappilOperandInternals)arg3));
+		}
+		public void M<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		{
+			Method(member, arg1, arg2, arg3);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Method<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method), this);
+		}
+		public HappilOperand<TReturn> M<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		{
+			return Method(member);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Method<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var @operator = new UnaryOperators.OperatorCall<T>(method, (IHappilOperandInternals)arg1);
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
+		}
+		public HappilOperand<TReturn> M<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
+		{
+			return Method(member, arg1);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Method<TArg1, TArg2, TReturn>(
 			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
-			throw new NotImplementedException();
+			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var @operator = new UnaryOperators.OperatorCall<T>(
+				method, 
+				(IHappilOperandInternals)arg1,
+				(IHappilOperandInternals)arg2);
+
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
+		}
+		public HappilOperand<TReturn> M<TArg1, TArg2, TReturn>(
+			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		{
+			return Method(member, arg1, arg2);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -94,7 +147,7 @@ namespace Happil.Fluent
 		{
 			return new PropertyAccessOperand<TProp>(
 				target: this, 
-				property: Helpers.GetPropertyInfoFromLambda(property).First());
+				property: Helpers.GetPropertyInfoArrayFromLambda(property).First());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -155,6 +208,16 @@ namespace Happil.Fluent
 			}
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		Type IHappilOperandInternals.OperandType
+		{
+			get
+			{
+				return this.OperandType;
+			}
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -209,6 +272,24 @@ namespace Happil.Fluent
 				else
 				{
 					return null;
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual Type OperandType
+		{
+			get
+			{
+				if ( m_OperandType != null )
+				{
+					return m_OperandType;
+				}
+				else
+				{
+					//TODO: cover this case in unit tests!
+					throw new NotSupportedException("The operand class must override OperandType property and provide a specialized implementation.");
 				}
 			}
 		}
@@ -504,7 +585,7 @@ namespace Happil.Fluent
 			if ( method == null )
 			{
 				throw new ArgumentException(string.Format(
-					"Member {0} cannot be invoked because it is not a method. Invoke can only be applied to methods.",
+					"Member {0} cannot be invoked because it is not a method.",
 					member.Name));
 			}
 
@@ -521,7 +602,7 @@ namespace Happil.Fluent
 			}
 
 			throw new ArgumentException(string.Format(
-				"Member {0} cannot be invoked because it is not a method of type {1}. Invoke can only be applied to the methods of the operand.",
+				"Member {0} cannot be invoked because it is not a method of type {1}.",
 				member.Name, typeof(T).FullName));
 		}
 	}

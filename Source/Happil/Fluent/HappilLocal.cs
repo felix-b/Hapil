@@ -15,7 +15,7 @@ namespace Happil.Fluent
 		internal HappilLocal(HappilMethod ownerMethod)
 			: base(ownerMethod)
 		{
-			m_LocalBuilder = ownerMethod.MethodBuilder.GetILGenerator().DeclareLocal(TypeTemplate.ResolveActualType<T>());
+			m_LocalBuilder = ownerMethod.MethodBuilder.GetILGenerator().DeclareLocal(TypeTemplate.Resolve<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

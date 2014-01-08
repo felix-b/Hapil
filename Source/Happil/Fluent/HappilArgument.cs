@@ -17,7 +17,7 @@ namespace Happil.Fluent
 		{
 			if ( index < 1 )
 			{
-				throw new ArgumentOutOfRangeException("index", "Argument index is 1-based.");
+				throw new ArgumentOutOfRangeException("index", "Argument index must be 1-based.");
 			}
 
 			m_Index = index;
@@ -62,14 +62,14 @@ namespace Happil.Fluent
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException("Changing value of arguments is an anti-pattern.");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			il.Emit(OpCodes.Ldarga_S, m_Index);
 		}
 	}
 }

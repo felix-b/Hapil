@@ -322,7 +322,7 @@ namespace Happil.Fluent
 
 		public PropertySelectors.Typed<TBase, TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property)
 		{
-			return new PropertySelectors.Typed<TBase, TProperty>(this, Helpers.GetPropertyInfoFromLambda(property));
+			return new PropertySelectors.Typed<TBase, TProperty>(this, Helpers.GetPropertyInfoArrayFromLambda(property));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -84,19 +84,19 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void UnregisterExpressionStatement<T>(IHappilOperand<T> operand)
+		public void Consume<T>(IHappilOperand<T> operand)
 		{
 			var expression = (operand as IHappilExpression);
 
 			if ( expression != null )
 			{
-				UnregisterExpressionStatement(expression);
+				Consume(expression);
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void UnregisterExpressionStatement(IHappilExpression expression)
+		public void Consume(IHappilExpression expression)
 		{
 			if ( expression != null )
 			{

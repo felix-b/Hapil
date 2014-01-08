@@ -15,8 +15,15 @@ namespace Happil
 		{
 			if ( target != null )
 			{
-				target.EmitTarget(il);
-				target.EmitLoad(il);
+				if ( target.OperandType.IsValueType )
+				{
+					target.EmitAddress(il);
+				}
+				else
+				{
+					target.EmitTarget(il);
+					target.EmitLoad(il);
+				}
 			}
 
 			foreach ( var argument in arguments )
@@ -69,10 +76,29 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static PropertyInfo[] GetPropertyInfoFromLambda(LambdaExpression lambda)
+		public static PropertyInfo[] GetPropertyInfoArrayFromLambda(LambdaExpression lambda)
 		{
 			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
 			return new[] { propertyInfo };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<T> OrNullConstant<T>(this IHappilOperand<T> operand)
+		{
+			if ( operand != null )
+			{
+				return operand;
+			}
+
+			var type = typeof(T);
+
+			if ( type.IsValueType && !type.IsNullableValueType() )
+			{
+				throw new NotSupportedException(string.Format("Null is not a valid value for type '{0}'.", type.FullName));
+			}
+
+			return new HappilConstant<T>(default(T));
 		}
 	}
 }

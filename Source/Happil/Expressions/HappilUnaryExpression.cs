@@ -29,7 +29,7 @@ namespace Happil.Expressions
 
 			var scope = StatementScope.Current; 
 
-			scope.UnregisterExpressionStatement(operand as IHappilExpression);
+			scope.Consume(operand as IHappilExpression);
 			scope.RegisterExpressionStatement(this);
 		}
 
