@@ -33,7 +33,7 @@ namespace Happil.UnitTests.Demo
 					.ImplementInterface(key.PrimaryInterface)
 					.VoidMethods().Implement(m => {
 						var methodName = m.Local<string>();
-						methodName.Assign(m.MethodInfo.Name);
+						methodName.AssignConst(m.MethodInfo.Name);
 						m.EmitFromLambda(() => Console.WriteLine(methodName));
 					});
 			}

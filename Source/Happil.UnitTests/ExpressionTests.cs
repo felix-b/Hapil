@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Fluent;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
@@ -262,7 +263,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
 				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, target) => {
-					m.Return(target.M<string>(x => x.ToString));
+					m.Return(target.M<string>(x => x.ToString).CastTo<object>());
 				});
 
 			//-- Act
@@ -297,6 +298,122 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(returnValue, Is.EqualTo("123"));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanCallStaticVoidMethod()
+		{
+			//-- Arrange
+
+			StaticTargetOne.ResetTimesCalled();
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					Static.Void(StaticTargetOne.CallMe);
+					m.Return(null);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+
+			obj.CallTheTarget(null);
+			obj.CallTheTarget(null);
+
+			//-- Assert
+
+			Assert.That(StaticTargetOne.TimesCalled, Is.EqualTo(2));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanCallStaticNonVoidFunctionWithArguments()
+		{
+			//-- Arrange
+
+			StaticTargetOne.ResetTimesCalled();
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetValueTypeCaller>()
+				.Method<int, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					m.Return(Static.Func(StaticTargetOne.IncrementMe, value).CastTo<object>());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetValueTypeCaller>().UsingDefaultConstructor();
+
+			var value1 = (int)obj.CallTheTarget(111);
+			var value2 = (int)obj.CallTheTarget(222);
+
+			//-- Assert
+
+			Assert.That(StaticTargetOne.TimesCalled, Is.EqualTo(333));
+			Assert.That(value1, Is.EqualTo(0));
+			Assert.That(value2, Is.EqualTo(111));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanGetStaticPropertyValue()
+		{
+			//-- Arrange
+
+			StaticTargetOne.ResetTimesCalled();
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					m.Return(Static.Prop(() => StaticTargetOne.TimesCalled).CastTo<object>());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+
+			StaticTargetOne.IncrementMe(123);
+
+			var propertyValue = (int)obj.CallTheTarget(null);
+
+			//-- Assert
+
+			Assert.That(propertyValue, Is.EqualTo(123));
+			Assert.That(StaticTargetOne.TimesCalled, Is.EqualTo(123));
+		}
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanSetStaticPropertyValue()
+		{
+			//-- Arrange
+
+			StaticTargetOne.ResetTimesCalled();
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetValueTypeCaller>()
+				.Method<int, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					Static.Prop(() => StaticTargetOne.SetMe).Assign(value.M<string>(x => x.ToString));
+					m.Return(null);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetValueTypeCaller>().UsingDefaultConstructor();
+			obj.CallTheTarget(98765);
+
+			//-- Assert
+
+			Assert.That(StaticTargetOne.SetMe, Is.EqualTo("98765"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -367,11 +484,45 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public class StaticTargetOne
+		{
+			public static void CallMe()
+			{
+				TimesCalled++;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static int IncrementMe(int delta)
+			{
+				var currentValue = TimesCalled;
+				TimesCalled += delta;
+				return currentValue;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static void ResetTimesCalled()
+			{
+				TimesCalled = 0;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static int TimesCalled { get; private set; }
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static string SetMe { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private class ExampleTargetObjectCaller
 		{
-			public string TargetToString(int target)
+			public object TargetToString(int target)
 			{
-				return target.ToString();
+				return target * 2;
 			}
 		}
 	}

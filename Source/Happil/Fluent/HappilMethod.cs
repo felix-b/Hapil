@@ -364,7 +364,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Return(TReturn constantValue)
+		public void ReturnConst(TReturn constantValue)
 		{
 			//TODO: verify that current scope belongs to this method
 			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(new HappilConstant<TReturn>(constantValue)));

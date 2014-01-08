@@ -26,7 +26,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		public HappilOperand<T> Assign(T constantValue)
+		public HappilOperand<T> AssignConst(T constantValue)
 		{
 			return new HappilBinaryExpression<T, T>(
 				base.OwnerMethod,

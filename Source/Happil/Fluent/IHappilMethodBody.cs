@@ -35,10 +35,10 @@ namespace Happil.Fluent
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	public interface IHappilMethodBody<in TReturn> : IHappilMethodBodyBase
+	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
 	{
 		void Return(IHappilOperand<TReturn> operand);
-		void Return(TReturn constantValue);
+		void ReturnConst(TReturn constantValue);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

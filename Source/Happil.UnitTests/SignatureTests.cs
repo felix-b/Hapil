@@ -21,9 +21,9 @@ namespace Happil.UnitTests
 				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.Method(intf => intf.One).Implement(m => { })
 				.Method<int>(intf => intf.Two).Implement((m, n) => { })
-				.Method<int>(intf => intf.Three).Implement(m => m.Return(123))
-				.Method<string, int>(intf => intf.Four).Implement((m, s) => m.Return(456))
-				.Method<int, string>(intf => intf.Five).Implement((m, n) => m.Return("ABC"));
+				.Method<int>(intf => intf.Three).Implement(m => m.ReturnConst(123))
+				.Method<string, int>(intf => intf.Four).Implement((m, s) => m.ReturnConst(456))
+				.Method<int, string>(intf => intf.Five).Implement((m, n) => m.ReturnConst("ABC"));
 
 			//-- Act
 
@@ -119,12 +119,12 @@ namespace Happil.UnitTests
 				.VoidMethods<int, int>().Implement((m, x, y) => {
 					Assert.Fail("No such methods! this is a bug.");
 				})
-				.NonVoidMethods<int>().Implement(m => m.Return(123))
-				.NonVoidMethods<string>().Implement(m => m.Return("ABC"))
-				.NonVoidMethods<int, string>().Implement((m, n) => m.Return("DEF"))
-				.NonVoidMethods<string, int>().Implement((m, s) => m.Return(456))
-				.NonVoidMethods<TimeSpan, string, int>().Implement((m, t, s) => m.Return(789))
-				.NonVoidMethods<int, TimeSpan, string>().Implement((m, n, t) => m.Return("GHI"))
+				.NonVoidMethods<int>().Implement(m => m.ReturnConst(123))
+				.NonVoidMethods<string>().Implement(m => m.ReturnConst("ABC"))
+				.NonVoidMethods<int, string>().Implement((m, n) => m.ReturnConst("DEF"))
+				.NonVoidMethods<string, int>().Implement((m, s) => m.ReturnConst(456))
+				.NonVoidMethods<TimeSpan, string, int>().Implement((m, t, s) => m.ReturnConst(789))
+				.NonVoidMethods<int, TimeSpan, string>().Implement((m, n, t) => m.ReturnConst("GHI"))
 				.NonVoidMethods<TimeSpan, string, int, object>().Implement((m, t, s, n) => m.Return(m.Const<object>(null)))
 				.NonVoidMethods<string, int, TimeSpan, IEnumerable<int>>().Implement((m, s, n, t) => m.Return(m.Const<IEnumerable<int>>(null)));
 
@@ -156,10 +156,10 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
 				.Property(intf => intf.AnInt).Implement(
-					p => p.Get(m => m.Return(123)),
+					p => p.Get(m => m.ReturnConst(123)),
 					p => p.Set((m, value) => { }))
 				.Property(intf => intf.AString).Implement(
-					p => p.Get(m => m.Return("ABC")),
+					p => p.Get(m => m.ReturnConst("ABC")),
 					p => p.Set((m, value) => { }))
 				.Property(intf => intf.AnObject).Implement(
 					p => p.Get(m => m.Return(m.Const<object>(null))),
@@ -265,11 +265,11 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
 				.Properties<int>().Implement(
-					p => p.Get(m => m.Return(123)),
+					p => p.Get(m => m.ReturnConst(123)),
 					p => p.Set((m, value) => { })
 				)
 				.Properties<string>().Implement(
-					p => p.Get(m => m.Return("ABC")),
+					p => p.Get(m => m.ReturnConst("ABC")),
 					p => p.Set((m, value) => { })
 				)
 				.Properties<object>().Implement(
@@ -307,11 +307,11 @@ namespace Happil.UnitTests
 					p => p.Set((m, value) => { })
 				)
 				.This<string, int>().Implement(
-					p => p.Get((m, n) => m.Return(123)),
+					p => p.Get((m, n) => m.ReturnConst(123)),
 					p => p.Set((m, n, value) => { })
 				)
 				.This<int, string, string>().Implement(
-					p => p.Get((m, n, s) => m.Return("ABC")),
+					p => p.Get((m, n, s) => m.ReturnConst("ABC")),
 					p => p.Set((m, n, s, value) => { })
 				);
 

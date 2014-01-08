@@ -353,11 +353,21 @@ namespace Happil.Expressions
 					throw new NotSupportedException("Cast type must be a constant type known in advance.");
 				}
 
-				((IHappilOperandInternals)left).EmitTarget(il);
-				((IHappilOperandInternals)left).EmitLoad(il);
+				var leftInternals = (IHappilOperandInternals)left;
+
+				leftInternals.EmitTarget(il);
+				leftInternals.EmitLoad(il);
 
 				var castType = TypeTemplate.Resolve(typeConstant.Value);
-				il.Emit(OpCodes.Castclass, castType);
+
+				if ( leftInternals.OperandType.IsValueType && castType == typeof(object) )
+				{
+					il.Emit(OpCodes.Box, leftInternals.OperandType);
+				}
+				else
+				{
+					il.Emit(OpCodes.Castclass, castType);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
