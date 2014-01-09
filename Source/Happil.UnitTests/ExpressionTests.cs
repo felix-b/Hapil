@@ -418,6 +418,128 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CanGetIndexerPropertyValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
+					var indexerValue = m.Local<int>(initialValue: indexersObj.Item<string, int>("ABC"));
+					m.Return(indexerValue.CastTo<object>());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var objWithIndexers = new ObjectWithIndexers();
+
+			objWithIndexers["ABC"] = 123;
+			var returnValue = (int)obj.CallTheTarget(objWithIndexers);
+
+			//-- Assert
+
+			Assert.That(returnValue, Is.EqualTo(123));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanSetIndexerPropertyValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
+					indexersObj.Item<string, int>("ABC").AssignConst(999);
+					indexersObj.Item<string, int>("DEF").AssignConst(888);
+					m.Return(null);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var objWithIndexers = new ObjectWithIndexers();
+
+			objWithIndexers["ABC"] = 123;
+			obj.CallTheTarget(objWithIndexers);
+
+			//-- Assert
+
+			Assert.That(objWithIndexers["ABC"], Is.EqualTo(999));
+			Assert.That(objWithIndexers["DEF"], Is.EqualTo(888));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanGetTwoDimensionalIndexerPropertyValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
+					var indexerValue = m.Local<int>(initialValue: indexersObj.Item<string, DayOfWeek, int>("BBB", DayOfWeek.Monday));
+					m.Return(indexerValue.CastTo<object>());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var objWithIndexers = new ObjectWithIndexers();
+
+			objWithIndexers["AAA", DayOfWeek.Sunday] = 111;
+			objWithIndexers["BBB", DayOfWeek.Monday] = 222;
+			objWithIndexers["CCC", DayOfWeek.Tuesday] = 333;
+			var returnValue = (int)obj.CallTheTarget(objWithIndexers);
+
+			//-- Assert
+
+			Assert.That(returnValue, Is.EqualTo(222));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanSetTwoDimensionalIndexerPropertyValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
+					indexersObj.Item<string, DayOfWeek, int>("AAA", DayOfWeek.Sunday).AssignConst(111);
+					indexersObj.Item<string, DayOfWeek, int>("BBB", DayOfWeek.Monday).AssignConst(222);
+					indexersObj.Item<string, DayOfWeek, int>("CCC", DayOfWeek.Tuesday).AssignConst(333);
+					m.Return(null);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var objWithIndexers = new ObjectWithIndexers();
+			obj.CallTheTarget(objWithIndexers);
+
+			//-- Assert
+
+			Assert.That(objWithIndexers["AAA", DayOfWeek.Sunday], Is.EqualTo(111));
+			Assert.That(objWithIndexers["BBB", DayOfWeek.Monday], Is.EqualTo(222));
+			Assert.That(objWithIndexers["CCC", DayOfWeek.Tuesday], Is.EqualTo(333));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class IntPropertiesBase1
 		{
 			public abstract int SumPropertiesAndNumber(int number);
@@ -516,6 +638,41 @@ namespace Happil.UnitTests
 			public static string SetMe { get; set; }
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class ObjectWithIndexers
+		{
+			private readonly Dictionary<string, int> m_Values = new Dictionary<string, int>();
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int this[string name]
+			{
+				get
+				{
+					return m_Values[name];
+				}
+				set
+				{
+					m_Values[name] = value;
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int this[string name, DayOfWeek day]
+			{
+				get
+				{
+					return m_Values[name + "_" + day.ToString()];
+				}
+				set
+				{
+					m_Values[name + "_" + day.ToString()] = value;
+				}
+			}
+		}
+		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class ExampleTargetObjectCaller

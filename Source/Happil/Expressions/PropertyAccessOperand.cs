@@ -88,7 +88,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException("Properties cannot be passed by reference.");
 		}
 	}
 }

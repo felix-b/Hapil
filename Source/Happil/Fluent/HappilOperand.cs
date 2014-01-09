@@ -151,6 +151,54 @@ namespace Happil.Fluent
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TItem> Item<TIndex, TItem>(HappilConstant<TIndex> indexArg1)
+		{
+			return Item<TIndex, TItem>((IHappilOperand<TIndex>)indexArg1);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TItem> Item<TIndex1, TIndex2, TItem>(HappilConstant<TIndex1> indexArg1, HappilConstant<TIndex2> indexArg2)
+		{
+			return Item<TIndex1, TIndex2, TItem>((IHappilOperand<TIndex1>)indexArg1, (IHappilOperand<TIndex2>)indexArg2);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TItem> Item<TIndex, TItem>(IHappilOperand<TIndex> indexArg1)
+		{
+			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex) });
+
+			if ( indexerProperty == null )
+			{
+				throw new InvalidOperationException("Could not find indexer with specified types.");
+			}
+
+			return new PropertyAccessOperand<TItem>(
+				target: this,
+				property: indexerProperty,
+				indexArguments: (IHappilOperandInternals)indexArg1);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TItem> Item<TIndex1, TIndex2, TItem>(IHappilOperand<TIndex1> indexArg1, IHappilOperand<TIndex2> indexArg2)
+		{
+			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex1), typeof(TIndex2) });
+
+			if ( indexerProperty == null )
+			{
+				throw new InvalidOperationException("Could not find indexer with specified types.");
+			}
+
+			return new PropertyAccessOperand<TItem>(
+				target: this,
+				property: indexerProperty,
+				indexArguments: new[] { (IHappilOperandInternals)indexArg1, (IHappilOperandInternals)indexArg2 });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		#region Overrides of Object
 
