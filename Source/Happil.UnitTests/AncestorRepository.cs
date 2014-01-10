@@ -51,6 +51,22 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public abstract class BaseTwo
+		{
+			public abstract int FirstValue { get; set; }
+			public abstract string SecondValue { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class BaseThree
+		{
+			public abstract int Add(int x, int y);
+			public abstract int TakeNextCounter();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface IFewMethods
 		{
 			void One();

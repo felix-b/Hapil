@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Fluent;
 using Happil.Selectors;
 using Moq;
 using NUnit.Framework;
@@ -363,6 +364,125 @@ namespace Happil.UnitTests
 			Assert.That(obj.AnInt, Is.EqualTo(321));
 			Assert.That(obj.AString, Is.EqualTo("DEF"));
 			Assert.That(obj.AnObject, Is.SameAs(anObjectValue));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void BaseProperties_ImplementOneByOne()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.BaseTwo>()
+				.DefaultConstructor()
+				.Property(cls => cls.FirstValue).ImplementAutomatic()
+				.Property(cls => cls.SecondValue).ImplementAutomatic();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.BaseTwo>().UsingDefaultConstructor();
+
+			obj.FirstValue = 123;
+			obj.SecondValue = "ABC";
+
+			//-- Assert
+
+			Assert.That(obj.FirstValue, Is.EqualTo(123));
+			Assert.That(obj.SecondValue, Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void BaseProperties_SelectAll()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.BaseTwo>()
+				.DefaultConstructor()
+				.AllProperties().ImplementAutomatic();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.BaseTwo>().UsingDefaultConstructor();
+
+			obj.FirstValue = 123;
+			obj.SecondValue = "ABC";
+
+			//-- Assert
+
+			Assert.That(obj.FirstValue, Is.EqualTo(123));
+			Assert.That(obj.SecondValue, Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void BaseMethods_ImplementOneByOne()
+		{
+			//-- Arrange
+
+			HappilField<int> counterField;
+
+			DeriveClassFrom<AncestorRepository.BaseThree>()
+				.DefaultConstructor()
+				.Field<int>("m_Counter", out counterField)
+				.Method<int, int, int>(cls => cls.Add).Implement((m, x, y) => {
+					m.Return(x + y);
+				})
+				.Method<int>(cls => cls.TakeNextCounter).Implement(m => {
+					counterField.Assign(counterField + 1);
+					m.Return(counterField);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.BaseThree>().UsingDefaultConstructor();
+
+			var sum = obj.Add(111, 222);
+			var counterValue1 = obj.TakeNextCounter();
+			var counterValue2 = obj.TakeNextCounter();
+
+			//-- Assert
+
+			Assert.That(sum, Is.EqualTo(333));
+			Assert.That(counterValue1, Is.EqualTo(1));
+			Assert.That(counterValue2, Is.EqualTo(2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void BaseMethods_SelectGroups()
+		{
+			//-- Arrange
+
+			HappilField<int> counterField;
+
+			DeriveClassFrom<AncestorRepository.BaseThree>()
+				.DefaultConstructor()
+				.Field<int>("m_Counter", out counterField)
+				.NonVoidMethods<int, int, int>().Implement((m, x, y) => {
+					m.Return(x + y);
+				})
+				.NonVoidMethods<int>(where: m => m.DeclaringType != typeof(object)).Implement(m => {
+					counterField.Assign(counterField + 1);
+					m.Return(counterField);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.BaseThree>().UsingDefaultConstructor();
+
+			var sum = obj.Add(111, 222);
+			var counterValue1 = obj.TakeNextCounter();
+			var counterValue2 = obj.TakeNextCounter();
+
+			//-- Assert
+
+			Assert.That(sum, Is.EqualTo(333));
+			Assert.That(counterValue1, Is.EqualTo(1));
+			Assert.That(counterValue2, Is.EqualTo(2));
 		}
 	}
 }
