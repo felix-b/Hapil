@@ -10,13 +10,13 @@ namespace Happil.Statements
 {
 	internal class CallStatement : IHappilStatement
 	{
-		private readonly IHappilOperandInternals m_Target;
+		private readonly IHappilOperand m_Target;
 		private readonly MethodBase m_Method;
-		private readonly IHappilOperandInternals[] m_Arguments;
+		private readonly IHappilOperand[] m_Arguments;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CallStatement(IHappilOperandInternals target, MethodBase method, params IHappilOperandInternals[] arguments)
+		public CallStatement(IHappilOperand target, MethodBase method, params IHappilOperand[] arguments)
 		{
 			StatementScope.Current.Consume((IHappilOperand<object>)target);
 

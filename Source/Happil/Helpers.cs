@@ -11,11 +11,11 @@ namespace Happil
 {
 	internal static class Helpers
 	{
-		public static void EmitCall(ILGenerator il, IHappilOperandInternals target, MethodBase method, params IHappilOperandInternals[] arguments)
+		public static void EmitCall(ILGenerator il, IHappilOperand target, MethodBase method, params IHappilOperand[] arguments)
 		{
 			if ( target != null )
 			{
-				if ( target.OperandType.IsValueType )
+				if ( ((IHappilOperandInternals)target).OperandType.IsValueType )
 				{
 					target.EmitAddress(il);
 				}
@@ -48,15 +48,15 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperandInternals CreateConstant(Type type, object value)
+		public static IHappilOperand CreateConstant(Type type, object value)
 		{
 			var constantType = typeof(HappilConstant<>).MakeGenericType(type);
-			return (IHappilOperandInternals)Activator.CreateInstance(constantType, new object[] { value });
+			return (IHappilOperand)Activator.CreateInstance(constantType, new object[] { value });
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperandInternals GetLambdaArgumentAsConstant(Expression argument)
+		public static IHappilOperand GetLambdaArgumentAsConstant(Expression argument)
 		{
 			var argumentLambda = Expression.Lambda<Func<object>>(argument);
 			var argumentValueFunc = argumentLambda.Compile();

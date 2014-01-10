@@ -3,7 +3,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal interface IHappilExpression : IHappilOperandInternals
+	internal interface IHappilExpression : IHappilOperand
 	{
 		bool ShouldLeaveValueOnStack { get; set; }
 	}

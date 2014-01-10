@@ -42,8 +42,8 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			((IHappilOperandInternals)m_Operand).EmitTarget(il);
-			((IHappilOperandInternals)m_Operand).EmitLoad(il);
+			m_Operand.EmitTarget(il);
+			m_Operand.EmitLoad(il);
 
 			il.Emit(OpCodes.Ret);
 		}

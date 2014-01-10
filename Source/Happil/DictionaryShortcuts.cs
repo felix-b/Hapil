@@ -89,9 +89,9 @@ namespace Happil
 		public static HappilAssignable<TValue> Item<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary, IHappilOperand<TKey> key)
 		{
 			return new PropertyAccessOperand<TValue>(
-				(IHappilOperandInternals)dictionary, 
+				dictionary, 
 				GetReflectionCache<TKey, TValue>().Item,
-				(IHappilOperandInternals)key);
+				key);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

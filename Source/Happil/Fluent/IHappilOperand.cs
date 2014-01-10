@@ -7,6 +7,15 @@ using System.Text;
 namespace Happil.Fluent
 {
 	/// <summary>
+	/// A type-agnostic common base for all kinds of operands.
+	/// </summary>
+	public interface IHappilOperand
+	{
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	/// <summary>
 	/// This is the common denominator of all different kinds of operands in Happil.
 	/// </summary>
 	/// <typeparam name="T">
@@ -17,7 +26,7 @@ namespace Happil.Fluent
 	/// The covariance of <typeparamref name="T"/> allows passing operand of a more specific type wherever an operand
 	/// of a more general type is expected, up the inheritance hierarchy.
 	/// </remarks>
-	public interface IHappilOperand<out T>
+	public interface IHappilOperand<out T> : IHappilOperand
 	{
 	}
 }

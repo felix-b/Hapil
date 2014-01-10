@@ -8,6 +8,6 @@ namespace Happil.Expressions
 {
 	internal interface INonPostfixNotation
 	{
-		IHappilOperandInternals RightSide { set; }
+		IHappilOperand RightSide { set; }
 	}
 }

@@ -17,7 +17,7 @@ namespace Happil
 		{
 			return new HappilUnaryExpression<ISet<T>, bool>(
 				ownerMethod: null,
-				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().Add, (IHappilOperandInternals)item),
+				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().Add, item),
 				operand: set);
 		}
 

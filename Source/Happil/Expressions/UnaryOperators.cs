@@ -121,12 +121,12 @@ namespace Happil.Expressions
 		public class OperatorCall<T> : IUnaryOperator<T>, IDontLeaveValueOnStack
 		{
 			private readonly MethodBase m_Method;
-			private readonly IHappilOperandInternals[] m_Arguments;
+			private readonly IHappilOperand[] m_Arguments;
 			private bool m_ShouldLeaveValueOnStack;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public OperatorCall(MethodBase method, params IHappilOperandInternals[] arguments)
+			public OperatorCall(MethodBase method, params IHappilOperand[] arguments)
 			{
 				m_Method = method;
 				m_Arguments = arguments;
@@ -153,7 +153,7 @@ namespace Happil.Expressions
 
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				Helpers.EmitCall(il, (IHappilOperandInternals)operand, m_Method, m_Arguments);
+				Helpers.EmitCall(il, operand, m_Method, m_Arguments);
 
 				if ( !IsVoidCall() && !m_ShouldLeaveValueOnStack )
 				{

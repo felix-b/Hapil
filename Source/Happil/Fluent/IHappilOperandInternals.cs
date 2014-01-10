@@ -8,10 +8,10 @@ namespace Happil.Fluent
 {
 	internal interface IHappilOperandInternals
 	{
-		void EmitTarget(ILGenerator il);
-		void EmitLoad(ILGenerator il);
-		void EmitStore(ILGenerator il);
-		void EmitAddress(ILGenerator il);
+		//void EmitTarget(ILGenerator il);
+		//void EmitLoad(ILGenerator il);
+		//void EmitStore(ILGenerator il);
+		//void EmitAddress(ILGenerator il);
 		HappilClass OwnerClass { get; }
 		HappilMethod OwnerMethod { get; }
 		Type OperandType { get; }

@@ -10,16 +10,16 @@ namespace Happil.Expressions
 {
 	internal class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation 
 	{
-		private readonly IHappilOperandInternals m_Target;
+		private readonly IHappilOperand m_Target;
 		private readonly PropertyInfo m_Property;
-		private readonly IHappilOperandInternals[] m_IndexArguments;
+		private readonly IHappilOperand[] m_IndexArguments;
 		private readonly MethodInfo m_Getter;
 		private readonly MethodInfo m_Setter;
-		private IHappilOperandInternals m_Value;
+		private IHappilOperand m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyAccessOperand(IHappilOperandInternals target, PropertyInfo property, params IHappilOperandInternals[] indexArguments)
+		public PropertyAccessOperand(IHappilOperand target, PropertyInfo property, params IHappilOperand[] indexArguments)
 			: base(ownerMethod: null)
 		{
 			m_Target = target;
@@ -34,7 +34,7 @@ namespace Happil.Expressions
 
 		#region INonPostfixNotation Members
 
-		IHappilOperandInternals INonPostfixNotation.RightSide
+		IHappilOperand INonPostfixNotation.RightSide
 		{
 			set
 			{

@@ -69,7 +69,7 @@ namespace Happil
 
 		public static IHappilOperand<int> Count<T>(this IHappilOperand<ICollection<T>> collection)
 		{
-			return new PropertyAccessOperand<int>((IHappilOperandInternals)collection, GetReflectionCache<T>().Count);
+			return new PropertyAccessOperand<int>(collection, GetReflectionCache<T>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

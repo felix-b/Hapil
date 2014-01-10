@@ -20,7 +20,7 @@ namespace Happil.Fluent
 	/// In addition to <see cref="IHappilOperand{T}"/> interface, this class defines all possible kinds of operators 
 	/// on Happil operands, for the fluent API.
 	/// </remarks>
-	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals
+	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals, IHappilOperandEmitter
 	{
 		private HappilMethod m_OwnerMethod;
 		private readonly Type m_OperandType;
@@ -50,7 +50,7 @@ namespace Happil.Fluent
 		public void Method<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
-			StatementScope.Current.AddStatement(new CallStatement(this, method, (IHappilOperandInternals)arg1));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
 		}
 		public void M<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
@@ -62,11 +62,7 @@ namespace Happil.Fluent
 		public void Method<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
-			StatementScope.Current.AddStatement(new CallStatement(
-				this, 
-				method, 
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
 		}
 		public void M<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
@@ -78,12 +74,7 @@ namespace Happil.Fluent
 		public void Method<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
-			StatementScope.Current.AddStatement(new CallStatement(
-				this,
-				method,
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2,
-				(IHappilOperandInternals)arg3));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2, arg3));
 		}
 		public void M<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
 		{
@@ -107,7 +98,7 @@ namespace Happil.Fluent
 		public HappilOperand<TReturn> Method<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
-			var @operator = new UnaryOperators.OperatorCall<T>(method, (IHappilOperandInternals)arg1);
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1);
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
 		}
 		public HappilOperand<TReturn> M<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
@@ -121,10 +112,7 @@ namespace Happil.Fluent
 			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
-			var @operator = new UnaryOperators.OperatorCall<T>(
-				method, 
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2);
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1, arg2);
 
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
 		}
@@ -178,7 +166,7 @@ namespace Happil.Fluent
 			return new PropertyAccessOperand<TItem>(
 				target: this,
 				property: indexerProperty,
-				indexArguments: (IHappilOperandInternals)indexArg1);
+				indexArguments: indexArg1);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -195,7 +183,7 @@ namespace Happil.Fluent
 			return new PropertyAccessOperand<TItem>(
 				target: this,
 				property: indexerProperty,
-				indexArguments: new[] { (IHappilOperandInternals)indexArg1, (IHappilOperandInternals)indexArg2 });
+				indexArguments: new IHappilOperand[] { indexArg1, indexArg2 });
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -220,28 +208,28 @@ namespace Happil.Fluent
 
 		#region IHappilOperandInternals Members
 
-		void IHappilOperandInternals.EmitTarget(ILGenerator il)
+		void IHappilOperandEmitter.EmitTarget(ILGenerator il)
 		{
 			OnEmitTarget(il);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		void IHappilOperandInternals.EmitLoad(ILGenerator il)
+		void IHappilOperandEmitter.EmitLoad(ILGenerator il)
 		{
 			OnEmitLoad(il);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		void IHappilOperandInternals.EmitStore(ILGenerator il)
+		void IHappilOperandEmitter.EmitStore(ILGenerator il)
 		{
 			OnEmitStore(il);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		void IHappilOperandInternals.EmitAddress(ILGenerator il)
+		void IHappilOperandEmitter.EmitAddress(ILGenerator il)
 		{
 			OnEmitAddress(il);
 		}

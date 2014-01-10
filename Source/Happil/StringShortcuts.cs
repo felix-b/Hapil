@@ -224,7 +224,7 @@ namespace Happil
 
 		public static IHappilOperand<int> Length(this IHappilOperand<string> str)
 		{
-			return new PropertyAccessOperand<int>((IHappilOperandInternals)str, s_Length);
+			return new PropertyAccessOperand<int>(str, s_Length);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

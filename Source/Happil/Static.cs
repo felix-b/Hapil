@@ -23,7 +23,7 @@ namespace Happil
 		public static void Void<TArg1>(Action<TArg1> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = GetValidStaticMethod(member);
-			StatementScope.Current.AddStatement(new CallStatement(null, method, (IHappilOperandInternals)arg1));
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -31,11 +31,7 @@ namespace Happil
 		public static void Void<TArg1, TArg2>(Action<TArg1, TArg2> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			var method = GetValidStaticMethod(member);
-			StatementScope.Current.AddStatement(new CallStatement(
-				null,
-				method,
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2));
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,12 +43,7 @@ namespace Happil
 			IHappilOperand<TArg3> arg3)
 		{
 			var method = GetValidStaticMethod(member);
-			StatementScope.Current.AddStatement(new CallStatement(
-				null,
-				method,
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2,
-				(IHappilOperandInternals)arg3));
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,7 +59,7 @@ namespace Happil
 		public static HappilOperand<TReturn> Func<TArg1, TReturn>(Func<TArg1, TReturn> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = GetValidStaticMethod(member);
-			var @operator = new UnaryOperators.OperatorCall<object>(method, (IHappilOperandInternals)arg1);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1);
 			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
 		}
 
@@ -80,10 +71,7 @@ namespace Happil
 			IHappilOperand<TArg2> arg2)
 		{
 			var method = GetValidStaticMethod(member);
-			var @operator = new UnaryOperators.OperatorCall<object>(
-				method,
-				(IHappilOperandInternals)arg1,
-				(IHappilOperandInternals)arg2);
+			var @operator = new UnaryOperators.OperatorCall<object>(method,arg1, arg2);
 
 			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
 		}

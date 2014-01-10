@@ -19,10 +19,10 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				((IHappilOperandInternals)left).EmitTarget(il);
-				((IHappilOperandInternals)left).EmitLoad(il);
-				((IHappilOperandInternals)right).EmitTarget(il);
-				((IHappilOperandInternals)right).EmitLoad(il);
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+				right.EmitTarget(il);
+				right.EmitLoad(il);
 				il.Emit(OpCodes.Add);
 			}
 
@@ -355,8 +355,8 @@ namespace Happil.Expressions
 
 				var leftInternals = (IHappilOperandInternals)left;
 
-				leftInternals.EmitTarget(il);
-				leftInternals.EmitLoad(il);
+				left.EmitTarget(il);
+				left.EmitLoad(il);
 
 				var castType = TypeTemplate.Resolve(typeConstant.Value);
 
@@ -405,28 +405,26 @@ namespace Happil.Expressions
 
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				var leftInternals = (IHappilOperandInternals)left;
-				var rightInternals = (IHappilOperandInternals)right;
 				var nonPostfix = (left as INonPostfixNotation);
 
-				leftInternals.EmitTarget(il);
+				left.EmitTarget(il);
 
 				if ( nonPostfix != null )
 				{
-					nonPostfix.RightSide = rightInternals;
+					nonPostfix.RightSide = right;
 				}
 				else
 				{
-					rightInternals.EmitTarget(il);
-					rightInternals.EmitLoad(il);
+					right.EmitTarget(il);
+					right.EmitLoad(il);
 				}
 
-				leftInternals.EmitStore(il);
+				left.EmitStore(il);
 
 				if ( m_ForceLeaveFalueOnStack )
 				{
-					leftInternals.EmitTarget(il);
-					leftInternals.EmitLoad(il);
+					left.EmitTarget(il);
+					left.EmitLoad(il);
 				}
 			}
 

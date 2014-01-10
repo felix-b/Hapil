@@ -47,6 +47,8 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
+    <Compile Include="Fluent\IHappilOperandEmitter.cs" />
+    <Compile Include="HappilOperandExtensions.cs" />
     <Compile Include="SetShortcuts.cs" />
     <Compile Include="MemberInfoExtensions.cs" />
     <Compile Include="Selectors\EventSelectors.cs" />
