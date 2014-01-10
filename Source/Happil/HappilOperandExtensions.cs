@@ -34,5 +34,19 @@ namespace Happil
 		{
 			((IHappilOperandEmitter)operand).EmitAddress(il);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilClass GetOwnerClass(this IHappilOperand operand)
+		{
+			return ((IHappilOperandInternals)operand).OwnerClass;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilMethod GetOwnerMethod(this IHappilOperand operand)
+		{
+			return ((IHappilOperandInternals)operand).OwnerMethod;
+		}
 	}
 }

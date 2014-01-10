@@ -60,8 +60,8 @@ namespace Happil.Expressions
 					return ownerClass;
 				}
 
-				var leftOwnerClass = ((IHappilOperandInternals)m_Left).OwnerClass;
-				var rightOwnerClass = ((IHappilOperandInternals)m_Right).OwnerClass;
+				var leftOwnerClass = m_Left.GetOwnerClass();
+				var rightOwnerClass = m_Right.GetOwnerClass();
 
 				return (leftOwnerClass ?? rightOwnerClass);
 			}

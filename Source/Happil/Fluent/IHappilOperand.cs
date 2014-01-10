@@ -11,6 +11,10 @@ namespace Happil.Fluent
 	/// </summary>
 	public interface IHappilOperand
 	{
+		/// <summary>
+		/// Gets CLR type of the operand value.
+		/// </summary>
+		Type OperandType { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

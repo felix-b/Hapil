@@ -20,7 +20,7 @@ namespace Happil.Fluent
 	/// In addition to <see cref="IHappilOperand{T}"/> interface, this class defines all possible kinds of operators 
 	/// on Happil operands, for the fluent API.
 	/// </remarks>
-	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandInternals, IHappilOperandEmitter
+	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandEmitter, IHappilOperandInternals
 	{
 		private HappilMethod m_OwnerMethod;
 		private readonly Type m_OperandType;
@@ -254,16 +254,6 @@ namespace Happil.Fluent
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		Type IHappilOperandInternals.OperandType
-		{
-			get
-			{
-				return this.OperandType;
-			}
-		}
-
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -286,6 +276,24 @@ namespace Happil.Fluent
 				@operator: new BinaryOperators.OperatorTryCast<T>(),
 				left: this,
 				right: new HappilConstant<Type>(typeof(TCast)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual Type OperandType
+		{
+			get
+			{
+				if ( m_OperandType != null )
+				{
+					return m_OperandType;
+				}
+				else
+				{
+					//TODO: cover this case in unit tests!
+					throw new NotSupportedException("The operand class must override OperandType property and provide a specialized implementation.");
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -318,24 +326,6 @@ namespace Happil.Fluent
 				else
 				{
 					return null;
-				}
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal virtual Type OperandType
-		{
-			get
-			{
-				if ( m_OperandType != null )
-				{
-					return m_OperandType;
-				}
-				else
-				{
-					//TODO: cover this case in unit tests!
-					throw new NotSupportedException("The operand class must override OperandType property and provide a specialized implementation.");
 				}
 			}
 		}

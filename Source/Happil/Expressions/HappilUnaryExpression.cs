@@ -11,7 +11,7 @@ namespace Happil.Expressions
 	internal class HappilUnaryExpression<TOperand, TExpr> : HappilExpression<TExpr>
 	{
 		private readonly IUnaryOperator<TOperand> m_Operator;
-		private readonly IHappilOperandInternals m_Operand;
+		private readonly IHappilOperand m_Operand;
 		private readonly UnaryOperatorPosition m_Position;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ namespace Happil.Expressions
 			UnaryOperatorPosition position = UnaryOperatorPosition.Prefix)
 			: base(ownerMethod)
 		{
-			m_Operand = (IHappilOperandInternals)operand;
+			m_Operand = operand;
 			m_Operator = @operator;
 			m_Position = position;
 
@@ -53,7 +53,7 @@ namespace Happil.Expressions
 		{
 			get
 			{
-				return (base.OwnerClass ?? m_Operand.OwnerClass);
+				return (base.OwnerClass ?? m_Operand.GetOwnerClass());
 			}
 		}
 
