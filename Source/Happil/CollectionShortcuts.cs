@@ -1,141 +1,133 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
+using System.Reflection;
 using System.Text;
+using Happil.Expressions;
+using Happil.Fluent;
 
-namespace Happil.Fluent
+namespace Happil
 {
-	public class HappilCollectionOperand<T, TItem> : HappilOperand<T> 
-		where T : IList<TItem>
+	public static class CollectionShortcuts
 	{
-		private readonly HappilOperand<T> m_Collection;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal HappilCollectionOperand(HappilOperand<T> collection)
-			: base(collection.OwnerMethod)
-		{
-			m_Collection = collection;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilOperand<int> IndexOf(IHappilOperand<TItem> item)
+		public static HappilOperand<int> IndexOf<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Insert(IHappilOperand<int> index, IHappilOperand<TItem> item)
+		public static void Insert<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index, IHappilOperand<T> item)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RemoveAt(IHappilOperand<int> index)
+		public static void RemoveAt<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilOperand<TItem> this[IHappilOperand<int> index]
+		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index)
 		{
-			get
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Add<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Clear<T>(this IHappilOperand<ICollection<T>> collection)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<bool> Contains<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void CopyTo<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T[]> array, IHappilOperand<int> arrayIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<int> Count<T>(this IHappilOperand<ICollection<T>> collection)
+		{
+			return new PropertyAccessOperand<int>((IHappilOperandInternals)collection, GetReflectionCache<T>().Count);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<bool> IsReadOnly<T>(this IHappilOperand<ICollection<T>> collection)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<bool> Remove<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<IEnumerator<T>> GetEnumerator<T>(this IHappilOperand<ICollection<T>> collection)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilOperand<T[]> ToArray<T>(this IHappilOperand<ICollection<T>> collection)
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
+			new ConcurrentDictionary<Type, ReflectionCache>();
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static ReflectionCache GetReflectionCache<T>()
+		{
+			return s_ReflectionCacheByItemType.GetOrAdd(typeof(T), new ReflectionCache<T>());
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private abstract class ReflectionCache
+		{
+			public PropertyInfo Count { get; protected set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class ReflectionCache<T> : ReflectionCache
+		{
+			public ReflectionCache()
 			{
-				throw new NotImplementedException();
+				var type = typeof(ICollection<T>);
+				Count = type.GetProperty("Count");
 			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void Add(IHappilOperand<TItem> item)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void Clear()
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public IHappilOperand<bool> Contains(IHappilOperand<TItem> item)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void CopyTo(IHappilOperand<TItem[]> array, IHappilOperand<int> arrayIndex)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public IHappilOperand<int> Count
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public IHappilOperand<bool> IsReadOnly
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public IHappilOperand<bool> Remove(IHappilOperand<TItem> item)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public IHappilOperand<IEnumerator<TItem>> GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitTarget(ILGenerator il)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitLoad(ILGenerator il)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitStore(ILGenerator il)
-		{
-			throw new NotImplementedException();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitAddress(ILGenerator il)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

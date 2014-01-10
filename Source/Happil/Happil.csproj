@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
-    <Compile Include="Fluent\HappilCollectionOperand.cs" />
+    <Compile Include="SetShortcuts.cs" />
     <Compile Include="MemberInfoExtensions.cs" />
     <Compile Include="Selectors\EventSelectors.cs" />
     <Compile Include="Selectors\MethodSelectors.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Statements\IHappilStatement.cs" />
     <Compile Include="Statements\StatementScope.cs" />
     <Compile Include="Static.cs" />
+    <Compile Include="StringShortcuts.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeTemplate.cs" />
   </ItemGroup>

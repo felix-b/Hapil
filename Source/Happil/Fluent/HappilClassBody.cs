@@ -87,14 +87,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TInterface> ImplementInterface<TInterface>(Type interfaceType, params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members)
-		{
-			m_HappilClass.ImplementInterface(interfaceType);
-			return m_HappilClass.GetBody<TInterface>();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public HappilField<T> Field<T>(string name)
 		{
 			var field = new HappilField<T>(m_HappilClass, name);

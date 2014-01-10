@@ -13,6 +13,7 @@ namespace Happil.Fluent
 		void EmitStore(ILGenerator il);
 		void EmitAddress(ILGenerator il);
 		HappilClass OwnerClass { get; }
+		HappilMethod OwnerMethod { get; }
 		Type OperandType { get; }
 	}
 }
