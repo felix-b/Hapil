@@ -105,6 +105,7 @@ namespace Happil.Fluent
 			switch ( convertible.GetTypeCode() )
 			{
 				case TypeCode.Int32:
+				case TypeCode.Boolean:
 					il.Emit(OpCodes.Ldc_I4, convertible.ToInt32(formatProvider));
 					break;
 				case TypeCode.String:

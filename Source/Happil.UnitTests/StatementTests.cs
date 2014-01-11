@@ -285,9 +285,120 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestWhile()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					var iterationsLeft = m.Local<int>(initialValue: input);
+					var iterationsDone = m.Local<int>(initialValueConst: 0);
+
+					m.While(iterationsLeft > 0).Do(loop => {
+						iterationsDone.Assign(iterationsDone + 1);
+						iterationsLeft.Assign(iterationsLeft - 1);
+					});
+
+					m.Return(iterationsDone);
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(10);
+			var result2 = tester.DoTest(20);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(10));
+			Assert.That(result2, Is.EqualTo(20));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestWhileWithBreak()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					var iterationsDone = m.Local<int>(initialValueConst: 0);
+
+					m.While(m.Const(true)).Do(loop => {
+						iterationsDone.Assign(iterationsDone + 1);
+
+						m.If(iterationsDone == 5).Then(() => {
+							loop.Break();
+						});
+					});
+
+					m.Return(iterationsDone);
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(0);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(5));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestWhileWithContinue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					var iterationsDone = m.Local<int>(initialValueConst: 0);
+					var counter = m.Local<int>(initialValueConst: 0);
+
+					m.While(iterationsDone < input).Do(loop => {
+						iterationsDone.Assign(iterationsDone + 1);
+						
+						m.If(iterationsDone == 5).Then(() => {
+							loop.Continue();
+						});
+
+						counter.Assign(counter + 1);
+					});
+
+					m.Return(counter);
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(4);
+			var result2 = tester.DoTest(10);
+			var result3 = tester.DoTest(100);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(4));
+			Assert.That(result2, Is.EqualTo(9));
+			Assert.That(result3, Is.EqualTo(99));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class StatementTester
 		{
 			public abstract int DoTest(int input);
+
+			public virtual bool Predicate(int input)
+			{
+				return false;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -295,6 +406,11 @@ namespace Happil.UnitTests
 		public abstract class StatementTester2
 		{
 			public abstract int DoTest(int x, int y);
+			
+			public virtual bool Predicate(int x, int y)
+			{
+				return false;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -335,6 +451,22 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public static int WhileExample(int count)
+			{
+				var iterationsLeft = count;
+				var iterationsDone = 0;
+
+				while ( iterationsLeft > 0 )
+				{
+					iterationsDone++;
+					iterationsLeft--;
+				}
+
+				return iterationsDone;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public static int CompareDifferentTypes()
 			{
 				string s1 = "A";
@@ -345,7 +477,7 @@ namespace Happil.UnitTests
 					double d1 = 123;
 					double d2 = 456;
 
-					if ( d1 == d2 )
+					if ( d1 != d2 )
 					{
 						DateTime dt1 = DateTime.Now;
 						DateTime dt2 = DateTime.UtcNow;

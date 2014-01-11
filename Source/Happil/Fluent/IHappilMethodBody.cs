@@ -5,12 +5,14 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Selectors;
+using Happil.Statements;
 
 namespace Happil.Fluent
 {
 	public interface IHappilMethodBodyBase
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
+		IHappilWhileSyntax While(IHappilOperand<bool> condition);
 		HappilOperand<TBase> This<TBase>();
 		HappilLocal<T> Local<T>();
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);

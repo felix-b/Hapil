@@ -55,6 +55,15 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilWhileSyntax While(IHappilOperand<bool> condition)
+		{
+			var statement = new WhileStatement(condition);
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TBase> This<TBase>()
 		{
 			return new HappilThis<TBase>(this);

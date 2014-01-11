@@ -40,7 +40,11 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+				il.Emit(OpCodes.Sub);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -267,7 +271,15 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.Emit(OpCodes.Ceq);
+				il.Emit(OpCodes.Ldc_I4_0);
+				il.Emit(OpCodes.Ceq);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -284,7 +296,13 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.Emit(OpCodes.Cgt);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -301,7 +319,13 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.Emit(OpCodes.Clt);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

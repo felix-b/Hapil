@@ -47,7 +47,8 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
-    <Compile Include="Fluent\IHappilIfBody.cs" />
+    <Compile Include="Statements\LoopStatementBase.cs" />
+    <Compile Include="Fluent\IHappilLoopBody.cs" />
     <Compile Include="Fluent\IHappilOperandEmitter.cs" />
     <Compile Include="HappilOperandExtensions.cs" />
     <Compile Include="SetShortcuts.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\IHappilStatement.cs" />
     <Compile Include="Statements\StatementScope.cs" />
+    <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Static.cs" />
     <Compile Include="StringShortcuts.cs" />
     <Compile Include="TypeExtensions.cs" />
