@@ -10,9 +10,11 @@ namespace Happil.Fluent
 {
 	public interface IHappilMethodBodyBase
 	{
+		IHappilIfBody If(IHappilOperand<bool> condition);
 		HappilOperand<TBase> This<TBase>();
 		HappilLocal<T> Local<T>();
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);
+		HappilLocal<T> Local<T>(T initialValueConst);
 		HappilConstant<T> Const<T>(T value);
 		HappilConstant<T> Default<T>();
 		HappilConstant<object> Default(Type type);

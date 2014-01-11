@@ -46,6 +46,15 @@ namespace Happil.Fluent
 
 		#region IHappilMethodBodyBase Members
 
+		public IHappilIfBody If(IHappilOperand<bool> condition)
+		{
+			var statement = new IfStatement(condition);
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TBase> This<TBase>()
 		{
 			return new HappilThis<TBase>(this);
@@ -65,6 +74,13 @@ namespace Happil.Fluent
 			var local = new HappilLocal<T>(this);
 			local.Assign(initialValue);
 			return local;
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilLocal<T> Local<T>(T initialValueConst)
+		{
+			return Local<T>(new HappilConstant<T>(initialValueConst));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

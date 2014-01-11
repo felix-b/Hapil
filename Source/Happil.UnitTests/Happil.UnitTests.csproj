@@ -69,6 +69,7 @@
     <Compile Include="ClassPerTestCaseFixtureBase.cs" />
     <Compile Include="SetShortcutsTests.cs" />
     <Compile Include="SignatureTests.cs" />
+    <Compile Include="StatementTests.cs" />
     <Compile Include="StringShortcutsTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -33,7 +33,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope()
+		public StatementScope(List<IHappilStatement> statementList)
 		{
 			m_Previous = s_Current;
 
@@ -42,7 +42,7 @@ namespace Happil.Statements
 				throw new InvalidOperationException("Parent scope is not present.");
 			}
 
-			m_StatementList = new List<IHappilStatement>();
+			m_StatementList = statementList;
 			m_OwnerMethod = m_Previous.m_OwnerMethod;
 			m_OwnerClass = m_Previous.m_OwnerClass;
 
@@ -106,6 +106,26 @@ namespace Happil.Statements
 				{
 					m_StatementList.RemoveAt(m_StatementList.Count - 1);
 				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilClass OwnerClass
+		{
+			get
+			{
+				return m_OwnerClass;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilMethod OwnerMethod
+		{
+			get
+			{
+				return m_OwnerMethod;
 			}
 		}
 
