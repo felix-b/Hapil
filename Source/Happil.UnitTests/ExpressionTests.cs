@@ -19,8 +19,8 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.Method<int, int>(cls => cls.SumPropertiesAndNumber).Implement((m, number) => {
 					m.Return(
-						m.This<AncestorRepository.ITwoProperties>().Property(x => x.PropertyOne) +
-						m.This<AncestorRepository.ITwoProperties>().Property(x => x.PropertyTwo) + 
+						m.This<AncestorRepository.ITwoProperties>().Prop(x => x.PropertyOne) +
+						m.This<AncestorRepository.ITwoProperties>().Prop(x => x.PropertyTwo) + 
 						number);
 				})
 				.ImplementInterface<AncestorRepository.ITwoProperties>()
@@ -54,9 +54,9 @@ namespace Happil.UnitTests
 					var temp = m.Local<int>();
 					var @this = m.This<AncestorRepository.ITwoProperties>();
 					
-					temp.Assign(@this.Property(x => x.PropertyOne));
-					@this.Property(x => x.PropertyOne).Assign(@this.Property(x => x.PropertyTwo));
-					@this.Property(x => x.PropertyTwo).Assign(temp);
+					temp.Assign(@this.Prop(x => x.PropertyOne));
+					@this.Prop(x => x.PropertyOne).Assign(@this.Prop(x => x.PropertyTwo));
+					@this.Prop(x => x.PropertyTwo).Assign(temp);
 				})
 				.ImplementInterface<AncestorRepository.ITwoProperties>()
 				.Properties<int>().ImplementAutomatic();
@@ -89,9 +89,9 @@ namespace Happil.UnitTests
 					var temp = m.Local<int>();
 					var @this = m.This<IntPropertiesBase3>();
 
-					temp.Assign(@this.Property(x => x.PropertyOne));
-					@this.Property(x => x.PropertyOne).Assign(@this.Property(x => x.PropertyTwo));
-					@this.Property(x => x.PropertyTwo).Assign(temp);
+					temp.Assign(@this.Prop(x => x.PropertyOne));
+					@this.Prop(x => x.PropertyOne).Assign(@this.Prop(x => x.PropertyTwo));
+					@this.Prop(x => x.PropertyTwo).Assign(temp);
 				});
 
 			//-- Act
@@ -124,9 +124,9 @@ namespace Happil.UnitTests
 					(m, container1, container2) => {
 						var sum = m.Local<int>(initialValue: m.Const(0));
 
-						sum.Assign(sum + container1.P(x => x.One).P(x => x.PropertyOne));
-						sum.Assign(sum + container2.P(x => x.Two).P(x => x.PropertyOne));
-						sum.Assign(sum + container2.P(x => x.Two).P(x => x.PropertyTwo));
+						sum.Assign(sum + container1.Prop(x => x.One).Prop(x => x.PropertyOne));
+						sum.Assign(sum + container2.Prop(x => x.Two).Prop(x => x.PropertyOne));
+						sum.Assign(sum + container2.Prop(x => x.Two).Prop(x => x.PropertyTwo));
 
 						m.Return(sum);
 					});
@@ -160,9 +160,9 @@ namespace Happil.UnitTests
 				.ImplementInterface<AncestorRepository.IPropertyContainersWriter>()
 				.Method<AncestorRepository.IPropertyContainerOne, AncestorRepository.IPropertyContainerTwo, int>(intf => intf.SetAll).Implement(
 					(m, container1, container2, value) => {
-						container1.P(x => x.One).P(x => x.PropertyOne).Assign(value);
-						container2.P(x => x.Two).P(x => x.PropertyOne).Assign(value);
-						container2.P(x => x.Two).P(x => x.PropertyTwo).Assign(value);
+						container1.Prop(x => x.One).Prop(x => x.PropertyOne).Assign(value);
+						container2.Prop(x => x.Two).Prop(x => x.PropertyOne).Assign(value);
+						container2.Prop(x => x.Two).Prop(x => x.PropertyTwo).Assign(value);
 					});
 
 			//-- Act
@@ -192,17 +192,17 @@ namespace Happil.UnitTests
 				.ImplementInterface<AncestorRepository.IPropertyContainersWriter>()
 				.Method<AncestorRepository.IPropertyContainerOne, AncestorRepository.IPropertyContainerTwo, int>(intf => intf.SetAll).Implement(
 					(m, container1, container2, value) => {
-						var temp = m.Local<int>();											// int temp;
+						var temp = m.Local<int>();												// int temp;
 						
-						temp.Assign(container1.P(x => x.One).P(x => x.PropertyOne));		// temp = container1.One.PropertyOne;
-						container1.P(x => x.One).P(x => x.PropertyOne).Assign(				// container1.One.PropertyOne = 
-							container2.P(x => x.Two).P(x => x.PropertyOne));				//     container2.Two.PropertyOne;
-						container2.P(x => x.Two).P(x => x.PropertyOne).Assign(temp);		// container2.Two.PropertyOne = temp;
+						temp.Assign(container1.Prop(x => x.One).Prop(x => x.PropertyOne));		// temp = container1.One.PropertyOne;
+						container1.Prop(x => x.One).Prop(x => x.PropertyOne).Assign(			// container1.One.PropertyOne = 
+							container2.Prop(x => x.Two).Prop(x => x.PropertyOne));				//     container2.Two.PropertyOne;
+						container2.Prop(x => x.Two).Prop(x => x.PropertyOne).Assign(temp);		// container2.Two.PropertyOne = temp;
 						
-						container2.P(x => x.Two).P(x => x.PropertyTwo).Assign(				// container2.Two.PropertyTwo = 
-							container1.P(x => x.One).P(x => x.PropertyOne) +				//     container1.One.PropertyOne +
-							container2.P(x => x.Two).P(x => x.PropertyOne) +				//     container2.Two.PropertyOne +
-							value);															//     value;
+						container2.Prop(x => x.Two).Prop(x => x.PropertyTwo).Assign(			// container2.Two.PropertyTwo = 
+							container1.Prop(x => x.One).Prop(x => x.PropertyOne) +				//     container1.One.PropertyOne +
+							container2.Prop(x => x.Two).Prop(x => x.PropertyOne) +				//     container2.Two.PropertyOne +
+							value);																//     value;
 					});
 
 			//-- Act
@@ -235,7 +235,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
 				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, target) => {
-					target.CastTo<TargetOne>().M(x => x.CallMe);
+					target.CastTo<TargetOne>().Void(x => x.CallMe);
 					m.Return(null);
 				});
 
@@ -263,7 +263,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
 				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, target) => {
-					m.Return(target.M<string>(x => x.ToString).CastTo<object>());
+					m.Return(target.Func<string>(x => x.ToString).CastTo<object>());
 				});
 
 			//-- Act
@@ -287,7 +287,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ITargetValueTypeCaller>()
 				.Method<int, object>(intf => intf.CallTheTarget).Implement((m, value) => {
-					m.Return(value.M<string>(x => x.ToString));
+					m.Return(value.Func<string>(x => x.ToString));
 				});
 
 			//-- Act
@@ -402,7 +402,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ITargetValueTypeCaller>()
 				.Method<int, object>(intf => intf.CallTheTarget).Implement((m, value) => {
-					Static.Prop(() => StaticTargetOne.SetMe).Assign(value.M<string>(x => x.ToString));
+					Static.Prop(() => StaticTargetOne.SetMe).Assign(value.Func<string>(x => x.ToString));
 					m.Return(null);
 				});
 

@@ -42,11 +42,11 @@ namespace Happil.UnitTests.Fluent
 
 			//-- Act
 
-			field1.Method(x => x.VoidMethod);
-			field1.Method(x => x.VoidMethodWithOneArg, new HappilConstant<int>(123));
-			field1.Method(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"));
-			field1.Method(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<DateTime>(DateTime.Now));
-			field1.Method(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"), new HappilConstant<DateTime>(DateTime.Now));
+			field1.Void(x => x.VoidMethod);
+			field1.Void(x => x.VoidMethodWithOneArg, new HappilConstant<int>(123));
+			field1.Void(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"));
+			field1.Void(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<DateTime>(DateTime.Now));
+			field1.Void(x => x.VoidMethodWithManyArgs, new HappilConstant<int>(123), new HappilConstant<string>("ABC"), new HappilConstant<DateTime>(DateTime.Now));
 		}
 	}
 }

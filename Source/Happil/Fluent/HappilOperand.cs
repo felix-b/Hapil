@@ -35,80 +35,56 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Method(Expression<Func<T, Action>> member)
+		public void Void(Expression<Func<T, Action>> member)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			StatementScope.Current.AddStatement(new CallStatement(this, method));
 		}
-		public void M(Expression<Func<T, Action>> member)
-		{
-			Method(member);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Method<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
+		public void Void<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
 		}
-		public void M<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
-		{
-			Method(member, arg1);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Method<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		public void Void<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
 		}
-		public void M<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
-		{
-			Method(member, arg1, arg2);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Method<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		public void Void<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2, arg3));
 		}
-		public void M<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
-		{
-			Method(member, arg1, arg2, arg3);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TReturn> Method<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		public HappilOperand<TReturn> Func<TReturn>(Expression<Func<T, Func<TReturn>>> member)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method), this);
 		}
-		public HappilOperand<TReturn> M<TReturn>(Expression<Func<T, Func<TReturn>>> member)
-		{
-			return Method(member);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TReturn> Method<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
+		public HappilOperand<TReturn> Func<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
 			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1);
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
 		}
-		public HappilOperand<TReturn> M<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
-		{
-			return Method(member, arg1);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TReturn> Method<TArg1, TArg2, TReturn>(
+		public HappilOperand<TReturn> Func<TArg1, TArg2, TReturn>(
 			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
@@ -116,22 +92,10 @@ namespace Happil.Fluent
 
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
 		}
-		public HappilOperand<TReturn> M<TArg1, TArg2, TReturn>(
-			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
-		{
-			return Method(member, arg1, arg2);
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAssignable<TProp> P<TProp>(Expression<Func<T, TProp>> property)
-		{
-			return Property<TProp>(property);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilAssignable<TProp> Property<TProp>(Expression<Func<T, TProp>> property)
+		public HappilAssignable<TProp> Prop<TProp>(Expression<Func<T, TProp>> property)
 		{
 			return new PropertyAccessOperand<TProp>(
 				target: this, 
