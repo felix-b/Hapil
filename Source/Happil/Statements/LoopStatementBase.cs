@@ -23,8 +23,8 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		protected abstract Label LoopStartLabel { get; }
-		protected abstract Label LoopEndLabel { get; }
+		internal protected abstract Label LoopStartLabel { get; }
+		internal protected abstract Label LoopEndLabel { get; }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

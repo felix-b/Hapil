@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Happil.Expressions;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil
 {
@@ -41,7 +42,7 @@ namespace Happil
 
 		public static void Add<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
 		{
-			throw new NotImplementedException();
+			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Add, item));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,6 +117,7 @@ namespace Happil
 
 		private abstract class ReflectionCache
 		{
+			public MethodInfo Add { get; protected set; }
 			public PropertyInfo Count { get; protected set; }
 		}
 
@@ -126,6 +128,8 @@ namespace Happil
 			public ReflectionCache()
 			{
 				var type = typeof(ICollection<T>);
+				
+				Add = type.GetMethod("Add");
 				Count = type.GetProperty("Count");
 			}
 		}

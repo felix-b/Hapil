@@ -32,5 +32,11 @@ namespace Happil.Fluent
 	/// </remarks>
 	public interface IHappilOperand<out T> : IHappilOperand
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TCast"></typeparam>
+		/// <returns></returns>
+		HappilOperand<TCast> CastTo<TCast>();
 	}
 }

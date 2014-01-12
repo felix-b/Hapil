@@ -391,6 +391,34 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test, Ignore("Not yet implemented")]
+		public void TestForeachElementIn()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester3>()
+				.DefaultConstructor()
+				.Method<IEnumerable<int>, IList<int>>(cls => cls.DoTest).Implement((m, input, output) => {
+					m.ForeachElementIn(input).Do((loop, element) => {
+						output.Add(element);
+					});
+				});
+
+			var inputEnumerable = new int[] { 1, 2, 3, 4, 5 };
+			var outputList = new List<int>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester3>().UsingDefaultConstructor();
+			tester.DoTest(inputEnumerable, outputList);
+
+			//-- Assert
+
+			Assert.That(outputList, Is.EqualTo(inputEnumerable));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class StatementTester
 		{
 			public abstract int DoTest(int input);
@@ -408,6 +436,18 @@ namespace Happil.UnitTests
 			public abstract int DoTest(int x, int y);
 			
 			public virtual bool Predicate(int x, int y)
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class StatementTester3
+		{
+			public abstract void DoTest(IEnumerable<int> input, IList<int> output);
+
+			public virtual bool Predicate(int item)
 			{
 				return false;
 			}
@@ -447,6 +487,16 @@ namespace Happil.UnitTests
 				}
 
 				return result;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static void ForeachExample(IEnumerable<int> input, IList<int> output)
+			{
+				foreach ( var element in input )
+				{
+					output.Add(element);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

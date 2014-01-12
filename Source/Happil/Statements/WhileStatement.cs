@@ -67,7 +67,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override Label LoopStartLabel
+		internal protected override Label LoopStartLabel
 		{
 			get
 			{
@@ -77,7 +77,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override Label LoopEndLabel
+		internal protected override Label LoopEndLabel
 		{
 			get
 			{

@@ -64,6 +64,43 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element)
+		{
+			var statement = new ForeachStatement<T>(element);
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection)
+		{
+			var element = this.Local<T>();
+			var statement = new ForeachStatement<T>(element);
+			StatementScope.Current.AddStatement(statement);
+			return statement.In(collection);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		public IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable)
+		{
+			var statement = new UsingStatement(disposable);
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilCatchSyntax Try(Action body)
+		{
+			var statement = new TryStatement(body);
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TBase> This<TBase>()
 		{
 			return new HappilThis<TBase>(this);

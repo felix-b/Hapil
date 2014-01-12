@@ -13,6 +13,10 @@ namespace Happil.Fluent
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
 		IHappilWhileSyntax While(IHappilOperand<bool> condition);
+		IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element);
+		IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection);
+		IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable);
+		IHappilCatchSyntax Try(Action body);
 		HappilOperand<TBase> This<TBase>();
 		HappilLocal<T> Local<T>();
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);
