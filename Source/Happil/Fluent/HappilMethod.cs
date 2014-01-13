@@ -48,27 +48,21 @@ namespace Happil.Fluent
 
 		public IHappilIfBody If(IHappilOperand<bool> condition)
 		{
-			var statement = new IfStatement(condition);
-			StatementScope.Current.AddStatement(statement);
-			return statement;
+			return AddStatement(new IfStatement(condition));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilWhileSyntax While(IHappilOperand<bool> condition)
 		{
-			var statement = new WhileStatement(condition);
-			StatementScope.Current.AddStatement(statement);
-			return statement;
+			return AddStatement(new WhileStatement(condition));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element)
 		{
-			var statement = new ForeachStatement<T>(element);
-			StatementScope.Current.AddStatement(statement);
-			return statement;
+			return AddStatement(new ForeachStatement<T>(element));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,27 +70,21 @@ namespace Happil.Fluent
 		public IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection)
 		{
 			var element = this.Local<T>();
-			var statement = new ForeachStatement<T>(element);
-			StatementScope.Current.AddStatement(statement);
-			return statement.In(collection);
+			return AddStatement(new ForeachStatement<T>(element));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		public IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable)
 		{
-			var statement = new UsingStatement(disposable);
-			StatementScope.Current.AddStatement(statement);
-			return statement;
+			return AddStatement(new UsingStatement(disposable));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilCatchSyntax Try(Action body)
 		{
-			var statement = new TryStatement(body);
-			StatementScope.Current.AddStatement(statement);
-			return statement;
+			return AddStatement(new TryStatement(body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -121,7 +109,7 @@ namespace Happil.Fluent
 			local.Assign(initialValue);
 			return local;
 		}
-		
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilLocal<T> Local<T>(T initialValueConst)
@@ -154,7 +142,7 @@ namespace Happil.Fluent
 
 		public void Throw<TException>(string message) where TException : Exception
 		{
-			throw new NotImplementedException();
+			AddStatement(new ThrowStatement(typeof(TException), message));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -384,6 +372,14 @@ namespace Happil.Fluent
 		{
 			var returnType = GetReturnType();
 			return (returnType == null || returnType == typeof(void));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private TStatement AddStatement<TStatement>(TStatement statement) where TStatement : IHappilStatement
+		{
+			StatementScope.Current.AddStatement(statement);
+			return statement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

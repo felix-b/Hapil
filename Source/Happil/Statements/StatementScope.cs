@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Fluent;
@@ -10,9 +11,15 @@ namespace Happil.Statements
 	internal class StatementScope : IDisposable
 	{
 		private readonly StatementScope m_Previous;
+		private readonly StatementScope m_Root;
 		private readonly HappilClass m_OwnerClass;
 		private readonly HappilMethod m_OwnerMethod;
 		private readonly List<IHappilStatement> m_StatementList;
+		private readonly int m_Depth;
+		private readonly TryStatement m_InheritedExceptionStatement;
+		private readonly ExceptionBlockType m_InheritedExceptionBlockType;
+		private readonly TryStatement m_ThisExceptionStatement;
+		private readonly ExceptionBlockType m_ThisExceptionBlockType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,8 +33,15 @@ namespace Happil.Statements
 			m_StatementList = statementList;
 			m_OwnerMethod = ownerMethod;
 			m_OwnerClass = ownerClass;
+			m_Depth = 0;
+			
+			m_ThisExceptionBlockType = ExceptionBlockType.None;
+			m_ThisExceptionStatement = null;
+			m_InheritedExceptionStatement = null;
+			m_InheritedExceptionBlockType = ExceptionBlockType.None;
 
 			m_Previous = null;
+			m_Root = this;
 			s_Current = this;
 		}
 
@@ -36,6 +50,7 @@ namespace Happil.Statements
 		public StatementScope(List<IHappilStatement> statementList)
 		{
 			m_Previous = s_Current;
+			m_Root = m_Previous.Root;
 
 			if ( m_Previous == null )
 			{
@@ -45,8 +60,25 @@ namespace Happil.Statements
 			m_StatementList = statementList;
 			m_OwnerMethod = m_Previous.m_OwnerMethod;
 			m_OwnerClass = m_Previous.m_OwnerClass;
+			m_Depth = m_Previous.Depth + 1;
+			
+			m_ThisExceptionBlockType = ExceptionBlockType.None;
+			m_ThisExceptionStatement = null;
+			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
+			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
 
 			s_Current = this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope(List<IHappilStatement> statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
+			: this(statementList)
+		{
+			m_ThisExceptionStatement = exceptionStatement;
+			m_ThisExceptionBlockType = blockType;
+			m_InheritedExceptionStatement = exceptionStatement;
+			m_InheritedExceptionBlockType = blockType;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,7 +101,20 @@ namespace Happil.Statements
 
 		public void AddStatement(IHappilStatement statement)
 		{
-			m_StatementList.Add(statement);
+			var effectiveStatementToAdd = statement;
+			var leaveStatement = (statement as ILeaveStatement);
+
+			if ( leaveStatement != null && m_InheritedExceptionBlockType != ExceptionBlockType.None )
+			{
+				var tryStatement = FindOutermostTryStatementWithin(leaveStatement.HomeScope);
+
+				if ( tryStatement != null )
+				{
+					effectiveStatementToAdd = tryStatement.WrapLeaveStatement(leaveStatement);
+				}
+			}
+			
+			m_StatementList.Add(effectiveStatementToAdd);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -111,6 +156,36 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public TryStatement FindOutermostTryStatementWithin(StatementScope homeScope)
+		{
+			TryStatement result = null;
+			var scope = this;
+
+			while ( !ReferenceEquals(scope, homeScope) )
+			{
+				if ( scope == null )
+				{
+					throw new Exception("Internal error: bad scope hierarchy.");
+				}
+
+				if ( scope.ThisExceptionBlockType == ExceptionBlockType.Finally )
+				{
+					throw new InvalidOperationException("Leaving from withing FINALLY block is not allowed.");
+				}
+
+				if ( scope.ThisExceptionBlockType != ExceptionBlockType.None )
+				{
+					result = scope.ThisExceptionStatement;
+				}
+
+				scope = scope.m_Previous;
+			}
+
+			return result;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilClass OwnerClass
 		{
 			get
@@ -131,8 +206,86 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public StatementScope Previous
+		{
+			get
+			{
+				return m_Previous;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope Root
+		{
+			get
+			{
+				return m_Root;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public int Depth
+		{
+			get
+			{
+				return m_Depth;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TryStatement InheritedExceptionStatement
+		{
+			get
+			{
+				return m_InheritedExceptionStatement;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ExceptionBlockType InheritedExceptionBlockType
+		{
+			get
+			{
+				return m_InheritedExceptionBlockType;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TryStatement ThisExceptionStatement
+		{
+			get
+			{
+				return m_ThisExceptionStatement;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ExceptionBlockType ThisExceptionBlockType
+		{
+			get
+			{
+				return m_ThisExceptionBlockType;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[ThreadStatic]
 		private static StatementScope s_Current;
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Cleanup()
+		{
+			s_Current = null;
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

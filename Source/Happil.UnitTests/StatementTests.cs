@@ -419,6 +419,58 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestTryCatchAllExceptions()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					m.Try(() => {
+						m.If(input == 888).Then(() => {
+							m.Throw<TestExceptionOne>("TEST888");
+						});
+
+						Static.Prop(() => OutputException).AssignConst(null);
+						m.ReturnConst(111);
+					})
+					.Catch<Exception>(e => {
+						Static.Prop(() => OutputException).Assign(e);
+						m.ReturnConst(999);
+					});
+
+					m.ReturnConst(-999); // should never get here!
+				});
+
+			OutputException = null;
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			
+			var result1 = tester.DoTest(123);
+			var exception1 = OutputException;
+
+			var result2 = tester.DoTest(888);
+			var exception2 = OutputException;
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(111));
+			Assert.That(exception1, Is.Null);
+
+			Assert.That(result2, Is.EqualTo(999));
+			Assert.That(exception2, Is.InstanceOf<TestExceptionOne>());
+			Assert.That(exception2.Message, Is.EqualTo("TEST888"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Exception OutputException { get; set; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class StatementTester
 		{
 			public abstract int DoTest(int input);
@@ -451,6 +503,22 @@ namespace Happil.UnitTests
 			{
 				return false;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class TestExceptionOne : Exception
+		{
+			public TestExceptionOne(string message)
+				: base(message)
+			{
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class TestExceptionTwo : Exception
+		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -540,6 +608,51 @@ namespace Happil.UnitTests
 				}
 
 				return 1;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static int TryCatchAllExample(int input)
+			{
+				while ( input-- > 0 )
+				{
+					try
+					{
+						if ( input == 888 )
+						{
+							throw new TestExceptionOne("TEST888");
+						}
+						try
+						{
+							if ( input == 666 )
+							{
+								continue;
+							}
+						}
+						catch
+						{
+							if ( input == 777 )
+							{
+								break;
+							}
+						}
+
+						OutputException = null;
+						return 111;
+					}
+					catch ( Exception  e )
+					{
+						OutputException = e;
+
+						if ( input == 888 )
+						{
+							return 999;
+						}
+					}
+				}
+
+				Console.WriteLine("-999");
+				return -999; // should never get here!
 			}
 		}
 	}

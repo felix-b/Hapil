@@ -28,15 +28,17 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ContinueStatement : IHappilStatement
+		private class ContinueStatement : IHappilStatement, ILeaveStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
+			private readonly StatementScope m_HomeScope;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public ContinueStatement(LoopStatementBase ownerLoop)
 			{
 				m_OwnerLoop = ownerLoop;
+				m_HomeScope = StatementScope.Current;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,6 +51,20 @@ namespace Happil.Statements
 			}
 
 			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region ILeaveStatement Members
+
+			public StatementScope HomeScope
+			{
+				get
+				{
+					return m_HomeScope;
+				}
+			}
+
+			#endregion
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -56,12 +72,14 @@ namespace Happil.Statements
 		private class BreakStatement : IHappilStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
+			private readonly StatementScope m_HomeScope;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public BreakStatement(LoopStatementBase ownerLoop)
 			{
 				m_OwnerLoop = ownerLoop;
+				m_HomeScope = StatementScope.Current;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +89,20 @@ namespace Happil.Statements
 			public void Emit(ILGenerator il)
 			{
 				il.Emit(OpCodes.Br_S, m_OwnerLoop.LoopEndLabel);
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region ILeaveStatement Members
+
+			public StatementScope HomeScope
+			{
+				get
+				{
+					return m_HomeScope;
+				}
 			}
 
 			#endregion

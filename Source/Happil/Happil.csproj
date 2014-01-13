@@ -48,6 +48,7 @@
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
+    <Compile Include="Statements\ILeaveStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Fluent\IHappilLoopBody.cs" />
     <Compile Include="Fluent\IHappilOperandEmitter.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\IHappilStatement.cs" />
     <Compile Include="Statements\StatementScope.cs" />
+    <Compile Include="Statements\ExceptionBlockType.cs" />
+    <Compile Include="Statements\ThrowStatement.cs" />
     <Compile Include="Statements\TryStatement.cs" />
     <Compile Include="Statements\UsingStatement.cs" />
     <Compile Include="Statements\WhileStatement.cs" />

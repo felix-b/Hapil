@@ -10,11 +10,34 @@ namespace Happil.Statements
 	/// <summary>
 	/// Return statement for void methods
 	/// </summary>
-	internal class ReturnStatement : IHappilStatement
+	internal class ReturnStatement : IHappilStatement, ILeaveStatement
 	{
+		private readonly TryStatement m_ExceptionStatement;
+		private readonly StatementScope m_HomeScope;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ReturnStatement()
+		{
+			m_HomeScope = StatementScope.Current;
+			m_ExceptionStatement = StatementScope.Current.InheritedExceptionStatement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ret);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope HomeScope
+		{
+			get
+			{
+				return m_HomeScope;
+			}
 		}
 	}
 
@@ -26,16 +49,18 @@ namespace Happil.Statements
 	/// <typeparam name="T">
 	/// The type of the return value.
 	/// </typeparam>
-	internal class ReturnStatement<T> : IHappilStatement
+	internal class ReturnStatement<T> : IHappilStatement, ILeaveStatement
 	{
-		private IHappilOperand<T> m_Operand;
+		private readonly IHappilOperand<T> m_Operand;
+		private readonly StatementScope m_HomeScope;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ReturnStatement(IHappilOperand<T> operand)
 		{
 			m_Operand = operand;
-			StatementScope.Current.Consume(operand);
+			m_HomeScope = StatementScope.Current;
+			m_HomeScope.Consume(operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -46,6 +71,16 @@ namespace Happil.Statements
 			m_Operand.EmitLoad(il);
 
 			il.Emit(OpCodes.Ret);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope HomeScope
+		{
+			get
+			{
+				return StatementScope.Current.Root;
+			}
 		}
 	}
 }
