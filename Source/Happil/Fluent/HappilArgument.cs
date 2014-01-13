@@ -62,7 +62,7 @@ namespace Happil.Fluent
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotSupportedException("Changing value of arguments is an anti-pattern.");
+			il.Emit(OpCodes.Starg_S, m_Index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
