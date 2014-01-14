@@ -73,8 +73,9 @@ namespace Happil.Fluent
 			var statement = new ForeachStatement<T>(element);
 			
 			AddStatement(statement);
-			
-			return statement.In(collection);
+			statement.In(collection);
+
+			return statement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

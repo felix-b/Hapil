@@ -12,6 +12,7 @@ namespace Happil.Statements
 		LoopStatementBase, 
 		IHappilStatement, 
 		IHappilForeachInSyntax<TElement>,
+		IHappilForeachInDoSyntax<TElement>,
 		IHappilForeachDoSyntax<TElement>
 	{
 		private readonly HappilLocal<TElement> m_Element;
@@ -45,10 +46,21 @@ namespace Happil.Statements
 
 		#region IHappilForeachInSyntax<TItem> Members
 
-		public IHappilForeachDoSyntax<TElement> In(IHappilOperand<IEnumerable<TElement>> collection)
+		public IHappilForeachInDoSyntax<TElement> In(IHappilOperand<IEnumerable<TElement>> collection)
 		{
 			m_Collection = collection;
 			return this;
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IHappilForeachInDoSyntax<TElement> Members
+
+		public void Do(Action<IHappilLoopBody> body)
+		{
+			Do((loop, element) => body(loop));
 		}
 
 		#endregion
@@ -103,7 +115,14 @@ namespace Happil.Statements
 
 	public interface IHappilForeachInSyntax<TItem>
 	{
-		IHappilForeachDoSyntax<TItem> In(IHappilOperand<IEnumerable<TItem>> collection);
+		IHappilForeachInDoSyntax<TItem> In(IHappilOperand<IEnumerable<TItem>> collection);
+	}
+
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IHappilForeachInDoSyntax<TItem>
+	{
+		void Do(Action<IHappilLoopBody> body);
 	}
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------
