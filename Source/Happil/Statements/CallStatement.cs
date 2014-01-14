@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 
 namespace Happil.Statements
@@ -18,7 +19,14 @@ namespace Happil.Statements
 
 		public CallStatement(IHappilOperand target, MethodBase method, params IHappilOperand[] arguments)
 		{
-			StatementScope.Current.Consume((IHappilOperand<object>)target);
+			var scope = StatementScope.Current;
+	
+			scope.Consume(target as IHappilExpression);
+
+			foreach ( var argument in arguments )
+			{
+				scope.Consume(argument as IHappilExpression);			
+			}
 
 			m_Target = target;
 			m_Method = method;

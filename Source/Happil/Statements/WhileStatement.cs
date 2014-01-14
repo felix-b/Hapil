@@ -38,14 +38,14 @@ namespace Happil.Statements
 			m_Condition.EmitTarget(il);
 			m_Condition.EmitLoad(il);
 
-			il.Emit(OpCodes.Brfalse_S, m_LoopEndLabel);
+			il.Emit(OpCodes.Brfalse, m_LoopEndLabel);
 
 			foreach ( var statement in m_BodyBlock )
 			{
 				statement.Emit(il);
 			}
 
-			il.Emit(OpCodes.Br_S, m_LoopStartLabel);
+			il.Emit(OpCodes.Br, m_LoopStartLabel);
 			il.MarkLabel(m_LoopEndLabel);
 		}
 

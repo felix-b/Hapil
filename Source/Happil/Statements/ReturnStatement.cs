@@ -13,13 +13,11 @@ namespace Happil.Statements
 	internal class ReturnStatement : IHappilStatement, ILeaveStatement
 	{
 		private readonly TryStatement m_ExceptionStatement;
-		private readonly StatementScope m_HomeScope;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ReturnStatement()
 		{
-			m_HomeScope = StatementScope.Current;
 			m_ExceptionStatement = StatementScope.Current.InheritedExceptionStatement;
 		}
 
@@ -36,7 +34,7 @@ namespace Happil.Statements
 		{
 			get
 			{
-				return m_HomeScope;
+				return StatementScope.Current.Root;
 			}
 		}
 	}
@@ -52,15 +50,13 @@ namespace Happil.Statements
 	internal class ReturnStatement<T> : IHappilStatement, ILeaveStatement
 	{
 		private readonly IHappilOperand<T> m_Operand;
-		private readonly StatementScope m_HomeScope;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ReturnStatement(IHappilOperand<T> operand)
 		{
 			m_Operand = operand;
-			m_HomeScope = StatementScope.Current;
-			m_HomeScope.Consume(operand);
+			StatementScope.Current.Consume(operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

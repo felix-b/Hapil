@@ -36,7 +36,7 @@ namespace Happil.Statements
 			m_Condition.EmitTarget(il);
 			m_Condition.EmitLoad(il);
 			
-			il.Emit(OpCodes.Brfalse_S, afterIfBlock);
+			il.Emit(OpCodes.Brfalse, afterIfBlock);
 
 			foreach ( var statement in m_ThenBlock )
 			{
@@ -45,7 +45,7 @@ namespace Happil.Statements
 
 			if ( m_ElseBlock.Count > 0 )
 			{
-				il.Emit(OpCodes.Br_S, afterElseBlock);
+				il.Emit(OpCodes.Br, afterElseBlock);
 			}
 			
 			il.MarkLabel(afterIfBlock);

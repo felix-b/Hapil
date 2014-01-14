@@ -425,23 +425,21 @@ namespace Happil.Fluent
 
 		private static MemberInfo[] GatherImplementableMembers()
 		{
+			var allTypes = typeof(TBase).GetTypeHierarchy();
 			var members = new HashSet<MemberInfo>();
-			var visitedTypes = new HashSet<Type>();
 
-			GatherImplementableMembers(typeof(TBase), members, visitedTypes);
-
+			foreach ( var type in allTypes )
+			{
+				GatherImplementableMembers(type, members);
+			}
+			
 			return members.ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static void GatherImplementableMembers(Type type, HashSet<MemberInfo> members, HashSet<Type> visitedTypes)
+		private static void GatherImplementableMembers(Type type, HashSet<MemberInfo> members)
 		{
-			if ( !visitedTypes.Add(type) )
-			{
-				return;
-			}
-
 			var implementableBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 			var methods = type.GetMethods(implementableBindingFlags).Where(IsImplementableMethod).Cast<MemberInfo>();
@@ -451,18 +449,6 @@ namespace Happil.Fluent
 			foreach ( var singleMember in methods.Concat(properties).Concat(events) )
 			{
 				members.Add(singleMember);
-			}
-
-			if ( type.IsClass && type.BaseType != null )
-			{
-				GatherImplementableMembers(type.BaseType, members, visitedTypes);
-			}
-			else if ( type.IsInterface )
-			{
-				foreach ( var baseInterface in type.GetInterfaces() )
-				{
-					GatherImplementableMembers(baseInterface, members, visitedTypes);
-				}
 			}
 		}
 

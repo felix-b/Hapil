@@ -15,6 +15,7 @@ namespace Happil.Statements
 		private readonly List<IHappilStatement> m_FinallyBlock;
 		private readonly List<LeaveBlock> m_LeaveBlocks;
 		private Label m_EndExceptionBlockLabel;
+		private Label m_EndLeaveBlocksLabel;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
+			m_EndLeaveBlocksLabel = il.DefineLabel();
 			m_EndExceptionBlockLabel = il.BeginExceptionBlock();
 
 			foreach ( var statement in m_TryBlock )
@@ -61,9 +63,16 @@ namespace Happil.Statements
 
 			il.EndExceptionBlock();
 
-			foreach ( var leaveBlock in m_LeaveBlocks )
+			if ( m_LeaveBlocks.Count > 0 )
 			{
-				leaveBlock.Emit(il);
+				il.Emit(OpCodes.Br, m_EndLeaveBlocksLabel);
+
+				foreach ( var leaveBlock in m_LeaveBlocks )
+				{
+					leaveBlock.Emit(il);
+				}
+
+				il.MarkLabel(m_EndLeaveBlocksLabel);
 			}
 		}
 
@@ -187,7 +196,7 @@ namespace Happil.Statements
 			public void Emit(ILGenerator il)
 			{
 				m_Destination.LeaveLabel = il.DefineLabel();
-				il.Emit(OpCodes.Leave_S, m_Destination.LeaveLabel);
+				il.Emit(OpCodes.Leave, m_Destination.LeaveLabel);
 			}
 
 			#endregion

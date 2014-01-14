@@ -30,5 +30,32 @@ namespace Happil
 				!type.IsGenericTypeDefinition && 
 				type.GetGenericTypeDefinition() == typeof(Nullable<>));
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Type[] GetTypeHierarchy(this Type type)
+		{
+			var baseTypes = new HashSet<Type>();
+			GetAllBaseTypes(type, baseTypes);
+			return baseTypes.ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static void GetAllBaseTypes(Type currentType, HashSet<Type> baseTypes)
+		{
+			if ( baseTypes.Add(currentType) )
+			{
+				if ( currentType.IsClass && currentType.BaseType != null )
+				{
+					GetAllBaseTypes(currentType.BaseType, baseTypes);
+				}
+				
+				foreach ( var baseInterface in currentType.GetInterfaces() )
+				{
+					GetAllBaseTypes(baseInterface, baseTypes);
+				}
+			}
+		}
 	}
 }

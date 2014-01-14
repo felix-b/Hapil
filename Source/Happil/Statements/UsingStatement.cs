@@ -26,7 +26,10 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			foreach ( var statement in m_BodyBlock )
+			{
+				statement.Emit(il);
+			}
 		}
 
 		#endregion

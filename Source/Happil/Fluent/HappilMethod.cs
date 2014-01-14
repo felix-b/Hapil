@@ -70,7 +70,11 @@ namespace Happil.Fluent
 		public IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection)
 		{
 			var element = this.Local<T>();
-			return AddStatement(new ForeachStatement<T>(element));
+			var statement = new ForeachStatement<T>(element);
+			
+			AddStatement(statement);
+			
+			return statement.In(collection);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

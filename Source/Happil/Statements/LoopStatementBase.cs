@@ -9,6 +9,17 @@ namespace Happil.Statements
 {
 	internal abstract class LoopStatementBase : IHappilLoopBody
 	{
+		private readonly StatementScope m_HomeScope;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected LoopStatementBase()
+		{
+			m_HomeScope = StatementScope.Current;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Continue()
 		{
 			StatementScope.Current.AddStatement(new ContinueStatement(this));
@@ -22,6 +33,16 @@ namespace Happil.Statements
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected StatementScope HomeScope
+		{
+			get
+			{
+				return m_HomeScope;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		internal protected abstract Label LoopStartLabel { get; }
 		internal protected abstract Label LoopEndLabel { get; }
@@ -31,14 +52,12 @@ namespace Happil.Statements
 		private class ContinueStatement : IHappilStatement, ILeaveStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
-			private readonly StatementScope m_HomeScope;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public ContinueStatement(LoopStatementBase ownerLoop)
 			{
 				m_OwnerLoop = ownerLoop;
-				m_HomeScope = StatementScope.Current;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,7 +66,7 @@ namespace Happil.Statements
 
 			public void Emit(ILGenerator il)
 			{
-				il.Emit(OpCodes.Br_S, m_OwnerLoop.LoopStartLabel);
+				il.Emit(OpCodes.Br, m_OwnerLoop.LoopStartLabel);
 			}
 
 			#endregion
@@ -60,7 +79,7 @@ namespace Happil.Statements
 			{
 				get
 				{
-					return m_HomeScope;
+					return m_OwnerLoop.HomeScope;
 				}
 			}
 
@@ -69,17 +88,15 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class BreakStatement : IHappilStatement
+		private class BreakStatement : IHappilStatement, ILeaveStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
-			private readonly StatementScope m_HomeScope;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public BreakStatement(LoopStatementBase ownerLoop)
 			{
 				m_OwnerLoop = ownerLoop;
-				m_HomeScope = StatementScope.Current;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,7 +105,7 @@ namespace Happil.Statements
 
 			public void Emit(ILGenerator il)
 			{
-				il.Emit(OpCodes.Br_S, m_OwnerLoop.LoopEndLabel);
+				il.Emit(OpCodes.Br, m_OwnerLoop.LoopEndLabel);
 			}
 
 			#endregion
@@ -101,7 +118,7 @@ namespace Happil.Statements
 			{
 				get
 				{
-					return m_HomeScope;
+					return m_OwnerLoop.HomeScope;
 				}
 			}
 

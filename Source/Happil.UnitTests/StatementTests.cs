@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
+// ReSharper disable ConvertToLambdaExpression
+// ReSharper disable ConvertClosureToMethodGroup
+
 namespace Happil.UnitTests
 {
 	[TestFixture]
@@ -391,8 +394,8 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
-		public void TestForeachElementIn()
+		[Test]
+		public void TestForeachElementIn_NonEmptyCollection()
 		{
 			//-- Arrange
 
@@ -415,6 +418,34 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(outputList, Is.EqualTo(inputEnumerable));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestForeachElementIn_EmptyCollection()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester3>()
+				.DefaultConstructor()
+				.Method<IEnumerable<int>, IList<int>>(cls => cls.DoTest).Implement((m, input, output) => {
+					m.ForeachElementIn(input).Do((loop, element) => {
+						output.Add(element);
+					});
+				});
+
+			var inputEnumerable = new int[0];
+			var outputList = new List<int>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester3>().UsingDefaultConstructor();
+			tester.DoTest(inputEnumerable, outputList);
+
+			//-- Assert
+
+			Assert.That(outputList.Count, Is.EqualTo(0));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -648,8 +679,8 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet finished")]
-		public void TestLoopBreakFromTryCatch()
+		[Test]
+		public void TestLoopBreakFromTry()
 		{
 			//-- Arrange
 
@@ -695,6 +726,278 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestLoopContinueFromTry()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+
+					m.While(input > 10).Do(loop => {
+						output.Add(input.Func<string>(x => x.ToString));
+
+						m.Try(() => {
+							m.If(input == 12).Then(() => {
+								input.Assign(input - 1);
+								output.Add(m.Const("CONTINUE"));
+								loop.Continue();
+							});
+						})
+						.Finally(() => {
+							output.Add(m.Const("FINALLY"));
+						});
+
+						input.Assign(input - 1);
+						output.Add(m.Const("END-LOOP"));
+					});
+
+					m.ReturnConst(0);
+				});
+
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			tester.DoTest(13);
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"13", "FINALLY", "END-LOOP",
+				"12", "CONTINUE", "FINALLY",
+				"11", "FINALLY", "END-LOOP"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLoopBreakFromCatchWithFinally()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+
+					m.While(input > 0).Do(loop => {
+						output.Add(input.Func<string>(x => x.ToString));
+
+						m.Try(() => {
+							m.If(input == 11).Then(() => {
+								output.Add(m.Const("THROW"));
+								m.Throw<TestExceptionOne>("11");
+							});
+						})
+						.Catch<Exception>(e => {
+							output.Add(m.Const("CATCH"));
+							loop.Break();
+						})
+						.Finally(() => {
+							output.Add(m.Const("FINALLY"));
+						});
+
+						input.Assign(input - 1);
+						output.Add(m.Const("END-LOOP"));
+					});
+
+					m.ReturnConst(0);
+				});
+
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			tester.DoTest(13);
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"13", "FINALLY", "END-LOOP",
+				"12", "FINALLY", "END-LOOP",
+				"11", "THROW", "CATCH", "FINALLY"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLoopContinueFromCatchWithFinally()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+
+					m.While(input > 10).Do(loop => {
+						output.Add(input.Func<string>(x => x.ToString));
+
+						m.Try(() => {
+							m.If(input == 12).Then(() => {
+								output.Add(m.Const("THROW"));
+								m.Throw<TestExceptionOne>("12");
+							});
+						})
+						.Catch<Exception>(e => {
+							output.Add(m.Const("CATCH"));
+							input.Assign(input - 1);
+							loop.Continue();
+						})
+						.Finally(() => {
+							output.Add(m.Const("FINALLY"));
+						});
+
+						input.Assign(input - 1);
+						output.Add(m.Const("END-LOOP"));
+					});
+
+					m.ReturnConst(0);
+				});
+
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			tester.DoTest(13);
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"13", "FINALLY", "END-LOOP",
+				"12", "THROW", "CATCH", "FINALLY",
+				"11", "FINALLY", "END-LOOP",
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestUsing_NoException_DisposeCalled()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+					output.Add(m.Const("BEFORE-USING"));
+					
+					m.Using(Static.Prop(() => InputDisposable)).Do(() => {
+						output.Add(m.Const("INSIDE-USING"));
+					});
+
+					output.Add(m.Const("AFTER-USING"));
+					m.ReturnConst(0);
+				});
+
+			InputDisposable = new TestDisposable();
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			tester.DoTest(111);
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"BEFORE-USING", "INSIDE-USING", "DISPOSE", "AFTER-USING",
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestUsing_ThrowException_DisposeCalled()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+					output.Add(m.Const("BEFORE-USING"));
+
+					m.Using(Static.Prop(() => InputDisposable)).Do(() => {
+						output.Add(m.Const("INSIDE-USING"));
+						m.Throw<TestExceptionOne>("222");
+					});
+
+					output.Add(m.Const("AFTER-USING"));
+					m.ReturnConst(0);
+				});
+
+			InputDisposable = new TestDisposable();
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+
+			try
+			{
+				tester.DoTest(111);
+				Assert.Fail("Expected TestExceptionOne");
+			}
+			catch ( TestExceptionOne )
+			{
+			}
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"BEFORE-USING", "INSIDE-USING", "DISPOSE"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestUsing_NullDisposable_DoNotThrow()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var output = m.Local(initialValue: Static.Prop(() => OutputList));
+					output.Add(m.Const("BEFORE-USING"));
+
+					m.Using(Static.Prop(() => InputDisposable)).Do(() => {
+						output.Add(m.Const("INSIDE-USING"));
+					});
+
+					output.Add(m.Const("AFTER-USING"));
+					m.ReturnConst(0);
+				});
+
+			InputDisposable = null;
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<StatementTester>().UsingDefaultConstructor();
+			tester.DoTest(111);
+
+			//-- Assert
+
+			Assert.That(OutputList, Is.EqualTo(new[] {
+				"BEFORE-USING", "INSIDE-USING", "AFTER-USING",
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IDisposable InputDisposable { get; set; }
 		public static Exception OutputException { get; set; }
 		public static string OutputString { get; set; }
 		public static List<string> OutputList { get; set; }
@@ -762,6 +1065,16 @@ namespace Happil.UnitTests
 			public TestExceptionThree(string message)
 				: base(message)
 			{
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class TestDisposable : IDisposable
+		{
+			public void Dispose()
+			{
+				OutputList.Add("DISPOSE");
 			}
 		}
 
@@ -897,6 +1210,38 @@ namespace Happil.UnitTests
 
 				Console.WriteLine("-999");
 				return -999; // should never get here!
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class ExampleTester2 : StatementTester
+		{
+			public sealed override int DoTest(int input)
+			{
+				List<string> outputList = StatementTests.OutputList;
+				while (true)
+				{
+					if (input <= 0)
+					{
+						break;
+					}
+					outputList.Add(input.ToString());
+					try
+					{
+						if (input == 11)
+						{
+							outputList.Add("BREAK");
+							break;
+						}
+					}
+					finally
+					{
+						outputList.Add("FINALLY");
+					}
+					input--;
+				}
+				return 0;
 			}
 		}
 	}

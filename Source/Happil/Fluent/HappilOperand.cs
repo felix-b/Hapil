@@ -644,21 +644,16 @@ namespace Happil.Fluent
 					member.Name));
 			}
 
-			var declaringType = typeof(T);
+			var allBaseTypes = typeof(T).GetTypeHierarchy();
 
-			while ( declaringType != null )
+			if ( !allBaseTypes.Contains(member.DeclaringType) )
 			{
-				if ( member.DeclaringType == declaringType )
-				{
-					return method;
-				}
-
-				declaringType = declaringType.BaseType;
+				throw new ArgumentException(string.Format(
+					"Member {0} cannot be invoked because it is not a method of type {1}.",
+					member.Name, typeof(T).FullName));
 			}
 
-			throw new ArgumentException(string.Format(
-				"Member {0} cannot be invoked because it is not a method of type {1}.",
-				member.Name, typeof(T).FullName));
+			return method;
 		}
 	}
 }
