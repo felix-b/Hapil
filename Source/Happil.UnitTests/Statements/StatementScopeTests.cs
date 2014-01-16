@@ -7,6 +7,9 @@ using Happil.Fluent;
 using Happil.Statements;
 using NUnit.Framework;
 
+// ReSharper disable ConvertToLambdaExpression
+// ReSharper disable ConvertClosureToMethodGroup
+
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]

@@ -102,6 +102,7 @@
     <Compile Include="Statements\IHappilStatement.cs" />
     <Compile Include="Statements\StatementScope.cs" />
     <Compile Include="Statements\ExceptionBlockType.cs" />
+    <Compile Include="Statements\SwitchStatement.cs" />
     <Compile Include="Statements\ThrowStatement.cs" />
     <Compile Include="Statements\TryStatement.cs" />
     <Compile Include="Statements\UsingStatement.cs" />

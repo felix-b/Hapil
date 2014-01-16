@@ -388,13 +388,17 @@ namespace Happil.Expressions
 
 				var castType = TypeTemplate.Resolve(typeConstant.Value);
 
-				if ( left.OperandType.IsValueType && castType == typeof(object) )
+				if ( left.OperandType.IsValueType )
 				{
-					il.Emit(OpCodes.Box, left.OperandType);
+					EmitValueTypeConversion(il, left.OperandType, castType);
+				}
+				else if ( !castType.IsValueType )
+				{
+					il.Emit(OpCodes.Castclass, castType);
 				}
 				else
 				{
-					il.Emit(OpCodes.Castclass, castType);
+					throw NewConversionNotSupportedException();
 				}
 			}
 
@@ -404,6 +408,58 @@ namespace Happil.Expressions
 			{
 				return "cast-to";
 			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void EmitValueTypeConversion(ILGenerator il, Type fromType, Type toType)
+			{
+				if ( toType == typeof(object) )
+				{
+					il.Emit(OpCodes.Box, fromType);
+					return;
+				}
+				
+				if ( !toType.IsValueType )
+				{
+					throw NewConversionNotSupportedException();
+				}
+
+				var conversionType = (toType.IsEnum ? Enum.GetUnderlyingType(toType) : toType);
+
+				if ( fromType != conversionType )
+				{
+					OpCode conversionInstruction;
+
+					if ( !s_ValueTypeCastInstructions.TryGetValue(conversionType, out conversionInstruction) )
+					{
+						throw new NotSupportedException("Casting to specified value type is not supported.");
+					}
+
+					il.Emit(conversionInstruction);
+				}
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private Exception NewConversionNotSupportedException()
+			{
+				return new NotSupportedException("Specified type conversion is not supported.");
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private static readonly Dictionary<Type, OpCode> s_ValueTypeCastInstructions = new Dictionary<Type, OpCode>() {
+				{ typeof(sbyte), OpCodes.Conv_I1 },
+				{ typeof(short), OpCodes.Conv_I2 },
+				{ typeof(int), OpCodes.Conv_I4 },
+				{ typeof(long), OpCodes.Conv_I8 },
+				{ typeof(byte), OpCodes.Conv_U1 },
+				{ typeof(ushort), OpCodes.Conv_U2 },
+				{ typeof(uint), OpCodes.Conv_U4 },
+				{ typeof(ulong), OpCodes.Conv_U8 },
+				{ typeof(float), OpCodes.Conv_R4 },
+				{ typeof(double), OpCodes.Conv_R8 }
+			};
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

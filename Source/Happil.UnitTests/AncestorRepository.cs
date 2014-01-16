@@ -185,5 +185,35 @@ namespace Happil.UnitTests
 		{
 			object CallTheTarget(int value);
 		}
+
+		public abstract class StatementTester
+		{
+			public abstract int DoTest(int input);
+
+			public virtual bool Predicate(int input)
+			{
+				return false;
+			}
+		}
+
+		public abstract class StatementTester2
+		{
+			public abstract int DoTest(int x, int y);
+			
+			public virtual bool Predicate(int x, int y)
+			{
+				return false;
+			}
+		}
+
+		public abstract class StatementTester3
+		{
+			public abstract void DoTest(IEnumerable<int> input, IList<int> output);
+
+			public virtual bool Predicate(int item)
+			{
+				return false;
+			}
+		}
 	}
 }

@@ -17,6 +17,7 @@ namespace Happil.Fluent
 		IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection);
 		IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable);
 		IHappilCatchSyntax Try(Action body);
+		IHappilSwitchSyntax<T> Switch<T>(IHappilOperand<T> value);
 		HappilOperand<TBase> This<TBase>();
 		HappilLocal<T> Local<T>();
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);

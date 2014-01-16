@@ -53,6 +53,7 @@
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />
     <Compile Include="Demo\EndToEndDemo.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
+    <Compile Include="ExceptionRepository.cs" />
     <Compile Include="ExpressionTests.cs" />
     <Compile Include="Fluent\ConstructorTests.cs" />
     <Compile Include="Fluent\CSharpTests.cs" />
@@ -69,8 +70,14 @@
     <Compile Include="ClassPerTestCaseFixtureBase.cs" />
     <Compile Include="SetShortcutsTests.cs" />
     <Compile Include="SignatureTests.cs" />
+    <Compile Include="Statements\ForeachStatementTests.cs" />
+    <Compile Include="Statements\IfStatementTests.cs" />
     <Compile Include="Statements\StatementScopeTests.cs" />
-    <Compile Include="StatementTests.cs" />
+    <Compile Include="Statements\SwitchStatementTests.cs" />
+    <Compile Include="Statements\TryStatementTests.cs" />
+    <Compile Include="Statements\UsingStatementTests.cs" />
+    <Compile Include="Statements\WhileStatementTests.cs" />
+    <Compile Include="CompiledExamples.cs" />
     <Compile Include="StringShortcutsTests.cs" />
   </ItemGroup>
   <ItemGroup>

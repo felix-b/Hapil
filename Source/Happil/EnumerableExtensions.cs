@@ -19,5 +19,47 @@ namespace Happil
 				return source;
 			}
 		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IEnumerable<T> ConcatIf<T>(this IEnumerable<T> source, bool condition, Func<T> valueFactory)
+		{
+			if ( condition )
+			{
+				return source.Concat(new[] { valueFactory() });
+			}
+			else
+			{
+				return source;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IEnumerable<T> ConcatIf<T>(this IEnumerable<T> source, T valueOrNull) where T : class
+		{
+			if ( valueOrNull != null )
+			{
+				return source.Concat(new[] { valueOrNull });
+			}
+			else
+			{
+				return source;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IEnumerable<T> ConcatIf<T>(this IEnumerable<T> source, bool condition, T value) 
+		{
+			if ( condition )
+			{
+				return source.Concat(new[] { value });
+			}
+			else
+			{
+				return source;
+			}
+		}
 	}
 }

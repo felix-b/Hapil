@@ -94,6 +94,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilSwitchSyntax<T> Switch<T>(IHappilOperand<T> value)
+		{
+			return AddStatement(new SwitchStatement<T>(value));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TBase> This<TBase>()
 		{
 			return new HappilThis<TBase>(this);
