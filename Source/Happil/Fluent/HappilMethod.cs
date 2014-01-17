@@ -60,6 +60,27 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilForShortSyntax For(HappilConstant<int> from, IHappilOperand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(this, from, to.CastTo<int>(), increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilForShortSyntax For(IHappilOperand<int> from, HappilConstant<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(this, from.CastTo<int>(), to, increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilForShortSyntax For(IHappilOperand<int> from, IHappilOperand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(this, from.CastTo<int>(), to.CastTo<int>(), increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element)
 		{
 			return AddStatement(new ForeachStatement<T>(element));

@@ -13,6 +13,9 @@ namespace Happil.Fluent
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
 		IHappilWhileSyntax While(IHappilOperand<bool> condition);
+		HappilForShortSyntax For(HappilConstant<int> from, IHappilOperand<int> to, int increment = 1);
+		HappilForShortSyntax For(IHappilOperand<int> from, HappilConstant<int> to, int increment = 1);
+		HappilForShortSyntax For(IHappilOperand<int> from, IHappilOperand<int> to, int increment = 1);
 		IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element);
 		IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection);
 		IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable);
