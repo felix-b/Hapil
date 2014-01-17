@@ -19,6 +19,16 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private class ExpressionExamples
+		{
+			private static bool LogicalAndExample(bool p, int y)
+			{
+				return (p && y == 10);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private class ExampleTester1 : AncestorRepository.StatementTester
 		{
 			public override int DoTest(int input)

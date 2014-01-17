@@ -112,7 +112,25 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
 			{
-				throw new NotImplementedException();
+				var falseLabel = il.DefineLabel();
+				var endLabel = il.DefineLabel();
+
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				il.Emit(OpCodes.Brfalse, falseLabel);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+				
+				il.Emit(OpCodes.Br, endLabel);
+
+				il.MarkLabel(falseLabel);
+				il.Emit(OpCodes.Ldc_I4_0);
+				il.Emit(OpCodes.Br, endLabel);
+
+				il.MarkLabel(endLabel);
+				il.Emit(OpCodes.Nop);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

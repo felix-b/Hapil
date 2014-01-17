@@ -299,10 +299,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator ==(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -310,10 +310,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator ==(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -321,10 +321,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator !=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorNotEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -332,10 +332,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator !=(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorNotEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -343,10 +343,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator >(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorGreaterThan<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -354,10 +354,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator >(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorGreaterThan<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -365,10 +365,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator <(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLessThan<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -376,10 +376,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator <(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLessThan<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -387,10 +387,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator >=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorGreaterThanOrEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -398,10 +398,10 @@ namespace Happil.Fluent
 		public static HappilOperand<bool> operator <=(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, bool>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorLessThanOrEqual<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -409,10 +409,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilOperand<T> y) 
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorAdd<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -420,10 +420,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator +(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorAdd<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -431,10 +431,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorSubtract<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -442,10 +442,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilConstant<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorSubtract<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -453,10 +453,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator *(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorMultiply<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -464,10 +464,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator /(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorDivide<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -475,10 +475,10 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator %(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
-				x.OwnerMethod ?? y.OwnerMethod,
+				null,//x.OwnerMethod ?? y.OwnerMethod,
 				@operator: new BinaryOperators.OperatorModulo<T>(),
-				left: x,
-				right: y);
+				left: x.OrNullConstant<T>(),
+				right: y.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -490,15 +490,15 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalAnd(),
-					left: (IHappilOperand<bool>)x,
-					right: (IHappilOperand<bool>)y);
+					left: (IHappilOperand<bool>)x.OrNullConstant<T>(),
+					right: (IHappilOperand<bool>)y.OrNullConstant<T>());
 			}
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseAnd<T>(),
 					left: x,
 					right: y);
@@ -516,18 +516,18 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalOr(),
-					left: (IHappilOperand<bool>)x,
-					right: (IHappilOperand<bool>)y);
+					left: (IHappilOperand<bool>)x.OrNullConstant<T>(),
+					right: (IHappilOperand<bool>)y.OrNullConstant<T>());
 			}
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseOr<T>(),
-					left: x,
-					right: y);
+					left: x.OrNullConstant<T>(),
+					right: y.OrNullConstant<T>());
 			}
 
 			return (HappilOperand<T>)result;
@@ -556,18 +556,18 @@ namespace Happil.Fluent
 			if ( typeof(T) == typeof(bool) )
 			{
 				result = new HappilBinaryExpression<bool, bool>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorLogicalXor(),
-					left: (IHappilOperand<bool>)x,
-					right: (IHappilOperand<bool>)y);
+					left: (IHappilOperand<bool>)x.OrNullConstant<T>(),
+					right: (IHappilOperand<bool>)y.OrNullConstant<T>());
 			}
 			else
 			{
 				result = new HappilBinaryExpression<T, T>(
-					x.OwnerMethod ?? y.OwnerMethod,
+					null,//x.OwnerMethod ?? y.OwnerMethod,
 					@operator: new BinaryOperators.OperatorBitwiseXor<T>(),
-					left: x,
-					right: y);
+					left: x.OrNullConstant<T>(),
+					right: y.OrNullConstant<T>());
 			}
 
 			return (HappilOperand<T>)result;
@@ -578,9 +578,9 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator <<(HappilOperand<T> x, int y)
 		{
 			return new HappilBinaryExpression<T, int, T>(
-				x.OwnerMethod,
+				null,//x.OwnerMethod
 				@operator: new BinaryOperators.OperatorLeftShift<T>(),
-				left: x,
+				left: x.OrNullConstant<T>(),
 				right: new HappilConstant<int>(y));
 		}
 
@@ -589,9 +589,9 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator >>(HappilOperand<T> x, int y)
 		{
 			return new HappilBinaryExpression<T, int, T>(
-				x.OwnerMethod,
+				null,//x.OwnerMethod
 				@operator: new BinaryOperators.OperatorRightShift<T>(),
-				left: x,
+				left: x.OrNullConstant<T>(),
 				right: new HappilConstant<int>(y));
 		}
 
@@ -602,9 +602,9 @@ namespace Happil.Fluent
 			ValidateIsBooleanFor("!");
 
 			object result = new HappilUnaryExpression<bool, bool>(
-				x.OwnerMethod,
+				null,//x.OwnerMethod
 				@operator: new UnaryOperators.OperatorLogicalNot(),
-				operand: (IHappilOperand<bool>)x);
+				operand: (IHappilOperand<bool>)x.OrNullConstant<T>());
 
 			return (HappilOperand<T>)result;
 		}
@@ -614,9 +614,9 @@ namespace Happil.Fluent
 		public static HappilOperand<T> operator ~(HappilOperand<T> x)
 		{
 			return new HappilUnaryExpression<T, T>(
-				x.OwnerMethod,
+				null,//x.OwnerMethod
 				@operator: new UnaryOperators.OperatorBitwiseNot<T>(),
-				operand: x);
+				operand: x.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

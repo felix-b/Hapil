@@ -81,6 +81,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilForWhileSyntax For(Action precondition)
+		{
+			return AddStatement(new ForStatement(precondition));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element)
 		{
 			return AddStatement(new ForeachStatement<T>(element));

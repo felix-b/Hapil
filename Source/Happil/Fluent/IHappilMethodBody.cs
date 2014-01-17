@@ -16,6 +16,7 @@ namespace Happil.Fluent
 		HappilForShortSyntax For(HappilConstant<int> from, IHappilOperand<int> to, int increment = 1);
 		HappilForShortSyntax For(IHappilOperand<int> from, HappilConstant<int> to, int increment = 1);
 		HappilForShortSyntax For(IHappilOperand<int> from, IHappilOperand<int> to, int increment = 1);
+		IHappilForWhileSyntax For(Action precondition);
 		IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element);
 		IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection);
 		IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable);
