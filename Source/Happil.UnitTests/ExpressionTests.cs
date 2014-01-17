@@ -540,6 +540,31 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestTernaryOperator()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					m.Return(m.Iif(input > 0, input + 10, input - 100));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(10);
+			var result2 = tester.DoTest(-10);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(20));
+			Assert.That(result2, Is.EqualTo(-110));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class IntPropertiesBase1
 		{
 			public abstract int SumPropertiesAndNumber(int number);

@@ -12,6 +12,7 @@ namespace Happil.Fluent
 	public interface IHappilMethodBodyBase
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
+		HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse);
 		IHappilWhileSyntax While(IHappilOperand<bool> condition);
 		HappilForShortSyntax For(HappilConstant<int> from, IHappilOperand<int> to, int increment = 1);
 		HappilForShortSyntax For(IHappilOperand<int> from, HappilConstant<int> to, int increment = 1);

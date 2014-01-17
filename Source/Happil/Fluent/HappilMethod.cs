@@ -53,6 +53,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse)
+		{
+			return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilWhileSyntax While(IHappilOperand<bool> condition)
 		{
 			return AddStatement(new WhileStatement(condition));
