@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using System.Reflection.Emit;
 
@@ -70,7 +71,7 @@ namespace Happil
 				TypeAttributes.AnsiClass;
 
 			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, baseType);
-			return new HappilClass(typeBuilder).GetBody<object>();
+			return new HappilClass(this, typeBuilder).GetBody<object>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -86,7 +87,7 @@ namespace Happil
 				TypeAttributes.AnsiClass;
 
 			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, parent: typeof(TBase));
-			return new HappilClass(typeBuilder).GetBody<TBase>();
+			return new HappilClass(this, typeBuilder).GetBody<TBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

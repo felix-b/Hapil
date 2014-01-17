@@ -248,13 +248,22 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
+				var overloads = TypeOperators.GetOperators(left.OperandType);
 
-				right.EmitTarget(il);
-				right.EmitLoad(il);
+				if ( overloads.OpEquality != null )
+				{
+					Helpers.EmitCall(il, null, overloads.OpEquality, left, right);
+				}
+				else
+				{
+					left.EmitTarget(il);
+					left.EmitLoad(il);
 
-				il.Emit(OpCodes.Ceq);
+					right.EmitTarget(il);
+					right.EmitLoad(il);
+
+					il.Emit(OpCodes.Ceq);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

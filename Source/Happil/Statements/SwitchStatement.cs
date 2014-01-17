@@ -41,10 +41,11 @@ namespace Happil.Statements
 
 			if ( !CanEmitJumpTable() || !TryEmitJumpTable(il) )
 			{
-				throw new NotImplementedException("Switch without jump table is not yet implemented");
+				EmitWithoutJumpTable(il);
 			}
 
 			il.MarkLabel(m_EndLabel);
+			il.Emit(OpCodes.Nop);
 		}
 
 		#endregion
@@ -81,9 +82,11 @@ namespace Happil.Statements
 
 		#endregion
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private bool CanEmitJumpTable()
 		{
-			return (typeof(T).IsPrimitive || typeof(T).IsEnum);
+			return (m_Value.OperandType.IsPrimitive || m_Value.OperandType.IsEnum);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -91,33 +94,18 @@ namespace Happil.Statements
 		private bool TryEmitJumpTable(ILGenerator il)
 		{
 			var caseBlocks = m_CasesByValue.Values.ToArray();
-			var jumpTableLength = caseBlocks[caseBlocks.Length - 1].Int64 - caseBlocks[0].Int64 + 1;
+			long adjustment;
+			CaseBlock[] jumpTable;
 
-			if ( jumpTableLength > caseBlocks.Length * 2 + 1 || jumpTableLength >= UInt32.MaxValue )
+			if ( !TryBuildJumpTable(caseBlocks, out jumpTable, out adjustment) )
 			{
 				return false;
-			}
-
-			var jumpTable = new CaseBlock[jumpTableLength];
-			var adjustment = -caseBlocks[0].Int64;
-			var caseIndex = 0;
-
-			for ( int jumpIndex = 0 ; jumpIndex < jumpTableLength ; jumpIndex++ )
-			{
-				if ( jumpIndex == caseBlocks[caseIndex].Int64 + adjustment )
-				{
-					jumpTable[jumpIndex] = caseBlocks[caseIndex++];
-				}
 			}
 
 			m_Value.EmitTarget(il);
 			m_Value.EmitLoad(il);
 
-			if ( adjustment != 0 )
-			{
-				new HappilConstant<int>(Math.Abs((int)adjustment)).EmitLoad(il);
-				il.Emit(adjustment < 0 ? OpCodes.Sub : OpCodes.Add);
-			}
+			EmitJumpTableAdjustment(il, adjustment);
 
 			var jumpTableLabels = jumpTable.Select(b => b != null ? b.Label : m_DefaultLabel).ToArray();
 			il.Emit(OpCodes.Switch, jumpTableLabels);
@@ -139,6 +127,83 @@ namespace Happil.Statements
 			}
 
 			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool TryBuildJumpTable(CaseBlock[] caseBlocks, out CaseBlock[] jumpTable, out long adjustment)
+		{
+			jumpTable = null;
+			adjustment = 0;
+
+			var jumpTableLength = caseBlocks[caseBlocks.Length - 1].Int64 - caseBlocks[0].Int64 + 1;
+
+			if ( jumpTableLength > caseBlocks.Length * 2 + 1 || jumpTableLength > UInt32.MaxValue )
+			{
+				return false;
+			}
+
+			jumpTable = new CaseBlock[jumpTableLength];
+			adjustment = -caseBlocks[0].Int64;
+			var caseIndex = 0;
+
+			for ( int jumpIndex = 0 ; jumpIndex < jumpTableLength ; jumpIndex++ )
+			{
+				if ( jumpIndex == caseBlocks[caseIndex].Int64 + adjustment )
+				{
+					jumpTable[jumpIndex] = caseBlocks[caseIndex++];
+				}
+			}
+
+			return true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitJumpTableAdjustment(ILGenerator il, long adjustment)
+		{
+			if ( adjustment != 0 )
+			{
+				if ( m_Value.OperandType.GetIntegralTypeSize() <= sizeof(int) )
+				{
+					new HappilConstant<int>(Math.Abs((int)adjustment)).EmitLoad(il);
+				}
+				else
+				{
+					new HappilConstant<long>(Math.Abs(adjustment)).EmitLoad(il);
+				}
+
+				il.Emit(adjustment < 0 ? OpCodes.Sub : OpCodes.Add);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitWithoutJumpTable(ILGenerator il)
+		{
+			foreach ( var block in m_CasesByValue.Values )
+			{
+				var operatorEqual = new BinaryOperators.OperatorEqual<T>();
+				operatorEqual.Emit(il, m_Value, new HappilConstant<T>(block.Value));
+
+				block.Label = il.DefineLabel();
+				il.Emit(OpCodes.Brtrue, block.Label);
+			}
+
+			if ( m_Default != null )
+			{
+				m_Default.Emit(il, m_EndLabel);
+			}
+			else
+			{
+				il.Emit(OpCodes.Br, m_EndLabel);
+			}
+
+			foreach ( var block in m_CasesByValue.Values )
+			{
+				il.MarkLabel(block.Label);
+				block.Emit(il, m_EndLabel);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

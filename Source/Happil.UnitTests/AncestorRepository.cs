@@ -186,6 +186,8 @@ namespace Happil.UnitTests
 			object CallTheTarget(int value);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class StatementTester
 		{
 			public abstract int DoTest(int input);
@@ -195,6 +197,8 @@ namespace Happil.UnitTests
 				return false;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public abstract class StatementTester2
 		{
@@ -206,11 +210,25 @@ namespace Happil.UnitTests
 			}
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class StatementTester3
 		{
 			public abstract void DoTest(IEnumerable<int> input, IList<int> output);
 
 			public virtual bool Predicate(int item)
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class StatementTester4
+		{
+			public abstract long DoTest(long input);
+
+			public virtual bool Predicate(long item)
 			{
 				return false;
 			}

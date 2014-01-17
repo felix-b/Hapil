@@ -9,6 +9,7 @@ namespace Happil.Fluent
 {
 	internal class HappilClass
 	{
+		private readonly HappilModule m_OwnerModule;
 		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<IHappilMember> m_Members;
 		private readonly List<Tuple<IHappilMember, Action>> m_MemberBodyDefinitions;
@@ -20,8 +21,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass(TypeBuilder typeBuilder)
-        {
+		public HappilClass(HappilModule ownerModule, TypeBuilder typeBuilder)
+		{
+			m_OwnerModule = ownerModule;
             m_TypeBuilder = typeBuilder;
 			m_Members = new List<IHappilMember>();
 			m_MemberBodyDefinitions = new List<Tuple<IHappilMember, Action>>();
@@ -146,6 +148,16 @@ namespace Happil.Fluent
 		public Delegate[] GetFactoryMethods()
 		{
 			return m_FactoryMethods.Select(CreateFactoryMethodDelegate).ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilModule OwnerModule
+		{
+			get
+			{
+				return m_OwnerModule;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

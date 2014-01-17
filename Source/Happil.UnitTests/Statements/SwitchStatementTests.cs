@@ -241,5 +241,93 @@ namespace Happil.UnitTests.Statements
 
 			Assert.That(outputs, Is.EqualTo(new[] { 999, 111, 222, 444, 999, 999 }));
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLongValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester4>()
+				.DefaultConstructor()
+				.Method<long, long>(x => x.DoTest).Implement((m, input) => {
+					m.Switch(input)
+						.Case(10).Do(() => m.ReturnConst(1000))
+						.Case(12).Do(() => m.ReturnConst(1222))
+						.Case(14).Do(() => m.ReturnConst(1444))
+						.Default(() => m.ReturnConst(9999));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester4>().UsingDefaultConstructor();
+
+			var inputs = new[] { long.MinValue, 10, 11, 12, 13, 14, long.MaxValue };
+			var outputs = inputs.Select(tester.DoTest).ToArray();
+
+			//-- Assert
+
+			Assert.That(outputs, Is.EqualTo(new[] { 9999, 1000, 9999, 1222, 9999, 1444, 9999 }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTooManyGapsNoJumpTable()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					m.Switch(input)
+						.Case(10).Do(() => m.ReturnConst(1000))
+						.Case(20).Do(() => m.ReturnConst(2000))
+						.Case(30).Do(() => m.ReturnConst(3000))
+						.Default(() => m.ReturnConst(9999));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+
+			var inputs = new[] { int.MinValue, 10, 15, 20, 25, 30, int.MaxValue };
+			var outputs = inputs.Select(tester.DoTest).ToArray();
+
+			//-- Assert
+
+			Assert.That(outputs, Is.EqualTo(new[] { 9999, 1000, 9999, 2000, 9999, 3000, 9999 }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestNonIntegralType()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
+					var s = m.Local<string>(input.Func<string>(x => x.ToString));
+					m.Switch(s)
+						.Case("10").Do(() => m.ReturnConst(1000))
+						.Case("20").Do(() => m.ReturnConst(2000))
+						.Case("30").Do(() => m.ReturnConst(3000))
+						.Default(() => m.ReturnConst(9999));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+
+			var inputs = new[] { int.MinValue, 10, 15, 20, 25, 30, int.MaxValue };
+			var outputs = inputs.Select(tester.DoTest).ToArray();
+
+			//-- Assert
+
+			Assert.That(outputs, Is.EqualTo(new[] { 9999, 1000, 9999, 2000, 9999, 3000, 9999 }));
+		}
 	}
 }

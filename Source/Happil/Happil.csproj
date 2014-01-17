@@ -47,7 +47,9 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
+    <Compile Include="Expressions\TypeOperators.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
+    <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Fluent\IHappilLoopBody.cs" />
