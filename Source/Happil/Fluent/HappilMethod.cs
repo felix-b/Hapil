@@ -122,6 +122,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilLockSyntax Lock(IHappilOperand<object> syncRoot, int millisecondsTimeout)
+		{
+			return AddStatement(new LockStatement(syncRoot, millisecondsTimeout));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilCatchSyntax Try(Action body)
 		{
 			return AddStatement(new TryStatement(body));
@@ -180,7 +187,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilConstant<object> Default(Type type)
+		public HappilConstant<object> DefaultOf(Type type)
 		{
 			return new HappilConstant<object>(type.GetDefaultValue());
 		}
@@ -190,6 +197,13 @@ namespace Happil.Fluent
 		public void Throw<TException>(string message) where TException : Exception
 		{
 			AddStatement(new ThrowStatement(typeof(TException), message));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Throw()
+		{
+			AddStatement(new RethrowStatement());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

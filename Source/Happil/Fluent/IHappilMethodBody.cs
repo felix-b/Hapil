@@ -21,6 +21,7 @@ namespace Happil.Fluent
 		IHappilForeachInSyntax<T> Foreach<T>(HappilLocal<T> element);
 		IHappilForeachDoSyntax<T> ForeachElementIn<T>(IHappilOperand<IEnumerable<T>> collection);
 		IHappilUsingSyntax Using(IHappilOperand<IDisposable> disposable);
+		IHappilLockSyntax Lock(IHappilOperand<object> syncRoot, int millisecondsTimeout);
 		IHappilCatchSyntax Try(Action body);
 		IHappilSwitchSyntax<T> Switch<T>(IHappilOperand<T> value);
 		HappilOperand<TBase> This<TBase>();
@@ -29,8 +30,9 @@ namespace Happil.Fluent
 		HappilLocal<T> Local<T>(T initialValueConst);
 		HappilConstant<T> Const<T>(T value);
 		HappilConstant<T> Default<T>();
-		HappilConstant<object> Default(Type type);
+		HappilConstant<object> DefaultOf(Type type);
 		void Throw<TException>(string message) where TException : Exception;
+		void Throw();
 		void EmitFromLambda(Expression<Action> lambda);
 		HappilArgument<T> Argument<T>(string name);
 		HappilArgument<T> Argument<T>(int index);

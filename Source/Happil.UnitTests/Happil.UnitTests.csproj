@@ -73,6 +73,8 @@
     <Compile Include="Statements\ForeachStatementTests.cs" />
     <Compile Include="Statements\ForStatementTests.cs" />
     <Compile Include="Statements\IfStatementTests.cs" />
+    <Compile Include="Statements\LockStatementTests.cs" />
+    <Compile Include="Statements\ThrowStatementTests.cs" />
     <Compile Include="Statements\StatementScopeTests.cs" />
     <Compile Include="Statements\SwitchStatementTests.cs" />
     <Compile Include="Statements\TryStatementTests.cs" />

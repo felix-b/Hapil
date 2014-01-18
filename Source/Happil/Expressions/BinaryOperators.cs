@@ -503,7 +503,7 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<Type> right)
 			{
-				throw new InvalidOperationException();
+				throw new NotImplementedException();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -511,6 +511,27 @@ namespace Happil.Expressions
 			public override string ToString()
 			{
 				return "as";
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorNullCoalesce<T> : IBinaryOperator<T>
+		{
+			#region IBinaryOperator<T,T> Members
+
+			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			{
+				throw new NotImplementedException();
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return "??";
 			}
 		}
 

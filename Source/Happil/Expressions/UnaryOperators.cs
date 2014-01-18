@@ -20,7 +20,11 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<bool> operand)
 			{
-				throw new NotImplementedException();
+				operand.EmitTarget(il);
+				operand.EmitLoad(il);
+				
+				il.Emit(OpCodes.Ldc_I4_0);
+				il.Emit(OpCodes.Ceq);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

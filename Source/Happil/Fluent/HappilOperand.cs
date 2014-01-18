@@ -244,6 +244,17 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilOperand<T> OrDefault(IHappilOperand<T> defaultValue)
+		{
+			return new HappilBinaryExpression<T, T>(
+				OwnerMethod,
+				@operator: new BinaryOperators.OperatorNullCoalesce<T>(),
+				left: this,
+				right: defaultValue);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public virtual Type OperandType
 		{
 			get

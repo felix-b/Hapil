@@ -52,6 +52,7 @@
     <Compile Include="Statements\ForeachStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
+    <Compile Include="Statements\LockStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Fluent\IHappilLoopBody.cs" />
     <Compile Include="Fluent\IHappilOperandEmitter.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Statements\CompositeStatement.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
+    <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\IHappilStatement.cs" />
     <Compile Include="Statements\StatementScope.cs" />
