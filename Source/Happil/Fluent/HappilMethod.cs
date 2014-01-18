@@ -194,6 +194,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length)
+		{
+			return new HappilUnaryExpression<int, TElement[]>(
+				ownerMethod: null, 
+				@operator: new UnaryOperators.OperatorNewArray<TElement>(),
+				operand: length);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Throw<TException>(string message) where TException : Exception
 		{
 			AddStatement(new ThrowStatement(typeof(TException), message));

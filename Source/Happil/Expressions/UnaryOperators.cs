@@ -185,5 +185,25 @@ namespace Happil.Expressions
 				return (returnType == null || returnType == typeof(void));
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorNewArray<TElement> : IUnaryOperator<int>
+		{
+			public void Emit(ILGenerator il, IHappilOperand<int> lengthOperand)
+			{
+				lengthOperand.EmitTarget(il);
+				lengthOperand.EmitLoad(il);
+
+				il.Emit(OpCodes.Newarr, TypeTemplate.Resolve<TElement>());
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return string.Format("new {0}[]", TypeTemplate.Resolve<TElement>().Name);
+			}
+		}
 	}
 }
