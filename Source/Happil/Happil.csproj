@@ -97,7 +97,7 @@
     <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fluent\IHappilPropertyBody.cs" />
-    <Compile Include="Statements\CallOperand.cs" />
+    <Compile Include="Expressions\NewObjectExpression.cs" />
     <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\CompositeStatement.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />

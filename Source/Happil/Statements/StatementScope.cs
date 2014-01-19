@@ -129,7 +129,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Consume<T>(IHappilOperand<T> operand)
+		public void Consume(IHappilOperand operand)
 		{
 			var expression = (operand as IHappilExpression);
 

@@ -31,6 +31,7 @@ namespace Happil.Fluent
 		HappilConstant<T> Const<T>(T value);
 		HappilConstant<T> Default<T>();
 		HappilConstant<object> DefaultOf(Type type);
+		IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments);
 		IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length);
 		void Throw<TException>(string message) where TException : Exception;
 		void Throw();

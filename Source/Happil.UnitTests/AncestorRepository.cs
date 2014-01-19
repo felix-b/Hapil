@@ -233,5 +233,12 @@ namespace Happil.UnitTests
 				return false;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class ObjectCreationTester
+		{
+			public abstract object DoTest();
+		}
 	}
 }

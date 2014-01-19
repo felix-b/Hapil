@@ -74,7 +74,6 @@
     <Compile Include="Statements\ForStatementTests.cs" />
     <Compile Include="Statements\IfStatementTests.cs" />
     <Compile Include="Statements\LockStatementTests.cs" />
-    <Compile Include="Statements\TestNewArrayStatement.cs" />
     <Compile Include="Statements\ThrowStatementTests.cs" />
     <Compile Include="Statements\StatementScopeTests.cs" />
     <Compile Include="Statements\SwitchStatementTests.cs" />
@@ -83,6 +82,7 @@
     <Compile Include="Statements\WhileStatementTests.cs" />
     <Compile Include="CompiledExamples.cs" />
     <Compile Include="StringShortcutsTests.cs" />
+    <Compile Include="TargetRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">

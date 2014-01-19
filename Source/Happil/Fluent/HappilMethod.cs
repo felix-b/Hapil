@@ -194,6 +194,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments)
+		{
+			return new NewObjectExpression<TObject>(constructorArguments);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length)
 		{
 			return new HappilUnaryExpression<int, TElement[]>(
