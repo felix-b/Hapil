@@ -565,6 +565,70 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestNewArray()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					var arr = m.Local<int[]>();
+					arr.Assign(m.NewArray<int>(input));
+					Static.Prop(() => OutputArray).Assign(arr);
+					m.Return(arr.Length());
+				});
+
+			OutputArray = null;
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(10);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(10));
+			Assert.That(OutputArray, Is.Not.Null);
+			Assert.That(OutputArray.Length, Is.EqualTo(10));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestNewArrayWithInitializer()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					var arr = m.Local<int[]>();
+					arr.Assign(m.NewArray<int>(input));
+					Static.Prop(() => OutputArray).Assign(arr);
+					m.Return(arr.Length());
+				});
+
+			OutputArray = null;
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(10);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(10));
+			Assert.That(OutputArray, Is.Not.Null);
+			Assert.That(OutputArray.Length, Is.EqualTo(10));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static int[] OutputArray { get; set; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public abstract class IntPropertiesBase1
 		{
 			public abstract int SumPropertiesAndNumber(int number);

@@ -103,8 +103,20 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static IHappilOperand<int> Length<T>(this IHappilOperand<T[]> array)
+		{
+			return new PropertyAccessOperand<int>(array, s_ArrayLength);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
 			new ConcurrentDictionary<Type, ReflectionCache>();
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static readonly PropertyInfo s_ArrayLength = 
+			typeof(Array).GetProperty("Length");
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
