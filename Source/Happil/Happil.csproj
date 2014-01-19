@@ -45,7 +45,10 @@
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Expressions\ICanEmitAddress.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
+    <Compile Include="Expressions\IValueTypeInitializer.cs" />
+    <Compile Include="Expressions\NewStructExpression.cs" />
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
     <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />

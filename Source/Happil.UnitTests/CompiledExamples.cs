@@ -16,14 +16,31 @@ namespace Happil.UnitTests
 		public static Exception OutputException { get; set; }
 		public static string OutputString { get; set; }
 		public static List<string> OutputList { get; set; }
+		public static TimeSpan TimeSpanValue { get; set; }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class ExpressionExamples
 		{
+			private static TimeSpan s_TimeValue;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			private static bool LogicalAndExample(bool p, int y)
 			{
 				return (p && y == 10);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private static TimeSpan NewStruct()
+			{
+				s_TimeValue = new TimeSpan();
+				TimeSpanValue = new TimeSpan();
+				var ts1 = new TimeSpan();
+				var ts2 = new TimeSpan(1, 2, 3, 4);
+				var ts3 = TimeSpan.FromDays(1);
+				return ts1.Add(ts2).Add(ts3).Add(s_TimeValue);
 			}
 		}
 

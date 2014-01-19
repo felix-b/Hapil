@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	public class HappilLocal<T> : HappilAssignable<T>
+	public class HappilLocal<T> : HappilAssignable<T>, ICanEmitAddress
 	{
 		private readonly LocalBuilder m_LocalBuilder;
 

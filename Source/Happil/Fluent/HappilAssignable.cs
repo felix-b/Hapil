@@ -17,11 +17,19 @@ namespace Happil.Fluent
 
 		public HappilOperand<T> Assign(IHappilOperand<T> value)
 		{
-			return new HappilBinaryExpression<T, T>(
-				base.OwnerMethod,
-				@operator: new BinaryOperators.OperatorAssign<T>(),
-				left: this,
-				right: value);
+			if ( OperandType.IsValueType && value is IValueTypeInitializer && this is ICanEmitAddress )
+			{
+				((IValueTypeInitializer)value).Target = this;
+				return (HappilOperand<T>)value;
+			}
+			else
+			{
+				return new HappilBinaryExpression<T, T>(
+					base.OwnerMethod, 
+					@operator: new BinaryOperators.OperatorAssign<T>(), 
+					left: this, 
+					right: value);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

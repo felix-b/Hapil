@@ -9,7 +9,7 @@ using Happil.Expressions;
 namespace Happil.Fluent
 {
 	//TODO: this class only implements instance fields; should implement static fields as well
-	public class HappilField<T> : HappilAssignable<T>, IHappilMember
+	public class HappilField<T> : HappilAssignable<T>, IHappilMember, ICanEmitAddress
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly FieldBuilder m_FieldBuilder;

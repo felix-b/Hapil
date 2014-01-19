@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	public class HappilArgument<T> : HappilAssignable<T>
+	public class HappilArgument<T> : HappilAssignable<T>, ICanEmitAddress
 	{
 		private readonly byte m_Index;
 

@@ -196,7 +196,14 @@ namespace Happil.Fluent
 
 		public IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments)
 		{
-			return new NewObjectExpression<TObject>(constructorArguments);
+			if ( TypeTemplate.Resolve<TObject>().IsValueType )
+			{
+				return new NewStructExpression<TObject>(constructorArguments);
+			}
+			else
+			{
+				return new NewObjectExpression<TObject>(constructorArguments);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -240,5 +240,13 @@ namespace Happil.UnitTests
 		{
 			public abstract object DoTest();
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class StructCreationTester
+		{
+			public abstract void DoTest(TimeSpan value);
+			public TimeSpan TimeValue { get; set; }
+		}
 	}
 }

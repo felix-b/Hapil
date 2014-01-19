@@ -17,6 +17,7 @@ namespace Happil
 			{
 				if ( target.OperandType.IsValueType )
 				{
+					target.EmitTarget(il);
 					target.EmitAddress(il);
 				}
 				else
