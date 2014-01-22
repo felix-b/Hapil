@@ -59,10 +59,13 @@ namespace Happil.Selectors
 
 				foreach ( var declaration in propertiesToImplement )
 				{
-					var propertyMember = new HappilProperty<TProperty>(OwnerBody.HappilClass, declaration);
-					OwnerBody.HappilClass.RegisterMember(propertyMember, propertyMember.BodyDefinitionAction);
-					
-					invokeAccessorBodyDefinitions(propertyMember.Body);
+					using ( TypeTemplate.CreateScope(typeof(TypeTemplate.TProperty), declaration.PropertyType) )
+					{
+						var propertyMember = new HappilProperty<TProperty>(OwnerBody.HappilClass, declaration);
+						OwnerBody.HappilClass.RegisterMember(propertyMember, propertyMember.BodyDefinitionAction);
+
+						invokeAccessorBodyDefinitions(propertyMember.Body);
+					}
 				}
 
 				return OwnerBody;
@@ -117,17 +120,17 @@ namespace Happil.Selectors
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public IHappilClassBody<TBase> Implement(
-				Func<IHappilPropertyBody<TypeTemplate>, IHappilPropertyGetter> getter,
-				Func<IHappilPropertyBody<TypeTemplate>, IHappilPropertySetter> setter = null)
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertySetter> setter = null)
 			{
-				DefineMembers<TypeTemplate>(body => {
+				DefineMembers<TypeTemplate.TProperty>(body => {
 					if ( getter != null )
 					{
-						getter((IHappilPropertyBody<TypeTemplate>)body);
+						getter((IHappilPropertyBody<TypeTemplate.TProperty>)body);
 					}
 					if ( setter != null )
 					{
-						setter((IHappilPropertyBody<TypeTemplate>)body);
+						setter((IHappilPropertyBody<TypeTemplate.TProperty>)body);
 					}
 				});
 
@@ -138,7 +141,7 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> ImplementAutomatic()
 			{
-				return DefineAutomaticImplementation<TypeTemplate>();
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>();
 			}
 		}
 
@@ -175,7 +178,7 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> ImplementAutomatic()
 			{
-				return DefineAutomaticImplementation<TypeTemplate>();
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>();
 			}
 		}
 

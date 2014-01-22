@@ -84,16 +84,7 @@ namespace Happil.Fluent
 
 		private object ResolveActualValue()
 		{
-			var template = (m_Value as TypeTemplate);
-
-			if ( template != null )
-			{
-				return template.CastValue;
-			}
-			else
-			{
-				return m_Value;
-			}
+			return TypeTemplate.ResolveValue(m_Value);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -53,7 +53,7 @@ namespace Happil.UnitTests
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods(m => !m.IsVoid()).Implement( 
 					m => {
-						m.Return(TypeTemplate.DefaultValue);
+						m.Return(m.Default<TypeTemplate.TReturn>());
 					});
 
 			//-- Act
@@ -87,7 +87,7 @@ namespace Happil.UnitTests
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
 				.AllMethods().Implement(   // this selects all methods, but only non-void methods will be implemented, 
 					m => {                 // because void methods were already implemented earlier.
-						m.Return(TypeTemplate.DefaultValue);
+						m.Return(m.Default<TypeTemplate.TReturn>());
 					});
 
 			//-- Act
@@ -191,11 +191,11 @@ namespace Happil.UnitTests
 			DeriveClassFrom<object>()
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IReadOnlyAndReadWriteProperties>()
-				.ReadOnlyProperties().Implement( 
-					p => p.Get(m => m.Return(TypeTemplate.DefaultValue))
+				.ReadOnlyProperties().Implement(
+					p => p.Get(m => m.Return(m.Default<TypeTemplate.TProperty>()))
 				)
 				.ReadWriteProperties().Implement(
-					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
+					p => p.Get(m => m.Return(m.Default<TypeTemplate.TProperty>())),
 					p => p.Set((m, value) => { })
 				);
 
@@ -229,10 +229,10 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IReadOnlyAndReadWriteProperties>()
 				.ReadOnlyProperties().Implement(
-					p => p.Get(m => m.Return(TypeTemplate.DefaultValue))
+					p => p.Get(m => m.Return(m.Default<TypeTemplate.TProperty>()))
 				)
 				.AllProperties().Implement(  // the Implement method only takes properties that were not implemented earlier
-					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
+					p => p.Get(m => m.Return(m.Default<TypeTemplate.TProperty>())),
 					p => p.Set((m, value) => { })
 				);
 
@@ -304,7 +304,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IFewPropertiesWithIndexers>()
 				.AllProperties(where: p => !p.IsIndexer()).Implement(
-					p => p.Get(m => m.Return(TypeTemplate.DefaultValue)),
+					p => p.Get(m => m.Return(m.Default<TypeTemplate.TProperty>())),
 					p => p.Set((m, value) => { })
 				)
 				.This<string, int>().Implement(

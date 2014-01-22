@@ -55,8 +55,11 @@ namespace Happil
 
 		private TypeEntry BuildNewTypeEntry(HappilTypeKey key)
 		{
-			var classDefinition = DefineNewClass(key);
-			return new TypeEntry((IHappilClassDefinitionInternals)classDefinition);
+			using ( key.CreateTypeTemplateScope() )
+			{
+				var classDefinition = DefineNewClass(key);
+				return new TypeEntry((IHappilClassDefinitionInternals)classDefinition);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

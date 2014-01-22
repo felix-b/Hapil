@@ -10,6 +10,7 @@ namespace Happil
 	{
 		private readonly Type m_BaseType;
 		private readonly Type m_PrimaryInterface;
+		private readonly Type[] m_SecondaryInterfacesArray;
 		private readonly HashSet<Type> m_SecondaryInterfaces;
 		private readonly int m_HashCode;
 
@@ -19,6 +20,7 @@ namespace Happil
 		{
 			m_BaseType = (baseType ?? typeof(object));
 			m_PrimaryInterface = primaryInterface;
+			m_SecondaryInterfacesArray = secondaryInterfaces;
 			m_SecondaryInterfaces = new HashSet<Type>(secondaryInterfaces ?? new Type[0]);
 			m_HashCode = CalculateHashCode();
 		}
@@ -70,6 +72,45 @@ namespace Happil
 		public override int GetHashCode()
 		{
 			return m_HashCode;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IDisposable CreateTypeTemplateScope()
+		{
+			var typePairCount = 
+				1 +  // TBase
+				(m_PrimaryInterface != null ? 1 : 0) +  // TPrimary
+				(m_SecondaryInterfacesArray != null ? Math.Min(m_SecondaryInterfacesArray.Length, 2) : 0); // TSecondary1, TSecondary2
+
+			var typePairs = new Type[typePairCount * 2];
+			var index = 0;
+
+			typePairs[index++] = typeof(TypeTemplate.TBase);
+			typePairs[index++] = m_BaseType;
+
+			if ( m_PrimaryInterface != null )
+			{
+				typePairs[index++] = typeof(TypeTemplate.TPrimary);
+				typePairs[index++] = m_PrimaryInterface;
+			}
+
+			if ( m_SecondaryInterfacesArray != null )
+			{
+				if ( m_SecondaryInterfacesArray.Length >= 1 )
+				{
+					typePairs[index++] = typeof(TypeTemplate.TSecondary1);
+					typePairs[index++] = m_SecondaryInterfacesArray[0];
+				}
+
+				if ( m_SecondaryInterfacesArray.Length >= 2 )
+				{
+					typePairs[index++] = typeof(TypeTemplate.TSecondary2);
+					typePairs[index++] = m_SecondaryInterfacesArray[1];
+				}
+			}
+
+			return TypeTemplate.CreateScope(typePairs);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

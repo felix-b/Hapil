@@ -83,6 +83,7 @@
     <Compile Include="CompiledExamples.cs" />
     <Compile Include="StringShortcutsTests.cs" />
     <Compile Include="TargetRepository.cs" />
+    <Compile Include="TypeTemplateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">

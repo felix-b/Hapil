@@ -25,7 +25,7 @@ namespace Happil.Fluent
 		public HappilClassBody(HappilClass happilClass, Type reflectedType = null)
 		{
 			m_HappilClass = happilClass;
-			m_ReflectedType = reflectedType ?? typeof(TBase);
+			m_ReflectedType = TypeTemplate.Resolve(reflectedType ?? typeof(TBase));
 			m_ImplementableMembers = GatherImplementableMembers();
 			m_ImplementableMethods = m_ImplementableMembers.OfType<MethodInfo>().ToArray();
 			m_ImplementableProperties = m_ImplementableMembers.OfType<PropertyInfo>().ToArray();
@@ -423,9 +423,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static MemberInfo[] GatherImplementableMembers()
+		private MemberInfo[] GatherImplementableMembers()
 		{
-			var allTypes = typeof(TBase).GetTypeHierarchy();
+			var allTypes = m_ReflectedType.GetTypeHierarchy();
 			var members = new HashSet<MemberInfo>();
 
 			foreach ( var type in allTypes )

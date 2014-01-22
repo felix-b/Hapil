@@ -67,6 +67,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IDisposable CreateTypeTemplateScope()
+		{
+			return TypeTemplate.CreateScope(typeof(TypeTemplate.TProperty), m_Declaration.PropertyType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		string IHappilMember.Name
 		{
 			get
@@ -81,28 +88,28 @@ namespace Happil.Fluent
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -341,19 +348,20 @@ namespace Happil.Fluent
 				var typedGetterDefinition = (GetterBodyDefinition as Action<IHappilMethodBody<T>>);
 				var typedSetterDefinition = (SetterBodyDefinition as Action<IVoidHappilMethodBody, HappilArgument<T>>);
 				
-				var typeTemplateScope = (typeof(T) == typeof(TypeTemplate) ? TypeTemplate.CreateScope(OwnerProperty.Declaration.PropertyType) : null);
-
-				using ( typeTemplateScope )
+				if ( typedGetterDefinition != null )
 				{
-					if ( typedGetterDefinition != null )
+					using ( (GetterMethod as IHappilMember).CreateTypeTemplateScope() )
 					{
 						using ( GetterMethod.CreateBodyScope() )
 						{
 							typedGetterDefinition(GetterMethod);
 						}
 					}
+				}
 
-					if ( typedSetterDefinition != null )
+				if ( typedSetterDefinition != null )
+				{
+					using ( (SetterMethod as IHappilMember).CreateTypeTemplateScope() )
 					{
 						using ( SetterMethod.CreateBodyScope() )
 						{
@@ -400,19 +408,29 @@ namespace Happil.Fluent
 				var typedGetterDefinition = (GetterBodyDefinition as Action<IHappilMethodBody<T>, HappilArgument<TIndex1>>);
 				var typedSetterDefinition = (SetterBodyDefinition as Action<IVoidHappilMethodBody, HappilArgument<TIndex1>, HappilArgument<T>>);
 
-				if ( typedGetterDefinition != null )
+				using ( TypeTemplate.CreateScope(
+					typeof(TypeTemplate.TIndex1), OwnerProperty.Declaration.GetIndexParameters()[0].ParameterType) )
 				{
-					using ( GetterMethod.CreateBodyScope() )
+					if ( typedGetterDefinition != null )
 					{
-						typedGetterDefinition(GetterMethod, new HappilArgument<TIndex1>(GetterMethod, 1));
+						using ( (GetterMethod as IHappilMember).CreateTypeTemplateScope() )
+						{
+							using ( GetterMethod.CreateBodyScope() )
+							{
+								typedGetterDefinition(GetterMethod, new HappilArgument<TIndex1>(GetterMethod, 1));
+							}
+						}
 					}
-				}
 
-				if ( typedSetterDefinition != null )
-				{
-					using ( SetterMethod.CreateBodyScope() )
+					if ( typedSetterDefinition != null )
 					{
-						typedSetterDefinition(SetterMethod, new HappilArgument<TIndex1>(SetterMethod, 1), new HappilArgument<T>(SetterMethod, 2));
+						using ( (SetterMethod as IHappilMember).CreateTypeTemplateScope() )
+						{
+							using ( SetterMethod.CreateBodyScope() )
+							{
+								typedSetterDefinition(SetterMethod, new HappilArgument<TIndex1>(SetterMethod, 1), new HappilArgument<T>(SetterMethod, 2));
+							}
+						}
 					}
 				}
 			}
@@ -456,28 +474,41 @@ namespace Happil.Fluent
 					as Action<IHappilMethodBody<T>, HappilArgument<TIndex1>, HappilArgument<TIndex2>>); 
 				var typedSetterDefinition = (
 					SetterBodyDefinition 
-					as Action<IVoidHappilMethodBody, HappilArgument<TIndex1>, HappilArgument<TIndex2>, HappilArgument<T>>); 
+					as Action<IVoidHappilMethodBody, HappilArgument<TIndex1>, HappilArgument<TIndex2>, HappilArgument<T>>);
 
-				if ( typedGetterDefinition != null )
+				var indexParameters = OwnerProperty.Declaration.GetIndexParameters();
+
+				using ( TypeTemplate.CreateScope(
+					typeof(TypeTemplate.TIndex1), indexParameters[0].ParameterType,
+					typeof(TypeTemplate.TIndex2), indexParameters[1].ParameterType) )
 				{
-					using ( GetterMethod.CreateBodyScope() )
+					if ( typedGetterDefinition != null )
 					{
-						typedGetterDefinition(
-							GetterMethod, 
-							new HappilArgument<TIndex1>(GetterMethod, 1), 
-							new HappilArgument<TIndex2>(GetterMethod, 2));
+						using ( (GetterMethod as IHappilMember).CreateTypeTemplateScope() )
+						{
+							using ( GetterMethod.CreateBodyScope() )
+							{
+								typedGetterDefinition(
+									GetterMethod, 
+									new HappilArgument<TIndex1>(GetterMethod, 1), 
+									new HappilArgument<TIndex2>(GetterMethod, 2));
+							}
+						}			
 					}
-				}
 
-				if ( typedSetterDefinition != null )
-				{
-					using ( SetterMethod.CreateBodyScope() )
+					if ( typedSetterDefinition != null )
 					{
-						typedSetterDefinition(
-							SetterMethod,
-							new HappilArgument<TIndex1>(SetterMethod, 1),
-							new HappilArgument<TIndex2>(SetterMethod, 2),
-							new HappilArgument<T>(SetterMethod, 3));
+						using ( (SetterMethod as IHappilMember).CreateTypeTemplateScope() )
+						{
+							using ( SetterMethod.CreateBodyScope() )
+							{
+								typedSetterDefinition(
+									SetterMethod,
+									new HappilArgument<TIndex1>(SetterMethod, 1),
+									new HappilArgument<TIndex2>(SetterMethod, 2),
+									new HappilArgument<T>(SetterMethod, 3));
+							}
+						}
 					}
 				}
 			}

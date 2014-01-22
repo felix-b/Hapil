@@ -217,7 +217,10 @@ namespace Happil.Fluent
 		{
 			foreach ( var member in m_Members )
 			{
-				member.EmitBody();
+				using ( member.CreateTypeTemplateScope() )
+				{
+					member.EmitBody();
+				}
 			}
 		}
 
@@ -230,7 +233,10 @@ namespace Happil.Fluent
 				var member = tuple.Item1;
 				var bodyDefinitionAction = tuple.Item2;
 
-				bodyDefinitionAction();
+				using ( member.CreateTypeTemplateScope() )
+				{
+					bodyDefinitionAction();
+				}
 
 				if ( StatementScope.Exists )
 				{

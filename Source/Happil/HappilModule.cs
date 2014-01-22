@@ -70,7 +70,7 @@ namespace Happil
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
 
-			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, baseType);
+			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, TypeTemplate.Resolve(baseType));
 			return new HappilClass(this, typeBuilder).GetBody<object>();
 		}
 
@@ -86,7 +86,7 @@ namespace Happil
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
 
-			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, parent: typeof(TBase));
+			TypeBuilder typeBuilder = m_ModuleBuilder.DefineType(classFullName, typeAtributes, parent: TypeTemplate.Resolve<TBase>());
 			return new HappilClass(this, typeBuilder).GetBody<TBase>();
 		}
 

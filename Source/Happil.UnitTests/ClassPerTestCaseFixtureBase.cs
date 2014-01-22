@@ -56,11 +56,17 @@ namespace Happil.UnitTests
 
 		protected IHappilClassBody<TBase> DeriveClassFrom<TBase>()
 		{
-			var currentTestName = TestContext.CurrentContext.Test.Name;
-			m_ClassDefinition = m_Module.DeriveClassFrom<TBase>(m_Module.SimpleName + ".TestCase" + currentTestName);
-			
+			m_ClassDefinition = m_Module.DeriveClassFrom<TBase>(TestCaseClassName);
 			m_Class = ((IHappilClassDefinitionInternals)m_ClassDefinition).HappilClass;
+			
 			return ((IHappilClassBody<TBase>)m_ClassDefinition);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void OnDefineNewClass(Func<HappilTypeKey, IHappilClassDefinition> callback)
+		{
+			m_Factory = new TestFactory(m_Module, classDefinition: null, classDefinitionCallback: callback);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,11 +95,18 @@ namespace Happil.UnitTests
 		{
 			if ( m_Factory == null )
 			{
-				m_Factory = new TestFactory(m_Module, m_ClassDefinition);
+				m_Factory = new TestFactory(m_Module, m_ClassDefinition, classDefinitionCallback: null);
 				m_Factory.DefineClass();
 			}
 
 			return new Constructors<TBase>(m_Factory);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void DefineClassByKey(HappilTypeKey key)
+		{
+			m_Factory.DefineClassByKey(key);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +131,17 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal string TestCaseClassName
+		{
+			get
+			{
+				var currentTestName = TestContext.CurrentContext.Test.Name;
+				return (m_Module.SimpleName + ".TestCase" + currentTestName);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal interface IConstructors<TBase>
 		{
 			TBase UsingDefaultConstructor(int constructorIndex = 0);
@@ -131,13 +155,18 @@ namespace Happil.UnitTests
 		private class TestFactory : HappilFactoryBase
 		{
 			private readonly IHappilClassDefinition m_ClassDefinition;
+			private readonly Func<HappilTypeKey, IHappilClassDefinition> m_ClassDefinitionCallback;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public TestFactory(HappilModule module, IHappilClassDefinition classDefinition)
+			public TestFactory(
+				HappilModule module, 
+				IHappilClassDefinition classDefinition, 
+				Func<HappilTypeKey, IHappilClassDefinition> classDefinitionCallback)
 				: base(module)
 			{
 				m_ClassDefinition = classDefinition;
+				m_ClassDefinitionCallback = classDefinitionCallback;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,13 +178,27 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void DefineClassByKey(HappilTypeKey key)
+			{
+				this.ClassTypeEntry = base.GetOrBuildType(key);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public TypeEntry ClassTypeEntry { get; private set; }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
 			{
-				return m_ClassDefinition;
+				if ( m_ClassDefinition != null )
+				{
+					return m_ClassDefinition;
+				}
+				else
+				{
+					return m_ClassDefinitionCallback(key);
+				}
 			}
 		}
 

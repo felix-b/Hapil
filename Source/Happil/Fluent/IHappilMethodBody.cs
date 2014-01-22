@@ -47,7 +47,7 @@ namespace Happil.Fluent
 
 	public interface IHappilMethodBodyTemplate : IHappilMethodBodyBase
 	{
-		void Return(IHappilOperand<TypeTemplate> operand);
+		void Return(IHappilOperand<TypeTemplate.TReturn> operand);
 		void Return();
 	}
 

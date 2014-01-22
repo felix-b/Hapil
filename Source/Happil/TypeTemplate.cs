@@ -1,171 +1,200 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Happil.Fluent;
 using Happil.Statements;
 
 namespace Happil
 {
 	/// <summary>
-	/// Serves as type parameter for non-typed member selectors.
+	/// Contains type parameters for non-typed member selectors.
 	/// </summary>
-	public class TypeTemplate
+	public static class TypeTemplate
 	{
-		private readonly Type m_CastType;
-		private readonly object m_CastValue;
+		private static readonly HashSet<Type> s_AllTemplateTypes;
+		private static readonly Type[] s_ArgumentTemplateTypes;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private TypeTemplate(Type castType, object castValue)
+		static TypeTemplate()
 		{
-			m_CastType = castType;
-			m_CastValue = castValue;
+			s_AllTemplateTypes = new HashSet<Type>(new[] {
+				typeof(TBase), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
+				typeof(TReturn), typeof(TProperty),
+				typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
+				typeof(TIndex1), typeof(TIndex2)
+			});
+
+			s_ArgumentTemplateTypes = new[] {
+				typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8)
+			};
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Type CastType
+		public static bool IsTemplateType(Type type)
 		{
-			get
+			return s_AllTemplateTypes.Contains(type);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsDefined(Type templateType)
+		{
+			ValidateTemplateType(templateType);
+			
+			var scope = Scope.Current;
+			return (scope != null && scope.TryResolve(templateType) != null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Type Resolve(Type type)
+		{
+			if ( IsTemplateType(type) )
 			{
-				return m_CastType;
+				return Scope.ValidateCurrent().Resolve(type);
+			}
+			else
+			{
+				return type;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public object CastValue
+		public static Type TryResolve(Type type)
 		{
-			get
+			if ( IsTemplateType(type) )
 			{
-				return m_CastValue;
+				return Scope.ValidateCurrent().TryResolve(type);
+			}
+			else
+			{
+				return type;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[ThreadStatic]
-		private static Scope s_CurrentScope;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static TypeTemplate Cast<T>(T constantValue)
-		{
-			return new TypeTemplate(typeof(T), constantValue);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static bool IsDefined
-		{
-			get
-			{
-				return (s_CurrentScope != null);
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static Type Type
-		{
-			get
-			{
-				var scope = ValidateCurrentScope();
-				return scope.TemplateType;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilConstant<TypeTemplate> DefaultValue
-		{
-			get
-			{
-				var scope = ValidateCurrentScope();
-				return new HappilConstant<TypeTemplate>(new TypeTemplate(scope.TemplateType, scope.TemplateType.GetDefaultValue()));
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal static IDisposable CreateScope(Type templateType)
-		{
-			if ( s_CurrentScope != null )
-			{
-				throw new InvalidOperationException("Type template scope is already defined.");
-			}
-
-			var scope = new Scope(templateType);
-			s_CurrentScope = scope;
-
-			return scope;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal static Type Resolve<T>()
+		public static Type Resolve<T>()
 		{
 			return Resolve(typeof(T));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal static Type Resolve(Type type)
-		{
-			if ( type == typeof(TypeTemplate) )
-			{
-				return TypeTemplate.Type;
-			}
-			else
-			{
-				return type;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal static Type TryResolve<T>()
+		public static Type TryResolve<T>()
 		{
 			return TryResolve(typeof(T));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal static Type TryResolve(Type type)
+		internal static IDisposable CreateScope(params Type[] templateActualTypePairs)
 		{
-			if ( type == typeof(TypeTemplate) )
+			return new Scope(templateActualTypePairs);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal static object ResolveValue(object value)
+		{
+			if ( value != null && IsTemplateType(value.GetType()) )
 			{
-				return (TypeTemplate.IsDefined ? TypeTemplate.Type : null);
+				return Scope.Current.Resolve(value.GetType()).GetDefaultValue();
 			}
 			else
 			{
-				return type;
+				return value;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static Scope ValidateCurrentScope()
+		internal static void BuildArgumentsTypePairs(Type[] parameterTypes, Type[] pairArray, int arrayStartIndex)
 		{
-			var currentScope = s_CurrentScope;
-
-			if ( currentScope == null )
+			for ( int i = 0 ; i < parameterTypes.Length && i < s_ArgumentTemplateTypes.Length ; i++ )
 			{
-				throw new InvalidOperationException("Type template is not defined in the current scope.");
+				pairArray[arrayStartIndex + (i * 2)] = s_ArgumentTemplateTypes[i];
+				pairArray[arrayStartIndex + (i * 2) + 1] = parameterTypes[i];
 			}
-
-			return currentScope;
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static void ValidateTemplateType(Type templateType)
+		{
+			if ( !s_AllTemplateTypes.Contains(templateType) )
+			{
+				throw new ArgumentException(string.Format("Type '{0}' is not a valid template type.", templateType.FullName));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class TemplateTypeBase
+		{
+			public Type ActualType
+			{
+				get
+				{
+					return Scope.ValidateCurrent().Resolve(this.GetType());
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		// ReSharper disable InconsistentNaming
+
+		public class TBase : TemplateTypeBase { }
+		public class TPrimary : TemplateTypeBase { }
+		public class TSecondary1 : TemplateTypeBase { }
+		public class TSecondary2 : TemplateTypeBase { }
+		public class TReturn : TemplateTypeBase { }
+		public class TProperty : TemplateTypeBase { }
+		public class TArg1 : TemplateTypeBase { }
+		public class TArg2 : TemplateTypeBase { }
+		public class TArg3 : TemplateTypeBase { }
+		public class TArg4 : TemplateTypeBase { }
+		public class TArg5 : TemplateTypeBase { }
+		public class TArg6 : TemplateTypeBase { }
+		public class TArg7 : TemplateTypeBase { }
+		public class TArg8 : TemplateTypeBase { }
+		public class TIndex1 : TemplateTypeBase { }
+		public class TIndex2 : TemplateTypeBase { }
+
+		// ReSharper restore InconsistentNaming
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class Scope : IDisposable
 		{
-			private readonly Type m_TemplateType;
+			private readonly Scope m_Outer;
+			private readonly Dictionary<Type, Type> m_ActualTypesByTemplates;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public Scope(Type templateType)
+			public Scope(params Type[] templateActualTypePairs)
 			{
-				m_TemplateType = templateType;
+				m_Outer = s_Current;
+
+				m_ActualTypesByTemplates = (
+					m_Outer != null ? 
+					new Dictionary<Type, Type>(m_Outer.m_ActualTypesByTemplates) :
+					new Dictionary<Type, Type>());
+
+				for ( int i = 0 ; i < templateActualTypePairs.Length - 1 ; i += 2 )
+				{
+					if ( templateActualTypePairs[i] != null && templateActualTypePairs[i + 1] != null )
+					{
+						m_ActualTypesByTemplates[templateActualTypePairs[i]] = templateActualTypePairs[i + 1];
+					}
+				}
+
+				s_Current = this;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -174,23 +203,72 @@ namespace Happil
 
 			public void Dispose()
 			{
-				if ( ValidateCurrentScope() != this )
+				if ( ValidateCurrent() != this )
 				{
 					throw new InvalidOperationException("Template type scopes are not balanced!");
 				}
 
-				s_CurrentScope = null;
+				s_Current = m_Outer;
 			}
 
 			#endregion
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 	
-			public Type TemplateType
+			public Type Resolve(Type templateType)
+			{
+				var actualType = TryResolve(templateType);
+
+				if ( actualType != null )
+				{
+					return actualType;
+				}
+
+				throw new ArgumentException(string.Format("Template type '{0}' is not defined in the current scope.", templateType.Name));
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public Type TryResolve(Type templateType)
+			{
+				Type actualType;
+
+				if ( m_ActualTypesByTemplates.TryGetValue(templateType, out actualType) )
+				{
+					return actualType;
+				}
+				else
+				{
+					return null;
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			[ThreadStatic]
+			private static Scope s_Current;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static Scope ValidateCurrent()
+			{
+				var currentScope = s_Current;
+
+				if ( currentScope == null )
+				{
+					throw new InvalidOperationException("Type template is not defined in the current scope.");
+				}
+
+				return currentScope;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public static Scope Current
 			{
 				get
 				{
-					return m_TemplateType;
+					return s_Current;
 				}
 			}
 		}

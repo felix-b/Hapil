@@ -18,6 +18,7 @@ namespace Happil.Fluent
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodInfo m_Declaration;
 		private readonly List<IHappilStatement> m_Statements;
+		private Type[] m_TemplateActualTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -348,9 +349,9 @@ namespace Happil.Fluent
 
 		#region IHappilMethodBodyTemplate Members
 
-		public void Return(IHappilOperand<TypeTemplate> operand)
+		public void Return(IHappilOperand<TypeTemplate.TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<object>(operand));
+			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -379,6 +380,18 @@ namespace Happil.Fluent
 			{
 				il.Emit(OpCodes.Ret);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		IDisposable IHappilMember.CreateTypeTemplateScope()
+		{
+			if ( m_TemplateActualTypePairs == null )
+			{
+				m_TemplateActualTypePairs = BuildTemplateActualTypePairs();
+			}
+
+			return TypeTemplate.CreateScope(m_TemplateActualTypePairs);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -449,6 +462,21 @@ namespace Happil.Fluent
 		protected virtual string GetName()
 		{
 			return m_MethodBuilder.Name;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual Type[] BuildTemplateActualTypePairs()
+		{
+			var parameterTypes = m_Declaration.GetParameters().Select(p => p.ParameterType).ToArray();
+			var pairs = new Type[(1 + parameterTypes.Length) * 2];
+
+			pairs[0] = typeof(TypeTemplate.TReturn);
+			pairs[1] = m_MethodBuilder.ReturnType;
+
+			TypeTemplate.BuildArgumentsTypePairs(parameterTypes, pairs, arrayStartIndex: 2);
+
+			return pairs;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
