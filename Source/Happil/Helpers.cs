@@ -72,6 +72,17 @@ namespace Happil
 		{
 			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
 			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+
+			if ( TypeTemplate.IsTemplateType(methodDeclaration.DeclaringType) )
+			{
+				var resolvedDeclaringType = TypeTemplate.Resolve(methodDeclaration.DeclaringType);
+				var resolvedReturnType = TypeTemplate.Resolve(methodDeclaration.ReturnType);
+				var resolvedParameterTypes = methodDeclaration.GetParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
+				var resolvedDeclaration = resolvedDeclaringType.GetMethods().OfSignature(resolvedReturnType, resolvedParameterTypes).Single();
+
+				methodDeclaration = resolvedDeclaration;
+			}
+
 			return new[] { methodDeclaration };
 		}
 

@@ -52,7 +52,7 @@ namespace Happil.Fluent
 
 		public void ImplementInterface(Type interfaceType)
 		{
-			m_TypeBuilder.AddInterfaceImplementation(interfaceType);
+			m_TypeBuilder.AddInterfaceImplementation(TypeTemplate.Resolve(interfaceType));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

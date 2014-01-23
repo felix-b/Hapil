@@ -36,7 +36,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Fails/nit implemented")]
+		[Test]
 		public void TestTPrimary()
 		{
 			//-- Arrange
@@ -47,7 +47,7 @@ namespace Happil.UnitTests
 				.AllProperties().ImplementAutomatic()
 				.ImplementInterface<IEquatable<TypeTemplate.TPrimary>>()
 				.Method<TypeTemplate.TPrimary, bool>(intf => intf.Equals).Implement((m, other) => {
-					m.ReturnConst(false);
+					m.ReturnConst(true);
 				})
 			);
 
@@ -56,14 +56,17 @@ namespace Happil.UnitTests
 			DefineClassByKey(new HappilTypeKey(primaryInterface: typeof(AncestorRepository.IFewReadWriteProperties)));
 
 			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
-
 			obj.AnInt = 123;
 			obj.AString = "ABC";
+
+			var equatable = (IEquatable<AncestorRepository.IFewReadWriteProperties>)obj;
+			var equalsResult = equatable.Equals(obj);
 
 			//-- Assert
 
 			Assert.That(obj.AnInt, Is.EqualTo(123));
 			Assert.That(obj.AString, Is.EqualTo("ABC"));
+			Assert.That(equalsResult, Is.True);
 		}
 	}
 }

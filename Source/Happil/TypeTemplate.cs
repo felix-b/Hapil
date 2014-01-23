@@ -35,7 +35,14 @@ namespace Happil
 
 		public static bool IsTemplateType(Type type)
 		{
-			return s_AllTemplateTypes.Contains(type);
+			if ( type.IsGenericType )
+			{
+				return type.GetGenericArguments().Any(IsTemplateType);
+			}
+			else
+			{
+				return s_AllTemplateTypes.Contains(type);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -180,17 +187,13 @@ namespace Happil
 			public Scope(params Type[] templateActualTypePairs)
 			{
 				m_Outer = s_Current;
-
-				m_ActualTypesByTemplates = (
-					m_Outer != null ? 
-					new Dictionary<Type, Type>(m_Outer.m_ActualTypesByTemplates) :
-					new Dictionary<Type, Type>());
+				m_ActualTypesByTemplates = new Dictionary<Type, Type>();
 
 				for ( int i = 0 ; i < templateActualTypePairs.Length - 1 ; i += 2 )
 				{
 					if ( templateActualTypePairs[i] != null && templateActualTypePairs[i + 1] != null )
 					{
-						m_ActualTypesByTemplates[templateActualTypePairs[i]] = templateActualTypePairs[i + 1];
+						m_ActualTypesByTemplates.Add(templateActualTypePairs[i], templateActualTypePairs[i + 1]);
 					}
 				}
 
@@ -231,16 +234,46 @@ namespace Happil
 
 			public Type TryResolve(Type templateType)
 			{
+				if ( templateType.IsGenericType )
+				{
+					return TryResolveGenericType(templateType);
+				}
+
 				Type actualType;
 
 				if ( m_ActualTypesByTemplates.TryGetValue(templateType, out actualType) )
 				{
 					return actualType;
 				}
+				else if ( m_Outer != null )
+				{
+					return m_Outer.TryResolve(templateType);
+				}
 				else
 				{
 					return null;
 				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private Type TryResolveGenericType(Type type)
+			{
+				var typeArguments = type.GetGenericArguments();
+
+				for ( int i = 0 ; i < typeArguments.Length ; i++ )
+				{
+					var resolvedTypeArgument = TryResolve(typeArguments[i]);
+
+					if ( resolvedTypeArgument == null )
+					{
+						return null;
+					}
+
+					typeArguments[i] = resolvedTypeArgument;
+				}
+
+				return type.GetGenericTypeDefinition().MakeGenericType(typeArguments);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

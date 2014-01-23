@@ -22,10 +22,10 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClassBody(HappilClass happilClass, Type reflectedType = null)
+		public HappilClassBody(HappilClass happilClass)
 		{
 			m_HappilClass = happilClass;
-			m_ReflectedType = TypeTemplate.Resolve(reflectedType ?? typeof(TBase));
+			m_ReflectedType = TypeTemplate.Resolve(typeof(TBase));
 			m_ImplementableMembers = GatherImplementableMembers();
 			m_ImplementableMethods = m_ImplementableMembers.OfType<MethodInfo>().ToArray();
 			m_ImplementableProperties = m_ImplementableMembers.OfType<PropertyInfo>().ToArray();

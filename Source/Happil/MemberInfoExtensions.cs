@@ -31,7 +31,7 @@ namespace Happil
 
 		public static bool IsOfSignature(this MethodInfo method, Type returnType, params Type[] parameterTypes)
 		{
-			if ( method.ReturnType != returnType )
+			if ( method.ReturnType != TypeTemplate.Resolve(returnType) )
 			{
 				return false;
 			}
@@ -45,7 +45,7 @@ namespace Happil
 
 			for ( int i = 0 ; i < parameterTypes.Length ; i++ )
 			{
-				if ( parameterTypes[i] != actualParameterTypes[i] )
+				if ( TypeTemplate.Resolve(parameterTypes[i]) != actualParameterTypes[i] )
 				{
 					return false;
 				}
@@ -58,7 +58,7 @@ namespace Happil
 
 		public static bool IsOfSignature(this PropertyInfo property, Type propertyType, params Type[] indexParameterTypes)
 		{
-			if ( property.PropertyType != propertyType )
+			if ( property.PropertyType != TypeTemplate.Resolve(propertyType) )
 			{
 				return false;
 			}
@@ -72,7 +72,7 @@ namespace Happil
 
 			for ( int i = 0 ; i < indexParameterTypes.Length ; i++ )
 			{
-				if ( indexParameterTypes[i] != actualParameterTypes[i] )
+				if ( TypeTemplate.Resolve(indexParameterTypes[i]) != actualParameterTypes[i] )
 				{
 					return false;
 				}
