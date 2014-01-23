@@ -99,13 +99,14 @@ namespace Happil.Fluent
 
 		public void DefineFactoryMethod(ConstructorInfo constructor, Type[] parameterTypes)
 		{
+			var resolvedParameterTypes = parameterTypes.Select(TypeTemplate.Resolve).ToArray();
 			var factoryMethodName = TakeMemberName("FactoryMethod" + (m_FactoryMethods.Count + 1).ToString());
 			var factoryMethod = m_TypeBuilder.DefineMethod(
 				factoryMethodName,
 				MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static,
 				CallingConventions.Standard,
 				typeof(object),
-				parameterTypes);
+				resolvedParameterTypes);
 
 			var il = factoryMethod.GetILGenerator();
 			il.DeclareLocal(typeof(object));
@@ -194,7 +195,7 @@ namespace Happil.Fluent
 		{
 			var parameters = factoryMethod.GetParameters();
 			var openDelegateType = s_DelegatePrototypesByArgumentCount[parameters.Length];
-			var delegateTypeParameters = parameters.Select(p => p.ParameterType).Concat(new[] { factoryMethod.ReturnType });
+			var delegateTypeParameters = parameters.Select(p => TypeTemplate.Resolve(p.ParameterType)).Concat(new[] { factoryMethod.ReturnType });
 			var closedDelegateType = openDelegateType.MakeGenericType(delegateTypeParameters.ToArray());
 
 			return Delegate.CreateDelegate(closedDelegateType, factoryMethod);

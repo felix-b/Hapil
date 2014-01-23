@@ -248,5 +248,14 @@ namespace Happil.UnitTests
 			public abstract void DoTest(TimeSpan value);
 			public TimeSpan TimeValue { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IVersionControlled<T>
+		{
+			T RemoteVersion { get; }
+			T LocalVersion { get; }
+			T WorkingVersion { get; }
+		}
 	}
 }

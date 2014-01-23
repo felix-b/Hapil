@@ -78,12 +78,17 @@ namespace Happil
 				var resolvedDeclaringType = TypeTemplate.Resolve(methodDeclaration.DeclaringType);
 				var resolvedReturnType = TypeTemplate.Resolve(methodDeclaration.ReturnType);
 				var resolvedParameterTypes = methodDeclaration.GetParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
-				var resolvedDeclaration = resolvedDeclaringType.GetMethods().OfSignature(resolvedReturnType, resolvedParameterTypes).Single();
+				var resolvedDeclaration = ImplementableMembers.Of(resolvedDeclaringType)
+					.Methods.Where(m => m.Name == methodDeclaration.Name)
+					.OfSignature(resolvedReturnType, resolvedParameterTypes)
+					.Single();
 
-				methodDeclaration = resolvedDeclaration;
+				return new[] { resolvedDeclaration };
 			}
-
-			return new[] { methodDeclaration };
+			else
+			{
+				return new[] { methodDeclaration };
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -91,7 +96,23 @@ namespace Happil
 		public static PropertyInfo[] GetPropertyInfoArrayFromLambda(LambdaExpression lambda)
 		{
 			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
-			return new[] { propertyInfo };
+
+			if ( TypeTemplate.IsTemplateType(propertyInfo.DeclaringType) )
+			{
+				var resolvedDeclaringType = TypeTemplate.Resolve(propertyInfo.DeclaringType);
+				var resolvedPropertyType = TypeTemplate.Resolve(propertyInfo.PropertyType);
+				var resolvedParameterTypes = propertyInfo.GetIndexParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
+				var resolvedPropertyInfo = ImplementableMembers.Of(resolvedDeclaringType)
+					.Properties.Where(p => p.Name == propertyInfo.Name)
+					.OfSignature(resolvedPropertyType, resolvedParameterTypes)
+					.Single();
+
+				return new[] { resolvedPropertyInfo };
+			}
+			else
+			{
+				return new[] { propertyInfo };
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

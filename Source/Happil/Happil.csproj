@@ -52,6 +52,7 @@
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
     <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />
+    <Compile Include="ImplementableMembers.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />

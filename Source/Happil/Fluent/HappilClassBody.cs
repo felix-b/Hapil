@@ -26,10 +26,13 @@ namespace Happil.Fluent
 		{
 			m_HappilClass = happilClass;
 			m_ReflectedType = TypeTemplate.Resolve(typeof(TBase));
-			m_ImplementableMembers = GatherImplementableMembers();
-			m_ImplementableMethods = m_ImplementableMembers.OfType<MethodInfo>().ToArray();
-			m_ImplementableProperties = m_ImplementableMembers.OfType<PropertyInfo>().ToArray();
-			m_ImplementableEvents = m_ImplementableMembers.OfType<EventInfo>().ToArray();
+
+			var members = ImplementableMembers.Of(m_ReflectedType);
+			
+			m_ImplementableMembers = members.Members;
+			m_ImplementableMethods = members.Methods;
+			m_ImplementableProperties = members.Properties;
+			m_ImplementableEvents = members.Events;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -423,92 +426,92 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private MemberInfo[] GatherImplementableMembers()
-		{
-			var allTypes = m_ReflectedType.GetTypeHierarchy();
-			var members = new HashSet<MemberInfo>();
+		//private MemberInfo[] GatherImplementableMembers()
+		//{
+		//	var allTypes = m_ReflectedType.GetTypeHierarchy();
+		//	var members = new HashSet<MemberInfo>();
 
-			foreach ( var type in allTypes )
-			{
-				GatherImplementableMembers(type, members);
-			}
+		//	foreach ( var type in allTypes )
+		//	{
+		//		GatherImplementableMembers(type, members);
+		//	}
 			
-			return members.ToArray();
-		}
+		//	return members.ToArray();
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static void GatherImplementableMembers(Type type, HashSet<MemberInfo> members)
-		{
-			var implementableBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+		//private static void GatherImplementableMembers(Type type, HashSet<MemberInfo> members)
+		//{
+		//	var implementableBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			var methods = type.GetMethods(implementableBindingFlags).Where(IsImplementableMethod).Cast<MemberInfo>();
-			var properties = type.GetProperties(implementableBindingFlags).Where(IsImplementableProperty).Cast<MemberInfo>();
-			var events = type.GetEvents(implementableBindingFlags).Where(IsImplementableEvent).Cast<MemberInfo>();
+		//	var methods = type.GetMethods(implementableBindingFlags).Where(IsImplementableMethod).Cast<MemberInfo>();
+		//	var properties = type.GetProperties(implementableBindingFlags).Where(IsImplementableProperty).Cast<MemberInfo>();
+		//	var events = type.GetEvents(implementableBindingFlags).Where(IsImplementableEvent).Cast<MemberInfo>();
 
-			foreach ( var singleMember in methods.Concat(properties).Concat(events) )
-			{
-				members.Add(singleMember);
-			}
-		}
+		//	foreach ( var singleMember in methods.Concat(properties).Concat(events) )
+		//	{
+		//		members.Add(singleMember);
+		//	}
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static bool IsImplementableMethod(MethodInfo method)
-		{
-			return (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual);
-		}
+		//private static bool IsImplementableMethod(MethodInfo method)
+		//{
+		//	return (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual);
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static bool IsImplementableProperty(PropertyInfo property)
-		{
-			if ( property.DeclaringType.IsInterface )
-			{
-				return true;
-			}
+		//private static bool IsImplementableProperty(PropertyInfo property)
+		//{
+		//	if ( property.DeclaringType.IsInterface )
+		//	{
+		//		return true;
+		//	}
 
-			var getter = property.GetGetMethod();
+		//	var getter = property.GetGetMethod();
 
-			if ( getter != null && (getter.IsAbstract || getter.IsVirtual) )
-			{
-				return true;
-			}
+		//	if ( getter != null && (getter.IsAbstract || getter.IsVirtual) )
+		//	{
+		//		return true;
+		//	}
 
-			var setter = property.GetSetMethod();
+		//	var setter = property.GetSetMethod();
 
-			if ( setter != null && (setter.IsAbstract || setter.IsVirtual) )
-			{
-				return true;
-			}
+		//	if ( setter != null && (setter.IsAbstract || setter.IsVirtual) )
+		//	{
+		//		return true;
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static bool IsImplementableEvent(EventInfo @event)
-		{
-			if ( @event.DeclaringType.IsInterface )
-			{
-				return true;
-			}
+		//private static bool IsImplementableEvent(EventInfo @event)
+		//{
+		//	if ( @event.DeclaringType.IsInterface )
+		//	{
+		//		return true;
+		//	}
 
-			var add = @event.GetAddMethod();
+		//	var add = @event.GetAddMethod();
 
-			if ( add != null && (add.IsVirtual || add.IsAbstract) )
-			{
-				return true;
-			}
+		//	if ( add != null && (add.IsVirtual || add.IsAbstract) )
+		//	{
+		//		return true;
+		//	}
 
-			var remove = @event.GetRemoveMethod();
+		//	var remove = @event.GetRemoveMethod();
 
-			if ( remove != null && (remove.IsVirtual || remove.IsAbstract) )
-			{
-				return true;
-			}
+		//	if ( remove != null && (remove.IsVirtual || remove.IsAbstract) )
+		//	{
+		//		return true;
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 	}
 }
