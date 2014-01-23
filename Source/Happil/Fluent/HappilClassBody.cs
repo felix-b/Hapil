@@ -411,12 +411,16 @@ namespace Happil.Fluent
 
 		private IHappilClassBody<TBase> DefineConstructor(Action<HappilConstructor> invokeBodyDefinition, params Type[] argumentTypes)
 		{
-			var constructorMember = new HappilConstructor(m_HappilClass, argumentTypes);
+			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
+			var constructorMember = new HappilConstructor(m_HappilClass, resolvedArgumentTypes);
 
 			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
-				using ( constructorMember.CreateBodyScope() )
+				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
 				{
-					invokeBodyDefinition(constructorMember);
+					using ( constructorMember.CreateBodyScope() )
+					{
+						invokeBodyDefinition(constructorMember);
+					}
 				}
 			});
 
