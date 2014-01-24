@@ -8,7 +8,7 @@ using Happil.Statements;
 namespace Happil
 {
 	/// <summary>
-	/// Contains type parameters for non-typed member selectors.
+	/// Contains type parameters for implementation of members selected by non-typed selectors.
 	/// </summary>
 	public static class TypeTemplate
 	{
