@@ -18,6 +18,7 @@ namespace Happil.Fluent
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodInfo m_Declaration;
 		private readonly List<IHappilStatement> m_Statements;
+		private readonly Type[] m_ArgumentTypes;
 		private Type[] m_TemplateActualTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,6 +34,7 @@ namespace Happil.Fluent
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
 			happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
+			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -452,9 +454,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected virtual Type GetReturnType()
+		internal protected virtual Type GetReturnType()
 		{
 			return m_MethodBuilder.ReturnType;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected virtual Type[] GetArgumentTypes()
+		{
+			return m_ArgumentTypes;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

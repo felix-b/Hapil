@@ -97,7 +97,26 @@ namespace Happil.UnitTests
 			object Seventeen(TimeSpan t, string s, int n);
 			IEnumerable<int> Eighteen(string s, int n, TimeSpan t);
 		}
-		
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IFewMethodsWithRefOutArgs
+		{
+			string One(ref string s1, out string s2);
+			int Two(ref int n1, out int n2);
+			TimeSpan Three(ref TimeSpan t1, out TimeSpan t2);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IMethodsWithRefOutArgsOverloads
+		{
+			void One(ref string s, out int n);
+			void One(string s, ref int n);
+			void One(out string s, int n);
+			void One(string s, int n);
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public interface IFewReadWriteProperties

@@ -102,16 +102,23 @@ namespace Happil.Fluent
 
 		#region Overrides of HappilMethod
 
-		protected override ILGenerator GetILGenerator()
+		internal protected override Type[] GetArgumentTypes()
 		{
-			return m_ConstructorBuilder.GetILGenerator();
+			return m_ArgumentTypes;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override Type GetReturnType()
+		internal protected override Type GetReturnType()
 		{
 			return null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override ILGenerator GetILGenerator()
+		{
+			return m_ConstructorBuilder.GetILGenerator();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

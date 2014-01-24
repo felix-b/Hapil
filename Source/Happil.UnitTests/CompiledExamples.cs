@@ -353,5 +353,35 @@ namespace Happil.UnitTests
 				return 0;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class ExampleRefOutArgs : AncestorRepository.IFewMethodsWithRefOutArgs
+		{
+			#region IFewMethodsWithRefOutArgs Members
+
+			public string One(ref string s1, out string s2)
+			{
+				s2 = s1 + s1;
+				s1 = "Z";
+				return s1 + s2;
+			}
+
+			public int Two(ref int n1, out int n2)
+			{
+				n2 = n1 + n1;
+				n1 = 99;
+				return n1 + n2;
+			}
+
+			public TimeSpan Three(ref TimeSpan t1, out TimeSpan t2)
+			{
+				t2 = t1 + t1;
+				t1 = TimeSpan.FromHours(9.0);
+				return t1 + t2;
+			}
+
+			#endregion
+		}
 	}
 }

@@ -214,7 +214,6 @@ namespace Happil.UnitTests
 			var obj = CreateClassInstanceAs<Repo.IOneProperty>().UsingConstructor<Repo.BaseOne, Repo.IOneProperty>(null, null);
 			var constructorInfo = obj.GetType().GetConstructor(new[] { typeof(Repo.BaseOne), typeof(Repo.IOneProperty) });
 
-
 			//-- Assert
 
 			Assert.That(obj, Is.Not.Null);

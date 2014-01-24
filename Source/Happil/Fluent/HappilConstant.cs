@@ -102,6 +102,9 @@ namespace Happil.Fluent
 				case TypeCode.Int64:
 					il.Emit(OpCodes.Ldc_I8, convertible.ToInt64(formatProvider));
 					break;
+				case TypeCode.Double:
+					il.Emit(OpCodes.Ldc_R8, convertible.ToDouble(formatProvider));
+					break;
 				case TypeCode.String:
 					il.Emit(OpCodes.Ldstr, convertible.ToString());
 					break;

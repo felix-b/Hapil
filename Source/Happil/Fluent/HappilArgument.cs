@@ -10,6 +10,7 @@ namespace Happil.Fluent
 	public class HappilArgument<T> : HappilAssignable<T>, ICanEmitAddress
 	{
 		private readonly byte m_Index;
+		private readonly bool m_IsByRef;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -22,6 +23,7 @@ namespace Happil.Fluent
 			}
 
 			m_Index = index;
+			m_IsByRef = ownerMethod.GetArgumentTypes()[index - 1].IsByRef;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,12 +37,65 @@ namespace Happil.Fluent
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			// arguments have no target
+			if ( m_IsByRef )
+			{
+				EmitLdarg(il);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
+		{
+			if ( !m_IsByRef )
+			{
+				EmitLdarg(il);
+			}
+			else if ( !OperandType.IsValueType )
+			{
+				il.Emit(OpCodes.Ldind_Ref);
+			}
+			else 
+			{
+				il.Emit(OpCodes.Ldobj, OperandType);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitStore(ILGenerator il)
+		{
+			if ( !m_IsByRef )
+			{
+				il.Emit(OpCodes.Starg_S, m_Index);
+			}
+			else if ( !OperandType.IsValueType )
+			{
+				il.Emit(OpCodes.Stind_Ref);
+			}
+			else
+			{
+				il.Emit(OpCodes.Stobj, OperandType);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void OnEmitAddress(ILGenerator il)
+		{
+			if ( m_IsByRef )
+			{
+				EmitLdarg(il);
+			}
+			else
+			{
+				il.Emit(OpCodes.Ldarga_S, m_Index);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private void EmitLdarg(ILGenerator il)
 		{
 			switch ( m_Index )
 			{
@@ -57,20 +112,6 @@ namespace Happil.Fluent
 					il.Emit(OpCodes.Ldarg_S, m_Index);
 					break;
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitStore(ILGenerator il)
-		{
-			il.Emit(OpCodes.Starg_S, m_Index);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitAddress(ILGenerator il)
-		{
-			il.Emit(OpCodes.Ldarga_S, m_Index);
 		}
 	}
 }

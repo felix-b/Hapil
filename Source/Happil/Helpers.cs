@@ -70,8 +70,32 @@ namespace Happil
 
 		public static MethodInfo[] GetMethodInfoFromLambda(LambdaExpression lambda)
 		{
-			var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
-			var methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			MethodInfo methodDeclaration;
+
+			if ( lambda.Body is UnaryExpression )
+			{
+				var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
+				methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+			}
+			else if ( lambda.Body is LambdaExpression )
+			{
+				/*
+				((LambdaExpression)lambda.Body).Body as MethodCallExpression
+				{x.One(s1, s2)}
+					Arguments: Count = 2
+					CanReduce: false
+					DebugView: ".Call $x.One(\r\n    $s1,\r\n    $s2)"
+					Method: {System.String One(System.String ByRef, System.String ByRef)}
+					NodeType: Call
+					Object: {x}
+				*/
+
+				methodDeclaration = ((MethodCallExpression)((LambdaExpression)lambda.Body).Body).Method;
+			}
+			else
+			{
+				throw new NotSupportedException("Specified lambda expression cannot be converted into method declaration.");
+			}
 
 			if ( TypeTemplate.IsTemplateType(methodDeclaration.DeclaringType) )
 			{

@@ -10,14 +10,20 @@ namespace Happil.Expressions
 	public class TypeOperators
 	{
 		private readonly Type m_Type;
-		private readonly MethodInfo m_OpEquality;
+	
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public readonly MethodInfo OpEquality;
+		public readonly MethodInfo OpAddition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public TypeOperators(Type type)
 		{
 			m_Type = type;
-			m_OpEquality = type.GetMethod("op_Equality", BindingFlags.Static | BindingFlags.Public);
+			
+			OpEquality = type.GetMethod("op_Equality", BindingFlags.Static | BindingFlags.Public);
+			OpAddition = type.GetMethod("op_Addition", BindingFlags.Static | BindingFlags.Public);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,13 +31,6 @@ namespace Happil.Expressions
 		public Type Type
 		{
 			get { return m_Type; }
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public MethodInfo OpEquality
-		{
-			get { return m_OpEquality; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

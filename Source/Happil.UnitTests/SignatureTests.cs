@@ -484,5 +484,62 @@ namespace Happil.UnitTests
 			Assert.That(counterValue1, Is.EqualTo(1));
 			Assert.That(counterValue2, Is.EqualTo(2));
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Does not pass yet")]
+		public void InterfaceMethods_RefOutArgs_OneByOne()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethodsWithRefOutArgs>()
+				.Method<string, string, string>(x => (s1, s2) => x.One(ref s1, out s2)).Implement((m, s1, s2) => {
+					s2.Assign(s1 + s1);
+					s1.AssignConst("Z");
+					m.Return(s1 + s2);
+				})
+				.Method<int, int, int>(x => (n1, n2) => x.Two(ref n1, out n2)).Implement((m, n1, n2) => {
+					n2.Assign(n1 + n1);
+					n1.AssignConst(99);
+					m.Return(n1 + n2);
+				})
+				.Method<TimeSpan, TimeSpan, TimeSpan>(x => (t1, t2) => x.Three(ref t1, out t2)).Implement((m, t1, t2) => {
+					t2.Assign(t1 + t1);
+					t1.Assign(Static.Func(TimeSpan.FromHours, m.Const(9d)));
+					m.Return(t1 + t2);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethodsWithRefOutArgs>().UsingDefaultConstructor();
+
+			string inputS1 = "A";
+			string inputS2;
+			string outputS = obj.One(ref inputS1, out inputS2);
+
+			int inputN1 = 1;
+			int inputN2;
+			int outputN = obj.Two(ref inputN1, out inputN2);
+
+			TimeSpan inputT1 = TimeSpan.FromMinutes(1);
+			TimeSpan inputT2;
+			TimeSpan outputT = obj.Three(ref inputT1, out inputT2);
+
+			//-- Assert
+
+			Assert.That(inputS1, Is.EqualTo("Z"));
+			Assert.That(inputS2, Is.EqualTo("AA"));
+			Assert.That(outputS, Is.EqualTo("ZAA"));
+
+			Assert.That(inputN1, Is.EqualTo(99));
+			Assert.That(inputN2, Is.EqualTo(2));
+			Assert.That(outputN, Is.EqualTo(101));
+
+			Assert.That(inputT1, Is.EqualTo(TimeSpan.Parse("09:00:00")));
+			Assert.That(inputT2, Is.EqualTo(TimeSpan.Parse("00:02:00")));
+			Assert.That(outputN, Is.EqualTo(TimeSpan.Parse("09:02:00")));
+		}
 	}
 }

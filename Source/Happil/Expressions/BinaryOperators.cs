@@ -19,11 +19,22 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-				il.Emit(OpCodes.Add);
+				var overloads = TypeOperators.GetOperators(left.OperandType);
+
+				if ( overloads.OpAddition != null )
+				{
+					Helpers.EmitCall(il, null, overloads.OpAddition, left, right);
+				}
+				else
+				{
+					left.EmitTarget(il);
+					left.EmitLoad(il);
+					
+					right.EmitTarget(il);
+					right.EmitLoad(il);
+					
+					il.Emit(OpCodes.Add);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
