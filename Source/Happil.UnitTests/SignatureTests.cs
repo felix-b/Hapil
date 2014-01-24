@@ -487,7 +487,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Does not pass yet")]
+		[Test]
 		public void InterfaceMethods_RefOutArgs_OneByOne()
 		{
 			//-- Arrange
@@ -539,7 +539,7 @@ namespace Happil.UnitTests
 
 			Assert.That(inputT1, Is.EqualTo(TimeSpan.Parse("09:00:00")));
 			Assert.That(inputT2, Is.EqualTo(TimeSpan.Parse("00:02:00")));
-			Assert.That(outputN, Is.EqualTo(TimeSpan.Parse("09:02:00")));
+			Assert.That(outputT, Is.EqualTo(TimeSpan.Parse("09:02:00")));
 		}
 	}
 }
