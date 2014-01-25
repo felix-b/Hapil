@@ -183,16 +183,18 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilConstant<T> Default<T>()
+		public HappilOperand<T> Default<T>()
 		{
-			return new HappilConstant<T>(default(T));
-		}
+			var actualType = TypeTemplate.Resolve<T>();
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilConstant<object> DefaultOf(Type type)
-		{
-			return new HappilConstant<object>(type.GetDefaultValue());
+			if ( actualType.IsPrimitive || !actualType.IsValueType )
+			{
+				return new HappilConstant<T>(default(T));
+			}
+			else
+			{
+				return new NewStructExpression<T>();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -272,9 +274,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilArgument<T> Argument<T>(int index)
+		public HappilArgument<T> Argument<T>(byte index)
 		{
-			throw new NotImplementedException();
+			return new HappilArgument<T>(this, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

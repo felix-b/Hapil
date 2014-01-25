@@ -488,7 +488,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void InterfaceMethods_RefOutArgs_OneByOne()
+		public void InterfaceMethods_OneByOne_ReferenceTypeArgsByRef()
 		{
 			//-- Arrange
 
@@ -500,15 +500,103 @@ namespace Happil.UnitTests
 					s1.AssignConst("Z");
 					m.Return(s1 + s2);
 				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethodsWithRefOutArgs>().UsingDefaultConstructor();
+
+			string inputS1 = "A";
+			string inputS2;
+			string outputS = obj.One(ref inputS1, out inputS2);
+
+			//-- Assert
+
+			Assert.That(inputS1, Is.EqualTo("Z"));
+			Assert.That(inputS2, Is.EqualTo("AA"));
+			Assert.That(outputS, Is.EqualTo("ZAA"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceMethods_OneByOne_PrimitiveTypeArgsByRef()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethodsWithRefOutArgs>()
 				.Method<int, int, int>(x => (n1, n2) => x.Two(ref n1, out n2)).Implement((m, n1, n2) => {
 					n2.Assign(n1 + n1);
 					n1.AssignConst(99);
 					m.Return(n1 + n2);
 				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethodsWithRefOutArgs>().UsingDefaultConstructor();
+
+			int inputN1 = 1;
+			int inputN2;
+			int outputN = obj.Two(ref inputN1, out inputN2);
+
+			//-- Assert
+
+			Assert.That(inputN1, Is.EqualTo(99));
+			Assert.That(inputN2, Is.EqualTo(2));
+			Assert.That(outputN, Is.EqualTo(101));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceMethods_OneByOne_StructArgsByRef()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethodsWithRefOutArgs>()
 				.Method<TimeSpan, TimeSpan, TimeSpan>(x => (t1, t2) => x.Three(ref t1, out t2)).Implement((m, t1, t2) => {
 					t2.Assign(t1 + t1);
 					t1.Assign(Static.Func(TimeSpan.FromHours, m.Const(9d)));
 					m.Return(t1 + t2);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethodsWithRefOutArgs>().UsingDefaultConstructor();
+
+			TimeSpan inputT1 = TimeSpan.FromMinutes(1);
+			TimeSpan inputT2;
+			TimeSpan outputT = obj.Three(ref inputT1, out inputT2);
+
+			//-- Assert
+
+			Assert.That(inputT1, Is.EqualTo(TimeSpan.Parse("09:00:00")));
+			Assert.That(inputT2, Is.EqualTo(TimeSpan.Parse("00:02:00")));
+			Assert.That(outputT, Is.EqualTo(TimeSpan.Parse("09:02:00")));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceMethods_SelectAll_ArgsByRef()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethodsWithRefOutArgs>()
+				.AllMethods().Implement(m => {
+					var a1 = m.Argument<TypeTemplate.TReturn>(1);
+					var a2 = m.Argument<TypeTemplate.TReturn>(2);
+					a2.Assign(a1 + a1);
+					a1.Assign(m.Default<TypeTemplate.TReturn>());
+					m.Return(a2);
 				});
 
 			//-- Act
@@ -529,17 +617,17 @@ namespace Happil.UnitTests
 
 			//-- Assert
 
-			Assert.That(inputS1, Is.EqualTo("Z"));
+			Assert.That(inputS1, Is.Null);
 			Assert.That(inputS2, Is.EqualTo("AA"));
-			Assert.That(outputS, Is.EqualTo("ZAA"));
+			Assert.That(outputS, Is.EqualTo("AA"));
 
-			Assert.That(inputN1, Is.EqualTo(99));
+			Assert.That(inputN1, Is.EqualTo(0));
 			Assert.That(inputN2, Is.EqualTo(2));
-			Assert.That(outputN, Is.EqualTo(101));
+			Assert.That(outputN, Is.EqualTo(2));
 
-			Assert.That(inputT1, Is.EqualTo(TimeSpan.Parse("09:00:00")));
-			Assert.That(inputT2, Is.EqualTo(TimeSpan.Parse("00:02:00")));
-			Assert.That(outputT, Is.EqualTo(TimeSpan.Parse("09:02:00")));
+			Assert.That(inputT1, Is.EqualTo(TimeSpan.Zero));
+			Assert.That(inputT2, Is.EqualTo(TimeSpan.FromMinutes(2)));
+			Assert.That(outputT, Is.EqualTo(TimeSpan.FromMinutes(2)));
 		}
 	}
 }

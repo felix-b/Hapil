@@ -33,7 +33,7 @@ namespace Happil.UnitTests.Statements
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException), ExpectedMessage = "Could not find .ctor", MatchType = MessageMatch.Contains)]
+		[ExpectedException(typeof(ArgumentException), ExpectedMessage = "Could not find constructor", MatchType = MessageMatch.Contains)]
 		public void TestThrowExceptionConstructorNotFound()
 		{
 			//-- Act

@@ -363,21 +363,21 @@ namespace Happil.UnitTests
 			public string One(ref string s1, out string s2)
 			{
 				s2 = s1 + s1;
-				s1 = "Z";
+				s1 = default(string);//"Z";
 				return s1 + s2;
 			}
 
 			public int Two(ref int n1, out int n2)
 			{
 				n2 = n1 + n1;
-				n1 = 99;
+				n1 = default(int);//99;
 				return n1 + n2;
 			}
 
 			public TimeSpan Three(ref TimeSpan t1, out TimeSpan t2)
 			{
 				t2 = t1 + t1;
-				t1 = TimeSpan.FromHours(9.0);
+				t1 = default(TimeSpan);//TimeSpan.FromHours(9.0);
 				return t1 + t2;
 			}
 

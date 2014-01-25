@@ -141,13 +141,13 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public abstract class TemplateTypeBase
+		public abstract class TemplateTypeBase<T> where T : TemplateTypeBase<T>
 		{
-			public Type ActualType
+			public static Type ActualType
 			{
 				get
 				{
-					return Scope.ValidateCurrent().Resolve(this.GetType());
+					return Scope.ValidateCurrent().Resolve(typeof(T));
 				}
 			}
 		}
@@ -156,22 +156,22 @@ namespace Happil
 
 		// ReSharper disable InconsistentNaming
 
-		public class TBase : TemplateTypeBase { }
-		public class TPrimary : TemplateTypeBase { }
-		public class TSecondary1 : TemplateTypeBase { }
-		public class TSecondary2 : TemplateTypeBase { }
-		public class TReturn : TemplateTypeBase { }
-		public class TProperty : TemplateTypeBase { }
-		public class TArg1 : TemplateTypeBase { }
-		public class TArg2 : TemplateTypeBase { }
-		public class TArg3 : TemplateTypeBase { }
-		public class TArg4 : TemplateTypeBase { }
-		public class TArg5 : TemplateTypeBase { }
-		public class TArg6 : TemplateTypeBase { }
-		public class TArg7 : TemplateTypeBase { }
-		public class TArg8 : TemplateTypeBase { }
-		public class TIndex1 : TemplateTypeBase { }
-		public class TIndex2 : TemplateTypeBase { }
+		public class TBase : TemplateTypeBase<TBase> { }
+		public class TPrimary : TemplateTypeBase<TPrimary> { }
+		public class TSecondary1 : TemplateTypeBase<TSecondary1> { }
+		public class TSecondary2 : TemplateTypeBase<TSecondary2> { }
+		public class TReturn : TemplateTypeBase<TReturn> { }
+		public class TProperty : TemplateTypeBase<TProperty> { }
+		public class TArg1 : TemplateTypeBase<TArg1> { }
+		public class TArg2 : TemplateTypeBase<TArg2> { }
+		public class TArg3 : TemplateTypeBase<TArg3> { }
+		public class TArg4 : TemplateTypeBase<TArg4> { }
+		public class TArg5 : TemplateTypeBase<TArg5> { }
+		public class TArg6 : TemplateTypeBase<TArg6> { }
+		public class TArg7 : TemplateTypeBase<TArg7> { }
+		public class TArg8 : TemplateTypeBase<TArg8> { }
+		public class TIndex1 : TemplateTypeBase<TIndex1> { }
+		public class TIndex2 : TemplateTypeBase<TIndex2> { }
 
 		// ReSharper restore InconsistentNaming
 

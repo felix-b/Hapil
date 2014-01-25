@@ -29,15 +29,14 @@ namespace Happil.Fluent
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);
 		HappilLocal<T> Local<T>(T initialValueConst);
 		HappilConstant<T> Const<T>(T value);
-		HappilConstant<T> Default<T>();
-		HappilConstant<object> DefaultOf(Type type);
+		HappilOperand<T> Default<T>();
 		IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments);
 		IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length);
 		void Throw<TException>(string message) where TException : Exception;
 		void Throw();
 		void EmitFromLambda(Expression<Action> lambda);
 		HappilArgument<T> Argument<T>(string name);
-		HappilArgument<T> Argument<T>(int index);
+		HappilArgument<T> Argument<T>(byte index);
 		MethodInfo MethodInfo { get; }
 		int ArgumentCount { get; }
 		Type ReturnType { get; }

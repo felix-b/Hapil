@@ -19,11 +19,15 @@ namespace Happil.Statements
 		{
 			m_ExceptionType = exceptionType;
 			m_Message = message;
-			m_Constructor = exceptionType.GetConstructor(new[] { typeof(string) });
+			
+			m_Constructor = (
+				message != null ?
+				exceptionType.GetConstructor(new[] { typeof(string) }) :
+				exceptionType.GetConstructor(Type.EmptyTypes));
 
 			if ( m_Constructor == null )
 			{
-				throw new ArgumentException("Could not find .ctor(string) on specified exception type.");
+				throw new ArgumentException("Could not find constructor on specified exception type.");
 			}
 		}
 
@@ -33,7 +37,11 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldstr, m_Message);
+			if ( m_Message != null )
+			{
+				il.Emit(OpCodes.Ldstr, m_Message);
+			}
+
 			il.Emit(OpCodes.Newobj, m_Constructor);
 			il.Emit(OpCodes.Throw);
 		}
