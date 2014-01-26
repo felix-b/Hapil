@@ -54,7 +54,11 @@
     <Compile Include="Demo\EndToEndDemo.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
     <Compile Include="ExceptionRepository.cs" />
-    <Compile Include="ExpressionTests.cs" />
+    <Compile Include="Expressions\NewObjectExpressionTests.cs" />
+    <Compile Include="Expressions\NewStructExpressionTests.cs" />
+    <Compile Include="Expressions\PropertyAccessOperandTests.cs" />
+    <Compile Include="Expressions\TernaryConditionalOperatorTests.cs" />
+    <Compile Include="Expressions\UnaryOperatorTests.cs" />
     <Compile Include="Fluent\ConstructorTests.cs" />
     <Compile Include="Fluent\CSharpTests.cs" />
     <Compile Include="Fluent\InvocationTests.cs" />
@@ -70,6 +74,7 @@
     <Compile Include="ClassPerTestCaseFixtureBase.cs" />
     <Compile Include="SetShortcutsTests.cs" />
     <Compile Include="SignatureTests.cs" />
+    <Compile Include="Statements\CallStatementTests.cs" />
     <Compile Include="Statements\ForeachStatementTests.cs" />
     <Compile Include="Statements\ForStatementTests.cs" />
     <Compile Include="Statements\IfStatementTests.cs" />
@@ -91,6 +96,7 @@
       <Name>Happil</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
