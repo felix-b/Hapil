@@ -184,7 +184,7 @@ namespace Happil.UnitTests.Statements
 
 			//-- Act
 
-			var expression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorMinus<int>(), m_Method.Const(111)); 
+			var expression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorNegation<int>(), m_Method.Const(111)); 
 
 			//-- Assert
 
@@ -224,7 +224,7 @@ namespace Happil.UnitTests.Statements
 
 			//-- Act
 
-			var innerExpression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorMinus<int>(), m_Method.Const(111));
+			var innerExpression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorNegation<int>(), m_Method.Const(111));
 			var outerExpression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorPlus<int>(), innerExpression);
 
 			//-- Assert

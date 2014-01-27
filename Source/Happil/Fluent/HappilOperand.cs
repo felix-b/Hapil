@@ -439,6 +439,16 @@ namespace Happil.Fluent
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilOperand<T> operator +(HappilOperand<T> x)
+		{
+			return new HappilUnaryExpression<T, T>(
+				null,//x.OwnerMethod ?? y.OwnerMethod,
+				@operator: new UnaryOperators.OperatorPlus<T>(),
+				operand: x.OrNullConstant<T>());
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static HappilOperand<T> operator -(HappilOperand<T> x, HappilOperand<T> y)
 		{
 			return new HappilBinaryExpression<T, T>(
@@ -457,6 +467,16 @@ namespace Happil.Fluent
 				@operator: new BinaryOperators.OperatorSubtract<T>(),
 				left: x.OrNullConstant<T>(),
 				right: y.OrNullConstant<T>());
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<T> operator -(HappilOperand<T> x)
+		{
+			return new HappilUnaryExpression<T, T>(
+				null,//x.OwnerMethod ?? y.OwnerMethod,
+				@operator: new UnaryOperators.OperatorNegation<T>(),
+				operand: x.OrNullConstant<T>());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -610,35 +630,39 @@ namespace Happil.Fluent
 
 		public static HappilOperand<T> operator !(HappilOperand<T> x)
 		{
-			ValidateIsBooleanFor("!");
+			if ( TypeTemplate.Resolve<T>() == typeof(bool) )
+			{
+				object result = new HappilUnaryExpression<bool, bool>(
+					null,
+					//x.OwnerMethod
+					@operator: new UnaryOperators.OperatorLogicalNot(),
+					operand: (IHappilOperand<bool>)x.OrNullConstant<T>());
 
-			object result = new HappilUnaryExpression<bool, bool>(
-				null,//x.OwnerMethod
-				@operator: new UnaryOperators.OperatorLogicalNot(),
-				operand: (IHappilOperand<bool>)x.OrNullConstant<T>());
-
-			return (HappilOperand<T>)result;
+				return (HappilOperand<T>)result;
+			}
+			else
+			{
+				throw new ArgumentException("Operator ! can only be applied to type Boolean.");
+			}
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<T> operator ~(HappilOperand<T> x)
 		{
-			return new HappilUnaryExpression<T, T>(
-				null,//x.OwnerMethod
-				@operator: new UnaryOperators.OperatorBitwiseNot<T>(),
-				operand: x.OrNullConstant<T>());
-		}
+			var safeOperand = x.OrNullConstant<T>();
+			var operandType = safeOperand.OperandType;
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		private static void ValidateIsBooleanFor(string operatorName)
-		{
-			if ( typeof(T) != typeof(bool) )
+			if ( operandType == typeof(int) || operandType == typeof(uint) || operandType == typeof(long) || operandType == typeof(ulong) )
 			{
-				throw new ArgumentException(string.Format(
-					"Operator {0} cannot be applied to operand of type {1}. It can only be applied to boolean operands.", 
-					operatorName, typeof(T).FullName));
+				return new HappilUnaryExpression<T, T>(
+					null,//x.OwnerMethod
+					@operator: new UnaryOperators.OperatorBitwiseNot<T>(),
+					operand: safeOperand);
+			}
+			else
+			{
+				throw new ArgumentException("Operator ~ is only supported on types int, uint, long, ulong.");
 			}
 		}
 

@@ -508,6 +508,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private HappilOperand<T> CreateUnaryExpression<T>(IUnaryOperator<T> @operator, IHappilOperand<T> operand)
+		{
+			return new HappilUnaryExpression<T, T>(
+				ownerMethod: null,
+				@operator: @operator,
+				operand: operand);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration)
 		{
 			var attributes =

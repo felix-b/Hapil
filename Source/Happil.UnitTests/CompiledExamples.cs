@@ -383,5 +383,61 @@ namespace Happil.UnitTests
 
 			#endregion
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class OperatorExamples
+		{
+			public void BitwiseNotExample()
+			{
+				int x1 = 0x01;
+				uint x2 = 0x01;
+				long x3 = 0x01;
+				ulong x4 = 0x01;
+
+				int r1 = ~x1;
+				uint r2 = ~x2;
+				long r3 = ~x3;
+				ulong r4 = ~x4;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void UnaryPlusExample()
+			{
+				int x1 = -0x01;
+				uint x2 = 0x01;
+				long x3 = -0x01;
+				ulong x4 = 0x01;
+				float x5 = -0x01;
+				decimal x6 = -0x01;
+				double x7 = -0x01;
+
+				int r1 = +x1;
+				uint r2 = +x2;
+				long r3 = +x3;
+				ulong r4 = +x4;
+				float r5 = +x5;
+				decimal r6 = +x6;
+				double r7 = +x7;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void UnaryMinusExample()
+			{
+				int x1 = -0x01;
+				long x3 = -0x01;
+				float x5 = -0x01;
+				decimal x6 = -0x01;
+				double x7 = -0x01;
+
+				int r1 = -x1;
+				long r3 = -x3;
+				float r5 = -x5;
+				decimal r6 = -x6;
+				double r7 = -x7;
+			}
+		}
 	}
 }

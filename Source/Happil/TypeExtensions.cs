@@ -90,6 +90,34 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static bool IsNumericType(this Type type)
+		{
+			if ( !type.IsPrimitive )
+			{
+				return (type == typeof(decimal));
+			}
+
+			switch ( Type.GetTypeCode(type) )
+			{
+				case TypeCode.SByte:
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+				case TypeCode.UInt16:
+				case TypeCode.Int32:
+				case TypeCode.UInt32:
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+				case TypeCode.Decimal:
+				case TypeCode.Single:
+				case TypeCode.Double: 
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static bool IsNullableValueType(this Type type)
 		{
 			return (

@@ -15,6 +15,8 @@ namespace Happil.Expressions
 
 		private MethodInfo m_OpEquality;
 		private MethodInfo m_OpAddition;
+		private MethodInfo m_OpUnaryPlus;
+		private MethodInfo m_OpNegation;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +28,8 @@ namespace Happil.Expressions
 
 			m_OpEquality = m_OpEquality ?? type.GetMethod("op_Equality", BindingFlags.Static | BindingFlags.Public);
 			m_OpAddition = m_OpAddition ?? type.GetMethod("op_Addition", BindingFlags.Static | BindingFlags.Public);
+			m_OpUnaryPlus = m_OpNegation ?? type.GetMethod("op_UnaryPlus", BindingFlags.Static | BindingFlags.Public);
+			m_OpNegation = m_OpNegation ?? type.GetMethod("op_UnaryNegation", BindingFlags.Static | BindingFlags.Public);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,6 +51,20 @@ namespace Happil.Expressions
 		public MethodInfo OpAddition
 		{
 			get { return m_OpAddition; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodInfo OpUnaryPlus
+		{
+			get { return m_OpUnaryPlus; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodInfo OpNegation
+		{
+			get { return m_OpNegation; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

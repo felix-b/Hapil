@@ -276,5 +276,31 @@ namespace Happil.UnitTests
 			T LocalVersion { get; }
 			T WorkingVersion { get; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IOperatorTester
+		{
+			OperatorInputOutput Unary(OperatorInputOutput input);
+			OperatorInputOutput Binary(OperatorInputOutput left, OperatorInputOutput right);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorInputOutput
+		{
+			public bool BooleanValue { get; set; }
+			public byte ByteValue { get; set; }
+			public short ShortValue { get; set; }
+			public int IntValue { get; set; }
+			public uint UIntValue { get; set; }
+			public long LongValue { get; set; }
+			public ulong ULongValue { get; set; }
+			public float FloatValue { get; set; }
+			public decimal DecimalValue { get; set; }
+			public double DoubleValue { get; set; }
+			public string StringValue { get; set; }
+			public TimeSpan TimeSpanValue { get; set; }
+		}
 	}
 }

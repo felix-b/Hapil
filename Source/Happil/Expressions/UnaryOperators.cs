@@ -22,7 +22,7 @@ namespace Happil.Expressions
 			{
 				operand.EmitTarget(il);
 				operand.EmitLoad(il);
-				
+
 				il.Emit(OpCodes.Ldc_I4_0);
 				il.Emit(OpCodes.Ceq);
 			}
@@ -41,7 +41,10 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				throw new NotImplementedException();
+				operand.EmitTarget(il);
+				operand.EmitLoad(il);
+
+				il.Emit(OpCodes.Not);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -58,7 +61,19 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				throw new NotImplementedException();
+				var overloads = TypeOperators.GetOperators(operand.OperandType);
+
+				if ( overloads.OpUnaryPlus != null )
+				{
+					Helpers.EmitCall(il, null, overloads.OpUnaryPlus, operand);
+				}
+				else
+				{
+					operand.EmitTarget(il);
+					operand.EmitLoad(il);
+					
+					// by default this operator does nothing to the operand
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,11 +86,23 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorMinus<T> : IUnaryOperator<T>
+		public class OperatorNegation<T> : IUnaryOperator<T>
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				throw new NotImplementedException();
+				var overloads = TypeOperators.GetOperators(operand.OperandType);
+
+				if ( overloads.OpNegation != null )
+				{
+					Helpers.EmitCall(il, null, overloads.OpNegation, operand);
+				}
+				else
+				{
+					operand.EmitTarget(il);
+					operand.EmitLoad(il);
+
+					il.Emit(OpCodes.Neg);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
