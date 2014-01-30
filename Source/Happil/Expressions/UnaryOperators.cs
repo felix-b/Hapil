@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -115,35 +116,131 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorPlusPlus<T> : IUnaryOperator<T>
+		public class OperatorIncrement<T> : IUnaryOperator<T>, IDontLeaveValueOnStack
 		{
+			private readonly UnaryOperatorPosition m_Position;
+			private readonly bool m_Positive;
+			private readonly HappilMethod m_OwnerMethod;
+			private bool m_ShouldLeaveValueOnStack;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public OperatorIncrement(UnaryOperatorPosition position, bool positive)
+			{
+				m_Position = position;
+				m_Positive = positive;
+				m_OwnerMethod = StatementScope.Current.OwnerMethod;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IDontLeaveValueOnStack Members
+
+			public void ForceLeaveFalueOnStack()
+			{
+				m_ShouldLeaveValueOnStack = true;
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public void Emit(ILGenerator il, IHappilOperand<T> operand)
 			{
-				throw new NotImplementedException();
+				if ( m_Position == UnaryOperatorPosition.Prefix || !m_ShouldLeaveValueOnStack )
+				{
+					EmitPrefixVersion(il, operand);
+				}
+				else
+				{
+					EmitPostfixVersion(il, operand);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public override string ToString()
 			{
-				return "++";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorMinusMinus<T> : IUnaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
-			{
-				throw new NotImplementedException();
+				return (m_Positive ? "++" : "--");
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override string ToString()
+			private void EmitPostfixVersion(ILGenerator il, IHappilOperand<T> operand)
 			{
-				return "--";
+				operand.EmitTarget(il);
+
+				EmitIncrement(il, operand);
+
+				if ( operand.HasTarget )
+				{
+					var temp = m_OwnerMethod.Local<T>();
+
+					temp.EmitStore(il);
+					operand.EmitTarget(il);
+					temp.EmitLoad(il);
+				}
+
+				operand.EmitStore(il);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void EmitPrefixVersion(ILGenerator il, IHappilOperand<T> operand)
+			{
+				if ( operand.HasTarget )
+				{
+					operand.EmitTarget(il);
+					il.Emit(OpCodes.Dup);
+				}
+
+				EmitIncrement(il, operand);
+
+				if ( operand.HasTarget && m_ShouldLeaveValueOnStack )
+				{
+					var temp = m_OwnerMethod.Local<T>();
+
+					temp.EmitStore(il);
+					operand.EmitStore(il);
+					temp.EmitLoad(il);
+				}
+				else
+				{
+					operand.EmitStore(il);
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void EmitIncrement(ILGenerator il, IHappilOperand<T> operand)
+			{
+				var overloads = TypeOperators.GetOperators(operand.OperandType);
+
+				operand.EmitLoad(il);
+
+				if ( m_Position == UnaryOperatorPosition.Postfix && m_ShouldLeaveValueOnStack )
+				{
+					il.Emit(OpCodes.Dup);
+				}
+
+				var overloadedOperator = (m_Positive ? overloads.OpIncrement : overloads.OpDecrement);
+
+				if ( overloadedOperator != null )
+				{
+					il.Emit(OpCodes.Call, overloadedOperator);
+				}
+				else
+				{
+					Helpers.EmitConvertible(il, 1);
+					Helpers.EmitCast(il, typeof(int), operand.OperandType);
+
+					il.Emit(m_Positive ? OpCodes.Add : OpCodes.Sub);
+				}
+
+				if ( m_Position == UnaryOperatorPosition.Prefix && m_ShouldLeaveValueOnStack )
+				{
+					il.Emit(OpCodes.Dup);
+				}
 			}
 		}
 

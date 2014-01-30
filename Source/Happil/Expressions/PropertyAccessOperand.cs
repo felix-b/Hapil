@@ -8,7 +8,7 @@ using Happil.Fluent;
 
 namespace Happil.Expressions
 {
-	internal class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation 
+	internal class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation
 	{
 		private readonly IHappilOperand m_Target;
 		private readonly PropertyInfo m_Property;
@@ -28,6 +28,16 @@ namespace Happil.Expressions
 
 			m_Getter = m_Property.GetGetMethod();
 			m_Setter = m_Property.GetSetMethod();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override bool HasTarget
+		{
+			get
+			{
+				return (m_Target != null);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,7 +85,7 @@ namespace Happil.Expressions
 		{
 			if ( m_Setter != null )
 			{
-				var setterArguments = m_IndexArguments.Concat(new[] { m_Value }).ToArray();
+				var setterArguments = m_IndexArguments.ConcatIf(m_Value).ToArray();
 				Helpers.EmitCall(il, target: null, method: m_Setter, arguments: setterArguments);
 			}
 			else

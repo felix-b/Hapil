@@ -54,7 +54,7 @@ namespace Happil.Fluent
 
 			if ( convertible != null )
 			{
-				EmitConvertible(il, convertible);
+				Helpers.EmitConvertible(il, convertible);
 			}
 			else if ( object.ReferenceEquals(null, actualValue) )
 			{
@@ -62,7 +62,7 @@ namespace Happil.Fluent
 			}
 			else
 			{
-				throw CreateTypeNotSupportedException();
+				throw Helpers.CreateConstantNotSupportedException(OperandType);
 			}
 		}
 
@@ -89,44 +89,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void EmitConvertible(ILGenerator il, IConvertible convertible)
-		{
-			var formatProvider = CultureInfo.CurrentCulture;
-
-			switch ( convertible.GetTypeCode() )
-			{
-				case TypeCode.Int32:
-				case TypeCode.Boolean:
-					il.Emit(OpCodes.Ldc_I4, convertible.ToInt32(formatProvider));
-					break;
-				case TypeCode.Int64:
-					il.Emit(OpCodes.Ldc_I8, convertible.ToInt64(formatProvider));
-					break;
-				case TypeCode.Double:
-					il.Emit(OpCodes.Ldc_R8, convertible.ToDouble(formatProvider));
-					break;
-				case TypeCode.String:
-					il.Emit(OpCodes.Ldstr, convertible.ToString());
-					break;
-				default:
-					throw CreateTypeNotSupportedException();
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		private void EmitNull(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ldnull);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private Exception CreateTypeNotSupportedException()
-		{
-			return new NotSupportedException(string.Format(
-				"Constants of type '{0}' are not supported.",
-				typeof(T).FullName));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -15,6 +15,13 @@ namespace Happil.Fluent
 		/// Gets CLR type of the operand value.
 		/// </summary>
 		Type OperandType { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Whether this operand needs to emit reference to target prior to accessing its value. 
+		/// </summary>
+		bool HasTarget { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

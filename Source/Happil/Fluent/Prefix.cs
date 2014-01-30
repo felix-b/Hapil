@@ -12,7 +12,7 @@ namespace Happil.Fluent
 		{
 			return new HappilUnaryExpression<T, T>(
 				assignable.OwnerMethod,
-				@operator: new UnaryOperators.OperatorPlusPlus<T>(),
+				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Prefix, positive: true),
 				operand: assignable,
 				position: UnaryOperatorPosition.Prefix);
 		}
@@ -23,7 +23,7 @@ namespace Happil.Fluent
 		{
 			return new HappilUnaryExpression<T, T>(
 				assignable.OwnerMethod,
-				@operator: new UnaryOperators.OperatorMinusMinus<T>(),
+				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Prefix, positive: false),
 				operand: assignable,
 				position: UnaryOperatorPosition.Prefix);
 		}

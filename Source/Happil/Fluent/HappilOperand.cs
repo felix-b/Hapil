@@ -170,7 +170,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilOperandInternals Members
+		#region IHappilOperandEmitter Members
 
 		void IHappilOperandEmitter.EmitTarget(ILGenerator il)
 		{
@@ -268,6 +268,16 @@ namespace Happil.Fluent
 					//TODO: cover this case in unit tests!
 					throw new NotSupportedException("The operand class must override OperandType property and provide a specialized implementation.");
 				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual bool HasTarget
+		{
+			get
+			{
+				return false;
 			}
 		}
 

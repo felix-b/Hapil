@@ -15,6 +15,8 @@ namespace Happil.Expressions
 
 		private MethodInfo m_OpEquality;
 		private MethodInfo m_OpAddition;
+		private MethodInfo m_OpIncrement;
+		private MethodInfo m_OpDecrement;
 		private MethodInfo m_OpUnaryPlus;
 		private MethodInfo m_OpNegation;
 
@@ -22,14 +24,17 @@ namespace Happil.Expressions
 
 		public TypeOperators(Type type)
 		{
-			m_Type = type;
+			const BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
 
+			m_Type = type;
 			ApplySpecialCases(type);
 
-			m_OpEquality = m_OpEquality ?? type.GetMethod("op_Equality", BindingFlags.Static | BindingFlags.Public);
-			m_OpAddition = m_OpAddition ?? type.GetMethod("op_Addition", BindingFlags.Static | BindingFlags.Public);
-			m_OpUnaryPlus = m_OpNegation ?? type.GetMethod("op_UnaryPlus", BindingFlags.Static | BindingFlags.Public);
-			m_OpNegation = m_OpNegation ?? type.GetMethod("op_UnaryNegation", BindingFlags.Static | BindingFlags.Public);
+			m_OpEquality = m_OpEquality ?? type.GetMethod("op_Equality", flags);
+			m_OpAddition = m_OpAddition ?? type.GetMethod("op_Addition", flags);
+			m_OpIncrement = m_OpIncrement ?? type.GetMethod("op_Increment", flags);
+			m_OpDecrement = m_OpDecrement ?? type.GetMethod("op_Decrement", flags);
+			m_OpUnaryPlus = m_OpNegation ?? type.GetMethod("op_UnaryPlus", flags);
+			m_OpNegation = m_OpNegation ?? type.GetMethod("op_UnaryNegation", flags);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,6 +56,20 @@ namespace Happil.Expressions
 		public MethodInfo OpAddition
 		{
 			get { return m_OpAddition; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodInfo OpIncrement
+		{
+			get { return m_OpIncrement; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodInfo OpDecrement
+		{
+			get { return m_OpDecrement; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

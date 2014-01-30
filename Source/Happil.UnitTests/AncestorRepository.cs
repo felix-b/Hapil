@@ -283,6 +283,7 @@ namespace Happil.UnitTests
 		{
 			OperatorInputOutput Unary(OperatorInputOutput input);
 			OperatorInputOutput Binary(OperatorInputOutput left, OperatorInputOutput right);
+			void NumbersByRef(ref int x, ref float y, ref decimal z);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

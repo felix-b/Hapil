@@ -50,6 +50,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override bool HasTarget
+		{
+			get
+			{
+				return !(m_Declaration.GetGetMethod() ?? m_Declaration.GetSetMethod()).IsStatic;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region IHappilMember Members
 
 		void IHappilMember.EmitBody()
