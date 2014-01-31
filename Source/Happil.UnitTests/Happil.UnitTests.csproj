@@ -54,6 +54,7 @@
     <Compile Include="Demo\EndToEndDemo.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
     <Compile Include="ExceptionRepository.cs" />
+    <Compile Include="Expressions\BinaryOperatorTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />
     <Compile Include="Expressions\PropertyAccessOperandTests.cs" />

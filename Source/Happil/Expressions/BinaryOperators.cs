@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
@@ -15,25 +16,44 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorAdd<T> : IBinaryOperator<T> 
+		public abstract class OverloadableBinaryOperatorBase<TLeft, TRight> : IBinaryOperator<TLeft, TRight>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				var overloads = TypeOperators.GetOperators(left.OperandType);
+			private readonly OpCode m_Instruction;
+			private readonly Func<TypeOperators, MethodInfo> m_OverloadSelector;
+			private readonly string m_Symbol;
+			private bool m_Overloaded;
 
-				if ( overloads.OpAddition != null )
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+	
+			protected OverloadableBinaryOperatorBase(OpCode instruction, Func<TypeOperators, MethodInfo> overloadSelector, string symbol)
+			{
+				m_Instruction = instruction;
+				m_OverloadSelector = overloadSelector;
+				m_Symbol = symbol;
+				m_Overloaded = false;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public virtual void Emit(ILGenerator il, IHappilOperand<TLeft> left, IHappilOperand<TRight> right)
+			{
+				var typeOverloads = TypeOperators.GetOperators(left.OperandType);
+				var overload = m_OverloadSelector(typeOverloads);
+
+				if ( overload != null )
 				{
-					Helpers.EmitCall(il, null, overloads.OpAddition, left, right);
+					m_Overloaded = true;
+					Helpers.EmitCall(il, null, overload, left, right);
 				}
 				else
 				{
 					left.EmitTarget(il);
 					left.EmitLoad(il);
-					
+
 					right.EmitTarget(il);
 					right.EmitLoad(il);
-					
-					il.Emit(OpCodes.Add);
+
+					il.Emit(m_Instruction);
 				}
 			}
 
@@ -41,81 +61,191 @@ namespace Happil.Expressions
 
 			public override string ToString()
 			{
-				return "+";
+				return m_Symbol;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected bool Overloaded
+			{
+				get
+				{
+					return m_Overloaded;
+				}
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorSubtract<T> : IBinaryOperator<T> 
+		public abstract class OverloadableBinaryOperatorBase<T> : OverloadableBinaryOperatorBase<T, T>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			protected OverloadableBinaryOperatorBase(OpCode instruction, Func<TypeOperators, MethodInfo> overloadSelector, string symbol)
+				: base(instruction, overloadSelector, symbol)
 			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-				il.Emit(OpCodes.Sub);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "-";
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorMultiply<T> : IBinaryOperator<T> 
+		public sealed class OperatorAdd<T> : OverloadableBinaryOperatorBase<T> 
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public OperatorAdd()
+				: base(OpCodes.Add, overloads => overloads.OpAddition, "+")
 			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "*";
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorDivide<T> : IBinaryOperator<T> 
+		public sealed class OperatorSubtract<T> : OverloadableBinaryOperatorBase<T> 
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public OperatorSubtract()
+				: base(OpCodes.Sub, overloads => overloads.OpSubtraction, "-")
 			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "/";
 			}
 		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpSubtraction != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpSubtraction, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Sub);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "-";
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorModulo<T> : IBinaryOperator<T> 
+		public sealed class OperatorMultiply<T> : OverloadableBinaryOperatorBase<T> 
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public OperatorMultiply()
+				: base(OpCodes.Mul, overloads => overloads.OpMultiply, "*")
 			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "%";
 			}
 		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpMultiply != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpMultiply, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Mul);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "*";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorDivide<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorDivide()
+				: base(OpCodes.Div, overloads => overloads.OpDivision, "/")
+			{
+			}
+		} 
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpDivision != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpDivision, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Div);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "/";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorModulus<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorModulus()
+				: base(OpCodes.Rem, overloads => overloads.OpModulus, "%")
+			{
+			}
+		} 
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpModulus != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpModulus, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Rem);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "%";
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -158,7 +288,25 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
 			{
-				throw new NotImplementedException();
+				var trueLabel = il.DefineLabel();
+				var endLabel = il.DefineLabel();
+
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				il.Emit(OpCodes.Brtrue, trueLabel);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.Emit(OpCodes.Br, endLabel);
+
+				il.MarkLabel(trueLabel);
+				il.Emit(OpCodes.Ldc_I4_1);
+				il.Emit(OpCodes.Br, endLabel);
+
+				il.MarkLabel(endLabel);
+				il.Emit(OpCodes.Nop);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,7 +323,13 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
 			{
-				throw new NotImplementedException();
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.Emit(OpCodes.Xor);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -188,231 +342,311 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorBitwiseAnd<T> : IBinaryOperator<T>
+		public class OperatorBitwiseAnd<T> : OverloadableBinaryOperatorBase<T> 
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public OperatorBitwiseAnd()
+				: base(OpCodes.And, overloads => overloads.OpBitwiseAnd, "&")
 			{
-				throw new NotImplementedException();
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "&";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorBitwiseOr<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorBitwiseOr()
+				: base(OpCodes.Or, overloads => overloads.OpBitwiseOr, "|")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "|";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorBitwiseXor<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorBitwiseXor()
+				: base(OpCodes.Xor, overloads => overloads.OpBitwiseXor, "^")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "^";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorLeftShift<T> : OverloadableBinaryOperatorBase<T, int> 
+		{
+			public OperatorLeftShift()
+				: base(OpCodes.Shl, overloads => overloads.OpLeftShift, "<<")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpLeftShift != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpLeftShift, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Shl);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "<<";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorRightShift<T> : OverloadableBinaryOperatorBase<T, int> 
+		{
+			public OperatorRightShift()
+				: base(OpCodes.Shr, overloads => overloads.OpRightShift, ">>")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpRightShift != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpRightShift, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Shr);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return ">>";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorEqual<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorEqual()
+				: base(OpCodes.Ceq, overloads => overloads.OpEquality, "==")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		var overloads = TypeOperators.GetOperators(left.OperandType);
+
+		//		if ( overloads.OpEquality != null )
+		//		{
+		//			Helpers.EmitCall(il, null, overloads.OpEquality, left, right);
+		//		}
+		//		else
+		//		{
+		//			left.EmitTarget(il);
+		//			left.EmitLoad(il);
+
+		//			right.EmitTarget(il);
+		//			right.EmitLoad(il);
+
+		//			il.Emit(OpCodes.Ceq);
+		//		}
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "==";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorNotEqual<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorNotEqual()
+				: base(OpCodes.Ceq, overloads => overloads.OpInequality, "!=")
+			{
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override string ToString()
+			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				return "&";
-			}
-		}
+				base.Emit(il, left, right);
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorBitwiseOr<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "|";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorBitwiseXor<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "^";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorLeftShift<T> : IBinaryOperator<T, int>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "<<";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorRightShift<T> : IBinaryOperator<T, int>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return ">>";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorEqual<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				var overloads = TypeOperators.GetOperators(left.OperandType);
-
-				if ( overloads.OpEquality != null )
+				if ( !Overloaded )
 				{
-					Helpers.EmitCall(il, null, overloads.OpEquality, left, right);
-				}
-				else
-				{
-					left.EmitTarget(il);
-					left.EmitLoad(il);
-
-					right.EmitTarget(il);
-					right.EmitLoad(il);
-
+					il.Emit(OpCodes.Ldc_I4_0);
 					il.Emit(OpCodes.Ceq);
 				}
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorGreaterThan<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorGreaterThan()
+				: base(OpCodes.Cgt, overloads => overloads.OpGreaterThan, ">")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		left.EmitTarget(il);
+		//		left.EmitLoad(il);
+
+		//		right.EmitTarget(il);
+		//		right.EmitLoad(il);
+
+		//		il.Emit(OpCodes.Cgt);
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return ">";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorLessThan<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorLessThan()
+				: base(OpCodes.Clt, overloads => overloads.OpLessThan, "<")
+			{
+			}
+		}
+		//{
+		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	{
+		//		left.EmitTarget(il);
+		//		left.EmitLoad(il);
+
+		//		right.EmitTarget(il);
+		//		right.EmitLoad(il);
+
+		//		il.Emit(OpCodes.Clt);
+		//	}
+
+		//	//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//	public override string ToString()
+		//	{
+		//		return "<";
+		//	}
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class OperatorGreaterThanOrEqual<T> : OverloadableBinaryOperatorBase<T> 
+		{
+			public OperatorGreaterThanOrEqual()
+				: base(OpCodes.Clt, overloads => overloads.OpGreaterThanOrEqual, ">=")
+			{
+			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
+	
+			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				return "==";
+				base.Emit(il, left, right);
+	
+				if ( !Overloaded )
+				{
+					il.Emit(OpCodes.Ldc_I4_0);
+					il.Emit(OpCodes.Ceq);
+				}
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorNotEqual<T> : IBinaryOperator<T>
+		public class OperatorLessThanOrEqual<T> : OverloadableBinaryOperatorBase<T> 
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public OperatorLessThanOrEqual()
+				: base(OpCodes.Cgt, overloads => overloads.OpLessThanOrEqual, "<=")
 			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-
-				il.Emit(OpCodes.Ceq);
-				il.Emit(OpCodes.Ldc_I4_0);
-				il.Emit(OpCodes.Ceq);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override string ToString()
+			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				return "!=";
-			}
-		}
+				base.Emit(il, left, right);
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorGreaterThan<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-
-				il.Emit(OpCodes.Cgt);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return ">";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorLessThan<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-
-				il.Emit(OpCodes.Clt);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "<";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorGreaterThanOrEqual<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				left.EmitTarget(il);
-				left.EmitLoad(il);
-
-				right.EmitTarget(il);
-				right.EmitLoad(il);
-
-				il.Emit(OpCodes.Clt);
-				il.Emit(OpCodes.Ldc_I4_0);
-				il.Emit(OpCodes.Ceq);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return ">=";
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class OperatorLessThanOrEqual<T> : IBinaryOperator<T>
-		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
-			{
-				throw new NotImplementedException();
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override string ToString()
-			{
-				return "<=";
+				if ( !Overloaded )
+				{
+					il.Emit(OpCodes.Ldc_I4_0);
+					il.Emit(OpCodes.Ceq);
+				}
 			}
 		}
 

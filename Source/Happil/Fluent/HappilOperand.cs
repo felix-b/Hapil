@@ -517,7 +517,7 @@ namespace Happil.Fluent
 		{
 			return new HappilBinaryExpression<T, T>(
 				null,//x.OwnerMethod ?? y.OwnerMethod,
-				@operator: new BinaryOperators.OperatorModulo<T>(),
+				@operator: new BinaryOperators.OperatorModulus<T>(),
 				left: x.OrNullConstant<T>(),
 				right: y.OrNullConstant<T>());
 		}
