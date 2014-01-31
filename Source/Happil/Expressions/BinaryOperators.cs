@@ -685,7 +685,19 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<Type> right)
 			{
-				throw new NotImplementedException();
+				var typeConstant = (right as HappilConstant<Type>);
+
+				if ( object.ReferenceEquals(typeConstant, null) )
+				{
+					throw new NotSupportedException("Cast type must be a constant type known in advance.");
+				}
+
+				var castType = TypeTemplate.Resolve(typeConstant.Value);
+
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				il.Emit(OpCodes.Isinst, castType);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -704,7 +716,21 @@ namespace Happil.Expressions
 
 			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
 			{
-				throw new NotImplementedException();
+				var endLabel = il.DefineLabel();
+
+				left.EmitTarget(il);
+				left.EmitLoad(il);
+
+				il.Emit(OpCodes.Dup);
+				il.Emit(OpCodes.Brtrue_S, endLabel);
+
+				il.Emit(OpCodes.Pop);
+
+				right.EmitTarget(il);
+				right.EmitLoad(il);
+
+				il.MarkLabel(endLabel);
+				il.Emit(OpCodes.Nop);
 			}
 
 			#endregion

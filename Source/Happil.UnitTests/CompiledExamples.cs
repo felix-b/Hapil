@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using NUnit.Framework;
 
@@ -515,6 +516,28 @@ namespace Happil.UnitTests
 			public bool LogicalXorExample(bool x, bool y)
 			{
 				return (x ^ y);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void CastExamples()
+			{
+				//OpCodes.Unbox_Any;
+				//OpCodes.Isinst;
+
+				int x0 = 1;
+				object x1 = (object)x0;
+				x0 = (int)x1;
+
+				object y0 = new System.IO.MemoryStream();
+				IDisposable y1 = (y0 as IDisposable);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string NullCoalesceExample(string s1, string s2)
+			{
+				return (s1 ?? s2);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

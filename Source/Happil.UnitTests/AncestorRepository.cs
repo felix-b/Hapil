@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 
@@ -288,6 +289,15 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public interface IComparisonTester
+		{
+			bool CompareInt(int x, int y);
+			bool CompareFloat(float x, float y);
+			bool CompareDecimal(decimal x, decimal y);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public class OperatorInputOutput
 		{
 			public bool BooleanValue { get; set; }
@@ -302,6 +312,7 @@ namespace Happil.UnitTests
 			public double DoubleValue { get; set; }
 			public string StringValue { get; set; }
 			public TimeSpan TimeSpanValue { get; set; }
+			public SqlInt32 SqlIntValue { get; set; }
 		}
 	}
 }

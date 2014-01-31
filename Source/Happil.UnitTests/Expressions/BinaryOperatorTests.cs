@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -323,6 +324,258 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(result2.BooleanValue, Is.True);
 			Assert.That(result3.BooleanValue, Is.True);
 			Assert.That(result4.BooleanValue, Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestBitwiseAnd()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.IntValue).Assign(in1.Prop(x => x.IntValue) & in2.Prop(x => x.IntValue));
+					output.Prop(x => x.SqlIntValue).Assign(in1.Prop(x => x.SqlIntValue) & in2.Prop(x => x.SqlIntValue));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Binary(
+				new InOut { IntValue = 0x0123, SqlIntValue = new SqlInt32(0x0123) }, 
+				new InOut { IntValue = 0x1020, SqlIntValue = new SqlInt32(0x1020) });
+
+			//-- Assert
+
+			Assert.That(result.IntValue, Is.EqualTo(0x0020));
+			Assert.That(result.SqlIntValue.Value, Is.EqualTo(0x0020));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestBitwiseOr()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.IntValue).Assign(in1.Prop(x => x.IntValue) | in2.Prop(x => x.IntValue));
+					output.Prop(x => x.SqlIntValue).Assign(in1.Prop(x => x.SqlIntValue) | in2.Prop(x => x.SqlIntValue));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Binary(
+				new InOut { IntValue = 0x0123, SqlIntValue = new SqlInt32(0x0123) },
+				new InOut { IntValue = 0x1020, SqlIntValue = new SqlInt32(0x1020) });
+
+			//-- Assert
+
+			Assert.That(result.IntValue, Is.EqualTo(0x1123));
+			Assert.That(result.SqlIntValue.Value, Is.EqualTo(0x1123));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestBitwiseXor()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.IntValue).Assign(in1.Prop(x => x.IntValue) ^ in2.Prop(x => x.IntValue));
+					output.Prop(x => x.SqlIntValue).Assign(in1.Prop(x => x.SqlIntValue) ^ in2.Prop(x => x.SqlIntValue));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Binary(
+				new InOut { IntValue = 0x1014, SqlIntValue = new SqlInt32(0x1014) },
+				new InOut { IntValue = 0x1104, SqlIntValue = new SqlInt32(0x1104) });
+
+			//-- Assert
+
+			Assert.That(result.IntValue, Is.EqualTo(0x0110));
+			Assert.That(result.SqlIntValue.Value, Is.EqualTo(0x0110));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLeftShift()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.IntValue).Assign(in1.Prop(x => x.IntValue) << 3);
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Binary(new InOut { IntValue = 128 }, right: null);
+			
+			//-- Assert
+
+			Assert.That(result.IntValue, Is.EqualTo(1024));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestRightShift()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.IntValue).Assign(in1.Prop(x => x.IntValue) >> 3);
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Binary(new InOut { IntValue = 1024 }, right: null);
+
+			//-- Assert
+
+			Assert.That(result.IntValue, Is.EqualTo(128));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestEqual()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x == y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x == y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(123, 123);
+			var resultInt2 = tester.CompareInt(123, 321);
+			var resultFloat1 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 321.5f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.True);
+			Assert.That(resultInt2, Is.False);
+			Assert.That(resultFloat1, Is.True);
+			Assert.That(resultFloat2, Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestNotEqual()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x != y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x != y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(123, 123);
+			var resultInt2 = tester.CompareInt(123, 321);
+			var resultFloat1 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 321.5f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.False);
+			Assert.That(resultInt2, Is.True);
+			Assert.That(resultFloat1, Is.False);
+			Assert.That(resultFloat2, Is.True);
+		}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLessThan()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x < y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x < y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(100, 200);
+			var resultInt2 = tester.CompareInt(100, 100);
+			var resultInt3 = tester.CompareInt(200, 100);
+			var resultFloat1 = tester.CompareFloat(123.4f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat3 = tester.CompareFloat(123.5f, 123.4f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.True);
+			Assert.That(resultInt2, Is.False);
+			Assert.That(resultInt3, Is.False);
+			Assert.That(resultFloat1, Is.True);
+			Assert.That(resultFloat2, Is.False);
+			Assert.That(resultFloat3, Is.False);
 		}
 	}
 }
