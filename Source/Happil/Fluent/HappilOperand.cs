@@ -235,6 +235,13 @@ namespace Happil.Fluent
 
 		public HappilOperand<TCast> As<TCast>()
 		{
+			var castType = TypeTemplate.Resolve<TCast>();
+
+			if ( castType.IsValueType && !castType.IsNullableValueType() )
+			{
+				throw new ArgumentException("The cast type must be a reference type or a nullable value type.");
+			}
+	
 			return new HappilBinaryExpression<T, Type, TCast>(
 				OwnerMethod,
 				@operator: new BinaryOperators.OperatorTryCast<T>(),

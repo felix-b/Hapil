@@ -218,14 +218,18 @@ namespace Happil
 
 		public static void EmitCast(ILGenerator il, Type fromType, Type toType)
 		{
-
 			if ( fromType.IsValueType )
 			{
 				EmitValueTypeConversion(il, fromType, toType);
 			}
-			else if ( !toType.IsValueType )
+			else if ( !toType.IsValueType || toType.IsNullableValueType() )
 			{
 				il.Emit(OpCodes.Castclass, toType);
+
+				if ( toType.IsNullableValueType() )
+				{
+					il.Emit(OpCodes.Unbox_Any, toType);
+				}
 			}
 			else
 			{

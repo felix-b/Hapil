@@ -314,5 +314,15 @@ namespace Happil.UnitTests
 			public TimeSpan TimeSpanValue { get; set; }
 			public SqlInt32 SqlIntValue { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface ICastTester
+		{
+			System.IO.Stream CastToStream(object input);
+			int? CastToNullableInt(object input);
+			object CastToObject(int input);
+			object CastNullableToObject(int? input);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -540,6 +541,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(resultFloat1, Is.False);
 			Assert.That(resultFloat2, Is.True);
 		}
+		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
@@ -576,6 +578,415 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(resultFloat1, Is.True);
 			Assert.That(resultFloat2, Is.False);
 			Assert.That(resultFloat3, Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLessThanOrEqual()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x <= y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x <= y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(100, 200);
+			var resultInt2 = tester.CompareInt(100, 100);
+			var resultInt3 = tester.CompareInt(200, 100);
+			var resultFloat1 = tester.CompareFloat(123.4f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat3 = tester.CompareFloat(123.5f, 123.4f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.True);
+			Assert.That(resultInt2, Is.True);
+			Assert.That(resultInt3, Is.False);
+			Assert.That(resultFloat1, Is.True);
+			Assert.That(resultFloat2, Is.True);
+			Assert.That(resultFloat3, Is.False);
+		}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestGreaterThan()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x > y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x > y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(100, 200);
+			var resultInt2 = tester.CompareInt(100, 100);
+			var resultInt3 = tester.CompareInt(200, 100);
+			var resultFloat1 = tester.CompareFloat(123.4f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat3 = tester.CompareFloat(123.5f, 123.4f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.False);
+			Assert.That(resultInt2, Is.False);
+			Assert.That(resultInt3, Is.True);
+			Assert.That(resultFloat1, Is.False);
+			Assert.That(resultFloat2, Is.False);
+			Assert.That(resultFloat3, Is.True);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestGreaterThanOrEqual()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IComparisonTester>()
+				.Method<int, int, bool>(intf => intf.CompareInt).Implement((m, x, y) => {
+					m.Return(x >= y);
+				})
+				.Method<float, float, bool>(intf => intf.CompareFloat).Implement((m, x, y) => {
+					m.Return(x >= y);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IComparisonTester>().UsingDefaultConstructor();
+			var resultInt1 = tester.CompareInt(100, 200);
+			var resultInt2 = tester.CompareInt(100, 100);
+			var resultInt3 = tester.CompareInt(200, 100);
+			var resultFloat1 = tester.CompareFloat(123.4f, 123.5f);
+			var resultFloat2 = tester.CompareFloat(123.5f, 123.5f);
+			var resultFloat3 = tester.CompareFloat(123.5f, 123.4f);
+
+			//-- Assert
+
+			Assert.That(resultInt1, Is.False);
+			Assert.That(resultInt2, Is.True);
+			Assert.That(resultInt3, Is.True);
+			Assert.That(resultFloat1, Is.False);
+			Assert.That(resultFloat2, Is.True);
+			Assert.That(resultFloat3, Is.True);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTryCast_ReferenceTypes()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<object, Stream>(intf => intf.CastToStream).Implement((m, obj) => {
+					m.Return(obj.As<Stream>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			object inputObj1 = new MemoryStream();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+			var outputStream1 = tester.CastToStream(inputObj1);
+			var outputStream2 = tester.CastToStream("STRING");
+			var outputStream3 = tester.CastToStream(null);
+
+			//-- Assert
+
+			Assert.That(outputStream1, Is.SameAs(inputObj1));
+			Assert.That(outputStream2, Is.Null);
+			Assert.That(outputStream3, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTryCast_ObjectToNullableValueType()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<object, int?>(intf => intf.CastToNullableInt).Implement((m, obj) => {
+					m.Return(obj.As<int?>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+			var outputValue1 = tester.CastToNullableInt(123);
+			var outputValue2 = tester.CastToNullableInt("ABC");
+			var outputValue3 = tester.CastToNullableInt(null);
+
+			//-- Assert
+
+			Assert.That(outputValue1, Is.EqualTo(123));
+			Assert.That(outputValue2, Is.EqualTo(default(int?)));
+			Assert.That(outputValue3, Is.EqualTo(default(int?)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTryCast_ValueTypeToObject()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<int, object>(intf => intf.CastToObject).Implement((m, num) => {
+					m.Return(num.As<object>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+			object outputObject1 = tester.CastToObject(123);
+
+			//-- Assert
+
+			Assert.That(outputObject1, Is.EqualTo(123));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTryCast_NullableValueTypeToObject()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<int?, object>(intf => intf.CastNullableToObject).Implement((m, nullableNum) => {
+					m.Return(nullableNum.As<object>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+			
+			object outputObject1 = tester.CastNullableToObject(123);
+			object outputObject2 = tester.CastNullableToObject(null);
+
+			//-- Assert
+
+			Assert.That(outputObject1, Is.EqualTo(123));
+			Assert.That(outputObject2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTryCast_AttemptCastToValueType_Throw()
+		{
+			//-- Arrange
+
+			ArgumentException caughtException = null;
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method(intf => intf.One).Implement(m => {
+					var o = m.Local<object>(m.New<object>());
+					var x = m.Local<int>();
+					
+					ExpectException<ArgumentException>(
+						() => x.Assign(o.As<int>()),
+						out caughtException);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+
+			//-- Assert
+
+			Assert.That(caughtException, Is.Not.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCastOrThrow_ReferenceTypes()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<object, Stream>(intf => intf.CastToStream).Implement((m, obj) => {
+					m.Return(obj.CastTo<Stream>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			object inputObj1 = new MemoryStream();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+			var outputStream1 = tester.CastToStream(inputObj1);
+			var outputStream2 = tester.CastToStream(null);
+			
+			ExpectException<InvalidCastException>(() => tester.CastToStream("STRING"));
+
+			//-- Assert
+
+			Assert.That(outputStream1, Is.SameAs(inputObj1));
+			Assert.That(outputStream2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCastOrThrow_ObjectToNullableValueType()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<object, int?>(intf => intf.CastToNullableInt).Implement((m, obj) => {
+					m.Return(obj.CastTo<int?>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+			var outputValue1 = tester.CastToNullableInt(123);
+			var outputValue2 = tester.CastToNullableInt(null);
+
+			ExpectException<InvalidCastException>(() => tester.CastToNullableInt("STRING"));
+
+			//-- Assert
+
+			Assert.That(outputValue1, Is.EqualTo(123));
+			Assert.That(outputValue2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCastOrThrow_ValueTypeToObject()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<int, object>(intf => intf.CastToObject).Implement((m, num) => {
+					m.Return(num.CastTo<object>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+			object outputObject1 = tester.CastToObject(123);
+
+			//-- Assert
+
+			Assert.That(outputObject1, Is.EqualTo(123));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCastOrThrow_NullableValueTypeToObject()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ICastTester>()
+				.Method<int?, object>(intf => intf.CastNullableToObject).Implement((m, nullableNum) => {
+					m.Return(nullableNum.CastTo<object>());
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+			object outputObject1 = tester.CastNullableToObject(123);
+			object outputObject2 = tester.CastNullableToObject(null);
+
+			//-- Assert
+
+			Assert.That(outputObject1, Is.EqualTo(123));
+			Assert.That(outputObject2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestNullCoalesce()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+					var output = m.Local(m.New<InOut>());
+					output.Prop(x => x.StringValue).Assign(in1.Prop(x => x.StringValue).OrDefault(in2.Prop(x => x.StringValue)));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			
+			var result1 = tester.Binary(new InOut { StringValue = "ABC" }, new InOut { StringValue = "DEF" });
+			var result2 = tester.Binary(new InOut { StringValue = "ABC" }, new InOut { StringValue = null });
+			var result3 = tester.Binary(new InOut { StringValue = null }, new InOut { StringValue = "DEF" });
+			var result4 = tester.Binary(new InOut { StringValue = null }, new InOut { StringValue = null });
+
+			//-- Assert
+
+			Assert.That(result1.StringValue, Is.EqualTo("ABC"));
+			Assert.That(result2.StringValue, Is.EqualTo("ABC"));
+			Assert.That(result3.StringValue, Is.EqualTo("DEF"));
+			Assert.That(result4.StringValue, Is.Null);
 		}
 	}
 }

@@ -71,6 +71,35 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected void ExpectException<TException>(Action codeUnderTest, out TException caughtException) where TException : Exception
+		{
+			try
+			{
+				codeUnderTest();
+				caughtException = null;
+			}
+			catch ( TException e )
+			{
+				caughtException = e;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void ExpectException<TException>(Action codeUnderTest) where TException : Exception
+		{
+			try
+			{
+				codeUnderTest();
+				Assert.Fail("Expected exception of type " + typeof(TException).Name);
+			}
+			catch ( TException )
+			{
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected virtual bool ShouldSaveAssembly
 		{
 			get

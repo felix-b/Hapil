@@ -531,6 +531,18 @@ namespace Happil.UnitTests
 
 				object y0 = new System.IO.MemoryStream();
 				IDisposable y1 = (y0 as IDisposable);
+
+				Console.WriteLine("---2---");
+				int? nullableNum = (y0 as int?);
+
+				Console.WriteLine("---3---");
+				object obj1 = (nullableNum as object);
+
+				Console.WriteLine("---4---");
+				object obj2 = (x0 as object);
+
+				Console.WriteLine("---5---");
+				object obj3 = (nullableNum as object);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
