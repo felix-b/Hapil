@@ -47,6 +47,77 @@ namespace Happil.UnitTests.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CanCreateStaticConstructor()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.StaticConstructor(m => {
+					Static.Prop(() => OutputList).Add(m.Const(".CCTOR"));
+				})
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOneProperty>()
+				.AllProperties().ImplementAutomatic();
+
+			OutputList = new List<string>();
+
+			//-- Act
+
+			var obj1 = CreateClassInstanceAs<AncestorRepository.IOneProperty>().UsingDefaultConstructor();
+			var output1 = OutputList.ToArray();
+
+			var obj2 = CreateClassInstanceAs<AncestorRepository.IOneProperty>().UsingDefaultConstructor();
+			var output2 = OutputList.ToArray();
+
+			//-- Assert
+
+			Assert.That(output1, Is.EqualTo(new[] { ".CCTOR" }));
+			Assert.That(output2, Is.EqualTo(new[] { ".CCTOR" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanInitializeStaticFields()
+		{
+			//-- Arrange
+
+			HappilField<int> intField;
+			HappilField<string> stringField;
+
+			DeriveClassFrom<object>()
+				.StaticField<int>("s_IntField", out intField)
+				.StaticField<string>("s_StringField", out stringField)
+				.StaticConstructor(m => {
+					intField.AssignConst(123);
+					stringField.AssignConst("ABC");
+				})
+				.DefaultConstructor()
+				.ImplementInterface<IMyFieldValues>()
+				.Method<int>(intf => intf.GetIntFieldValue).Implement(f => {
+					f.Return(intField);
+				})
+				.Method<string>(intf => intf.GetStringFieldValue).Implement(f => {
+					f.Return(stringField);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<IMyFieldValues>().UsingDefaultConstructor();
+
+			//-- Assert
+
+			Assert.That(obj.GetIntFieldValue(), Is.EqualTo(123));
+			Assert.That(obj.GetStringFieldValue(), Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static List<string> OutputList { get; set; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface IMyFieldValues
 		{
 			int GetIntFieldValue();

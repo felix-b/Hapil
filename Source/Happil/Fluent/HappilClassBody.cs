@@ -92,7 +92,7 @@ namespace Happil.Fluent
 
 		public HappilField<T> Field<T>(string name)
 		{
-			var field = new HappilField<T>(m_HappilClass, name);
+			var field = new HappilField<T>(m_HappilClass, name, isStatic: false);
 			m_HappilClass.RegisterMember(field);
 			return field;
 		}
@@ -107,9 +107,46 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilField<T> StaticField<T>(string name)
+		{
+			var field = new HappilField<T>(m_HappilClass, name, isStatic: true);
+			m_HappilClass.RegisterMember(field);
+			return field;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> StaticField<T>(string name, out HappilField<T> field)
+		{
+			field = this.StaticField<T>(name);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilClassBody<TBase> DefaultConstructor()
 		{
 			return DefineConstructor(ctor => ctor.Base());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> StaticConstructor(
+			Action<IHappilConstructorBody> body)
+		{
+			var constructorMember = HappilConstructor.CreateStaticConstructor(m_HappilClass);
+
+			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
+				{
+					using ( constructorMember.CreateBodyScope() )
+					{
+						body(constructorMember);
+					}
+				}
+			});
+
+			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

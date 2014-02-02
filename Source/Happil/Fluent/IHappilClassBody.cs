@@ -17,7 +17,11 @@ namespace Happil.Fluent
 		HappilField<T> Field<T>(string name);
 		IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field);
 
+		HappilField<T> StaticField<T>(string name);
+		IHappilClassBody<TBase> StaticField<T>(string name, out HappilField<T> field);
+
 		IHappilClassBody<TBase> DefaultConstructor();
+		IHappilClassBody<TBase> StaticConstructor(Action<IHappilConstructorBody> body);
 		IHappilClassBody<TBase> Constructor(Action<IHappilConstructorBody> body);
 		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilConstructorBody, HappilArgument<TArg1>> body);
 		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);

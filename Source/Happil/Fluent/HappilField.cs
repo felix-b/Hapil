@@ -8,11 +8,11 @@ using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	//TODO: this class only implements instance fields; should implement static fields as well
 	public class HappilField<T> : HappilAssignable<T>, IHappilMember, ICanEmitAddress
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly FieldBuilder m_FieldBuilder;
+		private readonly bool m_IsStatic;
 		
 		//TODO: remove this field
 		private readonly string m_Name;
@@ -29,14 +29,17 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilField(HappilClass happilClass, string name)
+		internal HappilField(HappilClass happilClass, string name, bool isStatic = false)
 			: base(ownerMethod: null)
 		{
 			m_HappilClass = happilClass;
 			m_Name = happilClass.TakeMemberName(name);
+			m_IsStatic = isStatic;
 
 			var actualType = TypeTemplate.Resolve<T>();
-			m_FieldBuilder = happilClass.TypeBuilder.DefineField(m_Name, actualType, FieldAttributes.Private);
+			var attributes = (isStatic ? FieldAttributes.Private | FieldAttributes.Static : FieldAttributes.Private);
+
+			m_FieldBuilder = happilClass.TypeBuilder.DefineField(m_Name, actualType, attributes);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -45,7 +48,7 @@ namespace Happil.Fluent
 		{
 			get
 			{
-				return true; //TODO: if instance; false if static
+				return !m_IsStatic;
 			}
 		}
 
@@ -102,28 +105,31 @@ namespace Happil.Fluent
 		
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldarg_0); // push 'this' reference onto stack
+			if ( !m_IsStatic )
+			{
+				il.Emit(OpCodes.Ldarg_0); // push 'this' reference onto stack
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldfld, m_FieldBuilder);  // push field value onto stack
+			il.Emit(m_IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, m_FieldBuilder);  // push field value onto stack
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			il.Emit(OpCodes.Stfld, m_FieldBuilder);  // pop value from stack into field
+			il.Emit(m_IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, m_FieldBuilder);  // pop value from stack into field
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldflda, m_FieldBuilder);  // push field address onto stack
+			il.Emit(m_IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_FieldBuilder);  // push field address onto stack
 		}
 	}
 }

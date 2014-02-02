@@ -556,5 +556,16 @@ namespace Happil.UnitTests
 
 			public int OutputValue { get; set; }
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class StaticConstructorExample
+		{
+			static StaticConstructorExample()
+			{
+				OutputList.Add(".CCTOR");
+			}
+
+		}
 	}
 }

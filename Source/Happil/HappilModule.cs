@@ -66,7 +66,7 @@ namespace Happil
 				TypeAttributes.Public |
 				TypeAttributes.Class |
 				TypeAttributes.Sealed |
-				TypeAttributes.BeforeFieldInit |
+				//TypeAttributes.BeforeFieldInit |
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
 
@@ -82,7 +82,7 @@ namespace Happil
 				TypeAttributes.Public |
 				TypeAttributes.Class |
 				TypeAttributes.Sealed |
-				TypeAttributes.BeforeFieldInit |
+				//TypeAttributes.BeforeFieldInit |
 				TypeAttributes.AutoClass |
 				TypeAttributes.AnsiClass;
 

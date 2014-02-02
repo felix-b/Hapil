@@ -13,6 +13,18 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private HappilConstructor(HappilClass happilClass)
+			: base(happilClass)
+		{
+			m_ArgumentTypes = new Type[0];
+			m_ConstructorBuilder = happilClass.TypeBuilder.DefineConstructor(
+				MethodAttributes.Private | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig | MethodAttributes.Static,
+				CallingConventions.Standard,
+				m_ArgumentTypes);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilConstructor(HappilClass happilClass, Type[] argumentTypes)
 			: base(happilClass)
 		{
@@ -159,6 +171,13 @@ namespace Happil.Fluent
 			}
 
 			throw new InvalidOperationException("Base constructor not found.");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilConstructor CreateStaticConstructor(HappilClass ownerClass)
+		{
+			return new HappilConstructor(ownerClass);
 		}
 	}
 }
