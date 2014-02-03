@@ -324,5 +324,12 @@ namespace Happil.UnitTests
 			object CastToObject(int input);
 			object CastNullableToObject(int? input);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class EnumerableTester
+		{
+			public abstract IEnumerable<string> DoTest(IEnumerable<string> source);
+		}
 	}
 }

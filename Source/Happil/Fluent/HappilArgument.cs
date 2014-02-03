@@ -17,13 +17,15 @@ namespace Happil.Fluent
 		internal HappilArgument(HappilMethod ownerMethod, byte index)
 			: base(ownerMethod)
 		{
-			if ( index < 1 )
+			var indexBase = (ownerMethod.IsStatic ? 0 : 1);
+
+			if ( index < indexBase )
 			{
-				throw new ArgumentOutOfRangeException("index", "Argument index must be 1-based.");
+				throw new ArgumentOutOfRangeException("index", string.Format("Argument index must be {0}-based.", indexBase));
 			}
 
 			m_Index = index;
-			m_IsByRef = ownerMethod.GetArgumentTypes()[index - 1].IsByRef;
+			m_IsByRef = ownerMethod.GetArgumentTypes()[index - indexBase].IsByRef;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

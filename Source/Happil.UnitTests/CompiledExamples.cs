@@ -565,7 +565,23 @@ namespace Happil.UnitTests
 			{
 				OutputList.Add(".CCTOR");
 			}
+		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class LambdaExample
+		{
+			public IEnumerable<string> SelectStrings(IEnumerable<string> source)
+			{
+				return source.Where(LambdaMethod);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private static bool LambdaMethod(string s)
+			{
+				return (s.Length > 2);
+			}
 		}
 	}
 }

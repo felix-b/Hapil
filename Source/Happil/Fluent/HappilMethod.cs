@@ -20,12 +20,14 @@ namespace Happil.Fluent
 		private readonly List<IHappilStatement> m_Statements;
 		private readonly Type[] m_ArgumentTypes;
 		private Type[] m_TemplateActualTypePairs = null;
+		private readonly bool m_IsStatic;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilMethod(HappilClass happilClass, MethodInfo declaration)
 			: this(happilClass)
 		{
+			m_IsStatic = false;
 			m_Declaration = declaration;
 			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
 				happilClass.TakeMemberName(declaration.Name),
@@ -34,7 +36,24 @@ namespace Happil.Fluent
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
 			happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
+			
 			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilMethod(HappilClass happilClass, string name, Type returnType, Type[] argumentTypes)
+			: this(happilClass)
+		{
+			m_IsStatic = true;
+			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
+				happilClass.TakeMemberName(name),
+				MethodAttributes.Static | MethodAttributes.Private | MethodAttributes.HideBySig,
+				returnType,
+				argumentTypes);
+
+			m_Declaration = m_MethodBuilder;
+			m_ArgumentTypes = argumentTypes;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -233,6 +252,49 @@ namespace Happil.Fluent
 		public void Throw()
 		{
 			AddStatement(new RethrowStatement());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
+		{
+			return new HappilAnonymousDeletage<TArg1, TReturn>(m_HappilClass, body);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(
+			ref IHappilDelegate site, 
+			Action<IHappilMethodBody<TReturn>, 
+			HappilArgument<TArg1>> body)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Delegate(body);
+			}
+			
+			return (HappilAnonymousDeletage<TArg1, TReturn>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
+		{
+			return Delegate<TArg1, TResult>((m, arg1) => m.Return(expression(arg1)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
+			ref IHappilDelegate site, 
+			Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Lambda(expression);
+			}
+			
+			return (HappilAnonymousDeletage<TArg1, TResult>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -449,6 +511,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public bool IsStatic
+		{
+			get
+			{
+				return m_IsStatic;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected virtual ILGenerator GetILGenerator()
 		{
 			return m_MethodBuilder.GetILGenerator();
@@ -479,7 +551,7 @@ namespace Happil.Fluent
 
 		protected virtual Type[] BuildTemplateActualTypePairs()
 		{
-			var parameterTypes = m_Declaration.GetParameters().Select(p => p.ParameterType).ToArray();
+			var parameterTypes = m_ArgumentTypes;// m_Declaration.GetParameters().Select(p => p.ParameterType).ToArray();
 			var pairs = new Type[(1 + parameterTypes.Length) * 2];
 
 			pairs[0] = typeof(TypeTemplate.TReturn);
@@ -526,7 +598,7 @@ namespace Happil.Fluent
 				MethodAttributes.Public |
 				MethodAttributes.Virtual;
 
-			if ( declaration.DeclaringType.IsInterface )
+			if ( declaration != null && declaration.DeclaringType.IsInterface )
 			{
 				attributes |= MethodAttributes.NewSlot;
 			}
@@ -541,6 +613,13 @@ namespace Happil.Fluent
 	{
 		public HappilMethod(HappilClass happilClass, MethodInfo declaration)
 			: base(happilClass, declaration)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilMethod(HappilClass happilClass, string name, Type returnType, Type[] argumentTypes)
+			: base(happilClass, name, returnType, argumentTypes)
 		{
 		}
 

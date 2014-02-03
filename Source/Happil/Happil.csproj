@@ -43,9 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="EnumerableShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Expressions\HappilAnonymousDelegate.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
+    <Compile Include="Expressions\IHappilDelegate.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\IValueTypeInitializer.cs" />
     <Compile Include="Expressions\NewStructExpression.cs" />
@@ -118,6 +121,7 @@
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Static.cs" />
     <Compile Include="StringShortcuts.cs" />
+    <Compile Include="TSource.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeTemplate.cs" />
   </ItemGroup>

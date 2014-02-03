@@ -229,8 +229,9 @@ namespace Happil.Fluent
 
 		private void DefineMemberBodies()
 		{
-			foreach ( var tuple in m_MemberBodyDefinitions )
+			for ( int index = 0 ; index < m_MemberBodyDefinitions.Count ; index++ )
 			{
+				var tuple = m_MemberBodyDefinitions[index];
 				var member = tuple.Item1;
 				var bodyDefinitionAction = tuple.Item2;
 

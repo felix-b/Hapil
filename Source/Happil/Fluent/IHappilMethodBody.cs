@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Happil.Expressions;
 using Happil.Selectors;
 using Happil.Statements;
 
@@ -34,6 +35,10 @@ namespace Happil.Fluent
 		IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length);
 		void Throw<TException>(string message) where TException : Exception;
 		void Throw();
+		HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
+		HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(ref IHappilDelegate site, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
+		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
+		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(ref IHappilDelegate site, Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
 		void EmitFromLambda(Expression<Action> lambda);
 		HappilArgument<T> Argument<T>(string name);
 		HappilArgument<T> Argument<T>(byte index);

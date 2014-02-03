@@ -222,56 +222,56 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<int> Length(this IHappilOperand<string> str)
+		public static HappilOperand<int> Length(this IHappilOperand<string> str)
 		{
 			return new PropertyAccessOperand<int>(str, s_Length);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> PadLeft(this IHappilOperand<string> str, IHappilOperand<int> totalWidth, IHappilOperand<char> paddingChar = null)
+		public static HappilOperand<string> PadLeft(this IHappilOperand<string> str, IHappilOperand<int> totalWidth, IHappilOperand<char> paddingChar = null)
 		{
 			throw new NotImplementedException();	
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> PadRight(this IHappilOperand<string> str, IHappilOperand<int> totalWidth, IHappilOperand<char> paddingChar = null)
+		public static HappilOperand<string> PadRight(this IHappilOperand<string> str, IHappilOperand<int> totalWidth, IHappilOperand<char> paddingChar = null)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Remove(this IHappilOperand<string> str, IHappilOperand<int> index, IHappilOperand<int> count = null)
+		public static HappilOperand<string> Remove(this IHappilOperand<string> str, IHappilOperand<int> index, IHappilOperand<int> count = null)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<char> oldChar, IHappilOperand<char> newChar)
+		public static HappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<char> oldChar, IHappilOperand<char> newChar)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<string> oldValue, IHappilOperand<string> newValue)
+		public static HappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<string> oldValue, IHappilOperand<string> newValue)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string[]> Split(this IHappilOperand<string> str, params char[] separator)
+		public static HappilOperand<string[]> Split(this IHappilOperand<string> str, params char[] separator)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string[]> Split(
+		public static HappilOperand<string[]> Split(
 			this IHappilOperand<string> str, 
 			IHappilOperand<char[]> separator, 
 			IHappilOperand<int> count = null,
@@ -282,14 +282,14 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string[]> Split(this IHappilOperand<string> str, params string[] separator)
+		public static HappilOperand<string[]> Split(this IHappilOperand<string> str, params string[] separator)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string[]> Split(
+		public static HappilOperand<string[]> Split(
 			this IHappilOperand<string> str,
 			IHappilOperand<string[]> separator,
 			IHappilOperand<int> count = null,
@@ -300,21 +300,21 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> StartsWith(this IHappilOperand<string> str, IHappilOperand<string> value, bool ignoreCase = false)
+		public static HappilOperand<string> StartsWith(this IHappilOperand<string> str, IHappilOperand<string> value, bool ignoreCase = false)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Substring(this IHappilOperand<string> str, IHappilOperand<int> startIndex, IHappilOperand<int> length = null)
+		public static HappilOperand<string> Substring(this IHappilOperand<string> str, IHappilOperand<int> startIndex, IHappilOperand<int> length = null)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<char[]> ToCharArray(
+		public static HappilOperand<char[]> ToCharArray(
 			this IHappilOperand<string> str, 
 			IHappilOperand<int> startIndex = null, 
 			IHappilOperand<int> length = null)
@@ -324,98 +324,98 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> ToLower(this IHappilOperand<string> str)
+		public static HappilOperand<string> ToLower(this IHappilOperand<string> str)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> ToLowerInvariant(this IHappilOperand<string> str)
+		public static HappilOperand<string> ToLowerInvariant(this IHappilOperand<string> str)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> ToUpper(this IHappilOperand<string> str)
+		public static HappilOperand<string> ToUpper(this IHappilOperand<string> str)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> ToUpperInvariant(this IHappilOperand<string> str)
+		public static HappilOperand<string> ToUpperInvariant(this IHappilOperand<string> str)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Trim(this IHappilOperand<string> str)
+		public static HappilOperand<string> Trim(this IHappilOperand<string> str)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Trim(this IHappilOperand<string> str, params char[] trimChars)
+		public static HappilOperand<string> Trim(this IHappilOperand<string> str, params char[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Trim(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
+		public static HappilOperand<string> Trim(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Trim(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
+		public static HappilOperand<string> Trim(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimEnd(this IHappilOperand<string> str, params char[] trimChars)
+		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, params char[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimEnd(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
+		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimEnd(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
+		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimStart(this IHappilOperand<string> str, params char[] trimChars)
+		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, params char[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimStart(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
+		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
 		{
 			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> TrimStart(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
+		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
 			throw new NotImplementedException();
 		}
