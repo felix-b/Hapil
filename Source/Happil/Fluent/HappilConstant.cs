@@ -50,19 +50,16 @@ namespace Happil.Fluent
 		protected override void OnEmitLoad(ILGenerator il)
 		{
 			var actualValue = ResolveActualValue();
-			var convertible = actualValue as IConvertible;
 
-			if ( convertible != null )
+			if ( !TryEmitConvertibleValue(il, actualValue as IConvertible) )
 			{
-				Helpers.EmitConvertible(il, convertible);
-			}
-			else if ( object.ReferenceEquals(null, actualValue) )
-			{
-				EmitNull(il);
-			}
-			else
-			{
-				throw Helpers.CreateConstantNotSupportedException(OperandType);
+				if ( !TryEmitStaticDelegateValue(il, actualValue as Delegate) )
+				{
+					if ( !TryEmitNullValue(il, actualValue) )
+					{
+						throw Helpers.CreateConstantNotSupportedException(OperandType);
+					}
+				}
 			}
 		}
 
@@ -89,9 +86,55 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void EmitNull(ILGenerator il)
+		private bool TryEmitConvertibleValue(ILGenerator il, IConvertible convertible)
 		{
-			il.Emit(OpCodes.Ldnull);
+			if ( convertible != null )
+			{
+				Helpers.EmitConvertible(il, convertible);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool TryEmitStaticDelegateValue(ILGenerator il, Delegate @delegate)
+		{
+			if ( @delegate != null )
+			{
+				if ( !@delegate.Method.IsStatic )
+				{
+					throw new NotSupportedException("Constants of delegate types can only point to static methods.");
+				}
+
+				il.Emit(OpCodes.Ldnull);
+				il.Emit(OpCodes.Ldftn, @delegate.Method);
+				il.Emit(OpCodes.Newobj, DelegateShortcuts.GetDelegateConstructor(@delegate.GetType()));
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool TryEmitNullValue(ILGenerator il, object value)
+		{
+			if ( object.ReferenceEquals(null, value) )
+			{
+				il.Emit(OpCodes.Ldnull);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

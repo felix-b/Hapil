@@ -43,10 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="EnumerableShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Expressions\HappilAnonymousDelegate.cs" />
+    <Compile Include="Expressions\HappilDelegate.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
     <Compile Include="Expressions\IHappilDelegate.cs" />
     <Compile Include="Expressions\INonPostfixNotation.cs" />

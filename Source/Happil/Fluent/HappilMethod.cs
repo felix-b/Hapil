@@ -258,7 +258,7 @@ namespace Happil.Fluent
 
 		public HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
 		{
-			return new HappilAnonymousDeletage<TArg1, TReturn>(m_HappilClass, body);
+			return new HappilAnonymousDelegate<TArg1, TReturn>(m_HappilClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -273,7 +273,15 @@ namespace Happil.Fluent
 				site = (IHappilDelegate)Delegate(body);
 			}
 			
-			return (HappilAnonymousDeletage<TArg1, TReturn>)site;
+			return (HappilAnonymousDelegate<TArg1, TReturn>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		{
+			var method = Helpers.GetMethodInfoFromLambda(methodSelector).First();
+			return new HappilDelegate<TMethod>(target, method);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -294,7 +302,7 @@ namespace Happil.Fluent
 				site = (IHappilDelegate)Lambda(expression);
 			}
 			
-			return (HappilAnonymousDeletage<TArg1, TResult>)site;
+			return (HappilAnonymousDelegate<TArg1, TResult>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

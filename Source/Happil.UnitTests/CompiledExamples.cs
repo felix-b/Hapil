@@ -573,12 +573,44 @@ namespace Happil.UnitTests
 		{
 			public IEnumerable<string> SelectStrings(IEnumerable<string> source)
 			{
-				return source.Where(LambdaMethod);
+				return source.Where(StaticLambdaMethod);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private static bool LambdaMethod(string s)
+			private static bool CallDelegate(string s, Func<string, bool> func)
+			{
+				return func(s);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private bool MakeDelegate(string s)
+			{
+				Console.WriteLine("---1---");
+				Func<string, bool> staticFunc = StaticLambdaMethod;
+				Console.WriteLine("---2---");
+				Func<string, bool> instanceFunc = InstanceLambdaMethod;
+
+				Console.WriteLine("---3---");
+				var result1 = staticFunc(s);
+				Console.WriteLine("---4---");
+				var result2 = instanceFunc(s);
+
+				Console.WriteLine("---5---");
+				return true;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private bool InstanceLambdaMethod(string s)
+			{
+				return (s.Length > 2);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private static bool StaticLambdaMethod(string s)
 			{
 				return (s.Length > 2);
 			}

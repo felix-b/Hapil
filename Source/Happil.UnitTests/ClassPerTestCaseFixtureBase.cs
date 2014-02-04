@@ -257,7 +257,7 @@ namespace Happil.UnitTests
 
 			public TBase UsingConstructor<T>(T arg, int constructorIndex = 0)
 			{
-				throw new NotImplementedException();
+				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T>(constructorIndex, arg);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

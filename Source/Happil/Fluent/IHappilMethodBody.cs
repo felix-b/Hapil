@@ -37,6 +37,7 @@ namespace Happil.Fluent
 		void Throw();
 		HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
 		HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(ref IHappilDelegate site, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);
+		HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector);
 		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
 		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(ref IHappilDelegate site, Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
 		void EmitFromLambda(Expression<Action> lambda);
