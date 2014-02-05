@@ -14,8 +14,12 @@ namespace Happil.Fluent
 		IHappilClassBody<TBase> ImplementInterface(Type interfaceType, params Func<IHappilClassBody<object>, IHappilClassBody<TBase>>[] members);
 		IHappilClassBody<TInterface> ImplementInterface<TInterface>(params Func<IHappilClassBody<TInterface>, IHappilClassBody<TBase>>[] members);
 
+		IHappilClassBody<TBase> Attribute<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null) 
+			where TAttribute : Attribute;
+
 		HappilField<T> Field<T>(string name);
 		IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field);
+		IHappilClassBody<TBase> Field<T>(string name, IHappilAttributes attributes, out HappilField<T> field);
 
 		HappilField<T> StaticField<T>(string name);
 		IHappilClassBody<TBase> StaticField<T>(string name, out HappilField<T> field);

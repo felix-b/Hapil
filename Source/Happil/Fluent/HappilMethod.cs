@@ -509,6 +509,19 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public virtual void SetAttributes(HappilAttributes attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes.GetAttributes() )
+				{
+					m_MethodBuilder.SetCustomAttribute(attribute);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilClass HappilClass
 		{
 			get

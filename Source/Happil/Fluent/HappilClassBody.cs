@@ -90,6 +90,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilClassBody<TBase> Attribute<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new HappilAttributeBuilder<TAttribute>(values);
+			m_HappilClass.TypeBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilField<T> Field<T>(string name)
 		{
 			var field = new HappilField<T>(m_HappilClass, name, isStatic: false);
@@ -102,6 +112,21 @@ namespace Happil.Fluent
 		public IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field)
 		{
 			field = this.Field<T>(name);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> Field<T>(string name, IHappilAttributes attributes, out HappilField<T> field)
+		{
+			field = this.Field<T>(name);
+			var customAttributes = ((HappilAttributes)attributes).GetAttributes();
+
+			foreach ( var attribute in customAttributes )
+			{
+				field.FieldBuilder.SetCustomAttribute(attribute);
+			}
+
 			return this;
 		}
 

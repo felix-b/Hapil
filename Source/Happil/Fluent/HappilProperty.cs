@@ -96,6 +96,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilProperty<T> Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new HappilAttributeBuilder<TAttribute>(values);
+			m_PropertyBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected override void OnEmitTarget(ILGenerator il)
 		{
 			throw new NotSupportedException();
@@ -318,6 +328,19 @@ namespace Happil.Fluent
 				{
 					SetterMethod = OwnerProperty.GetValidSetterMethod();
 					m_SetterBodyDefinition = value;
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			internal void SetAttributes(HappilAttributes attributes)
+			{
+				if ( attributes != null )
+				{
+					foreach ( var attribute in attributes.GetAttributes() )
+					{
+						OwnerProperty.PropertyBuilder.SetCustomAttribute(attribute);
+					}
 				}
 			}
 		}

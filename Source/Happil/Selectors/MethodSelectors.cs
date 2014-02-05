@@ -125,7 +125,18 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IVoidHappilMethodBody> body)
 			{
-				return DefineMembers<object>(methodMember => body((IVoidHappilMethodBody)methodMember));
+				return Implement(null, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(IHappilAttributes attributes, Action<IVoidHappilMethodBody> body)
+			{
+				return DefineMembers<object>(
+					methodMember => {
+						methodMember.SetAttributes(attributes as HappilAttributes);
+						body((IVoidHappilMethodBody)methodMember);
+					});
 			}
 		}
 

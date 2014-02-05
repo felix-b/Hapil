@@ -51,7 +51,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IMoreMethods>()
 				.AllMethods(m => m.IsVoid()).Implement(m => { })
-				.AllMethods(m => !m.IsVoid()).Implement( 
+				.AllMethods(m => !m.IsVoid()).Implement(
 					m => {
 						m.Return(m.Default<TypeTemplate.TReturn>());
 					});

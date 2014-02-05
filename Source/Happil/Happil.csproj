@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="EnumerableShortcuts.cs" />
@@ -57,6 +58,10 @@
     <Compile Include="Expressions\PropertyAccessOperand.cs" />
     <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />
+    <Compile Include="Fluent\HappilAttributeBuilder.cs" />
+    <Compile Include="Fluent\HappilAttributes.cs" />
+    <Compile Include="Fluent\IHappilAttributeBuilder.cs" />
+    <Compile Include="Fluent\IHappilAttributes.cs" />
     <Compile Include="ImplementableMembers.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />

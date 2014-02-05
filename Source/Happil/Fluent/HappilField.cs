@@ -102,6 +102,16 @@ namespace Happil.Fluent
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilField<T> Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new HappilAttributeBuilder<TAttribute>(values);
+			m_FieldBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		protected override void OnEmitTarget(ILGenerator il)
 		{
@@ -130,6 +140,16 @@ namespace Happil.Fluent
 		protected override void OnEmitAddress(ILGenerator il)
 		{
 			il.Emit(m_IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_FieldBuilder);  // push field address onto stack
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal FieldBuilder FieldBuilder
+		{
+			get
+			{
+				return m_FieldBuilder;
+			}
 		}
 	}
 }

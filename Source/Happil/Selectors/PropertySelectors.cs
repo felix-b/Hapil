@@ -160,7 +160,19 @@ namespace Happil.Selectors
 				Func<IHappilPropertyBody<TProperty>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TProperty>, IHappilPropertySetter> setter = null)
 			{
+				return Implement(null, getter, setter);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Func<IHappilPropertyBody<TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TProperty>, IHappilPropertySetter> setter = null)
+			{
 				DefineMembers<TProperty>(body => {
+					body.SetAttributes(attributes as HappilAttributes);
+					
 					if ( getter != null )
 					{
 						getter((IHappilPropertyBody<TProperty>)body);
