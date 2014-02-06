@@ -43,7 +43,18 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Throw<TException>(string message = null) where TException : Exception
 			{
-				return DefineMembers<object>(m => m.Throw<TException>(message));
+				return DefineMembers<object>(
+					attributes: m => null, 
+					invokeBodyDefinition: m => m.Throw<TException>(message));
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Throw<TException>(IHappilAttributes attributes, string message = null) where TException : Exception
+			{
+				return DefineMembers<object>(
+					attributes: m => attributes,
+					invokeBodyDefinition: m => m.Throw<TException>(message));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -60,7 +71,9 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			internal IHappilClassBody<TBase> DefineMembers<TReturn>(Action<HappilMethod> invokeBodyDefinition)
+			internal IHappilClassBody<TBase> DefineMembers<TReturn>(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes,
+				Action<HappilMethod> invokeBodyDefinition)
 			{
 				var methodsToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods);
 
@@ -74,10 +87,12 @@ namespace Happil.Selectors
 					OwnerBody.HappilClass.RegisterMember(
 						methodMember,
 						bodyDefinition: () => {
+							methodMember.SetAttributes(attributes);
 							using ( methodMember.CreateBodyScope() )
 							{
 								invokeBodyDefinition(methodMember);
 							}
+							methodMember.DefineReturnAttributes();
 						});
 				}
 				
@@ -103,7 +118,23 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBodyTemplate> body)
 			{
-				return DefineMembers<TypeTemplate.TReturn>(methodMember => {
+				return Implement(m => null, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(IHappilAttributes attributes, Action<IHappilMethodBodyTemplate> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IHappilMethodBodyTemplate> body)
+			{
+				return DefineMembers<TypeTemplate.TReturn>(attributes, methodMember => {
 					using ( TypeTemplate.CreateScope(typeof(TypeTemplate.TReturn), methodMember.ReturnType) )
 					{
 						body(methodMember);
@@ -125,18 +156,23 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IVoidHappilMethodBody> body)
 			{
-				return Implement(null, body);
+				return Implement(m => null, body);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public IHappilClassBody<TBase> Implement(IHappilAttributes attributes, Action<IVoidHappilMethodBody> body)
 			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(Func<IHappilMethodBodyBase, IHappilAttributes> attributes, Action<IVoidHappilMethodBody> body)
+			{
 				return DefineMembers<object>(
-					methodMember => {
-						methodMember.SetAttributes(attributes as HappilAttributes);
-						body((IVoidHappilMethodBody)methodMember);
-					});
+					attributes, 
+					methodMember => body((IVoidHappilMethodBody)methodMember));
 			}
 		}
 
@@ -153,9 +189,26 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body)
 			{
-				return DefineMembers<object>(methodMember => body(
-					(IVoidHappilMethodBody)methodMember,
-					new HappilArgument<TArg1>(methodMember, 1)));
+				return Implement(m => null, body);
+			}
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>> body)
+			{
+				return DefineMembers<object>(attributes, methodMember => {
+					body((IVoidHappilMethodBody)methodMember, new HappilArgument<TArg1>(methodMember, 1));
+				});
 			}
 		}
 
@@ -172,10 +225,27 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
 			{
-				return DefineMembers<object>(methodMember => body(
-					(IVoidHappilMethodBody)methodMember,
-					new HappilArgument<TArg1>(methodMember, 1),
-					new HappilArgument<TArg2>(methodMember, 2)));
+				return Implement(m => null, body);
+			}
+	
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes, 
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			{
+				return DefineMembers<object>(attributes, methodMember => {
+					body((IVoidHappilMethodBody)methodMember, new HappilArgument<TArg1>(methodMember, 1), new HappilArgument<TArg2>(methodMember, 2));
+				});
 			}
 		}
 
@@ -192,7 +262,25 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
 			{
-				return DefineMembers<object>(methodMember => body(
+				return Implement(m => null, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IVoidHappilMethodBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			{
+				return DefineMembers<object>(attributes, methodMember => body(
 					(IVoidHappilMethodBody)methodMember,
 					new HappilArgument<TArg1>(methodMember, 1),
 					new HappilArgument<TArg2>(methodMember, 2),
@@ -213,7 +301,27 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBody<TReturn>> body)
 			{
-				return DefineMembers<TReturn>(methodMember => body((IHappilMethodBody<TReturn>)methodMember));
+				return Implement(m => null, body);
+			}
+	
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IHappilMethodBody<TReturn>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IHappilMethodBody<TReturn>> body)
+			{
+				return DefineMembers<TReturn>(
+					attributes, 
+					methodMember => body((IHappilMethodBody<TReturn>)methodMember));
 			}
 		}
 
@@ -230,9 +338,27 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
 			{
-				return DefineMembers<TReturn>(methodMember => body(
-					(IHappilMethodBody<TReturn>)methodMember,
-					new HappilArgument<TArg1>(methodMember, 1)));
+				return Implement(m => null, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
+			{
+				return DefineMembers<TReturn>(attributes, methodMember => {
+					body((IHappilMethodBody<TReturn>)methodMember, new HappilArgument<TArg1>(methodMember, 1));
+				});
 			}
 		}
 
@@ -246,13 +372,33 @@ namespace Happil.Selectors
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
-			
+
 			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
 			{
-				return DefineMembers<TReturn>(methodMember => body(
-					(IHappilMethodBody<TReturn>)methodMember,
-					new HappilArgument<TArg1>(methodMember, 1),
-					new HappilArgument<TArg2>(methodMember, 2)));
+				return Implement(m => null, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+			
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			{
+				return DefineMembers<TReturn>(attributes, methodMember => {
+					body(
+						(IHappilMethodBody<TReturn>)methodMember, 
+						new HappilArgument<TArg1>(methodMember, 1), 
+						new HappilArgument<TArg2>(methodMember, 2));
+				});
 			}
 		}
 
@@ -266,14 +412,35 @@ namespace Happil.Selectors
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
-			
-			public IHappilClassBody<TBase> Implement(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+
+			public IHappilClassBody<TBase> Implement(
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
 			{
-				return DefineMembers<TReturn>(methodMember => body(
-					(IHappilMethodBody<TReturn>)methodMember,
-					new HappilArgument<TArg1>(methodMember, 1),
-					new HappilArgument<TArg2>(methodMember, 2),
-					new HappilArgument<TArg3>(methodMember, 3)));
+				return Implement(m => null, body);
+			}
+	
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			{
+				return Implement(m => attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+			
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
+				Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			{
+				return DefineMembers<TReturn>(attributes, methodMember => {
+					body(
+						(IHappilMethodBody<TReturn>)methodMember,
+						new HappilArgument<TArg1>(methodMember, 1),
+						new HappilArgument<TArg2>(methodMember, 2),
+						new HappilArgument<TArg3>(methodMember, 3));
+				});
 			}
 		}
 	}

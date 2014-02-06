@@ -102,6 +102,19 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override void SetAttributes(HappilAttributes attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes.GetAttributes() )
+				{
+					m_ConstructorBuilder.SetCustomAttribute(attribute);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public ConstructorInfo ConstructorInfo
 		{
 			get
@@ -151,6 +164,13 @@ namespace Happil.Fluent
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal override ParameterBuilder DefineParameter(int position)
+		{
+			return m_ConstructorBuilder.DefineParameter(position, ParameterAttributes.None, strParamName: null);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 	

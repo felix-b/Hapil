@@ -11,6 +11,7 @@ namespace Happil.Fluent
 	{
 		private readonly byte m_Index;
 		private readonly bool m_IsByRef;
+		private readonly ParameterBuilder m_ParameterBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ namespace Happil.Fluent
 
 			m_Index = index;
 			m_IsByRef = ownerMethod.GetArgumentTypes()[index - indexBase].IsByRef;
+			m_ParameterBuilder = ownerMethod.DefineParameter(index - indexBase);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,6 +35,16 @@ namespace Happil.Fluent
 		public override string ToString()
 		{
 			return string.Format("Arg<{0}>{{#{1}}}", typeof(T).Name, m_Index);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilArgument<T> Attribute<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new HappilAttributeBuilder<TAttribute>(values);
+			m_ParameterBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
+			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

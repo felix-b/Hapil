@@ -54,6 +54,7 @@ namespace Happil.Fluent
 	{
 		void Return(IHappilOperand<TypeTemplate.TReturn> operand);
 		void Return();
+		IHappilAttributes ReturnAttributes { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,6 +63,7 @@ namespace Happil.Fluent
 	{
 		void Return(IHappilOperand<TReturn> operand);
 		void ReturnConst(TReturn constantValue);
+		IHappilAttributes ReturnAttributes { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

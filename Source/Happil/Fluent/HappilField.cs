@@ -144,6 +144,19 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal void SetAttributes(HappilAttributes attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes.GetAttributes() )
+				{
+					m_FieldBuilder.SetCustomAttribute(attribute);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal FieldBuilder FieldBuilder
 		{
 			get

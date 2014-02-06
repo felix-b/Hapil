@@ -73,11 +73,16 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			internal IHappilClassBody<TBase> DefineAutomaticImplementation<TProperty>()
+			internal IHappilClassBody<TBase> DefineAutomaticImplementation<TProperty>(Func<IHappilPropertyBody<TProperty>, IHappilAttributes> attributes)
 			{
 				DefineMembers<TProperty>(body => {
 					ValidateAutomaticImplementation(body.Declaration);
-					
+
+					if ( attributes != null )
+					{
+						body.SetAttributes(attributes((IHappilPropertyBody<TProperty>)body) as HappilAttributes);
+					}
+
 					((IHappilPropertyBody<TProperty>)body).Get(m => m.Return(body.BackingField));
 					((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.Assign(value));
 				});
@@ -123,7 +128,32 @@ namespace Happil.Selectors
 				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertySetter> setter = null)
 			{
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilAttributes> nullAttributes = null;
+				return Implement(nullAttributes, getter, setter);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertySetter> setter = null)
+			{
+				return Implement(prop => attributes, getter, setter);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilAttributes> attributes,
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilPropertySetter> setter = null)
+			{
 				DefineMembers<TypeTemplate.TProperty>(body => {
+					if ( attributes != null )
+					{
+						body.SetAttributes(attributes((IHappilPropertyBody<TypeTemplate.TProperty>)body) as HappilAttributes);
+					}
 					if ( getter != null )
 					{
 						getter((IHappilPropertyBody<TypeTemplate.TProperty>)body);
@@ -141,7 +171,21 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> ImplementAutomatic()
 			{
-				return DefineAutomaticImplementation<TypeTemplate.TProperty>();
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(attributes: null);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic(IHappilAttributes attributes)
+			{
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(prop => attributes);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic(Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilAttributes> attributes)
+			{
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(attributes);
 			}
 		}
 
@@ -190,7 +234,21 @@ namespace Happil.Selectors
 
 			public IHappilClassBody<TBase> ImplementAutomatic()
 			{
-				return DefineAutomaticImplementation<TypeTemplate.TProperty>();
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(attributes: null);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic(IHappilAttributes attributes)
+			{
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(prop => attributes);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> ImplementAutomatic(Func<IHappilPropertyBody<TypeTemplate.TProperty>, IHappilAttributes> attributes)
+			{
+				return DefineAutomaticImplementation<TypeTemplate.TProperty>(attributes);
 			}
 		}
 
@@ -209,7 +267,19 @@ namespace Happil.Selectors
 				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertySetter> setter = null)
 			{
+				return Implement(null, getter, setter);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TIndex, TProperty>, IHappilPropertySetter> setter = null)
+			{
 				DefineMembers<TProperty>(body => {
+					body.SetAttributes(attributes as HappilAttributes);
+		
 					if ( getter != null )
 					{
 						getter((IHappilPropertyBody<TIndex, TProperty>)body);
@@ -239,7 +309,19 @@ namespace Happil.Selectors
 				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertyGetter> getter,
 				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertySetter> setter = null)
 			{
+				return Implement(null, getter, setter);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Implement(
+				IHappilAttributes attributes,
+				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertyGetter> getter,
+				Func<IHappilPropertyBody<TIndex1, TIndex2, TProperty>, IHappilPropertySetter> setter = null)
+			{
 				DefineMembers<TProperty>(body => {
+					body.SetAttributes(attributes as HappilAttributes);
+
 					if ( getter != null )
 					{
 						getter((IHappilPropertyBody<TIndex1, TIndex2, TProperty>)body);

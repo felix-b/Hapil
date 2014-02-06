@@ -19,8 +19,9 @@ namespace Happil.Fluent
 		private readonly MethodInfo m_Declaration;
 		private readonly List<IHappilStatement> m_Statements;
 		private readonly Type[] m_ArgumentTypes;
-		private Type[] m_TemplateActualTypePairs = null;
 		private readonly bool m_IsStatic;
+		private Type[] m_TemplateActualTypePairs = null;
+		private HappilAttributes m_ReturnAttributes = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -421,6 +422,21 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilAttributes ReturnAttributes
+		{
+			get
+			{
+				if ( m_ReturnAttributes == null )
+				{
+					m_ReturnAttributes = new HappilAttributes();
+				}
+
+				return m_ReturnAttributes;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region IHappilMethodBodyTemplate Members
 
 		public void Return(IHappilOperand<TypeTemplate.TReturn> operand)
@@ -509,6 +525,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void SetAttributes(Func<IHappilMethodBodyBase, IHappilAttributes> attributes)
+		{
+			if ( attributes != null )
+			{
+				SetAttributes(attributes(this) as HappilAttributes);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public virtual void SetAttributes(HappilAttributes attributes)
 		{
 			if ( attributes != null )
@@ -516,6 +542,21 @@ namespace Happil.Fluent
 				foreach ( var attribute in attributes.GetAttributes() )
 				{
 					m_MethodBuilder.SetCustomAttribute(attribute);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void DefineReturnAttributes()
+		{
+			if ( m_MethodBuilder != null && m_Declaration.ReturnParameter != null && m_ReturnAttributes != null )
+			{
+				var returnParameter = m_MethodBuilder.DefineParameter(0, m_Declaration.ReturnParameter.Attributes, m_Declaration.ReturnParameter.Name);
+
+				foreach ( var attribute in m_ReturnAttributes.GetAttributes() )
+				{
+					returnParameter.SetCustomAttribute(attribute);
 				}
 			}
 		}
@@ -559,6 +600,21 @@ namespace Happil.Fluent
 		internal protected virtual Type[] GetArgumentTypes()
 		{
 			return m_ArgumentTypes;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual ParameterBuilder DefineParameter(int position)
+		{
+			if ( m_Declaration == null || m_Declaration is MethodBuilder )
+			{
+				return m_MethodBuilder.DefineParameter(position, ParameterAttributes.None, strParamName: null);
+			}
+			else
+			{
+				var declaredParameter = m_Declaration.GetParameters()[position];
+				return m_MethodBuilder.DefineParameter(position + 1, declaredParameter.Attributes, declaredParameter.Name);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

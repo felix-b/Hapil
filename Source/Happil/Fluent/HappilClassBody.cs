@@ -120,13 +120,7 @@ namespace Happil.Fluent
 		public IHappilClassBody<TBase> Field<T>(string name, IHappilAttributes attributes, out HappilField<T> field)
 		{
 			field = this.Field<T>(name);
-			var customAttributes = ((HappilAttributes)attributes).GetAttributes();
-
-			foreach ( var attribute in customAttributes )
-			{
-				field.FieldBuilder.SetCustomAttribute(attribute);
-			}
-
+			field.SetAttributes(attributes as HappilAttributes);
 			return this;
 		}
 
@@ -149,21 +143,33 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> DefaultConstructor()
+		public IHappilClassBody<TBase> StaticField<T>(string name, IHappilAttributes attributes, out HappilField<T> field)
 		{
-			return DefineConstructor(ctor => ctor.Base());
+			field = this.StaticField<T>(name);
+			field.SetAttributes(attributes as HappilAttributes);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> DefaultConstructor(IHappilAttributes attributes = null)
+		{
+			return DefineConstructor(attributes, ctor => ctor.Base());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> StaticConstructor(
-			Action<IHappilConstructorBody> body)
+			Action<IHappilConstructorBody> body,
+			IHappilAttributes attributes = null)
 		{
 			var constructorMember = HappilConstructor.CreateStaticConstructor(m_HappilClass);
 
-			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+			m_HappilClass.RegisterMember( constructorMember, bodyDefinition: () => {
 				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
 				{
+					constructorMember.SetAttributes(attributes as HappilAttributes);
+
 					using ( constructorMember.CreateBodyScope() )
 					{
 						body(constructorMember);
@@ -177,17 +183,20 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> Constructor(
-			Action<IHappilConstructorBody> body)
+			Action<IHappilConstructorBody> body,
+			IHappilAttributes attributes = null)
 		{
-			return DefineConstructor(body);
+			return DefineConstructor(attributes, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> Constructor<TArg1>(
-			Action<IHappilConstructorBody, HappilArgument<TArg1>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>> body,
+			IHappilAttributes attributes = null)
 		{
 			return DefineConstructor(
+				attributes,
 				(ctor) => body(ctor, new HappilArgument<TArg1>(ctor, 1)),
 				typeof(TArg1));
 		}
@@ -195,9 +204,11 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> Constructor<TArg1, TArg2>(
-			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body,
+			IHappilAttributes attributes = null)
 		{
 			return DefineConstructor(
+				attributes,
 				(ctor) => body(ctor, new HappilArgument<TArg1>(ctor, 1), new HappilArgument<TArg2>(ctor, 2)),
 				typeof(TArg1), typeof(TArg2));
 		}
@@ -205,9 +216,11 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
-			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body)
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body,
+			IHappilAttributes attributes = null)
 		{
 			return DefineConstructor(
+				attributes,
 				(ctor) => body(ctor, new HappilArgument<TArg1>(ctor, 1), new HappilArgument<TArg2>(ctor, 2), new HappilArgument<TArg3>(ctor, 3)),
 				typeof(TArg1), typeof(TArg2), typeof(TArg3));
 		}
@@ -471,7 +484,10 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private IHappilClassBody<TBase> DefineConstructor(Action<HappilConstructor> invokeBodyDefinition, params Type[] argumentTypes)
+		private IHappilClassBody<TBase> DefineConstructor(
+			IHappilAttributes attributes, 
+			Action<HappilConstructor> invokeBodyDefinition, 
+			params Type[] argumentTypes)
 		{
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var constructorMember = new HappilConstructor(m_HappilClass, resolvedArgumentTypes);
@@ -479,6 +495,7 @@ namespace Happil.Fluent
 			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
 				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
 				{
+					constructorMember.SetAttributes(attributes as HappilAttributes);
 					using ( constructorMember.CreateBodyScope() )
 					{
 						invokeBodyDefinition(constructorMember);

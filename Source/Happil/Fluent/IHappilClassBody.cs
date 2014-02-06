@@ -23,14 +23,17 @@ namespace Happil.Fluent
 
 		HappilField<T> StaticField<T>(string name);
 		IHappilClassBody<TBase> StaticField<T>(string name, out HappilField<T> field);
+		IHappilClassBody<TBase> StaticField<T>(string name, IHappilAttributes attributes, out HappilField<T> field);
 
-		IHappilClassBody<TBase> DefaultConstructor();
-		IHappilClassBody<TBase> StaticConstructor(Action<IHappilConstructorBody> body);
-		IHappilClassBody<TBase> Constructor(Action<IHappilConstructorBody> body);
-		IHappilClassBody<TBase> Constructor<TArg1>(Action<IHappilConstructorBody, HappilArgument<TArg1>> body);
-		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body);
+		IHappilClassBody<TBase> DefaultConstructor(IHappilAttributes attributes = null);
+		IHappilClassBody<TBase> StaticConstructor(Action<IHappilConstructorBody> body, IHappilAttributes attributes = null);
+		IHappilClassBody<TBase> Constructor(Action<IHappilConstructorBody> body, IHappilAttributes attributes = null);
+		IHappilClassBody<TBase> Constructor<TArg1>(
+			Action<IHappilConstructorBody, HappilArgument<TArg1>> body, IHappilAttributes attributes = null);
+		IHappilClassBody<TBase> Constructor<TArg1, TArg2>(
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>> body, IHappilAttributes attributes = null);
 		IHappilClassBody<TBase> Constructor<TArg1, TArg2, TArg3>(
-			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body);
+			Action<IHappilConstructorBody, HappilArgument<TArg1>, HappilArgument<TArg2>, HappilArgument<TArg3>> body, IHappilAttributes attributes = null);
 
 		MethodSelectors.Void<TBase> Method(Expression<Func<TBase, Action>> method);
 		MethodSelectors.Void1Arg<TBase, TArg1> Method<TArg1>(Expression<Func<TBase, Action<TArg1>>> method);
