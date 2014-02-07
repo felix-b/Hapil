@@ -629,5 +629,28 @@ namespace Happil.UnitTests
 			Assert.That(inputT2, Is.EqualTo(TimeSpan.FromMinutes(2)));
 			Assert.That(outputT, Is.EqualTo(TimeSpan.FromMinutes(2)));
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceEvents_ImplementAllAutomatic()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewEvents>()
+				.AllEvents().ImplementAutomatic()
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingDefaultConstructor();
+
+
+			//-- Assert
+
+		}
+
 	}
 }

@@ -615,5 +615,22 @@ namespace Happil.UnitTests
 				return (s.Length > 2);
 			}
 		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class EventExample
+		{
+			public void RaiseSimpleEvent()
+			{
+				if ( SimpleEvent != null )
+				{
+					SimpleEvent(this, EventArgs.Empty);
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public event EventHandler SimpleEvent;
+		}
 	}
 }

@@ -65,6 +65,7 @@
     <Compile Include="Expressions\UnaryOperatorTests.cs" />
     <Compile Include="Fluent\ConstructorTests.cs" />
     <Compile Include="Fluent\CSharpTests.cs" />
+    <Compile Include="Fluent\HappilEventTests.cs" />
     <Compile Include="Fluent\InvocationTests.cs" />
     <Compile Include="Fluent\OperandTests.cs" />
     <Compile Include="Fluent\StatementTests.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="SetShortcutsTests.cs" />
     <Compile Include="SignatureTests.cs" />
     <Compile Include="Statements\CallStatementTests.cs" />
+    <Compile Include="Statements\DoWhileStatementTests.cs" />
     <Compile Include="Statements\ForeachStatementTests.cs" />
     <Compile Include="Statements\ForStatementTests.cs" />
     <Compile Include="Statements\IfStatementTests.cs" />

@@ -440,27 +440,27 @@ namespace Happil.Fluent
 				m_ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex1), typeof(TIndex2)).SelectIf(where));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public EventSelectors.Typed<TBase, TDelegate> Event<TDelegate>(Expression<Func<TBase, TDelegate>> @event)
-		{
-			//return new EventSelectors.Typed<TBase, TDelegate>(this, typeof(TBase).GetEvents().SelectIf(where));
-			throw new NotImplementedException();
-		}
+		//public EventSelectors.Typed<TBase, TDelegate> Event<TDelegate>(Expression<Func<TBase, TDelegate>> @event)
+		//{
+		//	//return new EventSelectors.Typed<TBase, TDelegate>(this, typeof(TBase).GetEvents().SelectIf(where));
+		//	throw new NotImplementedException();
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public EventSelectors.Untyped<TBase> AllEvents(Func<EventInfo, bool> where = null)
 		{
-			throw new NotImplementedException();
+			return new EventSelectors.Untyped<TBase>(this, typeof(TBase).GetEvents().SelectIf(where));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public EventSelectors.Typed<TBase, TDelegate> Events<TDelegate>(Func<EventInfo, bool> where = null)
-		{
-			throw new NotImplementedException();
-		}
+		//public EventSelectors.Typed<TBase, TDelegate> Events<TDelegate>(Func<EventInfo, bool> where = null)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		#endregion
 

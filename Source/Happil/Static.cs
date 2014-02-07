@@ -78,6 +78,20 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilOperand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+			Func<TArg1, TArg2, TArg3, TReturn> member,
+			IHappilOperand<TArg1> arg1,
+			IHappilOperand<TArg2> arg2,
+			IHappilOperand<TArg3> arg3)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
+
+			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static HappilAssignable<TProp> Prop<TProp>(Expression<Func<TProp>> propertyLambda)
 		{
 			var property = Helpers.GetPropertyInfoArrayFromLambda(propertyLambda).First();

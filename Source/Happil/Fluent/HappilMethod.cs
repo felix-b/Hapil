@@ -36,8 +36,11 @@ namespace Happil.Fluent
 				declaration.ReturnType, 
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
-			happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
-			
+			if ( !declaration.IsSpecialName )
+			{
+				happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
+			}
+
 			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
 		}
 
@@ -86,6 +89,13 @@ namespace Happil.Fluent
 		public IHappilWhileSyntax While(IHappilOperand<bool> condition)
 		{
 			return AddStatement(new WhileStatement(condition));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilDoWhileSyntax Do(Action<IHappilLoopBody> body)
+		{
+			return AddStatement(new DoWhileStatement(body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

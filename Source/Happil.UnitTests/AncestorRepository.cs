@@ -152,6 +152,24 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public interface IFewEvents
+		{
+			void RaiseOne();
+			string RaiseTwo(string input);
+			event EventHandler EventOne;
+			event EventHandler<InOutEventArgs> EventTwo;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class InOutEventArgs : EventArgs
+		{
+			public string InputValue { get; set; }
+			public string OutputValue { get; set; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface IOneProperty
 		{
 			int PropertyOne { get; set; }

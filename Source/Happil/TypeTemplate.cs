@@ -23,7 +23,8 @@ namespace Happil
 				typeof(TBase), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
 				typeof(TReturn), typeof(TProperty),
 				typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
-				typeof(TIndex1), typeof(TIndex2)
+				typeof(TIndex1), typeof(TIndex2),
+				typeof(TEventHandler)
 			});
 
 			s_ArgumentTemplateTypes = new[] {
@@ -172,6 +173,7 @@ namespace Happil
 		public class TArg8 : TemplateTypeBase<TArg8> { }
 		public class TIndex1 : TemplateTypeBase<TIndex1> { }
 		public class TIndex2 : TemplateTypeBase<TIndex2> { }
+		public class TEventHandler : TemplateTypeBase<TEventHandler> { }
 
 		// ReSharper restore InconsistentNaming
 
