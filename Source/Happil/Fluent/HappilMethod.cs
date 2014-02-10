@@ -26,20 +26,27 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilMethod(HappilClass happilClass, MethodInfo declaration)
+			: this(happilClass, declaration, GetMethodAttributesFor(declaration))
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilMethod(HappilClass happilClass, MethodInfo declaration, MethodAttributes methodAttributes)
 			: this(happilClass)
 		{
 			m_IsStatic = false;
 			m_Declaration = declaration;
 			m_MethodBuilder = happilClass.TypeBuilder.DefineMethod(
 				happilClass.TakeMemberName(declaration.Name),
-				GetMethodAttributesFor(declaration),
+				methodAttributes,
 				declaration.ReturnType, 
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
-			if ( !declaration.IsSpecialName )
-			{
+			//if ( !declaration.IsSpecialName )
+			//{
 				happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
-			}
+			//}
 
 			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
 		}
@@ -253,6 +260,14 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void RaiseEvent(string eventName, IHappilOperand<EventArgs> eventArgs)
+		{
+			var eventMember = m_HappilClass.FindMember<HappilEvent>(eventName);
+			eventMember.RaiseEvent(this, eventArgs);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Throw<TException>(string message) where TException : Exception
 		{
 			AddStatement(new ThrowStatement(typeof(TException), message));
@@ -291,7 +306,7 @@ namespace Happil.Fluent
 
 		public HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
 		{
-			var method = Helpers.GetMethodInfoFromLambda(methodSelector).First();
+			var method = Helpers.ResolveMethodFromLambda(methodSelector);
 			return new HappilDelegate<TMethod>(target, method);
 		}
 
@@ -739,5 +754,14 @@ namespace Happil.Fluent
 			: base(happilClass, declaration)
 		{
 		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public VoidHappilMethod(HappilClass happilClass, MethodInfo declaration, MethodAttributes methodAttributes)
+			: base(happilClass, declaration, methodAttributes)
+		{
+
+		}
 	}
+
 }

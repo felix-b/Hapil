@@ -31,7 +31,7 @@ namespace Happil
 
 		public static bool IsOfSignature(this MethodInfo method, Type returnType, params Type[] parameterTypes)
 		{
-			if ( method.ReturnType != TypeTemplate.Resolve(returnType) )
+			if ( !method.ReturnType.IsGenericParameter && method.ReturnType != TypeTemplate.Resolve(returnType) )
 			{
 				return false;
 			}
@@ -45,6 +45,11 @@ namespace Happil
 
 			for ( int i = 0 ; i < parameterTypes.Length ; i++ )
 			{
+				if ( actualParameterTypes[i].IsGenericParameter )
+				{
+					continue;
+				}
+
 				if ( TypeTemplate.Resolve(parameterTypes[i]) != actualParameterTypes[i] )
 				{
 					return false;

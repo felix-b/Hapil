@@ -618,19 +618,38 @@ namespace Happil.UnitTests
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class EventExample
+		public class EventExample : AncestorRepository.IFewEvents
 		{
-			public void RaiseSimpleEvent()
+			#region IFewEvents Members
+
+			public void RaiseOne()
 			{
-				if ( SimpleEvent != null )
+				if ( EventOne != null )
 				{
-					SimpleEvent(this, EventArgs.Empty);
+					EventOne(this, EventArgs.Empty);
 				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public event EventHandler SimpleEvent;
+			public string RaiseTwo(string input)
+			{
+				var args = new AncestorRepository.InOutEventArgs();
+
+				if ( EventTwo != null )
+				{
+					EventTwo(this, args);
+				}
+
+				return args.OutputValue;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public event EventHandler EventOne;
+			public event EventHandler<AncestorRepository.InOutEventArgs> EventTwo;
+
+			#endregion
 		}
 	}
 }

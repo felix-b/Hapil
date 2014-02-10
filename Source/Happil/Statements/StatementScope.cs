@@ -145,11 +145,15 @@ namespace Happil.Statements
 		{
 			if ( expression != null )
 			{
-				var lastExpressionStatement = (m_StatementList.LastOrDefault() as ExpressionStatement);
-
-				if ( lastExpressionStatement != null && object.ReferenceEquals(lastExpressionStatement.Expression, expression) )
+				for ( int index = m_StatementList.Count - 1 ; index >= 0 ; index-- )
 				{
-					m_StatementList.RemoveAt(m_StatementList.Count - 1);
+					var statement = (m_StatementList[index] as ExpressionStatement);
+
+					if ( statement != null && ReferenceEquals(statement.Expression, expression) )
+					{
+						m_StatementList.RemoveAt(index);
+						break;
+					}
 				}
 			}
 		}

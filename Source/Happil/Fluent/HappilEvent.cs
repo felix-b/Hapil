@@ -10,6 +10,16 @@ namespace Happil.Fluent
 {
 	internal class HappilEvent : IHappilMember
 	{
+		private const MethodAttributes ContainedMethodAttributes = 
+			MethodAttributes.Public | 
+			MethodAttributes.NewSlot | 
+			MethodAttributes.Final | 
+			MethodAttributes.HideBySig | 
+			MethodAttributes.SpecialName | 
+			MethodAttributes.Virtual;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private readonly HappilClass m_HappilClass;
 		private readonly EventInfo m_Declaration;
 		private readonly EventBuilder m_EventBuilder;
@@ -28,11 +38,11 @@ namespace Happil.Fluent
 			using ( CreateTypeTemplateScope() )
 			{
 				m_BackingField = new HappilField<TypeTemplate.TEventHandler>(happilClass, "m_" + declaration.Name + "EventHandler");
-				
-				m_AddMethod = new VoidHappilMethod(happilClass, declaration.GetAddMethod());
+
+				m_AddMethod = new VoidHappilMethod(happilClass, declaration.GetAddMethod(), ContainedMethodAttributes);
 				m_EventBuilder.SetAddOnMethod(m_AddMethod.MethodBuilder);
 
-				m_RemoveMethod = new VoidHappilMethod(happilClass, declaration.GetRemoveMethod());
+				m_RemoveMethod = new VoidHappilMethod(happilClass, declaration.GetRemoveMethod(), ContainedMethodAttributes);
 				m_EventBuilder.SetRemoveOnMethod(m_RemoveMethod.MethodBuilder);
 			}
 		}
@@ -83,7 +93,29 @@ namespace Happil.Fluent
 				}
 			}
 		}
-	
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void RaiseEvent(IHappilMethodBodyBase m, IHappilOperand args)
+		{
+			using ( CreateTypeTemplateScope() )
+			{
+				m.If(m_BackingField != m.Const<TypeTemplate.TEventHandler>(null)).Then(() => {
+					m_BackingField.Invoke(m.This<TypeTemplate.TBase>(), args);
+				});
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilField<TypeTemplate.TEventHandler> BackingField
+		{
+			get
+			{
+				return m_BackingField;
+			}
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private void DefineAddMethodBody(IVoidHappilMethodBody m, HappilArgument<TypeTemplate.TEventHandler> value)
@@ -99,7 +131,7 @@ namespace Happil.Fluent
 					oldHandler.CastTo<Delegate>(),
 					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
 
-				lastHandler.Assign(Static.Func((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
+				lastHandler.Assign(Static.GenericFunc((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
 					m_BackingField,
 					newHandler,
 					oldHandler));
@@ -121,7 +153,7 @@ namespace Happil.Fluent
 					oldHandler.CastTo<Delegate>(), 
 					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
 
-				lastHandler.Assign(Static.Func((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
+				lastHandler.Assign(Static.GenericFunc((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
 					m_BackingField,
 					newHandler,
 					oldHandler));

@@ -37,7 +37,7 @@ namespace Happil.Fluent
 
 		public void Void(Expression<Func<T, Action>> member)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			StatementScope.Current.AddStatement(new CallStatement(this, method));
 		}
 
@@ -45,7 +45,7 @@ namespace Happil.Fluent
 
 		public void Void<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
 		}
 
@@ -53,7 +53,7 @@ namespace Happil.Fluent
 
 		public void Void<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
 		}
 
@@ -61,7 +61,7 @@ namespace Happil.Fluent
 
 		public void Void<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2, arg3));
 		}
 
@@ -69,7 +69,7 @@ namespace Happil.Fluent
 
 		public HappilOperand<TReturn> Func<TReturn>(Expression<Func<T, Func<TReturn>>> member)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method), this);
 		}
 
@@ -77,7 +77,7 @@ namespace Happil.Fluent
 
 		public HappilOperand<TReturn> Func<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1);
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
 		}
@@ -87,7 +87,7 @@ namespace Happil.Fluent
 		public HappilOperand<TReturn> Func<TArg1, TArg2, TReturn>(
 			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
 		{
-			var method = ValidateMemberIsMethodOfType(Helpers.GetMethodInfoFromLambda(member).First());
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1, arg2);
 
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);

@@ -349,5 +349,24 @@ namespace Happil.UnitTests
 		{
 			public abstract IEnumerable<string> DoTest(IEnumerable<string> source);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IFewGenericMethods
+		{
+			void One<T>();
+			T Two<T>(T value);
+			TOut Three<TIn, TOut>(TIn input);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IGenericIterfaceWithFewMethods<T>
+		{
+			void One();
+			T Two(T value);
+			TOut Three<TOut>(T input);
+			TOut Four<TAux, TOut>(T input, TAux aux);
+		}
 	}
 }

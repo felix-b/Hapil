@@ -92,7 +92,14 @@ namespace Happil.Fluent
 
 		public TMember FindMember<TMember>(string name) where TMember : IHappilMember
 		{
-			return m_Members.OfType<TMember>().Where(m => m.Name == name).First();
+			var member = m_Members.OfType<TMember>().Where(m => m.Name == name).FirstOrDefault();
+
+			if ( object.ReferenceEquals(member, null) )
+			{
+				throw new ArgumentException(string.Format("{0} member named '{1}' was not defined.", typeof(TMember).Name, name));
+			}
+
+			return member;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

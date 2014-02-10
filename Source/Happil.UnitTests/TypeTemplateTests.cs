@@ -221,6 +221,7 @@ namespace Happil.UnitTests
 			Assert.That(constructorInfo.GetParameters().Length, Is.EqualTo(2));
 			Assert.That(constructorInfo.GetParameters()[0].ParameterType, Is.EqualTo(typeof(Repo.BaseOne)));
 			Assert.That(constructorInfo.GetParameters()[1].ParameterType, Is.EqualTo(typeof(Repo.IOneProperty)));
+
 		}
 	}
 }

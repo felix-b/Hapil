@@ -12,6 +12,16 @@ namespace Happil
 {
 	public static class DelegateShortcuts
 	{
+		public static void Invoke(this IHappilOperand<TypeTemplate.TEventHandler> eventDelegate, IHappilOperand sender, IHappilOperand eventArgs)
+		{
+			StatementScope.Current.AddStatement(new CallStatement(
+				eventDelegate, 
+				GetReflectionCache(eventDelegate.OperandType).Invoke, 
+				sender, eventArgs));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static void Invoke(this IHappilOperand<Action> action)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action>().Invoke));

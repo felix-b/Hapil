@@ -92,14 +92,45 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<TProp> Prop<TProp>(Expression<Func<TProp>> propertyLambda)
+		public static HappilOperand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
+			Expression<Func<TArg1, TArg2, TArg3, TReturn>> member,
+			IHappilOperand<TArg1> arg1,
+			IHappilOperand<TArg2> arg2,
+			IHappilOperand<TArg3> arg3)
 		{
-			var property = Helpers.GetPropertyInfoArrayFromLambda(propertyLambda).First();
-			ValidateStaticMethod(property.GetGetMethod() ?? property.GetSetMethod(), "propertyLambda");
+			var method = Helpers.ResolveMethodFromLambda(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
 
-			return new PropertyAccessOperand<TProp>(
-				target: null,
-				property: property);
+			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilAssignable<TProp> Prop<TProp>(Expression<Func<TProp>> propertyOrField)
+		{
+			var member = Helpers.GetMemberFromLambda(propertyOrField);
+
+			if ( member is PropertyInfo )
+			{
+				var property = Helpers.ResolvePropertyFromLambda(propertyOrField);
+				ValidateStaticMethod(property.GetGetMethod() ?? property.GetSetMethod(), "propertyLambda");
+
+				return new PropertyAccessOperand<TProp>(
+					target: null,
+					property: property);
+			}
+			else if ( member is FieldInfo )
+			{
+				var field = Helpers.ResolveFieldFromLambda(propertyOrField);
+
+				return new FieldAccessOperand<TProp>(
+					target: null,
+					field: field);
+			}
+			else
+			{
+				throw new ArgumentException("Specified lamba expression is not supported.");
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

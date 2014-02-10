@@ -43,10 +43,20 @@ namespace Happil
 				}
 			}
 
-			foreach ( var argument in arguments )
+			var methodParameters = (method is MethodBuilder || method is ConstructorBuilder ? null : method.GetParameters());
+
+			for ( int i = 0 ; i < arguments.Length ; i++ )
 			{
-				argument.EmitTarget(il);
-				argument.EmitLoad(il);
+				arguments[i].EmitTarget(il);
+
+				if ( methodParameters != null && methodParameters[i].ParameterType.IsByRef )
+				{
+					arguments[i].EmitAddress(il);
+				}
+				else
+				{
+					arguments[i].EmitLoad(il);
+				}
 			}
 
 			var methodInfo = (method as MethodInfo);
@@ -84,7 +94,42 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static MethodInfo[] GetMethodInfoFromLambda(LambdaExpression lambda)
+		public static MethodInfo ResolveMethodFromLambda(LambdaExpression lambda)
+		{
+			var originalDeclaration = ExtractMethodInfoFromLambda(lambda);
+			var shouldResolveDeclaringType = TypeTemplate.IsTemplateType(originalDeclaration.DeclaringType);
+
+			if ( !originalDeclaration.IsGenericMethod && !shouldResolveDeclaringType )
+			{
+				return originalDeclaration;
+			}
+
+			var resolvedDeclaration = originalDeclaration;
+
+			if ( shouldResolveDeclaringType )
+			{
+				var resolvedDeclaringType = TypeTemplate.Resolve(originalDeclaration.DeclaringType);
+				var resolvedReturnType = TypeTemplate.Resolve(originalDeclaration.ReturnType);
+				var resolvedParameterTypes = originalDeclaration.GetParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
+
+				resolvedDeclaration = TypeMembers.Of(resolvedDeclaringType)
+					.Methods.Where(m => m.Name == originalDeclaration.Name)
+					.OfSignature(resolvedReturnType, resolvedParameterTypes)
+					.Single();
+			}
+
+			if ( resolvedDeclaration.IsGenericMethod )
+			{
+				var resolvedGenericArguments = originalDeclaration.GetGenericArguments().Select(TypeTemplate.Resolve).ToArray();
+				resolvedDeclaration = resolvedDeclaration.GetGenericMethodDefinition().MakeGenericMethod(resolvedGenericArguments);
+			}
+
+			return resolvedDeclaration;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static MethodInfo ExtractMethodInfoFromLambda(LambdaExpression lambda)
 		{
 			MethodInfo methodDeclaration;
 
@@ -95,45 +140,61 @@ namespace Happil
 			}
 			else if ( lambda.Body is LambdaExpression )
 			{
-				/*
-				((LambdaExpression)lambda.Body).Body as MethodCallExpression
-				{x.One(s1, s2)}
-					Arguments: Count = 2
-					CanReduce: false
-					DebugView: ".Call $x.One(\r\n    $s1,\r\n    $s2)"
-					Method: {System.String One(System.String ByRef, System.String ByRef)}
-					NodeType: Call
-					Object: {x}
-				*/
-
 				methodDeclaration = ((MethodCallExpression)((LambdaExpression)lambda.Body).Body).Method;
+			}
+			else if ( lambda.Body is MethodCallExpression )
+			{
+				methodDeclaration = ((MethodCallExpression)lambda.Body).Method;
 			}
 			else
 			{
 				throw new NotSupportedException("Specified lambda expression cannot be converted into method declaration.");
 			}
 
-			if ( TypeTemplate.IsTemplateType(methodDeclaration.DeclaringType) )
-			{
-				var resolvedDeclaringType = TypeTemplate.Resolve(methodDeclaration.DeclaringType);
-				var resolvedReturnType = TypeTemplate.Resolve(methodDeclaration.ReturnType);
-				var resolvedParameterTypes = methodDeclaration.GetParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
-				var resolvedDeclaration = ImplementableMembers.Of(resolvedDeclaringType)
-					.Methods.Where(m => m.Name == methodDeclaration.Name)
-					.OfSignature(resolvedReturnType, resolvedParameterTypes)
-					.Single();
+			return methodDeclaration;
+		}
 
-				return new[] { resolvedDeclaration };
-			}
-			else
-			{
-				return new[] { methodDeclaration };
-			}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static MethodInfo[] GetMethodInfoArrayFromLambda(LambdaExpression lambda)
+		{
+			return new[] { ResolveMethodFromLambda(lambda) };
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static PropertyInfo[] GetPropertyInfoArrayFromLambda(LambdaExpression lambda)
+		{
+			return new[] { ResolvePropertyFromLambda(lambda) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static MemberInfo GetMemberFromLambda(LambdaExpression lambda)
+		{
+			return ((MemberExpression)lambda.Body).Member;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static FieldInfo ResolveFieldFromLambda(LambdaExpression lambda)
+		{
+			var originalFieldInfo = (FieldInfo)((MemberExpression)lambda.Body).Member;
+
+			if ( TypeTemplate.IsTemplateType(originalFieldInfo.DeclaringType) )
+			{
+				var resolvedDeclaringType = TypeTemplate.Resolve(originalFieldInfo.DeclaringType);
+				return TypeMembers.Of(resolvedDeclaringType).Fields.Single(m => m.Name == originalFieldInfo.Name);
+			}
+			else
+			{
+				return originalFieldInfo;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static PropertyInfo ResolvePropertyFromLambda(LambdaExpression lambda)
 		{
 			var propertyInfo = (PropertyInfo)((MemberExpression)lambda.Body).Member;
 
@@ -142,16 +203,16 @@ namespace Happil
 				var resolvedDeclaringType = TypeTemplate.Resolve(propertyInfo.DeclaringType);
 				var resolvedPropertyType = TypeTemplate.Resolve(propertyInfo.PropertyType);
 				var resolvedParameterTypes = propertyInfo.GetIndexParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
-				var resolvedPropertyInfo = ImplementableMembers.Of(resolvedDeclaringType)
+				var resolvedPropertyInfo = TypeMembers.Of(resolvedDeclaringType)
 					.Properties.Where(p => p.Name == propertyInfo.Name)
 					.OfSignature(resolvedPropertyType, resolvedParameterTypes)
 					.Single();
 
-				return new[] { resolvedPropertyInfo };
+				return resolvedPropertyInfo;
 			}
 			else
 			{
-				return new[] { propertyInfo };
+				return propertyInfo;
 			}
 		}
 
@@ -224,7 +285,10 @@ namespace Happil
 			}
 			else if ( !toType.IsValueType || toType.IsNullableValueType() )
 			{
-				il.Emit(OpCodes.Castclass, toType);
+				if ( !toType.IsAssignableFrom(fromType) )
+				{
+					il.Emit(OpCodes.Castclass, toType);
+				}
 
 				if ( toType.IsNullableValueType() )
 				{

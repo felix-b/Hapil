@@ -7,28 +7,39 @@ using System.Text;
 
 namespace Happil
 {
-	public sealed class ImplementableMembers
+	public sealed class TypeMembers
 	{
 		private readonly Type m_ReflectedType;
 		private readonly Type[] m_TypeHierarchy;
+		private readonly FieldInfo[] m_Fields;
 		private readonly MethodInfo[] m_Methods;
+		private readonly MethodInfo[] m_ImplementableMethods;
 		private readonly PropertyInfo[] m_Properties;
+		private readonly PropertyInfo[] m_ImplementableProperties;
 		private readonly EventInfo[] m_Events;
+		private readonly EventInfo[] m_ImplementableEvents;
 		private readonly MemberInfo[] m_Members;
+		private readonly MemberInfo[] m_ImplementableMembers;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private ImplementableMembers(Type reflectedType)
+		private TypeMembers(Type reflectedType)
 		{
 			m_ReflectedType = reflectedType;
 			m_TypeHierarchy = reflectedType.GetTypeHierarchy();
 
-			var implementableBindingFlags = (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			var implementableBindingFlags = (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-			m_Methods = m_TypeHierarchy.SelectMany(t => t.GetMethods(implementableBindingFlags).Where(IsImplementableMethod)).ToArray();
-			m_Properties = m_TypeHierarchy.SelectMany(t => t.GetProperties(implementableBindingFlags).Where(IsImplementableProperty)).ToArray();
-			m_Events = m_TypeHierarchy.SelectMany(t => t.GetEvents(implementableBindingFlags).Where(IsImplementableEvent)).ToArray();
+			m_Fields = m_TypeHierarchy.SelectMany(t => t.GetFields(implementableBindingFlags)).ToArray();
+			m_Methods = m_TypeHierarchy.SelectMany(t => t.GetMethods(implementableBindingFlags)).ToArray();
+			m_Properties = m_TypeHierarchy.SelectMany(t => t.GetProperties(implementableBindingFlags)).ToArray();
+			m_Events = m_TypeHierarchy.SelectMany(t => t.GetEvents(implementableBindingFlags)).ToArray();
 			m_Members = m_Methods.Cast<MemberInfo>().Concat(m_Properties).Concat(m_Events).ToArray();
+
+			m_ImplementableMethods = m_Methods.Where(IsImplementableMethod).ToArray();
+			m_ImplementableProperties = m_Properties.Where(IsImplementableProperty).ToArray();
+			m_ImplementableEvents = m_Events.Where(IsImplementableEvent).ToArray();
+			m_ImplementableMembers = m_ImplementableMethods.Cast<MemberInfo>().Concat(m_ImplementableProperties).Concat(m_ImplementableEvents).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,9 +58,23 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public FieldInfo[] Fields
+		{
+			get { return m_Fields; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodInfo[] Methods
 		{
 			get { return m_Methods; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodInfo[] ImplementableMethods
+		{
+			get { return m_ImplementableMethods; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -61,6 +86,13 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public PropertyInfo[] ImplementableProperties
+		{
+			get { return m_ImplementableProperties; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public EventInfo[] Events
 		{
 			get { return m_Events; }
@@ -68,30 +100,37 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MemberInfo[] Members
+		public EventInfo[] ImplementableEvents
 		{
-			get { return m_Members; }
+			get { return m_ImplementableEvents; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static readonly ConcurrentDictionary<Type, ImplementableMembers> s_ImplementableMembersByReflectedType = 
-			new ConcurrentDictionary<Type, ImplementableMembers>();
+		public MemberInfo[] ImplementableMembers
+		{
+			get { return m_ImplementableMembers; }
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static ImplementableMembers Of<T>()
+		private static readonly ConcurrentDictionary<Type, TypeMembers> s_TypeMembersByReflectedType = 
+			new ConcurrentDictionary<Type, TypeMembers>();
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static TypeMembers Of<T>()
 		{
 			return Of(typeof(T));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static ImplementableMembers Of(Type reflectedType)
+		public static TypeMembers Of(Type reflectedType)
 		{
-			return s_ImplementableMembersByReflectedType.GetOrAdd(
+			return s_TypeMembersByReflectedType.GetOrAdd(
 				reflectedType, 
-				key => new ImplementableMembers(key));
+				key => new TypeMembers(key));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -34,6 +34,7 @@ namespace Happil.Fluent
 		HappilOperand<T> Default<T>();
 		IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments);
 		IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length);
+		void RaiseEvent(string eventName, IHappilOperand<EventArgs> eventArgs);
 		void Throw<TException>(string message) where TException : Exception;
 		void Throw();
 		HappilOperand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body);

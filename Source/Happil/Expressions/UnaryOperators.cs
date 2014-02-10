@@ -259,6 +259,11 @@ namespace Happil.Expressions
 				m_Method = method;
 				m_Arguments = arguments;
 				m_ShouldLeaveValueOnStack = false;
+
+				foreach ( var arg in m_Arguments )
+				{
+					StatementScope.Current.Consume(arg);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
