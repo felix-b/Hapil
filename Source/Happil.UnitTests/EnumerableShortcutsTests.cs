@@ -9,6 +9,29 @@ namespace Happil.UnitTests
 	[TestFixture]
 	public class EnumerableShortcutsTests : ClassPerTestCaseFixtureBase
 	{
+		//[Test]
+		//public void TestAll()
+		//{
+		//	//-- Arrange
+
+		//	DeriveClassFrom<AncestorRepository.EnumerableTester>()
+		//		.DefaultConstructor()
+		//		.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+		//			m.Return(source.All(s => s.StartsWith(m.Const("U"))));
+		//		});
+
+		//	//-- Act
+
+		//	var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+		//	var result = tester.DoTest(new[] { "ABC", "UDE", "FGK", "UIJ", "LMN" }).ToArray();
+
+		//	//-- Assert
+
+		//	Assert.That(result, Is.EqualTo(new[] { "UDE", "UIJ" }));
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test]
 		public void TestWhere()
 		{

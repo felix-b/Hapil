@@ -300,7 +300,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<string> StartsWith(this IHappilOperand<string> str, IHappilOperand<string> value, bool ignoreCase = false)
+		public static HappilOperand<bool> StartsWith(this IHappilOperand<string> str, IHappilOperand<string> value, bool ignoreCase = false)
 		{
 			throw new NotImplementedException();
 		}
