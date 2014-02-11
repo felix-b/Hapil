@@ -17,13 +17,13 @@ namespace Happil.UnitTests
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
-					m.Return(source.Where(m.Delegate<string, bool>((del, s) => del.Return(s.Length() > del.Const(2)))));
+					m.Return(source.Where(s => s.Length() > m.Const(2)));
 				});
 
 			//-- Act
 
 			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
-			var result = tester.DoTest(new [] { "1", "55555", "22", "4444", "333" }).ToArray();
+			var result = tester.DoTest(new[] { "1", "55555", "22", "4444", "333" }).ToArray();
 
 			//-- Assert
 
@@ -40,7 +40,7 @@ namespace Happil.UnitTests
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
-					m.Return(source.OrderBy(m.Delegate<string, int>((del, s) => del.Return(s.Length()))));
+					m.Return(source.OrderBy(s => s.Length()));
 				});
 
 			//-- Act
@@ -51,6 +51,29 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(result, Is.EqualTo(new[] { "Z", "YY", "BBB", "AAAA" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestOrderByDescending()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.OrderByDescending(s => s.Length()));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "AA", "BBBB", "Y", "ZZZ" }).ToArray();
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "BBBB", "ZZZ", "AA", "Y" }));
 		}
 	}
 }

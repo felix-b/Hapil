@@ -53,6 +53,26 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilOperand<IOrderedEnumerable<TSource>> OrderByDescending<TSource, TKey>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, TKey>> keySelector)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.OrderByDescending<TKey>(), source, keySelector);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IOrderedEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IOrderedEnumerable<TSource>> OrderByDescending<TSource, TKey>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<TKey>> keySelectorLambda)
+		{
+			return OrderByDescending<TSource, TKey>(source, StatementScope.Current.OwnerMethod.Lambda(keySelectorLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
 			new ConcurrentDictionary<Type, ReflectionCache>();
 
@@ -68,12 +88,13 @@ namespace Happil
 		private abstract class ReflectionCache
 		{
 			public abstract MethodInfo OrderBy<TKey>();
+			public abstract MethodInfo OrderByDescending<TKey>();
 			public MethodInfo Where { get; protected set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ReflectionCache<TSource> : ReflectionCache
+		private sealed class ReflectionCache<TSource> : ReflectionCache
 		{
 			public ReflectionCache()
 			{
@@ -86,7 +107,14 @@ namespace Happil
 			{
 				return GetMethodInfo(OrderByMethod<TKey>());
 			}
-	
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override MethodInfo OrderByDescending<TKey>()
+			{
+				return GetMethodInfo(OrderByDescendingMethod<TKey>());
+			}
+
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			private MethodInfo GetMethodInfo(LambdaExpression lambda)
@@ -107,6 +135,14 @@ namespace Happil
 			private LambdaExpression OrderByMethod<TKey>()
 			{
 				Expression<Func<IEnumerable<TSource>, IOrderedEnumerable<TSource>>> lambda = (source => source.OrderBy(item => default(TKey)));
+				return lambda;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private LambdaExpression OrderByDescendingMethod<TKey>()
+			{
+				Expression<Func<IEnumerable<TSource>, IOrderedEnumerable<TSource>>> lambda = (source => source.OrderByDescending(item => default(TKey)));
 				return lambda;
 			}
 		}
