@@ -34,6 +34,8 @@ namespace Happil.Fluent
 		HappilOperand<T> Default<T>();
 		IHappilOperand<TObject> New<TObject>(params IHappilOperand[] constructorArguments);
 		IHappilOperand<TElement[]> NewArray<TElement>(IHappilOperand<int> length);
+		IHappilOperand<TElement[]> NewArray<TElement>(params TElement[] constantValues);
+		IHappilOperand<TElement[]> NewArray<TElement>(params IHappilOperand<TElement>[] values);
 		void RaiseEvent(string eventName, IHappilOperand<EventArgs> eventArgs);
 		void Throw<TException>(string message) where TException : Exception;
 		void Throw();

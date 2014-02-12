@@ -591,32 +591,29 @@ namespace Happil.UnitTests.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Initializers are not yet implemented")]
+		[Test]
 		public void TestNewArrayWithInitializer()
 		{
-			////-- Arrange
+			//-- Arrange
 
-			//DeriveClassFrom<AncestorRepository.StatementTester>()
-			//	.DefaultConstructor()
-			//	.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
-			//		var arr = m.Local<int[]>();
-			//		arr.Assign(m.NewArray<int>().Init(1, 2, 3, 4, 5));
-			//		Static.Prop(() => OutputArray).Assign(arr);
-			//		m.Return(arr.Length());
-			//	});
+			DeriveClassFrom<AncestorRepository.StatementTester>()
+				.DefaultConstructor()
+				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
+					Static.Prop(() => OutputArray).Assign(m.NewArray<int>(123, 456, 789));
+					m.ReturnConst(0);
+				});
 
-			//OutputArray = null;
+			OutputArray = null;
 
-			////-- Act
+			//-- Act
 
-			//var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
-			//var result = tester.DoTest(10);
+			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(0);
 
-			////-- Assert
+			//-- Assert
 
-			//Assert.That(result, Is.EqualTo(10));
-			//Assert.That(OutputArray, Is.Not.Null);
-			//Assert.That(OutputArray.Length, Is.EqualTo(10));
+			Assert.That(OutputArray, Is.Not.Null);
+			Assert.That(OutputArray, Is.EqualTo(new[] { 123, 456, 789 }));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

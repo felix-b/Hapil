@@ -260,6 +260,27 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilOperand<TElement[]> NewArray<TElement>(params TElement[] constantValues)
+		{
+			return NewArray<TElement>(constantValues.Select(v => new HappilConstant<TElement>(v)).ToArray());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilOperand<TElement[]> NewArray<TElement>(params IHappilOperand<TElement>[] values)
+		{
+			var arrayLocal = Local<TElement[]>(NewArray<TElement>(Const(values.Length)));
+
+			for ( int i = 0 ; i < values.Length ; i++ )
+			{
+				arrayLocal.ItemAt(i).Assign(values[i]);
+			}
+
+			return arrayLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void RaiseEvent(string eventName, IHappilOperand<EventArgs> eventArgs)
 		{
 			var eventMember = m_HappilClass.FindMember<HappilEvent>(eventName);

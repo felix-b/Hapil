@@ -53,11 +53,11 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<IEnumerable<TResult>> Cast<TSource, TResult>(this IHappilOperand<IEnumerable<TSource>> source)
+		public static HappilOperand<IEnumerable<TResult>> Cast<TResult>(this IHappilOperand<System.Collections.IEnumerable> source)
 		{
-			var methods = GetReflectionCache<TSource>();
-			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Cast<TResult>(), source);
-			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TResult>>(null, @operator, null);
+			var castMethod = GetCastMethod<TResult>();
+			var @operator = new UnaryOperators.OperatorCall<System.Collections.IEnumerable>(castMethod, source);
+			return new HappilUnaryExpression<System.Collections.IEnumerable, IEnumerable<TResult>>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -79,11 +79,11 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<IEnumerable<TResult>> OfType<TSource, TResult>(this IHappilOperand<IEnumerable<TSource>> source)
+		public static HappilOperand<IEnumerable<TResult>> OfType<TResult>(this IHappilOperand<System.Collections.IEnumerable> source)
 		{
-			var methods = GetReflectionCache<TSource>();
-			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.OfType<TResult>(), source);
-			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TResult>>(null, @operator, null);
+			var ofTypeMethod = GetOfTypeMethod<TResult>();
+			var @operator = new UnaryOperators.OperatorCall<System.Collections.IEnumerable>(ofTypeMethod, source);
+			return new HappilUnaryExpression<System.Collections.IEnumerable, IEnumerable<TResult>>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -681,10 +681,6 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
 			new ConcurrentDictionary<Type, ReflectionCache>();
 
@@ -697,11 +693,32 @@ namespace Happil
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private static MethodInfo GetMethodInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
+		{
+			return ((MethodCallExpression)lambda.Body).Method;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MethodInfo GetCastMethod<TResult>()
+		{
+			Expression<Func<System.Collections.IEnumerable, IEnumerable<TResult>>> lambda = (source => source.Cast<TResult>());
+			return GetMethodInfo(lambda);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MethodInfo GetOfTypeMethod<TResult>()
+		{
+			Expression<Func<System.Collections.IEnumerable, IEnumerable<TResult>>> lambda = (source => source.OfType<TResult>());
+			return GetMethodInfo(lambda);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private abstract class ReflectionCache
 		{
-			public abstract MethodInfo Cast<TResult>();
 			public abstract MethodInfo GroupBy<TKey>();
-			public abstract MethodInfo OfType<TResult>();
 			public abstract MethodInfo OrderBy<TKey>();
 			public abstract MethodInfo OrderByDescending<TKey>();
 			public abstract MethodInfo Select<TResult>();
@@ -800,10 +817,6 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override MethodInfo Cast<TResult>()
-			{
-				return GetMethodInfo(CastMethod<TResult>());
-			}
 			public override MethodInfo GroupBy<TKey>()
 			{
 				return GetMethodInfo(GroupByMethod<TKey>());
@@ -815,10 +828,6 @@ namespace Happil
 			public override MethodInfo OrderByDescending<TKey>()
 			{
 				return GetMethodInfo(OrderByDescendingMethod<TKey>());
-			}
-			public override MethodInfo OfType<TResult>()
-			{
-				return GetMethodInfo(OfTypeMethod<TResult>());
 			}
 			public override MethodInfo Select<TResult>()
 			{
@@ -847,26 +856,9 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private MethodInfo GetMethodInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
-			{
-				return ((MethodCallExpression)lambda.Body).Method;
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			private LambdaExpression CastMethod<TResult>()
-			{
-				Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> lambda = (source => source.Cast<TResult>());
-				return lambda;
-			}
 			private LambdaExpression GroupByMethod<TKey>()
 			{
 				Expression<Func<IEnumerable<TSource>, IEnumerable<IGrouping<TKey, TSource>>>> lambda = (source => source.GroupBy<TSource, TKey>(item => default(TKey)));
-				return lambda;
-			}
-			private LambdaExpression OfTypeMethod<TResult>()
-			{
-				Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> lambda = (source => source.OfType<TResult>());
 				return lambda;
 			}
 			private LambdaExpression OrderByMethod<TKey>()

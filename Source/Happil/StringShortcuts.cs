@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -6,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Happil.Expressions;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil
 {
@@ -283,9 +285,14 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<string[]> Split(this IHappilOperand<string> str, params string[] separator)
+		public static HappilOperand<string[]> Split(this IHappilOperand<string> str, params string[] separators)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(
+				s_SplitWithStringArray, 
+				Helpers.BuildArrayLocal(separators), 
+				new HappilConstant<StringSplitOptions>(StringSplitOptions.None));
+			
+			return new HappilUnaryExpression<string, string[]>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -309,9 +316,18 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<string> Substring(this IHappilOperand<string> str, IHappilOperand<int> startIndex, IHappilOperand<int> length = null)
+		public static HappilOperand<string> Substring(this IHappilOperand<string> str, IHappilOperand<int> startIndex)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Substring, startIndex);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<string> Substring(this IHappilOperand<string> str, IHappilOperand<int> startIndex, IHappilOperand<int> length)
+		{
+			var @operator = new UnaryOperators.OperatorCall<string>(s_SubstringWithLength, startIndex, length);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -426,6 +442,9 @@ namespace Happil
 
 		private static readonly PropertyInfo s_Length;
 		private static readonly MethodInfo s_StartsWith;
+		private static readonly MethodInfo s_Substring;
+		private static readonly MethodInfo s_SubstringWithLength;
+		private static readonly MethodInfo s_SplitWithStringArray;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -433,6 +452,9 @@ namespace Happil
 		{
 			s_Length = GetPropertyInfo<Expression<Func<string, int>>>(s => s.Length);
 			s_StartsWith = GetMethodInfo<Expression<Func<string, bool>>>(s => s.StartsWith("s"));
+			s_Substring = GetMethodInfo<Expression<Func<string, string>>>(s => s.Substring(1));
+			s_SubstringWithLength = GetMethodInfo<Expression<Func<string, string>>>(s => s.Substring(1, 2));
+			s_SplitWithStringArray = GetMethodInfo<Expression<Func<string, string[]>>>(s => s.Split(new[] { "s" }, StringSplitOptions.None));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

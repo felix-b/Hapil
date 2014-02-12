@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
@@ -33,9 +34,16 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index)
+		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<IList<T>> collection, IHappilOperand<int> index)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<T>(collection, GetReflectionCache<T>().Item, index);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<IList<T>> collection, int index)
+		{
+			return ItemAt(collection, new HappilConstant<int>(index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -131,6 +139,7 @@ namespace Happil
 		{
 			public MethodInfo Add { get; protected set; }
 			public PropertyInfo Count { get; protected set; }
+			public PropertyInfo Item { get; protected set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,10 +148,12 @@ namespace Happil
 		{
 			public ReflectionCache()
 			{
-				var type = typeof(ICollection<T>);
-				
-				Add = type.GetMethod("Add");
-				Count = type.GetProperty("Count");
+				var collectionType = typeof(ICollection<T>);
+				var listType = typeof(IList<T>);
+
+				Add = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.Add(default(T)));
+				Count = Helpers.GetPropertyInfo<Expression<Func<ICollection<T>, int>>>(x => x.Count);
+				Item = listType.GetProperty("Item");
 			}
 		}
 	}

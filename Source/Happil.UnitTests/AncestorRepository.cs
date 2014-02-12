@@ -351,13 +351,27 @@ namespace Happil.UnitTests
 			{
 				throw new NotImplementedException();
 			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
+			public virtual IEnumerable<int> DoCastingTest(IEnumerable<object> source)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual IEnumerable<FirstLetterGroup> DoGroupingTest(IEnumerable<string> source)
+			{
+				throw new NotImplementedException();
+			}
 			public virtual bool DoBooleanTest(IEnumerable<string> source)
 			{
 				throw new NotImplementedException();
 			}
+			public virtual IEnumerable<string> DoBinaryTest(IEnumerable<string> first, IEnumerable<string> second)
+			{
+				throw new NotImplementedException();
+			}
+		}
+		public class FirstLetterGroup
+		{
+			public string FirstLetter { get; set; }
+			public string[] Values { get; set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

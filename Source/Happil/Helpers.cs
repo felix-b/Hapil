@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil
 {
@@ -216,6 +217,20 @@ namespace Happil
 			}
 		}
 
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static MethodInfo GetMethodInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
+		{
+			return ((MethodCallExpression)lambda.Body).Method;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static PropertyInfo GetPropertyInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
+		{
+			return (PropertyInfo)((MemberExpression)lambda.Body).Member;
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<T> OrNullConstant<T>(this IHappilOperand<T> operand)
@@ -308,6 +323,21 @@ namespace Happil
 			return new NotSupportedException(string.Format(
 				"Constants of type '{0}' are not supported.",
 				type.FullName));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilLocal<T[]> BuildArrayLocal<T>(params T[] constantValues)
+		{
+			var method = StatementScope.Current.OwnerMethod;
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(constantValues.Length)));
+
+			for ( int i = 0 ; i < constantValues.Length ; i++ )
+			{
+				arrayLocal.ItemAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
+			}
+
+			return arrayLocal;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
