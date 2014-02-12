@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
@@ -302,7 +303,8 @@ namespace Happil
 
 		public static HappilOperand<bool> StartsWith(this IHappilOperand<string> str, IHappilOperand<string> value, bool ignoreCase = false)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(s_StartsWith, value);
+			return new HappilUnaryExpression<string, bool>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -423,14 +425,28 @@ namespace Happil
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static readonly PropertyInfo s_Length;
+		private static readonly MethodInfo s_StartsWith;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		static StringShortcuts()
 		{
-			var type = typeof(string);
+			s_Length = GetPropertyInfo<Expression<Func<string, int>>>(s => s.Length);
+			s_StartsWith = GetMethodInfo<Expression<Func<string, bool>>>(s => s.StartsWith("s"));
+		}
 
-			s_Length = type.GetProperty("Length");
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MethodInfo GetMethodInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
+		{
+			return ((MethodCallExpression)lambda.Body).Method;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static PropertyInfo GetPropertyInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
+		{
+			return (PropertyInfo)((MemberExpression)lambda.Body).Member;
 		}
 	}
 }

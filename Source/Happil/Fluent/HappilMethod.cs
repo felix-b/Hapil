@@ -304,6 +304,28 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilOperand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
+			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+		{
+			return new HappilAnonymousDelegate<TArg1, TArg2, TReturn>(m_HappilClass, body);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
+			ref IHappilDelegate site,
+			Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Delegate(body);
+			}
+
+			return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
 		{
 			var method = Helpers.ResolveMethodFromLambda(methodSelector);
@@ -320,15 +342,37 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
-			ref IHappilDelegate site, 
+			ref IHappilDelegate site,
 			Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
 		{
 			if ( site == null )
 			{
 				site = (IHappilDelegate)Lambda(expression);
 			}
-			
+
 			return (HappilAnonymousDelegate<TArg1, TResult>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+			ref IHappilDelegate site,
+			Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Lambda(expression);
+			}
+			
+			return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+			Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
+		{
+			return Delegate<TArg1, TArg2, TResult>((m, arg1, arg2) => m.Return(expression(arg1, arg2)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

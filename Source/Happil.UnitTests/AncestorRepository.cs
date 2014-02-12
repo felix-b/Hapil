@@ -347,7 +347,17 @@ namespace Happil.UnitTests
 
 		public abstract class EnumerableTester
 		{
-			public abstract IEnumerable<string> DoTest(IEnumerable<string> source);
+			public virtual IEnumerable<string> DoTest(IEnumerable<string> source)
+			{
+				throw new NotImplementedException();
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public virtual bool DoBooleanTest(IEnumerable<string> source)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

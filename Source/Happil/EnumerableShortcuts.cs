@@ -246,6 +246,445 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilOperand<IEnumerable<TSource>> Where<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, int, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.WhereWithIndex, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+		public static HappilOperand<IEnumerable<TSource>> Where<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, HappilOperand<int>, IHappilOperand<bool>> predicateLambda)
+		{
+			return Where<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Concat<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> first,
+			IHappilOperand<IEnumerable<TSource>> second)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Concat, first, second);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<bool> Contains<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source, 
+			IHappilOperand<TSource> value)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Contains, source, value);
+			return new HappilUnaryExpression<IEnumerable<TSource>, bool>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<int> Count<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Count, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, int>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<int> Count<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Where, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, int>(null, @operator, null);
+		}
+		public static HappilOperand<int> Count<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return Count<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> DefaultIfEmpty<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.DefaultIfEmpty, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> DefaultIfEmpty<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<TSource> defaultValue)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.DefaultIfEmptyWithValue, source, defaultValue);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Distinct<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<TSource> defaultValue)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Distinct, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> ElementAt<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<int> index)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.ElementAt, source, index);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> ElementAtOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<int> index)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.ElementAtOrDefault, source, index);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Except<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> first,
+			IHappilOperand<IEnumerable<TSource>> second)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Except, first, second);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> First<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.First, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> First<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.FirstWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> First<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return First<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> FirstOrDefault<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.FirstOrDefault, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> FirstOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.FirstOrDefaultWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> FirstOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return FirstOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Intersect<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> first,
+			IHappilOperand<IEnumerable<TSource>> second)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Intersect, first, second);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> Last<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Last, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> Last<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.LastWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> Last<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return Last<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> LastOrDefault<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.LastOrDefault, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> LastOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.LastOrDefaultWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> LastOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return LastOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Reverse<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Reverse, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<bool> SequenceEqual<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> first,
+			IHappilOperand<IEnumerable<TSource>> second)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SequenceEqual, first, second);
+			return new HappilUnaryExpression<IEnumerable<TSource>, bool>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> Single<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Single, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> Single<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SingleWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> Single<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return Single<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> SingleOrDefault<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SingleOrDefault, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource> SingleOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SingleOrDefaultWithPredicate, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+		}
+		public static HappilOperand<TSource> SingleOrDefault<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return SingleOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Skip<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<int> count)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Skip, source, count);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> SkipWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SkipWhile, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+		public static HappilOperand<IEnumerable<TSource>> SkipWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return SkipWhile<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> SkipWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, int, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SkipWhileWithIndex, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+		public static HappilOperand<IEnumerable<TSource>> SkipWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, HappilOperand<int>, IHappilOperand<bool>> predicateLambda)
+		{
+			return SkipWhile<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Take<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<int> count)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Take, source, count);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> TakeWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.TakeWhile, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+		public static HappilOperand<IEnumerable<TSource>> TakeWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, IHappilOperand<bool>> predicateLambda)
+		{
+			return TakeWhile<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> TakeWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			IHappilOperand<Func<TSource, int, bool>> predicate)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.TakeWhileWithIndex, source, predicate);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+		public static HappilOperand<IEnumerable<TSource>> TakeWhile<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> source,
+			Func<HappilOperand<TSource>, HappilOperand<int>, IHappilOperand<bool>> predicateLambda)
+		{
+			return TakeWhile<TSource>(source, StatementScope.Current.OwnerMethod.Lambda(predicateLambda));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<TSource[]> ToArray<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.ToArray, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, TSource[]>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<List<TSource>> ToList<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.ToList, source);
+			return new HappilUnaryExpression<IEnumerable<TSource>, List<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilOperand<IEnumerable<TSource>> Union<TSource>(
+			this IHappilOperand<IEnumerable<TSource>> first,
+			IHappilOperand<IEnumerable<TSource>> second)
+		{
+			var methods = GetReflectionCache<TSource>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Union, first, second);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
 			new ConcurrentDictionary<Type, ReflectionCache>();
 

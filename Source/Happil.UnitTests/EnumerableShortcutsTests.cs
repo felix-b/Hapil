@@ -9,26 +9,28 @@ namespace Happil.UnitTests
 	[TestFixture]
 	public class EnumerableShortcutsTests : ClassPerTestCaseFixtureBase
 	{
-		//[Test]
-		//public void TestAll()
-		//{
-		//	//-- Arrange
+		[Test]
+		public void TestAll()
+		{
+			//-- Arrange
 
-		//	DeriveClassFrom<AncestorRepository.EnumerableTester>()
-		//		.DefaultConstructor()
-		//		.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
-		//			m.Return(source.All(s => s.StartsWith(m.Const("U"))));
-		//		});
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, bool>(cls => cls.DoBooleanTest).Implement((m, source) => {
+					m.Return(source.All(s => s.StartsWith(m.Const("U"))));
+				});
 
-		//	//-- Act
+			//-- Act
 
-		//	var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
-		//	var result = tester.DoTest(new[] { "ABC", "UDE", "FGK", "UIJ", "LMN" }).ToArray();
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoBooleanTest(new[] { "UA", "UB", "XC" });
+			var result2 = tester.DoBooleanTest(new[] { "UA", "UB", "UC" });
 
-		//	//-- Assert
+			//-- Assert
 
-		//	Assert.That(result, Is.EqualTo(new[] { "UDE", "UIJ" }));
-		//}
+			Assert.That(result1, Is.False);
+			Assert.That(result2, Is.True);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
