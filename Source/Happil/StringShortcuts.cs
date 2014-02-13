@@ -32,28 +32,33 @@ namespace Happil
 
 		public static IHappilOperand<string> Concat(this IHappilOperand<string> strA, IHappilOperand<string> strB)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Concat, strA, strB);
+			return new HappilUnaryExpression<string, string>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<string> Concat(this IHappilOperand<string> strA, IHappilOperand<string[]> values)
+		public static IHappilOperand<string> Concat(this IHappilOperand<string> str, params IHappilOperand<string>[] values)
 		{
-			throw new NotImplementedException();
-		}
+			var method = StatementScope.Current.OwnerMethod;
+			var newArray = method.Local(method.NewArray<string>(new HappilConstant<int>(values.Length + 1)));
+			newArray.ElementAt(0).Assign(str);
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+			for ( int i = 0 ; i < values.Length ; i++ )
+			{
+				newArray.ElementAt(i + 1).Assign(values[i]);
+			}
 
-		public static IHappilOperand<string> Concat(this IHappilOperand<string> strA, params IHappilOperand<string>[] values)
-		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ConcatArray, newArray);
+			return new HappilUnaryExpression<string, string>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<string> Copy(this IHappilOperand<string> str)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Copy, str);
+			return new HappilUnaryExpression<string, string>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -446,7 +451,7 @@ namespace Happil
 		private static readonly PropertyInfo s_Item;
 		private static readonly MethodInfo s_Compare;
 		private static readonly MethodInfo s_Concat;
-		private static readonly MethodInfo s_ConcatWithArray;
+		private static readonly MethodInfo s_ConcatArray;
 		private static readonly MethodInfo s_Copy;
 		//private static readonly MethodInfo s_CopyTo;
 		//private static readonly MethodInfo s_EndsWith;
@@ -493,7 +498,7 @@ namespace Happil
 			s_Item = typeof(string).GetProperty("Chars");
 			s_Compare = GetMethodInfo<Expression<Func<string, int>>>(s => string.Compare(s, "s", StringComparison.InvariantCultureIgnoreCase));
 			s_Concat = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(s, s));
-			s_ConcatWithArray = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(s, new string[0]));
+			s_ConcatArray = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(new string[0]));
 			s_Copy = GetMethodInfo<Expression<Func<string, string>>>(s => string.Copy(s));
 			
 			//s_CopyTo = GetMethodInfo<Expression<Action<string>>>(s => s.CopyTo(0, new char[0], 0, 0));

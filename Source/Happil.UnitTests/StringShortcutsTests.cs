@@ -87,6 +87,77 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void TestConcat()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string, string>(cls => cls.DoBinaryTest).Implement((m, str1, str2) => {
+					m.Return(str1.Concat(str2));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoBinaryTest("ABC", "DEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABCDEF"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestConcatWithArrayOfOperands()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string, string>(cls => cls.DoBinaryTest).Implement((m, str1, str2) => {
+					m.Return(str1.Concat(m.Const("=^"), str2, m.Const("$")));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoBinaryTest("ABC", "DEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABC=^DEF$"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCopy()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Copy());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var input = "ABC";
+			var output = obj.DoTest(input);
+
+			//-- Assert
+
+			Assert.That(output, Is.EqualTo("ABC"));
+			Assert.That(output, Is.Not.SameAs(input));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void TestLength()
 		{
 			//-- Arrange
