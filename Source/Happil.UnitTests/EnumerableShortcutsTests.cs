@@ -831,6 +831,256 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestSingle()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.Single());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A" });
+
+			ExpectException<InvalidOperationException>(() => {
+				tester.DoStringTest(new[] { "A", "B" });
+			}, "Sequence contains more than one element");
+			
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("A"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSingleWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.Single(s => s.Length() > 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "BB", "C" });
+
+			ExpectException<InvalidOperationException>(() => {
+				tester.DoStringTest(new[] { "AA", "BB" });
+			}, "Sequence contains more than one matching element");
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("BB"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSingleOrDefault()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.SingleOrDefault());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A" });
+			var result2 = tester.DoStringTest(new string[0]);
+
+			ExpectException<InvalidOperationException>(() => {
+				tester.DoStringTest(new[] { "A", "B" });
+			}, "Sequence contains more than one element");
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("A"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSingleOrDefaultWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.SingleOrDefault(s => s.Length() > 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "BB", "C" });
+			var result2 = tester.DoStringTest(new[] { "A", "B", "C" });
+
+			ExpectException<InvalidOperationException>(() => {
+				tester.DoStringTest(new[] { "AA", "BB" });
+			}, "Sequence contains more than one matching element");
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("BB"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSkip()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.Skip(m.Const(2)));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "A", "B", "C", "D" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "C", "D" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSkipWhile()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.SkipWhile(s => s.Length() == 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "A", "B", "CC", "DDD" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "CC", "DDD" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSkipWhileWithIndex()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.SkipWhile((s, index) => s.Length() == index));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "", "A", "BB", "CX", "DX" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "CX", "DX" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTake()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.Take(m.Const(2)));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "A", "B", "C", "D" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "A", "B" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTakeWhile()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.TakeWhile(s => s.Length() == 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "A", "B", "CC", "DDD" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "A", "B" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTakeWhileWithIndex()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.TakeWhile((s, index) => s.Length() == index));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "", "A", "BB", "CX", "DX" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "", "A", "BB" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Dictionary<string, string> OutputDictionary { get; set; }
 	}
 }

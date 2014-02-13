@@ -15,14 +15,17 @@ namespace Happil
 	{
 		public static IHappilOperand<char> CharAt(this IHappilOperand<string> s, IHappilOperand<int> index)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<char>(s, s_Item, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<int> Compare(this IHappilOperand<string> strA, IHappilOperand<string> strB, bool ignoreCase = false)
 		{
-			throw new NotImplementedException();
+			var comparisonValue = (ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.CurrentCulture);
+			var comparisonOperand = new HappilConstant<StringComparison>(comparisonValue);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Compare, strA, strB, comparisonOperand);
+			return new HappilUnaryExpression<string, int>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -440,21 +443,102 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private static readonly PropertyInfo s_Item;
+		private static readonly MethodInfo s_Compare;
+		private static readonly MethodInfo s_Concat;
+		private static readonly MethodInfo s_ConcatWithArray;
+		private static readonly MethodInfo s_Copy;
+		//private static readonly MethodInfo s_CopyTo;
+		//private static readonly MethodInfo s_EndsWith;
+		//private static readonly MethodInfo s_EqualsWithComparisonType;
+		//private static readonly MethodInfo s_Format;
+		//private static readonly MethodInfo s_FormatWithProvider;
+		//private static readonly MethodInfo s_IndexOf;
+		//private static readonly MethodInfo s_IndexOfWithStartIndexAndCount;
+		//private static readonly MethodInfo s_IndexOfAny;
+		//private static readonly MethodInfo s_IndexOfAnyWithStartIndexAndCount;
+		//private static readonly MethodInfo s_Insert;
+		//private static readonly MethodInfo s_LastIndexOf;
+		//private static readonly MethodInfo s_LastIndexOfWithStartIndexAndCount;
+		//private static readonly MethodInfo s_LastIndexOfAny;
+		//private static readonly MethodInfo s_LastIndexOfAnyWithStartIndexAndCount;
 		private static readonly PropertyInfo s_Length;
+		//private static readonly MethodInfo s_PadLeft;
+		//private static readonly MethodInfo s_PadRight;
+		//private static readonly MethodInfo s_Remove;
+		//private static readonly MethodInfo s_Replace;
+		//private static readonly MethodInfo s_ReplaceWithChars;
+		//private static readonly MethodInfo s_SplitWithCharArray;
+		//private static readonly MethodInfo s_SplitWithCharArrayAndCount;
+		private static readonly MethodInfo s_SplitWithStringArray;
+		//private static readonly MethodInfo s_SplitWithStringArrayAndCount;
+		//private static readonly MethodInfo s_SplitWithCount;
 		private static readonly MethodInfo s_StartsWith;
 		private static readonly MethodInfo s_Substring;
 		private static readonly MethodInfo s_SubstringWithLength;
-		private static readonly MethodInfo s_SplitWithStringArray;
+		//private static readonly MethodInfo s_ToCharArray;
+		//private static readonly MethodInfo s_ToLower;
+		//private static readonly MethodInfo s_ToLowerInvariant;
+		//private static readonly MethodInfo s_ToUpper;
+		//private static readonly MethodInfo s_ToUpperInvariant;
+		//private static readonly MethodInfo s_Trim;
+		//private static readonly MethodInfo s_TrimWithChars;
+		//private static readonly MethodInfo s_TrimEnd;
+		//private static readonly MethodInfo s_TrimStart;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		static StringShortcuts()
 		{
+			s_Item = typeof(string).GetProperty("Chars");
+			s_Compare = GetMethodInfo<Expression<Func<string, int>>>(s => string.Compare(s, "s", StringComparison.InvariantCultureIgnoreCase));
+			s_Concat = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(s, s));
+			s_ConcatWithArray = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(s, new string[0]));
+			s_Copy = GetMethodInfo<Expression<Func<string, string>>>(s => string.Copy(s));
+			
+			//s_CopyTo = GetMethodInfo<Expression<Action<string>>>(s => s.CopyTo(0, new char[0], 0, 0));
+			//s_EndsWith = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_EqualsWithComparisonType = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_Format = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_FormatWithProvider = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_IndexOf = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_IndexOfWithStartIndexAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_IndexOfAny = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_IndexOfAnyWithStartIndexAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_Insert = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_LastIndexOf = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_LastIndexOfWithStartIndexAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_LastIndexOfAny = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_LastIndexOfAnyWithStartIndexAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+
 			s_Length = GetPropertyInfo<Expression<Func<string, int>>>(s => s.Length);
+
+			//s_PadLeft = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_PadRight = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_Remove = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_Replace = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_ReplaceWithChars = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_SplitWithCharArray = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_SplitWithCharArrayAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+
+			s_SplitWithStringArray = GetMethodInfo<Expression<Func<string, string[]>>>(s => s.Split(new[] { "s" }, StringSplitOptions.None));
+
+			//s_SplitWithStringArrayAndCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_SplitWithCount = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+
 			s_StartsWith = GetMethodInfo<Expression<Func<string, bool>>>(s => s.StartsWith("s"));
 			s_Substring = GetMethodInfo<Expression<Func<string, string>>>(s => s.Substring(1));
 			s_SubstringWithLength = GetMethodInfo<Expression<Func<string, string>>>(s => s.Substring(1, 2));
-			s_SplitWithStringArray = GetMethodInfo<Expression<Func<string, string[]>>>(s => s.Split(new[] { "s" }, StringSplitOptions.None));
+
+			//s_ToCharArray = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_ToLower = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_ToLowerInvariant = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_ToUpper = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_ToUpperInvariant = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_Trim = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_TrimWithChars = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_TrimEnd = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
+			//s_TrimStart = GetMethodInfo<Expression<Func<string, string>>>(s => s.StartsWith("s"));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

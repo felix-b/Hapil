@@ -384,6 +384,36 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public abstract class StringTester
+		{
+			public virtual string DoTest(string input)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual int DoIntTest(string input)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual bool DoBooleanTest()
+			{
+				throw new NotImplementedException();
+			}
+			public virtual char DoCharTest(string input)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual string DoBinaryTest(string first, string second)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual int DoIntBinaryTest(string first, string second)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface IFewGenericMethods
 		{
 			void One<T>();

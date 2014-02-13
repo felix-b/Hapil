@@ -86,6 +86,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected void ExpectException<TException>(Action codeUnderTest, string messageContains) where TException : Exception
+		{
+			try
+			{
+				codeUnderTest();
+				Assert.Fail("Expected exception of type " + typeof(TException).Name);
+			}
+			catch ( TException e )
+			{
+				StringAssert.Contains(messageContains, e.Message, "Exception message was not as expected");
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected void ExpectException<TException>(Action codeUnderTest) where TException : Exception
 		{
 			try

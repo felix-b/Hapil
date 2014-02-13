@@ -8,26 +8,18 @@ using Happil.Fluent;
 
 namespace Happil.Expressions
 {
-	internal class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation
+	internal class ArrayElementAccessOperand<T> : HappilAssignable<T>
 	{
-		private readonly IHappilOperand m_Target;
-		private readonly PropertyInfo m_Property;
-		private readonly IHappilOperand[] m_IndexArguments;
-		private readonly MethodInfo m_Getter;
-		private readonly MethodInfo m_Setter;
-		private IHappilOperand m_Value;
+		private readonly IHappilOperand m_Array;
+		private readonly IHappilOperand m_Index;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyAccessOperand(IHappilOperand target, PropertyInfo property, params IHappilOperand[] indexArguments)
+		public ArrayElementAccessOperand(IHappilOperand array, IHappilOperand index)
 			: base(ownerMethod: null)
 		{
-			m_Target = target;
-			m_Property = property;
-			m_IndexArguments = indexArguments;
-
-			m_Getter = m_Property.GetGetMethod();
-			m_Setter = m_Property.GetSetMethod();
+			m_Array = array;
+			m_Index = index;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -36,46 +28,32 @@ namespace Happil.Expressions
 		{
 			get
 			{
-				return (m_Target != null);
+				return true;
 			}
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region INonPostfixNotation Members
-
-		IHappilOperand INonPostfixNotation.RightSide
-		{
-			set
-			{
-				m_Value = value;
-			}
-		}
-
-		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			if ( m_Target != null )
-			{
-				m_Target.EmitTarget(il);
-				m_Target.EmitLoad(il);
-			}
+			m_Array.EmitTarget(il);
+			m_Array.EmitLoad(il);
+
+			m_Index.EmitTarget(il);
+			m_Index.EmitLoad(il);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			if ( m_Getter != null )
+			if ( OperandType.IsValueType )
 			{
-				Helpers.EmitCall(il, target: null, method: m_Getter, arguments: m_IndexArguments);
+				il.Emit(OpCodes.Ldelem, OperandType);
 			}
 			else
 			{
-				throw new InvalidOperationException(string.Format("Property '{0}' does not define a getter.", m_Property.Name));
+				il.Emit(OpCodes.Ldelem_Ref);
 			}
 		}
 
@@ -83,14 +61,13 @@ namespace Happil.Expressions
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			if ( m_Setter != null )
+			if ( OperandType.IsValueType )
 			{
-				var setterArguments = m_IndexArguments.ConcatIf(m_Value).ToArray();
-				Helpers.EmitCall(il, target: null, method: m_Setter, arguments: setterArguments);
+				il.Emit(OpCodes.Stelem, OperandType);
 			}
 			else
 			{
-				throw new InvalidOperationException(string.Format("Property '{0}' is read-only.", m_Property.Name));
+				il.Emit(OpCodes.Stelem_Ref);
 			}
 		}
 
@@ -98,7 +75,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotSupportedException("Properties cannot be passed by reference.");
+			il.Emit(OpCodes.Ldelema, OperandType);
 		}
 	}
 }
