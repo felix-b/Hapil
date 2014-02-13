@@ -334,7 +334,22 @@ namespace Happil
 
 			for ( int i = 0 ; i < constantValues.Length ; i++ )
 			{
-				arrayLocal.ItemAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
+				arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
+			}
+
+			return arrayLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilLocal<T[]> BuildArrayLocal<T>(params IHappilOperand<T>[] values)
+		{
+			var method = StatementScope.Current.OwnerMethod;
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(values.Length)));
+
+			for ( int i = 0 ; i < values.Length ; i++ )
+			{
+				arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(values[i]);
 			}
 
 			return arrayLocal;

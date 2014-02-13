@@ -394,11 +394,15 @@ namespace Happil.UnitTests
 			{
 				throw new NotImplementedException();
 			}
-			public virtual bool DoBooleanTest()
+			public virtual bool DoBooleanTest(string input)
 			{
 				throw new NotImplementedException();
 			}
 			public virtual char DoCharTest(string input)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual char[] DoCharArrayTest(string input)
 			{
 				throw new NotImplementedException();
 			}

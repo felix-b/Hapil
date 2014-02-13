@@ -91,6 +91,14 @@ namespace Happil.Fluent
 			if ( convertible != null )
 			{
 				Helpers.EmitConvertible(il, convertible);
+
+				var valueType = convertible.GetType();
+
+				if ( valueType.IsValueType && OperandType == typeof(object) )
+				{
+					il.Emit(OpCodes.Box, valueType);
+				}
+
 				return true;
 			}
 			else
