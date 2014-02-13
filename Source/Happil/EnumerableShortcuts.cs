@@ -311,29 +311,27 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TSource> DefaultIfEmpty<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
+		public static HappilOperand<IEnumerable<TSource>> DefaultIfEmpty<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
 		{
 			var methods = GetReflectionCache<TSource>();
 			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.DefaultIfEmpty, source);
-			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TSource> DefaultIfEmpty<TSource>(
+		public static HappilOperand<IEnumerable<TSource>> DefaultIfEmpty<TSource>(
 			this IHappilOperand<IEnumerable<TSource>> source,
 			IHappilOperand<TSource> defaultValue)
 		{
 			var methods = GetReflectionCache<TSource>();
 			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.DefaultIfEmptyWithValue, source, defaultValue);
-			return new HappilUnaryExpression<IEnumerable<TSource>, TSource>(null, @operator, null);
+			return new HappilUnaryExpression<IEnumerable<TSource>, IEnumerable<TSource>>(null, @operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<IEnumerable<TSource>> Distinct<TSource>(
-			this IHappilOperand<IEnumerable<TSource>> source,
-			IHappilOperand<TSource> defaultValue)
+		
+		public static HappilOperand<IEnumerable<TSource>> Distinct<TSource>(this IHappilOperand<IEnumerable<TSource>> source)
 		{
 			var methods = GetReflectionCache<TSource>();
 			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Distinct, source);

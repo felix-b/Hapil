@@ -48,6 +48,20 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static HappilAssignable<T> ElementAt<T>(this IHappilOperand<T[]> array, IHappilOperand<int> index)
+		{
+			return new ArrayElementAccessOperand<T>(array, index);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static HappilAssignable<T> ElementAt<T>(this IHappilOperand<T[]> array, int index)
+		{
+			return ElementAt(array, new HappilConstant<int>(index));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static void Add<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Add, item));

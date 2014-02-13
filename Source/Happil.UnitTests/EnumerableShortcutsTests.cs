@@ -415,6 +415,422 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestDefaultIfEmpty()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.DefaultIfEmpty());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(new[] { "ABC", "DEF" });
+			var result2 = tester.DoTest(new string[0]);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "ABC", "DEF" }));
+			Assert.That(result2, Is.EqualTo(new string[] { null }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestDefaultIfEmptyWithDefaultValue()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.DefaultIfEmpty(m.Const("ZZZ")));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(new[] { "ABC", "DEF" });
+			var result2 = tester.DoTest(new string[0]);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "ABC", "DEF" }));
+			Assert.That(result2, Is.EqualTo(new string[] { "ZZZ" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestDistinct()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.Distinct());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoTest(new[] { "A", "B", "C" });
+			var result2 = tester.DoTest(new[] { "A", "B", "A", "C", "B" });
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "A", "B", "C" }));
+			Assert.That(result2, Is.EqualTo(new[] { "A", "B", "C" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestElementAt()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.ElementAt(m.Const(2)));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoStringTest(new[] { "A", "B", "C", "D" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("C"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestElementAtOrDefault()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.ElementAtOrDefault(m.Const(2)));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "B", "C", "D" });
+			var result2 = tester.DoStringTest(new[] { "A", "B" });
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("C"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestExcept()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>, IEnumerable<string>>(cls => cls.DoBinaryTest).Implement((m, first, second) => {
+					m.Return(first.Except(second));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoBinaryTest(new[] { "A", "B", "C", "D" }, new[] { "A", "D" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "B", "C" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestFirst()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.First());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoStringTest(new[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("A"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestFirstWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.First(s => s.Length() > 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoStringTest(new[] { "A", "BB", "CCC" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("BB"));
+		}
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestFirstOrDefault()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.FirstOrDefault());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "B", "C" });
+			var result2 = tester.DoStringTest(new string[0]);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("A"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestFirstOrDefaultWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.FirstOrDefault(s => s.Length() > 1));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "BB", "CCC" });
+			var result2 = tester.DoStringTest(new[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("BB"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestIntersect()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>, IEnumerable<string>>(cls => cls.DoBinaryTest).Implement((m, first, second) => {
+					m.Return(first.Intersect(second));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoBinaryTest(new[] { "A", "B", "C", "D" }, new[] { "A", "D" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "A", "D" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLast()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.Last());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoStringTest(new[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("C"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.Last(s => s.Length() < 3));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoStringTest(new[] { "A", "BB", "CCC" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("BB"));
+		}
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastOrDefault()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.LastOrDefault());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "B", "C" });
+			var result2 = tester.DoStringTest(new string[0]);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("C"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastOrDefaultWithPredicate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, string>(cls => cls.DoStringTest).Implement((m, source) => {
+					m.Return(source.LastOrDefault(s => s.Length() < 3));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoStringTest(new[] { "A", "BB", "CCC" });
+			var result2 = tester.DoStringTest(new[] { "AAA", "BBB", "CCC" });
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo("BB"));
+			Assert.That(result2, Is.Null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestReverse()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
+					m.Return(source.Reverse());
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(new[] { "A", "B", "C" }).ToArray();
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "C", "B", "A" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSequenceEqual()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>, IEnumerable<string>>(cls => cls.DoBinaryTest).Implement((m, first, second) => {
+					m.If(first.SequenceEqual(second)).Then(() => {
+						m.Return(m.NewArray<string>(constantValues: "EQ"));		
+					})
+					.Else(() => {
+						m.Return(m.NewArray<string>(constantValues: "NEQ"));
+					});
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = tester.DoBinaryTest(new[] { "A", "B", "C" }, new[] { "A", "B", "C" });
+			var result2 = tester.DoBinaryTest(new[] { "A", "B", "C" }, new[] { "A", "B" });
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "EQ" }));
+			Assert.That(result2, Is.EqualTo(new[] { "NEQ" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Dictionary<string, string> OutputDictionary { get; set; }
 	}
 }

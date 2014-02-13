@@ -651,5 +651,25 @@ namespace Happil.UnitTests
 
 			#endregion
 		}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class EnumerableExample : AncestorRepository.EnumerableTester
+		{
+			#region Overrides of EnumerableTester
+
+			public override IEnumerable<string> DoBinaryTest(IEnumerable<string> first, IEnumerable<string> second)
+			{
+				if ( first.SequenceEqual(second) )
+				{
+					return new[] { "EQ" };
+				}
+				else
+				{
+					return new[] { "NEQ" };
+				}
+			}
+
+			#endregion
+		}
 	}
 }

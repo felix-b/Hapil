@@ -363,6 +363,14 @@ namespace Happil.UnitTests
 			{
 				throw new NotImplementedException();
 			}
+			public virtual int DoIntTest(IEnumerable<string> source)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual string DoStringTest(IEnumerable<string> source)
+			{
+				throw new NotImplementedException();
+			}
 			public virtual IEnumerable<string> DoBinaryTest(IEnumerable<string> first, IEnumerable<string> second)
 			{
 				throw new NotImplementedException();

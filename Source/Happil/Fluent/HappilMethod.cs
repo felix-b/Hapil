@@ -273,7 +273,7 @@ namespace Happil.Fluent
 
 			for ( int i = 0 ; i < values.Length ; i++ )
 			{
-				arrayLocal.ItemAt(i).Assign(values[i]);
+				arrayLocal.ElementAt(i).Assign(values[i]);
 			}
 
 			return arrayLocal;

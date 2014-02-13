@@ -59,6 +59,8 @@ namespace Happil.Statements
 
 				il.MarkLabel(afterElseBlock);
 			}
+
+			il.Emit(OpCodes.Nop);
 		}
 
 		#endregion
