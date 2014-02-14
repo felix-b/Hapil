@@ -192,16 +192,16 @@ namespace Happil
 
 		public static IHappilOperand<string> Insert(this IHappilOperand<string> str, IHappilOperand<int> startIndex, IHappilOperand<string> value)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_Insert, str, startIndex, value);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Insert, startIndex, value);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<int> LastIndexOf(this IHappilOperand<string> str, IHappilOperand<string> value)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOf, str, value);
-			return new HappilUnaryExpression<string, int>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOf, value);
+			return new HappilUnaryExpression<string, int>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -212,16 +212,16 @@ namespace Happil
 			IHappilOperand<int> startIndex,
 			IHappilOperand<int> count)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfWithStartIndexAndCount, str, value, startIndex, count);
-			return new HappilUnaryExpression<string, int>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfWithStartIndexAndCount, value, startIndex, count);
+			return new HappilUnaryExpression<string, int>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<int> LastIndexOfAny(this IHappilOperand<string> str, IHappilOperand<char[]> anyOf)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfAny, str, anyOf);
-			return new HappilUnaryExpression<string, int>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfAny, anyOf);
+			return new HappilUnaryExpression<string, int>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -232,8 +232,8 @@ namespace Happil
 			IHappilOperand<int> startIndex,
 			IHappilOperand<int> count)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfAnyWithStartIndexAndCount, str, anyOf, startIndex, count);
-			return new HappilUnaryExpression<string, int>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_LastIndexOfAnyWithStartIndexAndCount, anyOf, startIndex, count);
+			return new HappilUnaryExpression<string, int>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -247,56 +247,56 @@ namespace Happil
 
 		public static HappilOperand<string> PadLeft(this IHappilOperand<string> str, IHappilOperand<int> totalWidth)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_PadLeft, str, totalWidth);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_PadLeft, totalWidth);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> PadRight(this IHappilOperand<string> str, IHappilOperand<int> totalWidth)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_PadRight, str, totalWidth);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_PadRight, totalWidth);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Remove(this IHappilOperand<string> str, IHappilOperand<int> index)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_Remove, str, index);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Remove, index);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Remove(this IHappilOperand<string> str, IHappilOperand<int> index, IHappilOperand<int> count)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_RemoveWithCount, str, index, count);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_RemoveWithCount, index, count);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<char> oldChar, IHappilOperand<char> newChar)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ReplaceWithChars, str, oldChar, newChar);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ReplaceWithChars, oldChar, newChar);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Replace(this IHappilOperand<string> str, IHappilOperand<string> oldValue, IHappilOperand<string> newValue)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_Replace, str, oldValue, newValue);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Replace, oldValue, newValue);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string[]> Split(this IHappilOperand<string> str, params char[] separator)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_SplitWithCharArray, str, Helpers.BuildArrayLocal(separator));
-			return new HappilUnaryExpression<string, string[]>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_SplitWithCharArray, Helpers.BuildArrayLocal(separator));
+			return new HappilUnaryExpression<string, string[]>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -307,11 +307,8 @@ namespace Happil
 			IHappilOperand<int> count,
 			IHappilOperand<StringSplitOptions> options)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(
-				s_SplitWithCharArrayAndCount, 
-				str, Helpers.BuildArrayLocal(separator), count, options);
-
-			return new HappilUnaryExpression<string, string[]>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_SplitWithCharArrayAndCount, separator, count, options);
+			return new HappilUnaryExpression<string, string[]>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,7 +335,7 @@ namespace Happil
 				s_SplitWithStringArrayAndCount,
 				separator,
 				count,
-				new HappilConstant<StringSplitOptions>(StringSplitOptions.None));
+				options);
 
 			return new HappilUnaryExpression<string, string[]>(null, @operator, str);
 		}
@@ -371,8 +368,8 @@ namespace Happil
 
 		public static HappilOperand<char[]> ToCharArray(this IHappilOperand<string> str)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToCharArray, str);
-			return new HappilUnaryExpression<string, char[]>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ToCharArray);
+			return new HappilUnaryExpression<string, char[]>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -382,120 +379,88 @@ namespace Happil
 			IHappilOperand<int> startIndex, 
 			IHappilOperand<int> length)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToCharArrayWithIndexAndLength, str, startIndex, length);
-			return new HappilUnaryExpression<string, char[]>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ToCharArrayWithIndexAndLength, startIndex, length);
+			return new HappilUnaryExpression<string, char[]>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> ToLower(this IHappilOperand<string> str)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToLower, str);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<string> ToLowerInvariant(this IHappilOperand<string> str)
-		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToLowerInvariant, str);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ToLower);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> ToUpper(this IHappilOperand<string> str)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToUpper, str);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<string> ToUpperInvariant(this IHappilOperand<string> str)
-		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_ToUpperInvariant, str);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_ToUpper);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Trim(this IHappilOperand<string> str)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_Trim, str);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Trim);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Trim(this IHappilOperand<string> str, params char[] trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, Helpers.BuildArrayLocal(trimChars));
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Trim(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, Helpers.BuildArrayLocal(trimChars));
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> Trim(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, str, trimChars);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimWithChars, trimChars);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, params char[] trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimEnd, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
-		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimEnd, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimEnd, Helpers.BuildArrayLocal(trimChars));
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> TrimEnd(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimEnd, str, trimChars);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimEnd, trimChars);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, params char[] trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimStart, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, params IHappilOperand<char>[] trimChars)
-		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimStart, str, Helpers.BuildArrayLocal(trimChars));
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimStart, Helpers.BuildArrayLocal(trimChars));
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static HappilOperand<string> TrimStart(this IHappilOperand<string> str, IHappilOperand<char[]> trimChars)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimStart, str, trimChars);
-			return new HappilUnaryExpression<string, string>(null, @operator, null);
+			var @operator = new UnaryOperators.OperatorCall<string>(s_TrimStart, trimChars);
+			return new HappilUnaryExpression<string, string>(null, @operator, str);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -414,6 +414,10 @@ namespace Happil.UnitTests
 			{
 				throw new NotImplementedException();
 			}
+			public virtual string[] DoSplitTest(string input)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -440,7 +440,122 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestInsert()
+		{
+			//-- Arrange
 
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string, string>(cls => cls.DoBinaryTest).Implement((m, strA, strB) => {
+					m.Return(strA.Insert(m.Const(3), strB));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoBinaryTest("ABCDEF", "xyz");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABCxyzDEF"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastIndexOf()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, int>(cls => cls.DoIntTest).Implement((m, str) => {
+					m.Return(str.LastIndexOf(m.Const("123")));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoIntTest("123-123-123");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(8));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastIndexOfWithStartIndexAndCount()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, int>(cls => cls.DoIntTest).Implement((m, str) => {
+					m.Return(str.IndexOf(m.Const("123"), m.Const(7), m.Const(10)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result1 = obj.DoIntTest("123-123-123-GHI-JKL");
+			var result2 = obj.DoIntTest("123-123-DEF-GHI-JKL");
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(8));
+			Assert.That(result2, Is.EqualTo(-1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastIndexOfAny()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, int>(cls => cls.DoIntTest).Implement((m, str) => {
+					m.Return(str.LastIndexOfAny(m.NewArray<char>('1', '2', '3')));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoIntTest("ABC-123-DEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(6));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestLastIndexOfAnyWithStartIndexAndCount()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, int>(cls => cls.DoIntTest).Implement((m, str) => {
+					m.Return(str.LastIndexOfAny(m.NewArray<char>('1', '2', '3'), m.Const(8), m.Const(8)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result1 = obj.DoIntTest("123-123-DEF");
+			var result2 = obj.DoIntTest("123-ABC-DEF");
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(6));
+			Assert.That(result2, Is.EqualTo(2));
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -467,6 +582,602 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestPadLeft()
+		{
+			//-- Arrange
 
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.PadLeft(m.Const(5)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABC");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestPadRight()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.PadRight(m.Const(5)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABC");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestRemove()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Remove(m.Const(5)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABCDEFGH");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABCDE"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestRemoveWithCount()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Remove(m.Const(5), m.Const(3)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABCDEFGHIJKL");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABCDEIJKL"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestReplaceChar()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Replace(m.Const('$'), m.Const('@')));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("$abc$def");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("@abc@def"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestReplaceString()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Replace(m.Const("$"), m.Const("@")));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("$abc$def");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("@abc@def"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSplitByConstChars()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string[]>(cls => cls.DoSplitTest).Implement((m, str) => {
+					m.Return(str.Split(',', ';'));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoSplitTest("ab,cd;ef");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "ab", "cd", "ef" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSplitByConstCharsWithCountAndOptions()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string[]>(cls => cls.DoSplitTest).Implement((m, str) => {
+					m.Return(str.Split(m.NewArray<char>(',', ';'), count: m.Const(3), options: m.Const(StringSplitOptions.RemoveEmptyEntries)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoSplitTest("ab,,cd;;ef,ij;kl");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "ab", "cd", "ef,ij;kl" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSplitByConstString()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string[]>(cls => cls.DoSplitTest).Implement((m, str) => {
+					m.Return(str.Split(",", ";"));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoSplitTest("ab,cd;ef");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "ab", "cd", "ef" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSplitByConstStringsWithCountAndOptions()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string[]>(cls => cls.DoSplitTest).Implement((m, str) => {
+					m.Return(str.Split(m.NewArray<string>(",", ";"), count: m.Const(3), options: m.Const(StringSplitOptions.RemoveEmptyEntries)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoSplitTest("ab,,cd;;ef,ij;kl");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "ab", "cd", "ef,ij;kl" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestStartsWith()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, bool>(cls => cls.DoBooleanTest).Implement((m, str) => {
+					m.Return(str.StartsWith(m.Const("ABC")));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result1 = obj.DoBooleanTest("ABCDEF");
+			var result2 = obj.DoBooleanTest("BCDEFG");
+
+			//-- Assert
+
+			Assert.That(result1, Is.True);
+			Assert.That(result2, Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSubstring()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Substring(m.Const(1)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABCDEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("BCDEF"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSubstringWithLength()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Substring(startIndex: m.Const(1), length: m.Const(3)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABCDEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("BCD"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestToCharArray()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, char[]>(cls => cls.DoCharArrayTest).Implement((m, str) => {
+					m.Return(str.ToCharArray());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoCharArrayTest("ABC");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new char[] { 'A', 'B', 'C' }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestToCharArrayWithStartIndexAndLength()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, char[]>(cls => cls.DoCharArrayTest).Implement((m, str) => {
+					m.Return(str.ToCharArray(startIndex: m.Const(2), length: m.Const(3)));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoCharArrayTest("ABCDEF");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new char[] { 'C', 'D', 'E' }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestToLower()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.ToLower());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("ABC");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("abc"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestToUpper()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.ToUpper());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("abc");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrim()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Trim());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("  ABC  ");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimWithCharOperandArray()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Trim('^', '$'));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimWithCharArrayOperand()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.Trim(m.NewArray<char>('^', '$')));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimEnd()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimEnd());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("  ABC  ");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimEndWithCharOperandArray()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimEnd('^', '$'));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("^^  ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimEndWithCharArrayOperand()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimEnd(m.NewArray<char>('^', '$')));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("^^  ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimStart()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimStart());
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("  ABC  ");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("ABC  "));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimStartWithCharOperandArray()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimStart('^', '$'));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC  $$"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestTrimStartWithCharArrayOperand()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.StringTester>()
+				.DefaultConstructor()
+				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
+					m.Return(str.TrimStart(m.NewArray<char>('^', '$')));
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.StringTester>().UsingDefaultConstructor();
+			var result = obj.DoTest("^^  ABC  $$");
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("  ABC  $$"));
+		}
 	}
 }
