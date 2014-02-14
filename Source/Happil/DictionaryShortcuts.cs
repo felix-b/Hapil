@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Happil.Expressions;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil
 {
@@ -17,32 +18,34 @@ namespace Happil
 			IHappilOperand<TKey> key, 
 			IHappilOperand<TValue> value)
 		{
-			throw new NotImplementedException();
+			StatementScope.Current.AddStatement(new CallStatement(dictionary, GetReflectionCache<TKey, TValue>().Add, key, value));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static void Clear<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			throw new NotImplementedException();
+			StatementScope.Current.AddStatement(new CallStatement(dictionary, GetReflectionCache<TKey, TValue>().Clear));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> ContainsKey<TKey, TValue>(
+		public static HappilOperand<bool> ContainsKey<TKey, TValue>(
 			this IHappilOperand<IDictionary<TKey, TValue>> dictionary, 
 			IHappilOperand<TKey> key)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().ContainsKey, key);
+			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> ContainsValue<TKey, TValue>(
+		public static HappilOperand<bool> ContainsValue<TKey, TValue>(
 			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
 			IHappilOperand<TValue> value)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().ContainsValue, value);
+			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,7 +54,8 @@ namespace Happil
 			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
 			IHappilOperand<TKey> key)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().Remove, key);
+			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,30 +63,31 @@ namespace Happil
 		public static IHappilOperand<bool> TryGetValue<TKey, TValue>(
 			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
 			IHappilOperand<TKey> key,
-			IHappilOperand<TValue> value) //TODO: support out parameters!
+			IHappilOperand<TValue> value)
 		{
-			throw new NotImplementedException();
+			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().TryGetValue, key, value);
+			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<int> Count<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<int>(dictionary, GetReflectionCache<TKey, TValue>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<ICollection<TKey>> Keys<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<ICollection<TKey>>(dictionary, GetReflectionCache<TKey, TValue>().Keys);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IHappilOperand<ICollection<TValue>> Values<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			throw new NotImplementedException();
+			return new PropertyAccessOperand<ICollection<TValue>>(dictionary, GetReflectionCache<TKey, TValue>().Values);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -138,8 +143,8 @@ namespace Happil
 				TryGetValue = Helpers.GetMethodInfo<Expression<Func<Dictionary<TKey, TValue>, TValue, bool>>>((x, v) => x.TryGetValue(default(TKey), out v));
 
 				Count = Helpers.GetPropertyInfo<Expression<Func<Dictionary<TKey, TValue>, int>>>(x => x.Count);
-				Keys = Helpers.GetPropertyInfo<Expression<Func<Dictionary<TKey, TValue>, Dictionary<TKey, TValue>.KeyCollection>>>(x => x.Keys);
-				Values = Helpers.GetPropertyInfo<Expression<Func<Dictionary<TKey, TValue>, Dictionary<TKey, TValue>.ValueCollection>>>(x => x.Values);
+				Keys = Helpers.GetPropertyInfo<Expression<Func<IDictionary<TKey, TValue>, ICollection<TKey>>>>(x => x.Keys);
+				Values = Helpers.GetPropertyInfo<Expression<Func<IDictionary<TKey, TValue>, ICollection<TValue>>>>(x => x.Values);
 				Item = typeof(IDictionary<TKey, TValue>).GetProperty("Item");
 			}
 		}

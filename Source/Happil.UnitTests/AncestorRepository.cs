@@ -351,6 +351,14 @@ namespace Happil.UnitTests
 			{
 				throw new NotImplementedException();
 			}
+			public virtual IEnumerable<string> DoOutBooleanTest(IEnumerable<string> source, out bool result)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual bool DoBooleanBinaryTest(IEnumerable<string> first, IEnumerable<string> second)
+			{
+				throw new NotImplementedException();
+			}
 			public virtual IEnumerable<int> DoCastingTest(IEnumerable<object> source)
 			{
 				throw new NotImplementedException();
@@ -415,6 +423,36 @@ namespace Happil.UnitTests
 				throw new NotImplementedException();
 			}
 			public virtual string[] DoSplitTest(string input)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract class DictionaryTester
+		{
+			public virtual void DoTest(IDictionary<int, string> dictionary)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual int DoIntTest(IDictionary<int, string> dictionary)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual string DoStringTest(IDictionary<int, string> dictionary)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual bool DoBooleanTest(IDictionary<int, string> dictionary)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual int[] DoKeysTest(IDictionary<int, string> dictionary)
+			{
+				throw new NotImplementedException();
+			}
+			public virtual string[] DoValuesTest(IDictionary<int, string> dictionary)
 			{
 				throw new NotImplementedException();
 			}

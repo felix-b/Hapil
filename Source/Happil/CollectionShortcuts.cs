@@ -28,7 +28,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void RemoveAt<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index)
+		public static void RemoveAt<T>(this IHappilOperand<IList<T>> collection, IHappilOperand<int> index)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().RemoveAt, index));
 		}
