@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -28,6 +29,13 @@ namespace Happil.Expressions
 
 			m_Getter = m_Property.GetGetMethod();
 			m_Setter = m_Property.GetSetMethod();
+
+			var scope = StatementScope.Current;
+
+			foreach ( var argument in m_IndexArguments )
+			{
+				scope.Consume(argument);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

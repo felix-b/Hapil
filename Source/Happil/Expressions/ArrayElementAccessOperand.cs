@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Fluent;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -20,6 +21,8 @@ namespace Happil.Expressions
 		{
 			m_Array = array;
 			m_Index = index;
+
+			StatementScope.Current.Consume(index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

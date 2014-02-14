@@ -114,15 +114,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<IEnumerator<T>> GetEnumerator<T>(this IHappilOperand<ICollection<T>> collection)
-		{
-			var @operator = new UnaryOperators.OperatorCall<ICollection<T>>(GetReflectionCache<T>().GetEnumerator);
-			return new HappilUnaryExpression<ICollection<T>, IEnumerator<T>>(null, @operator, collection);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static IHappilOperand<int> Length<T>(this IHappilOperand<T[]> array)
+		public static HappilOperand<int> Length<T>(this IHappilOperand<T[]> array)
 		{
 			return new PropertyAccessOperand<int>(array, s_ArrayLength);
 		}
@@ -155,7 +147,6 @@ namespace Happil
 			public MethodInfo Clear { get; protected set; }
 			public MethodInfo Contains { get; protected set; }
 			public MethodInfo CopyTo { get; protected set; }
-			public MethodInfo GetEnumerator { get; protected set; }
 			public MethodInfo Remove { get; protected set; }
 			public PropertyInfo Count { get; protected set; }
 			public PropertyInfo IsReadOnly { get; protected set; }
@@ -175,7 +166,6 @@ namespace Happil
 				Clear = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.Clear());
 				Contains = Helpers.GetMethodInfo<Expression<Func<ICollection<T>, bool>>>(x => x.Contains(default(T)));
 				CopyTo = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.CopyTo(new T[0], 0));
-				GetEnumerator = Helpers.GetMethodInfo<Expression<Func<ICollection<T>, IEnumerator<T>>>>(x => x.GetEnumerator());
 				Remove = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.Remove(default(T)));
 				
 				Count = Helpers.GetPropertyInfo<Expression<Func<ICollection<T>, int>>>(x => x.Count);
