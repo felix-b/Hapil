@@ -1,17 +1,18 @@
 Happil
 ======
 
-Here we are building a **Reflection.Emit wrapper** library in **C#.NET**. We want a library which:
+Hi there! I'm building a **Reflection.Emit wrapper** library in **C#.NET**, which focuses on two major use cases: 
 
-* Lets us **implement interfaces and abstract classes** at run-time.
-* Lets us build **from-scratch implementations** with **any members and code** we may want.
-* Lets us build **decorators** and **interceptors**.
-* Lets us use generated types **without any further Reflection**. 
+* **Contract-First (and only) Development**: let developers author contracts as C# interfaces or base classes, then at run-time, emit classes that implement functionality behind the contracts.
+* **Aspect-Oriented Programming**: allow dynamic implementation of aspects as decorators for compiled components.
+
+I want a library which:
+
+* Provides very **short and easy happy path** for the above use cases.
+* Allows writing **clean, maintainable**, compiler- and **refactor-safe** code generators.
 * Is **lightweight**, even in **large applications** with **thousands** of dynamic types.
-* Makes it **fun and easy** to follow the **happy path**.
-* Makes it hard to create an invalid program.
-* **Just works**.
-* Keeps its **users happy**.
+* Makes it **easy** to create a **valid program**, and makes it **hard** to create an **invalid** one.
+* **Just works**, and keeps its **users happy**.
 
 ### More Information
 
