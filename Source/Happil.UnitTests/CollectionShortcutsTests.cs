@@ -14,34 +14,21 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var input = new string[] { "A", "B", "C" };
-			OutputCount = -1;
-
-			DeriveClassFrom<CollectionTester>()
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.DefaultConstructor()
-				.Method<ICollection<string>>(cls => cls.DoTest).Implement((m, inputCollection) => {
-					Static.Prop(() => OutputCount).Assign(inputCollection.Count());
+				.Method<IEnumerable<string>, int>(cls => cls.DoIntTest).Implement((m, input) => {
+					var list = m.New<List<string>>(input);
+					m.Return(list.Count());
 				});
 
 			//-- Act
 
-			var tester = CreateClassInstanceAs<CollectionTester>().UsingDefaultConstructor();
-			tester.DoTest(input);
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoIntTest(new[] { "A", "B", "C" });
 
 			//-- Assert
 
-			Assert.That(OutputCount, Is.EqualTo(3));
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static int OutputCount { get; set; }
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public abstract class CollectionTester
-		{
-			public abstract void DoTest(ICollection<string> inputCollection);
+			Assert.That(result, Is.EqualTo(3));
 		}
 	}
 }
