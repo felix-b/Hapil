@@ -233,7 +233,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
+			protected override IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key)
 			{
 				if ( m_ClassDefinition != null )
 				{

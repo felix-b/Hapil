@@ -84,7 +84,11 @@ namespace Happil.Selectors
 					}
 
 					((IHappilPropertyBody<TProperty>)body).Get(m => m.Return(body.BackingField));
-					((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.Assign(value));
+
+					if ( body.Declaration.CanWrite )
+					{
+						((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.Assign(value));
+					}
 				});
 
 				return OwnerBody;
@@ -99,10 +103,10 @@ namespace Happil.Selectors
 
 			private void ValidateAutomaticImplementation(PropertyInfo declaration)
 			{
-				if ( !declaration.CanRead || !declaration.CanWrite )
+				if ( !declaration.CanRead )
 				{
 					throw new NotSupportedException(string.Format(
-						"Property '{0}' cannot have automatic implementation because it is not read-write.", declaration.Name));
+						"Property '{0}' cannot have automatic implementation because it has no getter.", declaration.Name));
 				}
 
 				if ( declaration.IsIndexer() )

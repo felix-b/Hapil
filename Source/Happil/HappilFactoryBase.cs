@@ -39,7 +39,7 @@ namespace Happil
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected abstract IHappilClassDefinition DefineNewClass(HappilTypeKey key);
+		protected abstract IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key);
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ namespace Happil
 		{
 			using ( key.CreateTypeTemplateScope() )
 			{
-				var classDefinition = DefineNewClass(key);
+				var classDefinition = DefineNewClass(m_Module, key);
 				return new TypeEntry((IHappilClassDefinitionInternals)classDefinition);
 			}
 		}

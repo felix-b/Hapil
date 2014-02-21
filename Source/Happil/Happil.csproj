@@ -136,6 +136,7 @@
     <Compile Include="TSource.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeTemplate.cs" />
+    <Compile Include="XTuple.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

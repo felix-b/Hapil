@@ -70,7 +70,7 @@ namespace Happil.UnitTests.Demo
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override IHappilClassDefinition DefineNewClass(HappilTypeKey key)
+			protected override IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key)
 			{
 				return Module.DefineClass(key, namespaceName: "EndToEndDemo")
 					.ImplementInterface(key.PrimaryInterface)
