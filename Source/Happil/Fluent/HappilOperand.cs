@@ -22,8 +22,9 @@ namespace Happil.Fluent
 	/// </remarks>
 	public abstract class HappilOperand<T> : IHappilOperand<T>, IHappilOperandEmitter, IHappilOperandInternals
 	{
-		private HappilMethod m_OwnerMethod;
+		private readonly HappilMethod m_OwnerMethod;
 		private readonly Type m_OperandType;
+		private TypeMembers m_TypeMembers;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -43,9 +44,41 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void Void(Func<MethodInfo, bool> methodSelector)
+		{
+			var method = this.Members.SelectVoids(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void(MethodInfo method)
+		{
+			ValidateMemberIsMethodOfType(method);
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Void<TArg1>(Expression<Func<T, Action<TArg1>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1>(MethodInfo method, IHappilOperand<TArg1> arg1)
+		{
+			ValidateMemberIsMethodOfType(method);
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1>(Func<MethodInfo, bool> methodSelector, IHappilOperand<TArg1> arg1)
+		{
+			var method = this.Members.SelectVoids<TArg1>(methodSelector).Single();
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
 		}
 
@@ -59,10 +92,34 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Void<TArg1, TArg2, TArg3>(Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2, IHappilOperand<TArg3> arg3)
+		public void Void<TArg1, TArg2>(Func<MethodInfo, bool> methodSelector, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		{
+			var method = this.Members.SelectVoids<TArg1, TArg2>(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2, TArg3>(
+			Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member, 
+			IHappilOperand<TArg1> arg1, 
+			IHappilOperand<TArg2> arg2, 
+			IHappilOperand<TArg3> arg3)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2, arg3));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2, TArg3>(
+			Func<MethodInfo, bool> methodSelector, 
+			IHappilOperand<TArg1> arg1, 
+			IHappilOperand<TArg2> arg2, 
+			IHappilOperand<TArg3> arg3)
+		{
+			var method = this.Members.SelectVoids<TArg1, TArg2>(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,11 +132,43 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilOperand<TReturn> Func<TReturn>(Func<MethodInfo, bool> methodSelector)
+		{
+			var method = this.Members.SelectFuncs<TReturn>(methodSelector).Single();
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Func<TReturn>(MethodInfo method)
+		{
+			ValidateMemberIsMethodOfType(method);
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<TReturn> Func<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IHappilOperand<TArg1> arg1)
 		{
 			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
 			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1);
 			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Func<TArg1, TReturn>(Func<MethodInfo, bool> methodSelector, IHappilOperand<TArg1> arg1)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TReturn>(methodSelector).Single();
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method, arg1), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Func<TArg1, TReturn>(MethodInfo method, IHappilOperand<TArg1> arg1)
+		{
+			ValidateMemberIsMethodOfType(method);
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method, arg1), this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,11 +184,90 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilOperand<TReturn> Func<TArg1, TArg2, TReturn>(
+			Func<MethodInfo, bool> methodSelector, 
+			IHappilOperand<TArg1> arg1, 
+			IHappilOperand<TArg2> arg2)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TArg2, TReturn>(methodSelector).Single();
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method, arg1, arg2), this);
+		}
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+			Expression<Func<T, Func<TArg1, TArg2, TArg3, TReturn>>> member, 
+			IHappilOperand<TArg1> arg1, 
+			IHappilOperand<TArg2> arg2,
+			IHappilOperand<TArg3> arg3)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1, arg2, arg3);
+
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, @operator, this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+			Func<MethodInfo, bool> methodSelector,
+			IHappilOperand<TArg1> arg1,
+			IHappilOperand<TArg2> arg2,
+			IHappilOperand<TArg3> arg3)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TArg2, TArg3, TReturn>(methodSelector).Single();
+			return new HappilUnaryExpression<T, TReturn>(m_OwnerMethod, new UnaryOperators.OperatorCall<T>(method, arg1, arg2, arg3), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilAssignable<TProp> Prop<TProp>(Expression<Func<T, TProp>> property)
 		{
 			return new PropertyAccessOperand<TProp>(
 				target: this, 
 				property: Helpers.GetPropertyInfoArrayFromLambda(property).First());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TProp> Prop<TProp>(Func<PropertyInfo, bool> propertySelector)
+		{
+			return new PropertyAccessOperand<TProp>(
+				target: this,
+				property: this.Members.SelectProps<TProp>(propertySelector).Single());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TProp> Prop<TProp>(PropertyInfo property)
+		{
+			return new PropertyAccessOperand<TProp>(this, property);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TField> Field<TField>(Expression<Func<T, TField>> field)
+		{
+			return new FieldAccessOperand<TField>(
+				target: this,
+				field: Helpers.ResolveFieldFromLambda(field));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TField> Field<TField>(Func<FieldInfo, bool> fieldSelector)
+		{
+			return new FieldAccessOperand<TField>(
+				target: this,
+				field: this.Members.SelectFields<TField>(fieldSelector).Single());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilAssignable<TField> Field<TField>(FieldInfo field)
+		{
+			return new FieldAccessOperand<TField>(this, field);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -285,6 +453,21 @@ namespace Happil.Fluent
 			get
 			{
 				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TypeMembers Members
+		{
+			get
+			{
+				if ( m_TypeMembers == null )
+				{
+					m_TypeMembers = TypeMembers.Of(this.OperandType);
+				}
+
+				return m_TypeMembers;
 			}
 		}
 

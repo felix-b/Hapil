@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Happil.Selectors;
 
 namespace Happil.Fluent
 {
@@ -11,6 +12,15 @@ namespace Happil.Fluent
 	/// </summary>
 	public interface IHappilOperand
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TCast"></typeparam>
+		/// <returns></returns>
+		HappilOperand<TCast> CastTo<TCast>();
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Gets CLR type of the operand value.
 		/// </summary>
@@ -22,6 +32,13 @@ namespace Happil.Fluent
 		/// Whether this operand needs to emit reference to target prior to accessing its value. 
 		/// </summary>
 		bool HasTarget { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Gets cached information on members of CLR type represented by the current operand. 
+		/// </summary>
+		TypeMembers Members { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,11 +56,5 @@ namespace Happil.Fluent
 	/// </remarks>
 	public interface IHappilOperand<out T> : IHappilOperand
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TCast"></typeparam>
-		/// <returns></returns>
-		HappilOperand<TCast> CastTo<TCast>();
 	}
 }
