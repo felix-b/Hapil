@@ -317,7 +317,10 @@ namespace Happil
 			{
 				foreach ( var member in m_SelectedMembers )
 				{
-					action(member);
+					using ( CreateTemplateScope(member) )
+					{
+						action(member);
+					}
 				}
 			}
 
@@ -334,6 +337,13 @@ namespace Happil
 			{
 				return m_SelectedMembers.ToArray();
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected virtual IDisposable CreateTemplateScope(TMemberInfo member)
+			{
+				return null;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -343,6 +353,20 @@ namespace Happil
 			public MethodSelector(IEnumerable<MethodInfo> preSelectedMembers, Func<MethodInfo, bool> optionalPredicate)
 				: base(preSelectedMembers, optionalPredicate)
 			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override IDisposable CreateTemplateScope(MethodInfo method)
+			{
+				var parameterTypes = method.GetParameters().Select(p => p.ParameterType).ToArray();
+				var templateTypePairs = new Type[2 * (1 + parameterTypes.Length)];
+
+				templateTypePairs[0] = typeof(TypeTemplate.TReturn);
+				templateTypePairs[1] = method.ReturnType;
+
+				TypeTemplate.BuildArgumentsTypePairs(parameterTypes, templateTypePairs, arrayStartIndex: 2);
+				return TypeTemplate.CreateScope(templateTypePairs);
 			}
 		}
 
@@ -354,6 +378,24 @@ namespace Happil
 				: base(preSelectedMembers, optionalPredicate)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override IDisposable CreateTemplateScope(PropertyInfo property)
+			{
+				var parameterTypes = property.GetIndexParameters().Select(p => p.ParameterType).ToArray();
+				var templateTypePairs = new Type[2 * (1 + parameterTypes.Length)];
+
+				templateTypePairs[0] = typeof(TypeTemplate.TProperty);
+				templateTypePairs[1] = property.PropertyType;
+
+				if ( parameterTypes.Length > 0 )
+				{
+					TypeTemplate.BuildArgumentsTypePairs(parameterTypes, templateTypePairs, arrayStartIndex: 2);
+				}
+
+				return TypeTemplate.CreateScope(templateTypePairs);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -364,6 +406,13 @@ namespace Happil
 				: base(preSelectedMembers, optionalPredicate)
 			{
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override IDisposable CreateTemplateScope(EventInfo @event)
+			{
+				return TypeTemplate.CreateScope<TypeTemplate.TEventHandler>(@event.EventHandlerType);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -373,6 +422,13 @@ namespace Happil
 			public FieldSelector(IEnumerable<FieldInfo> preSelectedMembers, Func<FieldInfo, bool> optionalPredicate)
 				: base(preSelectedMembers, optionalPredicate)
 			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override IDisposable CreateTemplateScope(FieldInfo field)
+			{
+				return TypeTemplate.CreateScope<TypeTemplate.TField>(field.FieldType);
 			}
 		}
 	}

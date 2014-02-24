@@ -26,7 +26,7 @@ namespace Happil.Fluent
 		IHappilLockSyntax Lock(IHappilOperand<object> syncRoot, int millisecondsTimeout);
 		IHappilCatchSyntax Try(Action body);
 		IHappilSwitchSyntax<T> Switch<T>(IHappilOperand<T> value);
-		HappilOperand<TBase> This<TBase>();
+		HappilThis<TBase> This<TBase>();
 		HappilLocal<T> Local<T>();
 		HappilLocal<T> Local<T>(IHappilOperand<T> initialValue);
 		HappilLocal<T> Local<T>(T initialValueConst);
@@ -45,10 +45,10 @@ namespace Happil.Fluent
 		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
 		HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(ref IHappilDelegate site, Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression);
 		void EmitFromLambda(Expression<Action> lambda);
-		HappilArgument<T> Argument<T>(string name);
+		void ForEachArgument(Action<HappilArgument<TypeTemplate.TArgument>> action);
 		HappilArgument<T> Argument<T>(byte index);
-		MethodInfo MethodInfo { get; }
 		int ArgumentCount { get; }
+		MethodInfo MethodInfo { get; }
 		Type ReturnType { get; }
 	}
 

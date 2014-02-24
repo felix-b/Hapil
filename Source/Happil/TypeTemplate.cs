@@ -22,9 +22,10 @@ namespace Happil
 			s_AllTemplateTypes = new HashSet<Type>(new[] {
 				typeof(TBase), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
 				typeof(TReturn), typeof(TProperty),
-				typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
+				typeof(TArgument), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
 				typeof(TIndex1), typeof(TIndex2),
-				typeof(TEventHandler)
+				typeof(TEventHandler),
+				typeof(TField)
 			});
 
 			s_ArgumentTemplateTypes = new[] {
@@ -38,7 +39,14 @@ namespace Happil
 		{
 			if ( type.IsGenericType )
 			{
-				return type.GetGenericArguments().Any(IsTemplateType);
+				if ( type.GetGenericTypeDefinition() != typeof(TemplateTypeBase<>) )
+				{
+					return type.GetGenericArguments().Any(IsTemplateType);
+				}
+				else
+				{
+					return false;
+				}
 			}
 			else
 			{
@@ -96,6 +104,14 @@ namespace Happil
 		public static Type TryResolve<T>()
 		{
 			return TryResolve(typeof(T));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IDisposable CreateScope<TTemplate>(Type actualType)
+			where TTemplate : TemplateTypeBase<TTemplate>
+		{
+			return new Scope(typeof(TTemplate), actualType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -163,6 +179,7 @@ namespace Happil
 		public class TSecondary2 : TemplateTypeBase<TSecondary2> { }
 		public class TReturn : TemplateTypeBase<TReturn> { }
 		public class TProperty : TemplateTypeBase<TProperty> { }
+		public class TArgument : TemplateTypeBase<TArgument> { }
 		public class TArg1 : TemplateTypeBase<TArg1> { }
 		public class TArg2 : TemplateTypeBase<TArg2> { }
 		public class TArg3 : TemplateTypeBase<TArg3> { }
@@ -174,6 +191,7 @@ namespace Happil
 		public class TIndex1 : TemplateTypeBase<TIndex1> { }
 		public class TIndex2 : TemplateTypeBase<TIndex2> { }
 		public class TEventHandler : TemplateTypeBase<TEventHandler> { }
+		public class TField : TemplateTypeBase<TField> { }
 
 		// ReSharper restore InconsistentNaming
 

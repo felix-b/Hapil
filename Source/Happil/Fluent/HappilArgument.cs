@@ -10,6 +10,7 @@ namespace Happil.Fluent
 	public class HappilArgument<T> : HappilAssignable<T>, ICanEmitAddress
 	{
 		private readonly byte m_Index;
+		private readonly string m_Name;
 		private readonly bool m_IsByRef;
 		private readonly ParameterBuilder m_ParameterBuilder;
 
@@ -26,6 +27,7 @@ namespace Happil.Fluent
 			}
 
 			m_Index = index;
+			m_Name = ownerMethod.GetArgumentNames()[index - indexBase];
 			m_IsByRef = ownerMethod.GetArgumentTypes()[index - indexBase].IsByRef;
 			m_ParameterBuilder = ownerMethod.DefineParameter(index - indexBase);
 		}
@@ -54,6 +56,36 @@ namespace Happil.Fluent
 			get
 			{
 				return m_IsByRef;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool IsByRef
+		{
+			get
+			{
+				return m_IsByRef;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public int Index
+		{
+			get
+			{
+				return m_Index;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public string Name
+		{
+			get
+			{
+				return m_Name;
 			}
 		}
 

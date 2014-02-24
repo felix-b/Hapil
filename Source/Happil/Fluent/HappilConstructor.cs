@@ -9,6 +9,7 @@ namespace Happil.Fluent
 	internal class HappilConstructor : HappilMethod, IHappilConstructorBody
 	{
 		private readonly Type[] m_ArgumentTypes;
+		private readonly string[] m_ArgumentNames;
 		private readonly ConstructorBuilder m_ConstructorBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,6 +18,8 @@ namespace Happil.Fluent
 			: base(happilClass)
 		{
 			m_ArgumentTypes = new Type[0];
+			m_ArgumentNames = new string[0];
+
 			m_ConstructorBuilder = happilClass.TypeBuilder.DefineConstructor(
 				MethodAttributes.Private | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig | MethodAttributes.Static,
 				CallingConventions.Standard,
@@ -29,6 +32,8 @@ namespace Happil.Fluent
 			: base(happilClass)
 		{
 			m_ArgumentTypes = argumentTypes;
+			m_ArgumentNames = CreateDefaultArgumentNames(argumentTypes);
+
 			m_ConstructorBuilder = happilClass.TypeBuilder.DefineConstructor(
 				MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
 				CallingConventions.HasThis,
@@ -130,6 +135,13 @@ namespace Happil.Fluent
 		internal protected override Type[] GetArgumentTypes()
 		{
 			return m_ArgumentTypes;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected override string[] GetArgumentNames()
+		{
+			return m_ArgumentNames;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

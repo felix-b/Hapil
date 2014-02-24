@@ -44,6 +44,17 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private HappilField(HappilClass happilClass, string name, bool isStatic, FieldBuilder fieldBuilder)
+			: base(ownerMethod: null)
+		{
+			m_HappilClass = happilClass;
+			m_Name = name;
+			m_IsStatic = isStatic;
+			m_FieldBuilder = fieldBuilder;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override bool HasTarget
 		{
 			get
@@ -153,6 +164,13 @@ namespace Happil.Fluent
 					m_FieldBuilder.SetCustomAttribute(attribute);
 				}
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilField<TConvert> ConvertTo<TConvert>()
+		{
+			return new HappilField<TConvert>(m_HappilClass, m_Name, m_IsStatic, m_FieldBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

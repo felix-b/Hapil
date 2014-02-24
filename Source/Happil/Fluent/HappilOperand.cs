@@ -880,8 +880,9 @@ namespace Happil.Fluent
 			}
 
 			var allBaseTypes = typeof(T).GetTypeHierarchy();
+			var resolvedBaseTypes = allBaseTypes.Select(TypeTemplate.Resolve).ToArray();
 
-			if ( !allBaseTypes.Contains(member.DeclaringType) )
+			if ( !resolvedBaseTypes.Contains(member.DeclaringType) )
 			{
 				throw new ArgumentException(string.Format(
 					"Member {0} cannot be invoked because it is not a method of type {1}.",

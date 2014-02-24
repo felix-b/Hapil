@@ -9,7 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation
+	public class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation
 	{
 		private readonly IHappilOperand m_Target;
 		private readonly PropertyInfo m_Property;

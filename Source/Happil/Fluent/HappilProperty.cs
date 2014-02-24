@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Happil.Fluent
 {
-	public class HappilProperty<T> : HappilAssignable<T>, IHappilMember
+	public class HappilProperty<T> : HappilAssignable<T>, IHappilMember, IHappilProperty
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly PropertyInfo m_Declaration;
@@ -84,7 +84,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		string IHappilMember.Name
+		public string Name
 		{
 			get
 			{
@@ -102,6 +102,33 @@ namespace Happil.Fluent
 			var builder = new HappilAttributeBuilder<TAttribute>(values);
 			m_PropertyBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
 			return this;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilField<TConvert> GetBackingFieldAs<TConvert>()
+		{
+			return BackingField.ConvertTo<TConvert>();
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilField<T> BackingField
+		{
+			get
+			{
+				return m_Body.BackingField;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public PropertyInfo Declaration
+		{
+			get
+			{
+				return m_Declaration;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,16 +166,6 @@ namespace Happil.Fluent
 			get
 			{
 				return m_HappilClass;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal PropertyInfo Declaration
-		{
-			get
-			{
-				return m_Declaration;
 			}
 		}
 

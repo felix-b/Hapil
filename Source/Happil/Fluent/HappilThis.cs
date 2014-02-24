@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
@@ -11,6 +12,27 @@ namespace Happil.Fluent
 		internal HappilThis(HappilMethod ownerMethod)
 			: base(ownerMethod)
 		{
+		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilField<TField> FindField<TField>(string name)
+		//{
+		//	return OwnerClass.FindMember<HappilField<TField>>(name);
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilProperty<TProperty> FindProperty<TProperty>(string name)
+		//{
+		//	return OwnerClass.FindMember<HappilProperty<TProperty>>(name);
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilField<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
+		{
+			return OwnerClass.GetBackingFieldAs<TProperty>(declaration);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

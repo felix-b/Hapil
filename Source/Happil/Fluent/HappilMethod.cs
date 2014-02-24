@@ -19,6 +19,7 @@ namespace Happil.Fluent
 		private readonly MethodInfo m_Declaration;
 		private readonly List<IHappilStatement> m_Statements;
 		private readonly Type[] m_ArgumentTypes;
+		private readonly string[] m_ArgumentNames;
 		private readonly bool m_IsStatic;
 		private Type[] m_TemplateActualTypePairs = null;
 		private HappilAttributes m_ReturnAttributes = null;
@@ -49,6 +50,7 @@ namespace Happil.Fluent
 			//}
 
 			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
+			m_ArgumentNames = declaration.GetParameters().Select(p => p.Name).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,6 +67,7 @@ namespace Happil.Fluent
 
 			m_Declaration = m_MethodBuilder;
 			m_ArgumentTypes = argumentTypes;
+			m_ArgumentNames = CreateDefaultArgumentNames(argumentTypes);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -183,7 +186,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilOperand<TBase> This<TBase>()
+		public HappilThis<TBase> This<TBase>()
 		{
 			return new HappilThis<TBase>(this);
 		}
@@ -425,12 +428,21 @@ namespace Happil.Fluent
 			//m_HappilClass.CurrentScope.AddStatement();
 		}
 
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilArgument<T> Argument<T>(string name)
+		public void ForEachArgument(Action<HappilArgument<TypeTemplate.TArgument>> action)
 		{
-			throw new NotImplementedException();
+			var argumentTypes = GetArgumentTypes();
+			var indexBase = (IsStatic ? 0 : 1);
+
+			for ( byte i = 0 ; i < argumentTypes.Length ; i++ )
+			{
+				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(argumentTypes[i]) )
+				{
+					var argument = this.Argument<TypeTemplate.TArgument>((byte)(i + indexBase));
+					action(argument);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -480,14 +492,7 @@ namespace Happil.Fluent
 		{
 			get
 			{
-				if ( m_Declaration != null )
-				{
-					return m_Declaration.GetParameters().Length;
-				}
-				else
-				{
-					throw new NotSupportedException();
-				}
+				return GetArgumentTypes().Length;
 			}
 		}
 
@@ -694,6 +699,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal protected virtual string[] GetArgumentNames()
+		{
+			return m_ArgumentNames;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal virtual ParameterBuilder DefineParameter(int position)
 		{
 			if ( m_Declaration == null || m_Declaration is MethodBuilder )
@@ -753,6 +765,20 @@ namespace Happil.Fluent
 				ownerMethod: null,
 				@operator: @operator,
 				operand: operand);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected static string[] CreateDefaultArgumentNames(Type[] argumentTypes)
+		{
+			var names = new string[argumentTypes.Length];
+
+			for ( int i = 0 ; i < names.Length ; i++ )
+			{
+				names[i] = "p" + (i + 1).ToString();
+			}
+
+			return names;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

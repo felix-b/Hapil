@@ -104,6 +104,20 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilField<TField> GetBackingFieldAs<TField>(PropertyInfo declaration)
+		{
+			var property = m_Members.OfType<IHappilProperty>().FirstOrDefault(p => p.Declaration == declaration);
+
+			if ( object.ReferenceEquals(property, null) )
+			{
+				throw new ArgumentException(string.Format("Property '{0}' was not implemented by this class.", declaration.Name));
+			}
+
+			return property.GetBackingFieldAs<TField>();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void DefineFactoryMethod(ConstructorInfo constructor, Type[] parameterTypes)
 		{
 			var resolvedParameterTypes = parameterTypes.Select(TypeTemplate.Resolve).ToArray();

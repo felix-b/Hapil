@@ -66,6 +66,7 @@
     <Compile Include="Fluent\IHappilAttributeBuilder.cs" />
     <Compile Include="Fluent\IHappilAttributes.cs" />
     <Compile Include="Fluent\IHappilEventBody.cs" />
+    <Compile Include="Fluent\IHappilProperty.cs" />
     <Compile Include="TypeMembers.cs" />
     <Compile Include="Statements\DoWhileStatement.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
