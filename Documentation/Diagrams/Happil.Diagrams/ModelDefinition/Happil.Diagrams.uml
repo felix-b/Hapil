@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="dd3e4df7-8296-4a40-b681-5aadd12251b4"
   name="Happil.Diagrams" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -2755,6 +2755,214 @@ generated</body>
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7f908f7c-a378-4727-9fe1-e748228d4708"
+        name="MemberSelectors"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="89eb4f9d-9300-4a1e-bae7-68ad27bac22e"
+            name="Voids"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="3d6edafe-ab67-44e2-9f28-609b5c1ffde1"
+            name="Voids&lt;TArg1&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="b2316b76-51d4-4fd1-bc62-826d662b8ab5"
+            name="Voids&lt;TArg1, TArg2&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="a63dab93-3886-428c-aacb-5948bb362994"
+            name="Voids&lt;TArg1, TArg2, TArg3&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="d42ff017-9a20-4418-a824-f26fbf96e146"
+            name="Funcs&lt;TReturn&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="6f1de57c-cad3-45b5-a768-c8339078e56d"
+            name="Funcs&lt;TArg1, TReturn&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="cf1e1bae-fc98-456d-966a-b9ecae82c647"
+            name="Funcs&lt;TArg1, TArg2, TReturn&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8985c01a-8048-46a5-b903-58e4ca89dd16"
+            name="Funcs&lt;TArg1, TArg2, TArg3, TReturn&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="ced95c4a-adfb-42bf-9450-3dde2eac2c48"
+            name="Props&lt;TProp&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="cefe93ba-c71b-44b0-8a26-95fa5e454d96"
+            name="Item&lt;TIndex1, TItem&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="397b79c7-58c9-43da-a572-da7add0f4441"
+            name="Item&lt;TIndex1, TIndex2, TItem&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="605882c5-69e1-426b-b908-77d236ef5c72"
+            name="AllProperties"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8ba16dfd-9ea8-4882-a215-b11be4a6260e"
+            name="AllMethods"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="ace8e1ad-8352-4875-9a3f-6333f5adb81a"
+            name="Events&lt;TEventHandler&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="19a7732d-b073-484b-a991-d3b3419ca364"
+            name="AllEvents"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="4723efae-f1a6-4de5-9edc-e4030a54b63d"
+            name="Prop"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f93ae71d-13d8-4d5b-b1db-fd7c47791555"
+                  name="info"
+                  direction="In">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="c179152d-97e0-456a-9683-397e6907be57"
+                      LastKnownName="PropertyInfo"
+                      LastKnownLocation="Happil.Diagrams.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="c179152d-97e0-456a-9683-397e6907be57"
+        name="PropertyInfo" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="62bf6b80-8a45-4486-a3fe-68d782a4d23c"
+        name="SelectedMethods"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="f0d132ac-2bbf-4d78-b299-89e914a8cb59"
+            name="ForEach"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="cdb591cd-3435-4719-a6a3-9393bd569577"
+        name="ImplementableSelectedMethods"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="fba9e762-7248-4076-9bc9-d1ae2b18097b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="62bf6b80-8a45-4486-a3fe-68d782a4d23c"
+              LastKnownName="SelectedMethods"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="bb853851-2067-4edc-8017-ae492f8f51dc"
+            name="Implement"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
