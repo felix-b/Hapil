@@ -89,9 +89,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilIfBody ConditionalIf(bool shouldEvaluateConditionAtRunTime, IHappilOperand<bool> runTimeCondition)
+		public IHappilIfBody If(IHappilOperand<bool> condition, bool isTautology)
 		{
-			return AddStatement(new IfStatement(runTimeCondition, conditionIsAlwaysTrue: !shouldEvaluateConditionAtRunTime));
+			return AddStatement(new IfStatement(condition, isTautology));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -99,6 +99,24 @@ namespace Happil.Fluent
 		public HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse)
 		{
 			return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, bool isTautology, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse)
+		{
+			if ( !isTautology )
+			{
+				return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);
+			}
+			else
+			{
+				var scope = StatementScope.Current;
+				scope.Consume(condition);
+				scope.Consume(onFalse);
+				
+				return (HappilOperand<T>)onTrue;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

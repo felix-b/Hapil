@@ -71,6 +71,7 @@ namespace Happil
 				ImplementTupleInterface();
 				ImplementObjectOverrides();
 				ImplementIEquatable();
+				ImplementIComparable();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,23 +104,20 @@ namespace Happil
 						})
 					.Method<int>(cls => cls.GetHashCode)
 						.Implement(m => {
-							var resultHashCode = m.Local<int>(0);
-							var fieldHashCode = m.Local<int>(0);
+							var hashCode = m.Local<int>(0);
 
 							m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach(prop => {
 								var field = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
-								
-								m.ConditionalIf(!field.OperandType.IsValueType, field != m.Const<TT.TProperty>(null)).Then(() => {
-									fieldHashCode.Assign(field.Func<int>(x => x.GetHashCode));
-								})
-								.Else(() => {
-									fieldHashCode.AssignConst(0);
-								});
+								var fieldHashCodeExpression = m.Iif(
+									condition: field != m.Const<TT.TProperty>(null),
+									isTautology: field.OperandType.IsValueType,
+									onTrue: field.Func<int>(x => x.GetHashCode),
+									onFalse: m.Const<int>(0));
 
-								resultHashCode.Assign(((resultHashCode << 5) + resultHashCode) ^ fieldHashCode);
+								hashCode.Assign(((hashCode << 5) + hashCode) ^ fieldHashCodeExpression);
 							});
 
-							m.Return(resultHashCode);
+							m.Return(hashCode);
 						});
 			}
 
@@ -137,6 +135,39 @@ namespace Happil
 								);
 							});
 							m.ReturnConst(true);
+						});
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void ImplementIComparable()
+			{
+				m_ClassBody
+					.ImplementInterface<IComparable>()
+					.Method<object, int>(intf => intf.CompareTo)
+						.Implement((m, other) => {
+							var otherTuple = m.Local(initialValue: other.As<TT.TPrimary>());
+
+							m.If(Static.Func(object.ReferenceEquals, otherTuple, m.Const<object>(null))).Then(() => {
+								m.ReturnConst(1);
+							});
+
+							m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach(prop => {
+								var backingField = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
+								var otherValue = m.Local(initialValue: otherTuple.Prop<TT.TProperty>(prop));
+
+								m.If(backingField > otherValue).Then(() =>
+									m.ReturnConst(1)
+								)
+								.ElseIf(backingField < otherValue).Then(() =>
+									m.ReturnConst(-1)
+								)
+								.ElseIf(backingField != otherValue).Then(() =>
+									m.ReturnConst(1)
+								);
+							});
+
+							m.ReturnConst(0);
 						});
 			}
 		}

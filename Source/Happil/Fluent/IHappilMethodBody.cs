@@ -13,8 +13,9 @@ namespace Happil.Fluent
 	public interface IHappilMethodBodyBase
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
-		IHappilIfBody ConditionalIf(bool shouldEvaluateConditionAtRunTime, IHappilOperand<bool> runTimeCondition);
+		IHappilIfBody If(IHappilOperand<bool> condition, bool isTautology);
 		HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse);
+		HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, bool isTautology, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse);
 		IHappilWhileSyntax While(IHappilOperand<bool> condition);
 		IHappilDoWhileSyntax Do(Action<IHappilLoopBody> body);
 		HappilForShortSyntax For(HappilConstant<int> from, IHappilOperand<int> to, int increment = 1);

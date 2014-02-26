@@ -283,14 +283,18 @@ namespace Happil
 
 				for ( int i = 0 ; i < typeArguments.Length ; i++ )
 				{
-					var resolvedTypeArgument = TryResolve(typeArguments[i]);
-
-					if ( resolvedTypeArgument == null )
+					if ( IsTemplateType(typeArguments[i]) )
 					{
-						return null;
+						var resolvedTypeArgument = TryResolve(typeArguments[i]);
+
+						if ( resolvedTypeArgument == null )
+						{
+							return null;
+						}
+					
+						typeArguments[i] = resolvedTypeArgument;
 					}
 
-					typeArguments[i] = resolvedTypeArgument;
 				}
 
 				return type.GetGenericTypeDefinition().MakeGenericType(typeArguments);
