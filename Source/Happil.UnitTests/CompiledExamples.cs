@@ -651,6 +651,7 @@ namespace Happil.UnitTests
 
 			#endregion
 		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public class EnumerableExample : AncestorRepository.EnumerableTester
@@ -670,6 +671,34 @@ namespace Happil.UnitTests
 			}
 
 			#endregion
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class HashCodeExample
+		{
+			private int m_First;
+			private string m_Second;
+			private TimeSpan m_Third;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public HashCodeExample()
+			{
+				m_First = 123;
+				m_Second = "ABC";
+				m_Third = TimeSpan.FromMinutes(5);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public sealed override int GetHashCode()
+			{
+				int num = 0;
+				num = ((num << 5) + num) ^ this.m_First.GetHashCode();
+				num = ((num << 5) + num) ^ this.m_Second.GetHashCode();
+				return (((num << 5) + num) ^ this.m_Third.GetHashCode());
+			}
 		}
 	}
 }

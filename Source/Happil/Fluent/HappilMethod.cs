@@ -89,6 +89,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilIfBody ConditionalIf(bool shouldEvaluateConditionAtRunTime, IHappilOperand<bool> runTimeCondition)
+		{
+			return AddStatement(new IfStatement(runTimeCondition, conditionIsAlwaysTrue: !shouldEvaluateConditionAtRunTime));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse)
 		{
 			return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);

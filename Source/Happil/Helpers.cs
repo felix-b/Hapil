@@ -36,6 +36,7 @@ namespace Happil
 				{
 					target.EmitTarget(il);
 					target.EmitAddress(il);
+					il.Emit(OpCodes.Constrained, target.OperandType);
 				}
 				else
 				{
@@ -62,7 +63,10 @@ namespace Happil
 
 			var methodInfo = (method as MethodInfo);
 			var constructorInfo = (method as ConstructorInfo);
-			var callOpcode = (method.IsVirtual || method.DeclaringType.IsInterface ? OpCodes.Callvirt : OpCodes.Call);
+			var callOpcode = (
+				method.IsVirtual || method.DeclaringType.IsInterface || (target != null && target.OperandType.IsValueType) ? 
+				OpCodes.Callvirt : 
+				OpCodes.Call);
 
 			if ( methodInfo != null )
 			{

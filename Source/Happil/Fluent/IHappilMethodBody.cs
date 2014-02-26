@@ -13,6 +13,7 @@ namespace Happil.Fluent
 	public interface IHappilMethodBodyBase
 	{
 		IHappilIfBody If(IHappilOperand<bool> condition);
+		IHappilIfBody ConditionalIf(bool shouldEvaluateConditionAtRunTime, IHappilOperand<bool> runTimeCondition);
 		HappilOperand<T> Iif<T>(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse);
 		IHappilWhileSyntax While(IHappilOperand<bool> condition);
 		IHappilDoWhileSyntax Do(Action<IHappilLoopBody> body);

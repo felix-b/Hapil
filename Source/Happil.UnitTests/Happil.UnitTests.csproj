@@ -96,7 +96,7 @@
     <Compile Include="StringShortcutsTests.cs" />
     <Compile Include="TargetRepository.cs" />
     <Compile Include="TypeTemplateTests.cs" />
-    <Compile Include="XTupleTests.cs" />
+    <Compile Include="XTupleFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">

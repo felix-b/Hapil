@@ -10,85 +10,39 @@ using TT = Happil.TypeTemplate;
 
 namespace Happil
 {
-	public static class XTuple
+	public class XTupleFactory : HappilFactoryBase
 	{
-		private static readonly object s_FactoryInstanceSyncRoot = new object();
-		private static Factory s_FactoryInstance = null;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static T New<T>() where T : class
+		public XTupleFactory(HappilModule module)
+			: base(module)
 		{
-			return FactoryInstance.CreateTuple<T>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Factory FactoryInstance
+		public T New<T>() where T : class
 		{
-			get
-			{
-				var instance = s_FactoryInstance;
-
-				if ( instance == null )
-				{
-					lock ( s_FactoryInstanceSyncRoot )
-					{
-						if ( s_FactoryInstance == null )
-						{
-							instance = new Factory(new HappilModule());
-							s_FactoryInstance = instance;
-						}
-					}
-				}
-
-				return instance;
-			}
-			set
-			{
-				lock ( s_FactoryInstanceSyncRoot )
-				{
-					s_FactoryInstance = value;
-				}
-			}
+			var key = new HappilTypeKey(primaryInterface: typeof(T));
+			var type = base.GetOrBuildType(key);
+			return type.CreateInstance<T>();
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public class Factory : HappilFactoryBase
-		{
-			public Factory(HappilModule module)
-				: base(module)
-			{
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public T CreateTuple<T>() where T : class
-			{
-				var key = new HappilTypeKey(primaryInterface: typeof(T));
-				var type = base.GetOrBuildType(key);
-				return type.CreateInstance<T>();
-			}
 	
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key)
-			{
-				var classDefinition = Module.DeriveClassFrom<object>(MakeClassNameFrom(key.PrimaryInterface, prefix: "XTupleOf"));
-				var builder = new TupleClassBuilder(key, classDefinition);
+		protected override IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key)
+		{
+			var classDefinition = Module.DeriveClassFrom<object>(MakeClassNameFrom(key.PrimaryInterface, prefix: "XTupleOf"));
+			var builder = new TupleClassBuilder(key, classDefinition);
 
-				builder.BuildClass();
+			builder.BuildClass();
 
-				return classDefinition;
-			}
+			return classDefinition;
+		}
 
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private string MakeClassNameFrom(Type type, string prefix = null, string suffix = null)
-			{
-				return type.Namespace + "." + (prefix ?? "") + type.Name + (suffix ?? "");
-			}
+		private string MakeClassNameFrom(Type type, string prefix = null, string suffix = null)
+		{
+			return type.Namespace + "." + (prefix ?? "") + type.Name + (suffix ?? "");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,17 +99,26 @@ namespace Happil
 						.Implement((m, other) => {
 							m.Return(
 								m.This<IEquatable<TT.TPrimary>>().Func<TT.TPrimary, bool>(intf => intf.Equals, other.CastTo<TT.TPrimary>())
-							);		
+							);
 						})
 					.Method<int>(cls => cls.GetHashCode)
 						.Implement(m => {
 							var resultHashCode = m.Local<int>(0);
-						
+							var fieldHashCode = m.Local<int>(0);
+
 							m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach(prop => {
-								var fieldHashCode = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop).Func<int>(x => x.GetHashCode);
+								var field = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
+								
+								m.ConditionalIf(!field.OperandType.IsValueType, field != m.Const<TT.TProperty>(null)).Then(() => {
+									fieldHashCode.Assign(field.Func<int>(x => x.GetHashCode));
+								})
+								.Else(() => {
+									fieldHashCode.AssignConst(0);
+								});
+
 								resultHashCode.Assign(((resultHashCode << 5) + resultHashCode) ^ fieldHashCode);
 							});
-						
+
 							m.Return(resultHashCode);
 						});
 			}
@@ -169,7 +132,7 @@ namespace Happil
 					.Method<TT.TPrimary, bool>(intf => intf.Equals)
 						.Implement((m, other) => {
 							m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach(prop => {
-								m.If(m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop) != other.Prop<TT.TProperty>(prop)).Then(() => 
+								m.If(m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop) != other.Prop<TT.TProperty>(prop)).Then(() =>
 									m.ReturnConst(false)
 								);
 							});

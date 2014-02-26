@@ -9,6 +9,7 @@ namespace Happil.Statements
 {
 	internal class IfStatement : IHappilStatement, IHappilIfBody, IHappilIfBodyThen
 	{
+		private readonly bool m_ConditionIsAlwaysTrue;
 		private readonly IHappilOperand<bool> m_Condition;
 		private readonly List<IHappilStatement> m_ThenBlock;
 		private readonly List<IHappilStatement> m_ElseBlock;
@@ -16,8 +17,16 @@ namespace Happil.Statements
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IfStatement(IHappilOperand<bool> condition)
+			: this(condition, conditionIsAlwaysTrue: false)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IfStatement(IHappilOperand<bool> condition, bool conditionIsAlwaysTrue)
 		{
 			m_Condition = condition;
+			m_ConditionIsAlwaysTrue = conditionIsAlwaysTrue;
 			m_ThenBlock = new List<IHappilStatement>();
 			m_ElseBlock = new List<IHappilStatement>();
 
@@ -30,37 +39,14 @@ namespace Happil.Statements
 
 		public void Emit(ILGenerator il)
 		{
-			var afterIfBlock = il.DefineLabel();
-			var afterElseBlock = (m_ElseBlock.Count > 0 ? il.DefineLabel() : new Label());
-
-			m_Condition.EmitTarget(il);
-			m_Condition.EmitLoad(il);
-			
-			il.Emit(OpCodes.Brfalse, afterIfBlock);
-
-			foreach ( var statement in m_ThenBlock )
+			if ( m_ConditionIsAlwaysTrue )
 			{
-				statement.Emit(il);
+				EmitThenBlock(il);
 			}
-
-			if ( m_ElseBlock.Count > 0 )
+			else
 			{
-				il.Emit(OpCodes.Br, afterElseBlock);
+				EmitFullStatement(il);
 			}
-			
-			il.MarkLabel(afterIfBlock);
-
-			if ( m_ElseBlock.Count > 0 )
-			{
-				foreach ( var statement in m_ElseBlock )
-				{
-					statement.Emit(il);
-				}
-
-				il.MarkLabel(afterElseBlock);
-			}
-
-			il.Emit(OpCodes.Nop);
 		}
 
 		#endregion
@@ -103,6 +89,53 @@ namespace Happil.Statements
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private void EmitThenBlock(ILGenerator il)
+		{
+			foreach ( var statement in m_ThenBlock )
+			{
+				statement.Emit(il);
+			}
+		}
+	
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EmitFullStatement(ILGenerator il)
+		{
+			var afterIfBlock = il.DefineLabel();
+			var afterElseBlock = (m_ElseBlock.Count > 0 ? il.DefineLabel() : new Label());
+
+			m_Condition.EmitTarget(il);
+			m_Condition.EmitLoad(il);
+
+			il.Emit(OpCodes.Brfalse, afterIfBlock);
+
+			foreach ( var statement in m_ThenBlock )
+			{
+				statement.Emit(il);
+			}
+
+			if ( m_ElseBlock.Count > 0 )
+			{
+				il.Emit(OpCodes.Br, afterElseBlock);
+			}
+
+			il.MarkLabel(afterIfBlock);
+
+			if ( m_ElseBlock.Count > 0 )
+			{
+				foreach ( var statement in m_ElseBlock )
+				{
+					statement.Emit(il);
+				}
+
+				il.MarkLabel(afterElseBlock);
+			}
+
+			il.Emit(OpCodes.Nop);
+		}
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
