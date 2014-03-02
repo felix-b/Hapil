@@ -41,13 +41,13 @@ namespace Happil.UnitTests
 		{
 			//-- Act
 
-			var tuple = m_Factory.New<ITwoItemTuple>().Init(first: 123, second: "ABC");
+			var tuple = m_Factory.New<ITwoItemTuple>().Init(bfirst: 123, asecond: "ABC");
 
 			//-- Assert
 
 			Assert.That(tuple, Is.Not.Null);
-			Assert.That(tuple.First, Is.EqualTo(123));
-			Assert.That(tuple.Second, Is.EqualTo("ABC"));
+			Assert.That(tuple.BFirst, Is.EqualTo(123));
+			Assert.That(tuple.ASecond, Is.EqualTo("ABC"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -162,25 +162,90 @@ namespace Happil.UnitTests
 
 			//-- Act & Assert
 
+			Console.WriteLine("1-1");
 			Assert.That(tuple1.CompareTo(tuple1), Is.EqualTo(0));
+			Console.WriteLine("1-2");
 			Assert.That(tuple1.CompareTo(tuple2), Is.EqualTo(0));
 
+			Console.WriteLine("1-3");
 			Assert.That(tuple1.CompareTo(tuple3), Is.LessThan(0));
+			Console.WriteLine("3-1");
 			Assert.That(tuple3.CompareTo(tuple1), Is.GreaterThan(0));
 
+			Console.WriteLine("1-4");
 			Assert.That(tuple1.CompareTo(tuple4), Is.LessThan(0));
+			Console.WriteLine("4-1");
 			Assert.That(tuple4.CompareTo(tuple1), Is.GreaterThan(0));
 
+			Console.WriteLine("1-5");
 			Assert.That(tuple1.CompareTo(tuple5), Is.LessThan(0));
+			Console.WriteLine("5-1");
 			Assert.That(tuple5.CompareTo(tuple1), Is.GreaterThan(0));
 
+			Console.WriteLine("3-4");
 			Assert.That(tuple3.CompareTo(tuple4), Is.GreaterThan(0));
+			Console.WriteLine("4-3");
 			Assert.That(tuple4.CompareTo(tuple3), Is.LessThan(0));
-			
+
+			Console.WriteLine("4-5");
 			Assert.That(tuple4.CompareTo(tuple5), Is.GreaterThan(0));
+			Console.WriteLine("5-4");
 			Assert.That(tuple5.CompareTo(tuple4), Is.LessThan(0));
 
+			Console.WriteLine("3-5");
 			Assert.That(tuple3.CompareTo(tuple5), Is.GreaterThan(0));
+			Console.WriteLine("5-3");
+			Assert.That(tuple5.CompareTo(tuple3), Is.LessThan(0));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanCompare2()
+		{
+			//-- Arrange
+
+			var tuple1 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "ABC", third: TimeSpan.FromMinutes(5));
+			var tuple2 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "ABC", third: TimeSpan.FromMinutes(5));
+			var tuple3 = m_Factory.New<IThreeItemTuple>().Init(first: 456, second: "ABC", third: TimeSpan.FromMinutes(5));
+			var tuple4 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "DEF", third: TimeSpan.FromMinutes(5));
+			var tuple5 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "ABC", third: TimeSpan.FromMinutes(10));
+
+			//-- Act & Assert
+
+			Console.WriteLine("1-1");
+			Assert.That(tuple1.CompareTo(tuple1), Is.EqualTo(0));
+			Console.WriteLine("1-2");
+			Assert.That(tuple1.CompareTo(tuple2), Is.EqualTo(0));
+
+			Console.WriteLine("1-3");
+			Assert.That(tuple1.CompareTo(tuple3), Is.LessThan(0));
+			Console.WriteLine("3-1");
+			Assert.That(tuple3.CompareTo(tuple1), Is.GreaterThan(0));
+
+			Console.WriteLine("1-4");
+			Assert.That(tuple1.CompareTo(tuple4), Is.LessThan(0));
+			Console.WriteLine("4-1");
+			Assert.That(tuple4.CompareTo(tuple1), Is.GreaterThan(0));
+
+			Console.WriteLine("1-5");
+			Assert.That(tuple1.CompareTo(tuple5), Is.LessThan(0));
+			Console.WriteLine("5-1");
+			Assert.That(tuple5.CompareTo(tuple1), Is.GreaterThan(0));
+
+			Console.WriteLine("3-4");
+			Assert.That(tuple3.CompareTo(tuple4), Is.GreaterThan(0));
+			Console.WriteLine("4-3");
+			Assert.That(tuple4.CompareTo(tuple3), Is.LessThan(0));
+
+			Console.WriteLine("4-5");
+			Assert.That(tuple4.CompareTo(tuple5), Is.GreaterThan(0));
+			Console.WriteLine("5-4");
+			Assert.That(tuple5.CompareTo(tuple4), Is.LessThan(0));
+
+			Console.WriteLine("3-5");
+			Assert.That(tuple3.CompareTo(tuple5), Is.GreaterThan(0));
+			Console.WriteLine("5-3");
 			Assert.That(tuple5.CompareTo(tuple3), Is.LessThan(0));
 		}
 
@@ -191,7 +256,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var tuple1 = m_Factory.New<ITwoItemTuple>().Init(first: 123, second: "ABC");
+			var tuple1 = m_Factory.New<ITwoItemTuple>().Init(bfirst: 123, asecond: "ABC");
 			var tuple2 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "ABC", third: TimeSpan.FromMinutes(5));
 
 			//-- Act 
@@ -260,11 +325,27 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestToString()
+		{
+			//-- Arrange
+
+			var tuple1 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: "ABC", third: TimeSpan.FromMinutes(5));
+			var tuple2 = m_Factory.New<IThreeItemTuple>().Init(first: 123, second: null, third: TimeSpan.FromMinutes(5));
+
+			//-- Act & Assert
+
+			Assert.That(tuple1.ToString(), Is.EqualTo("(123, ABC, 00:05:00)"));
+			Assert.That(tuple2.ToString(), Is.EqualTo("(123, , 00:05:00)"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface ITwoItemTuple
 		{
-			ITwoItemTuple Init(int first, string second);
-			int First { get; }
-			string Second { get; }
+			ITwoItemTuple Init(int bfirst, string asecond);
+			int BFirst { get; }
+			string ASecond { get; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -326,6 +326,21 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void ForEach(MemberAction action)
+			{
+				for ( int index = 0 ; index < m_SelectedMembers.Length ; index++ )
+				{
+					var member = m_SelectedMembers[index];
+
+					using ( CreateTemplateScope(member) )
+					{
+						action(index, m_SelectedMembers.Length, member);
+					}
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public TMemberInfo Single()
 			{
 				return m_SelectedMembers.Single();
@@ -344,6 +359,10 @@ namespace Happil
 			{
 				return null;
 			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public delegate void MemberAction(int index, int count, TMemberInfo member);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

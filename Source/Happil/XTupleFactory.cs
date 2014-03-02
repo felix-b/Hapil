@@ -69,7 +69,9 @@ namespace Happil
 				m_ClassBody.DefaultConstructor();
 
 				ImplementTupleInterface();
-				ImplementObjectOverrides();
+				ImplementObjectEquals();
+				ImplementGetHashCode();
+				ImplementToString();
 				ImplementIEquatable();
 				ImplementIComparable();
 			}
@@ -93,7 +95,7 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private void ImplementObjectOverrides()
+			private void ImplementObjectEquals()
 			{
 				m_ClassBody
 					.Method<object, bool>(cls => cls.Equals)
@@ -101,7 +103,14 @@ namespace Happil
 							m.Return(
 								m.This<IEquatable<TT.TPrimary>>().Func<TT.TPrimary, bool>(intf => intf.Equals, other.CastTo<TT.TPrimary>())
 							);
-						})
+						});
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void ImplementGetHashCode()
+			{
+				m_ClassBody
 					.Method<int>(cls => cls.GetHashCode)
 						.Implement(m => {
 							var hashCode = m.Local<int>(0);
@@ -119,6 +128,23 @@ namespace Happil
 
 							m.Return(hashCode);
 						});
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void ImplementToString()
+			{
+				m_ClassBody.Method<string>(cls => cls.ToString).Implement(m => {
+					var stringBuilder = m.Local(m.New<StringBuilder>(m.Const("(")));
+
+					m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach((index, count, prop) => {
+						var field = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
+						stringBuilder.Func<object, StringBuilder>(x => x.Append, field.CastTo<object>());
+						stringBuilder.Func<string, StringBuilder>(x => x.Append, m.Const(index < count - 1 ? ", " : ")"));
+					});
+
+					m.Return(stringBuilder.Func<string>(x => x.ToString));
+				});
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -147,6 +173,7 @@ namespace Happil
 					.Method<object, int>(intf => intf.CompareTo)
 						.Implement((m, other) => {
 							var otherTuple = m.Local(initialValue: other.As<TT.TPrimary>());
+							var compareResult = m.Local<int>(initialValueConst: 0);
 
 							m.If(Static.Func(object.ReferenceEquals, otherTuple, m.Const<object>(null))).Then(() => {
 								m.ReturnConst(1);
@@ -156,15 +183,27 @@ namespace Happil
 								var backingField = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
 								var otherValue = m.Local(initialValue: otherTuple.Prop<TT.TProperty>(prop));
 
-								m.If(backingField > otherValue).Then(() =>
-									m.ReturnConst(1)
-								)
-								.ElseIf(backingField < otherValue).Then(() =>
-									m.ReturnConst(-1)
-								)
-								.ElseIf(backingField != otherValue).Then(() =>
-									m.ReturnConst(1)
-								);
+								if ( backingField.OperandType.IsValueType )
+								{
+									m.If(backingField > otherValue).Then(() => {
+										m.ReturnConst(1);
+									})
+									.ElseIf(backingField < otherValue).Then(() => {
+										m.ReturnConst(-1);
+									})
+									.ElseIf(backingField != otherValue).Then(() => {
+										m.ReturnConst(1);
+									});
+								}
+								else if ( typeof(IComparable).IsAssignableFrom(backingField.OperandType) )
+								{
+									compareResult.Assign(backingField.CastTo<IComparable>().Func<object, int>(x => x.CompareTo, otherValue));
+									m.If(compareResult != 0).Then(() => m.Return(compareResult));
+								}
+								else
+								{
+									throw new NotSupportedException("Cannot compare values of type: " + backingField.OperandType.FullName);
+								}
 							});
 
 							m.ReturnConst(0);
