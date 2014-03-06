@@ -180,34 +180,45 @@ namespace Happil
 							});
 
 							m.This<TT.TPrimary>().Members.SelectAllProperties().ForEach(prop => {
-								var backingField = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
-								var otherValue = m.Local(initialValue: otherTuple.Prop<TT.TProperty>(prop));
-
-								if ( backingField.OperandType.IsValueType )
-								{
-									m.If(backingField > otherValue).Then(() => {
-										m.ReturnConst(1);
-									})
-									.ElseIf(backingField < otherValue).Then(() => {
-										m.ReturnConst(-1);
-									})
-									.ElseIf(backingField != otherValue).Then(() => {
-										m.ReturnConst(1);
-									});
-								}
-								else if ( typeof(IComparable).IsAssignableFrom(backingField.OperandType) )
-								{
-									compareResult.Assign(backingField.CastTo<IComparable>().Func<object, int>(x => x.CompareTo, otherValue));
-									m.If(compareResult != 0).Then(() => m.Return(compareResult));
-								}
-								else
-								{
-									throw new NotSupportedException("Cannot compare values of type: " + backingField.OperandType.FullName);
-								}
+								EmitPropertyComparison(m, prop, otherTuple, compareResult);
 							});
 
 							m.ReturnConst(0);
 						});
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private static void EmitPropertyComparison(
+				IHappilMethodBody<int> m, 
+				PropertyInfo prop, 
+				HappilLocal<TypeTemplate.TPrimary> otherTuple, 
+				HappilLocal<int> compareResult)
+			{
+				var backingField = m.This<TT.TPrimary>().BackingFieldOf<TT.TProperty>(prop);
+				var otherValue = m.Local(initialValue: otherTuple.Prop<TT.TProperty>(prop));
+
+				if ( backingField.OperandType.IsValueType )
+				{
+					m.If(backingField > otherValue).Then(() => {
+						m.ReturnConst(1);
+					})
+					.ElseIf(backingField < otherValue).Then(() => {
+						m.ReturnConst(-1);
+					})
+					.ElseIf(backingField != otherValue).Then(() => {
+						m.ReturnConst(1);
+					});
+				}
+				else if ( typeof(IComparable).IsAssignableFrom(backingField.OperandType) )
+				{
+					compareResult.Assign(backingField.CastTo<IComparable>().Func<object, int>(x => x.CompareTo, otherValue));
+					m.If(compareResult != 0).Then(() => m.Return(compareResult));
+				}
+				else
+				{
+					throw new NotSupportedException("Cannot compare values of type: " + backingField.OperandType.FullName);
+				}
 			}
 		}
 	}
