@@ -73,9 +73,10 @@ namespace Happil.Selectors
 
 			internal IHappilClassBody<TBase> DefineMembers<TReturn>(
 				Func<IHappilMethodBodyBase, IHappilAttributes> attributes,
-				Action<HappilMethod> invokeBodyDefinition)
+				Action<HappilMethod> invokeBodyDefinition,
+				bool extendIfImplemented = false)
 			{
-				var methodsToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods);
+				var methodsToImplement = (extendIfImplemented ? SelectedMethods : OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods));
 
 				foreach ( var declaration in methodsToImplement )
 				{
