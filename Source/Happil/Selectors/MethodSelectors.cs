@@ -80,14 +80,13 @@ namespace Happil.Selectors
 
 				foreach ( var declaration in methodsToImplement )
 				{
-					HappilMethod methodMember = (
-						declaration.IsVoid()
-						? (HappilMethod)new VoidHappilMethod(OwnerBody.HappilClass, declaration)
-						: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration));
-
-					OwnerBody.HappilClass.RegisterMember(
-						methodMember,
-						bodyDefinition: () => {
+					OwnerBody.HappilClass.RegisterOrExtendDeclaredMember<HappilMethod>(
+						declaration,
+						memberFactory: () => 
+							declaration.IsVoid()
+							? (HappilMethod)new VoidHappilMethod(OwnerBody.HappilClass, declaration)
+							: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration),
+						bodyDefinition: methodMember => {
 							methodMember.SetAttributes(attributes);
 							using ( methodMember.CreateBodyScope() )
 							{
@@ -135,12 +134,16 @@ namespace Happil.Selectors
 				Func<IHappilMethodBodyBase, IHappilAttributes> attributes, 
 				Action<IHappilMethodBodyTemplate> body)
 			{
-				return DefineMembers<TypeTemplate.TReturn>(attributes, methodMember => {
-					using ( TypeTemplate.CreateScope(typeof(TypeTemplate.TReturn), methodMember.ReturnType) )
-					{
-						body(methodMember);
-					}
-				});
+				return DefineMembers<TypeTemplate.TReturn>(attributes, body);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public IHappilClassBody<TBase> Extend(
+				Func<IHappilMethodBodyBase, IHappilAttributes> attributes = null,
+				Action<IHappilMethodBodyTemplate> body = null)
+			{
+				return DefineMembers<TypeTemplate.TReturn>(attributes, body, extendIfImplemented: true);
 			}
 		}
 

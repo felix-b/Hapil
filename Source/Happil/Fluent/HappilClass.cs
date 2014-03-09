@@ -73,7 +73,8 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterOrExtendDeclaredMember(MemberInfo declaration, Func<IHappilMember> memberFactory, Action bodyDefinition)
+		public void RegisterOrExtendDeclaredMember<TMember>(MemberInfo declaration, Func<IHappilMember> memberFactory, Action<TMember> bodyDefinition)
+			where TMember : IHappilMember
 		{
 			IHappilMember member;
 
@@ -84,7 +85,7 @@ namespace Happil.Fluent
 				m_ImplementedMembers.Add(declaration, member);
 			}
 
-			RegisterMemberBodyDefinition(member, bodyDefinition);
+			RegisterMemberBodyDefinition(member, () => bodyDefinition((TMember)member));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

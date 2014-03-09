@@ -58,6 +58,7 @@ namespace Happil.Fluent
 
 	public interface IHappilMethodBodyTemplate : IHappilMethodBodyBase
 	{
+		HappilOperand<TypeTemplate.TReturn> Proceed();
 		void Return(IHappilOperand<TypeTemplate.TReturn> operand);
 		void Return();
 		IHappilAttributes ReturnAttributes { get; }
@@ -67,6 +68,7 @@ namespace Happil.Fluent
 
 	public interface IHappilMethodBody<TReturn> : IHappilMethodBodyBase
 	{
+		//HappilOperand<TReturn> Proceed();
 		void Return(IHappilOperand<TReturn> operand);
 		void ReturnConst(TReturn constantValue);
 		IHappilAttributes ReturnAttributes { get; }
@@ -76,6 +78,7 @@ namespace Happil.Fluent
 
 	public interface IVoidHappilMethodBody : IHappilMethodBodyBase
 	{
+		//void Proceed();
 		void Return();
 	}
 
@@ -83,6 +86,7 @@ namespace Happil.Fluent
 
 	public interface IHappilConstructorBody : IHappilMethodBodyBase
 	{
+		//void Proceed();
 		void Base();
 		void Base<TArg1>(IHappilOperand<TArg1> arg1);
 		void Base<TArg1, TArg2>(IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2);

@@ -36,7 +36,7 @@ namespace Happil
 		{
 			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
 		}
-		
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected abstract IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key);
@@ -60,6 +60,62 @@ namespace Happil
 				var classDefinition = DefineNewClass(m_Module, key);
 				return new TypeEntry((IHappilClassDefinitionInternals)classDefinition);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilClassDefinition ImplementAspects(
+			IHappilClassBody<object> classDefinition,
+			HappilTypeKey key,
+			params AspectImplementorCallback[] aspects)
+		{
+			return ImplementAspects(classDefinition, key, aspects.AsEnumerable());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilClassDefinition ImplementAspects(
+			IHappilClassBody<object> classDefinition,
+			HappilTypeKey key,
+			params IAspectImplementor[] aspects)
+		{
+			return ImplementAspects(classDefinition, key, aspects.AsEnumerable());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilClassDefinition ImplementAspects(
+			IHappilClassBody<object> classDefinition,
+			HappilTypeKey key,
+			IEnumerable<IAspectImplementor> aspects)
+		{
+			return ImplementAspects(classDefinition, key, aspects.Select(a => new AspectImplementorCallback(a.ImplementAspect)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static IHappilClassDefinition ImplementAspects(
+			IHappilClassBody<object> classDefinition,
+			HappilTypeKey key,
+			IEnumerable<AspectImplementorCallback> aspects)
+		{
+			foreach ( var singleAspect in aspects )
+			{
+				singleAspect(classDefinition, key);
+			}
+
+			return classDefinition;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public delegate void AspectImplementorCallback(IHappilClassBody<object> classDefinition, HappilTypeKey key);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IAspectImplementor
+		{
+			void ImplementAspect(IHappilClassBody<object> classDefinition, HappilTypeKey key);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

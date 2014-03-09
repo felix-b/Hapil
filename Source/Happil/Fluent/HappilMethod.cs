@@ -559,6 +559,13 @@ namespace Happil.Fluent
 
 		#region IHappilMethodBodyTemplate Members
 
+		public HappilOperand<TypeTemplate.TReturn> Proceed()
+		{
+			throw new NotImplementedException();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
 		public void Return(IHappilOperand<TypeTemplate.TReturn> operand)
 		{
 			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));

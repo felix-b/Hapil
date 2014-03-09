@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AncestorRepository.cs" />
+    <Compile Include="AspectPipelineTests.cs" />
     <Compile Include="AttributeTests.cs" />
     <Compile Include="CollectionShortcutsTests.cs" />
     <Compile Include="Demo\ImplementingMethodsDemo.cs" />

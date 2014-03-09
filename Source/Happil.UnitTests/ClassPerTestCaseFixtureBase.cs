@@ -66,7 +66,7 @@ namespace Happil.UnitTests
 
 		protected void OnDefineNewClass(Func<HappilTypeKey, IHappilClassDefinition> callback)
 		{
-			m_Factory = new TestFactory(m_Module, classDefinition: null, classDefinitionCallback: callback);
+			m_Factory = CreateTestFactory(m_Module, classDefinition: null, classDefinitionCallback: callback);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -135,11 +135,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected virtual TestFactory CreateTestFactory(
+			HappilModule module,
+			IHappilClassDefinition classDefinition,
+			Func<HappilTypeKey, IHappilClassDefinition> classDefinitionCallback)
+		{
+			return new TestFactory(module, classDefinition, classDefinitionCallback);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal IConstructors<TBase> CreateClassInstanceAs<TBase>()
 		{
 			if ( m_Factory == null )
 			{
-				m_Factory = new TestFactory(m_Module, m_ClassDefinition, classDefinitionCallback: null);
+				m_Factory = CreateTestFactory(m_Module, m_ClassDefinition, classDefinitionCallback: null);
 				m_Factory.DefineClass();
 			}
 
@@ -196,7 +206,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class TestFactory : HappilFactoryBase
+		protected class TestFactory : HappilFactoryBase
 		{
 			private readonly IHappilClassDefinition m_ClassDefinition;
 			private readonly Func<HappilTypeKey, IHappilClassDefinition> m_ClassDefinitionCallback;
@@ -229,7 +239,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public TypeEntry ClassTypeEntry { get; private set; }
+			internal TypeEntry ClassTypeEntry { get; private set; }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -134,7 +134,6 @@
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Static.cs" />
     <Compile Include="StringShortcuts.cs" />
-    <Compile Include="TSource.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeTemplate.cs" />
     <Compile Include="XTupleFactory.cs" />
