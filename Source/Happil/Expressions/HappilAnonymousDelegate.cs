@@ -20,14 +20,13 @@ namespace Happil.Expressions
 		{
 			m_Method = new HappilMethod<TReturn>(happilClass, "<Anonymous>", typeof(TReturn), new[] { typeof(TArg1) });
 
-			happilClass.RegisterMember(
-				m_Method,
-				bodyDefinition: () => {
-					using ( m_Method.CreateBodyScope() )
-					{
-						body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0));
-					}
-				});
+			happilClass.AddUndeclaredMember(m_Method);
+			m_Method.AddBodyDefinition(() => {
+				using ( m_Method.CreateBodyScope() )
+				{
+					body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0));
+				}
+			});
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,15 +83,14 @@ namespace Happil.Expressions
 			: base(ownerMethod: null)
 		{
 			m_Method = new HappilMethod<TReturn>(happilClass, "<Anonymous>", typeof(TReturn), new[] { typeof(TArg1), typeof(TArg2) });
+			m_Method.AddBodyDefinition(() => {
+				using ( m_Method.CreateBodyScope() )
+				{
+					body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0), new HappilArgument<TArg2>(m_Method, index: 1));
+				}
+			});
 
-			happilClass.RegisterMember(
-				m_Method,
-				bodyDefinition: () => {
-					using ( m_Method.CreateBodyScope() )
-					{
-						body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0), new HappilArgument<TArg2>(m_Method, index: 1));
-					}
-				});
+			happilClass.AddUndeclaredMember(m_Method);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

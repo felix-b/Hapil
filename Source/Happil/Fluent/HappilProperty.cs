@@ -62,6 +62,13 @@ namespace Happil.Fluent
 
 		#region IHappilMember Members
 
+		void IHappilMember.DefineBody()
+		{
+			m_Body.DefineMemberBody();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		void IHappilMember.EmitBody()
 		{
 			if ( m_GetterMethod != null )
@@ -118,7 +125,10 @@ namespace Happil.Fluent
 
 		public HappilField<TConvert> GetBackingFieldAs<TConvert>()
 		{
-			return BackingField.ConvertTo<TConvert>();
+			using ( TypeTemplate.CreateScope<TypeTemplate.TProperty>(this.OperandType) )
+			{
+				return BackingField.ConvertTo<TConvert>();
+			}
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -167,6 +177,19 @@ namespace Happil.Fluent
 		protected override void OnEmitAddress(ILGenerator il)
 		{
 			throw new NotSupportedException();
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void SetAttributes(Func<HappilAttributes> attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes().GetAttributes() )
+				{
+					m_PropertyBuilder.SetCustomAttribute(attribute);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

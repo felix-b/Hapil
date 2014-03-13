@@ -51,7 +51,14 @@ namespace Happil.Fluent
 
 		#region IHappilMember Members
 
-		public void EmitBody()
+		void IHappilMember.DefineBody()
+		{
+			DefineDefaultAddRemoveMethods();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		void IHappilMember.EmitBody()
 		{
 			((IHappilMember)m_AddMethod).EmitBody();
 			((IHappilMember)m_RemoveMethod).EmitBody();
@@ -62,6 +69,19 @@ namespace Happil.Fluent
 		public IDisposable CreateTypeTemplateScope()
 		{
 			return TypeTemplate.CreateScope(typeof(TypeTemplate.TEventHandler), m_Declaration.EventHandlerType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void SetAttributes(Func<HappilAttributes> attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes().GetAttributes() )
+				{
+					m_EventBuilder.SetCustomAttribute(attribute);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,24 +108,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void DefineDefaultAddRemoveMethods()
-		{
-			using ( CreateTypeTemplateScope() )
-			{
-				using ( m_AddMethod.CreateBodyScope() )
-				{
-					DefineAddMethodBody(m_AddMethod, new HappilArgument<TypeTemplate.TEventHandler>(m_AddMethod, 1));
-				}
-
-				using ( m_RemoveMethod.CreateBodyScope() )
-				{
-					DefineRemoveMethodBody(m_RemoveMethod, new HappilArgument<TypeTemplate.TEventHandler>(m_RemoveMethod, 1));
-				}
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public void RaiseEvent(IHappilMethodBodyBase m, IHappilOperand args)
 		{
 			using ( CreateTypeTemplateScope() )
@@ -123,6 +125,24 @@ namespace Happil.Fluent
 			get
 			{
 				return m_BackingField;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void DefineDefaultAddRemoveMethods()
+		{
+			using ( CreateTypeTemplateScope() )
+			{
+				using ( m_AddMethod.CreateBodyScope() )
+				{
+					DefineAddMethodBody(m_AddMethod, new HappilArgument<TypeTemplate.TEventHandler>(m_AddMethod, 1));
+				}
+
+				using ( m_RemoveMethod.CreateBodyScope() )
+				{
+					DefineRemoveMethodBody(m_RemoveMethod, new HappilArgument<TypeTemplate.TEventHandler>(m_RemoveMethod, 1));
+				}
 			}
 		}
 

@@ -103,7 +103,7 @@ namespace Happil.Fluent
 		public HappilField<T> Field<T>(string name)
 		{
 			var field = new HappilField<T>(m_HappilClass, name, isStatic: false);
-			m_HappilClass.RegisterMember(field);
+			m_HappilClass.AddUndeclaredMember(field);
 			return field;
 		}
 
@@ -129,7 +129,7 @@ namespace Happil.Fluent
 		public HappilField<T> StaticField<T>(string name)
 		{
 			var field = new HappilField<T>(m_HappilClass, name, isStatic: true);
-			m_HappilClass.RegisterMember(field);
+			m_HappilClass.AddUndeclaredMember(field);
 			return field;
 		}
 
@@ -165,7 +165,7 @@ namespace Happil.Fluent
 		{
 			var constructorMember = HappilConstructor.CreateStaticConstructor(m_HappilClass);
 
-			m_HappilClass.RegisterMember( constructorMember, bodyDefinition: () => {
+			constructorMember.AddBodyDefinition(() => {
 				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
 				{
 					constructorMember.SetAttributes(attributes as HappilAttributes);
@@ -177,6 +177,7 @@ namespace Happil.Fluent
 				}
 			});
 
+			m_HappilClass.AddUndeclaredMember(constructorMember);
 			return this;
 		}
 
@@ -492,7 +493,7 @@ namespace Happil.Fluent
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var constructorMember = new HappilConstructor(m_HappilClass, resolvedArgumentTypes);
 
-			m_HappilClass.RegisterMember(constructorMember, bodyDefinition: () => {
+			constructorMember.AddBodyDefinition(() => {
 				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
 				{
 					constructorMember.SetAttributes(attributes as HappilAttributes);
@@ -503,7 +504,9 @@ namespace Happil.Fluent
 				}
 			});
 
+			m_HappilClass.AddUndeclaredMember(constructorMember);
 			m_HappilClass.DefineFactoryMethod(constructorMember.ConstructorInfo, argumentTypes);
+			
 			return this;
 		}
 

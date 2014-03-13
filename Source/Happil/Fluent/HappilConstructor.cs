@@ -177,6 +177,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_ConstructorBuilder.SetCustomAttribute(attribute);
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected override string GetName()
 		{
 			return ".ctor";

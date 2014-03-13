@@ -25,10 +25,10 @@ namespace Happil.Selectors
 
 				foreach ( var declaration in eventsToImplement )
 				{
-					var eventMember = new HappilEvent(OwnerBody.HappilClass, declaration);
-					OwnerBody.HappilClass.RegisterMember(eventMember, () => {
-						eventMember.DefineDefaultAddRemoveMethods();
-					});
+					var declarationCopy = declaration;
+					OwnerBody.HappilClass.GetOrAddDeclaredMember(
+						declaration, 
+						memberFactory: () => new HappilEvent(OwnerBody.HappilClass, declarationCopy));
 				}
 
 				return OwnerBody;

@@ -67,6 +67,13 @@ namespace Happil.Fluent
 
 		#region IHappilMember Members
 
+		void IHappilMember.DefineBody()
+		{
+			// nothing - a field does not have a body
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		void IHappilMember.EmitBody()
 		{
 			// nothing - a field does not have a body

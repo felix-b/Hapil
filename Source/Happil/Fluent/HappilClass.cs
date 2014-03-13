@@ -12,7 +12,6 @@ namespace Happil.Fluent
 		private readonly HappilModule m_OwnerModule;
 		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<IHappilMember> m_Members;
-		private readonly Dictionary<IHappilMember, Stack<Action>> m_MemberBodyDefinitions;
 		private readonly List<MethodInfo> m_FactoryMethods;
 		private readonly Dictionary<Type, IHappilClassDefinition> m_BodiesByBaseType;
 		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
@@ -26,7 +25,6 @@ namespace Happil.Fluent
 			m_OwnerModule = ownerModule;
             m_TypeBuilder = typeBuilder;
 			m_Members = new List<IHappilMember>();
-			m_MemberBodyDefinitions = new Dictionary<IHappilMember, Stack<Action>>();
 			m_FactoryMethods = new List<MethodInfo>();
 			m_BodiesByBaseType = new Dictionary<Type, IHappilClassDefinition>();
 			m_NotImplementedMembers = new HashSet<MemberInfo>();
@@ -65,15 +63,15 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterMember(IHappilMember member, Action bodyDefinition = null)
+		public void AddUndeclaredMember(IHappilMember member)
 		{
 			m_Members.Add(member);
-			RegisterMemberBodyDefinition(member, bodyDefinition);
+			//RegisterMemberBodyDefinition(member, bodyDefinition);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterOrExtendDeclaredMember<TMember>(MemberInfo declaration, Func<IHappilMember> memberFactory, Action<TMember> bodyDefinition)
+		public TMember GetOrAddDeclaredMember<TMember>(MemberInfo declaration, Func<TMember> memberFactory)
 			where TMember : IHappilMember
 		{
 			IHappilMember member;
@@ -85,7 +83,7 @@ namespace Happil.Fluent
 				m_ImplementedMembers.Add(declaration, member);
 			}
 
-			RegisterMemberBodyDefinition(member, () => bodyDefinition((TMember)member));
+			return (TMember)member;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -254,21 +252,21 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void RegisterMemberBodyDefinition(IHappilMember member, Action bodyDefinition)
-		{
-			if ( bodyDefinition != null )
-			{
-				Stack<Action> bodyDefinitionStack;
+		//private void RegisterMemberBodyDefinition(IHappilMember member, Action bodyDefinition)
+		//{
+		//	if ( bodyDefinition != null )
+		//	{
+		//		Stack<Action> bodyDefinitionStack;
 
-				if ( !m_MemberBodyDefinitions.TryGetValue(member, out bodyDefinitionStack) )
-				{
-					bodyDefinitionStack = new Stack<Action>();
-					m_MemberBodyDefinitions.Add(member, bodyDefinitionStack);
-				}
+		//		if ( !m_MemberBodyDefinitions.TryGetValue(member, out bodyDefinitionStack) )
+		//		{
+		//			bodyDefinitionStack = new Stack<Action>();
+		//			m_MemberBodyDefinitions.Add(member, bodyDefinitionStack);
+		//		}
 
-				bodyDefinitionStack.Push(bodyDefinition);
-			}
-		}
+		//		bodyDefinitionStack.Push(bodyDefinition);
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -290,26 +288,27 @@ namespace Happil.Fluent
 			for ( int index = 0 ; index < m_Members.Count ; index++ )
 			{
 				var member = m_Members[index];
-				Stack<Action> bodyDefinitionStack;
+				//Stack<Action> bodyDefinitionStack;
 
-				if ( !m_MemberBodyDefinitions.TryGetValue(member, out bodyDefinitionStack) )
-				{
-					continue;
-				}
+				//if ( !m_MemberBodyDefinitions.TryGetValue(member, out bodyDefinitionStack) )
+				//{
+				//	continue;
+				//}
 
 				using ( member.CreateTypeTemplateScope() )
 				{
-					while ( bodyDefinitionStack.Count > 0 )
-					{
-						var action = bodyDefinitionStack.Pop();
-						action();
+					member.DefineBody();
+					//while ( bodyDefinitionStack.Count > 0 )
+					//{
+					//	var action = bodyDefinitionStack.Pop();
+					//	action();
 						
-						if ( StatementScope.Exists )
-						{
-							throw new InvalidOperationException(
-								string.Format("Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));
-						}
-					}
+					//	if ( StatementScope.Exists )
+					//	{
+					//		throw new InvalidOperationException(
+					//			string.Format("Scope stack is not empty after body definition of member '{0}' ({1}).", member.Name, member.GetType().Name));
+					//	}
+					//}
 				}
 			}
 		}

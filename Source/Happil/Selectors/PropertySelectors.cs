@@ -61,8 +61,10 @@ namespace Happil.Selectors
 				{
 					using ( TypeTemplate.CreateScope(typeof(TypeTemplate.TProperty), declaration.PropertyType) )
 					{
-						var propertyMember = new HappilProperty<TProperty>(OwnerBody.HappilClass, declaration);
-						OwnerBody.HappilClass.RegisterMember(propertyMember, propertyMember.BodyDefinitionAction);
+						var copyOfDeclaration = declaration;
+						var propertyMember = OwnerBody.HappilClass.GetOrAddDeclaredMember(
+							copyOfDeclaration,
+							memberFactory: () => new HappilProperty<TProperty>(OwnerBody.HappilClass, copyOfDeclaration));
 
 						invokeAccessorBodyDefinitions(propertyMember.Body);
 					}

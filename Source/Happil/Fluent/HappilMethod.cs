@@ -21,6 +21,7 @@ namespace Happil.Fluent
 		private readonly Type[] m_ArgumentTypes;
 		private readonly string[] m_ArgumentNames;
 		private readonly bool m_IsStatic;
+		private readonly LinkedList<Action> m_BodyDefinitions;
 		private Type[] m_TemplateActualTypePairs = null;
 		private HappilAttributes m_ReturnAttributes = null;
 
@@ -76,6 +77,7 @@ namespace Happil.Fluent
 		{
 			m_HappilClass = happilClass;
 			m_Statements = new List<IHappilStatement>();
+			m_BodyDefinitions = new LinkedList<Action>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -584,6 +586,18 @@ namespace Happil.Fluent
 
 		#region IHappilMember Members
 
+		void IHappilMember.DefineBody()
+		{
+			foreach ( var body in m_BodyDefinitions )
+			{
+				body();
+			}
+
+			
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		void IHappilMember.EmitBody()
 		{
 			var il = GetILGenerator();
@@ -601,7 +615,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		IDisposable IHappilMember.CreateTypeTemplateScope()
+		public IDisposable CreateTypeTemplateScope()
 		{
 			if ( m_TemplateActualTypePairs == null )
 			{
@@ -678,9 +692,16 @@ namespace Happil.Fluent
 			{
 				foreach ( var attribute in attributes.GetAttributes() )
 				{
-					m_MethodBuilder.SetCustomAttribute(attribute);
+					SetCustomAttribute(attribute);
 				}
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AddBodyDefinition(Action bodyDefinition)
+		{
+			m_BodyDefinitions.AddFirst(bodyDefinition);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -788,6 +809,13 @@ namespace Happil.Fluent
 			TypeTemplate.BuildArgumentsTypePairs(parameterTypes, pairs, arrayStartIndex: 2);
 
 			return pairs;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_MethodBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

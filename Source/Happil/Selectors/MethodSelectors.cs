@@ -80,20 +80,22 @@ namespace Happil.Selectors
 
 				foreach ( var declaration in methodsToImplement )
 				{
-					OwnerBody.HappilClass.RegisterOrExtendDeclaredMember<HappilMethod>(
+					var methodMember = OwnerBody.HappilClass.GetOrAddDeclaredMember<HappilMethod>(
 						declaration,
 						memberFactory: () => 
 							declaration.IsVoid()
 							? (HappilMethod)new VoidHappilMethod(OwnerBody.HappilClass, declaration)
-							: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration),
-						bodyDefinition: methodMember => {
-							methodMember.SetAttributes(attributes);
-							using ( methodMember.CreateBodyScope() )
-							{
-								invokeBodyDefinition(methodMember);
-							}
-							methodMember.DefineReturnAttributes();
-						});
+							: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration));
+
+					using ( methodMember.CreateTypeTemplateScope() )
+					{
+						methodMember.SetAttributes(attributes);
+						using ( methodMember.CreateBodyScope() )
+						{
+							invokeBodyDefinition(methodMember);
+						}
+						methodMember.DefineReturnAttributes();
+					}
 				}
 				
 				return OwnerBody;
