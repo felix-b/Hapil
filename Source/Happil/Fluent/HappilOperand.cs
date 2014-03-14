@@ -396,7 +396,7 @@ namespace Happil.Fluent
 				OwnerMethod,
 				@operator: new BinaryOperators.OperatorCastOrThrow<T>(), 
 				left: this, 
-				right: new HappilConstant<Type>(typeof(TCast)));
+				right: new HappilConstant<Type>(TypeTemplate.Resolve<TCast>()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

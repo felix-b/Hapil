@@ -165,16 +165,9 @@ namespace Happil.Fluent
 		{
 			var constructorMember = HappilConstructor.CreateStaticConstructor(m_HappilClass);
 
+			constructorMember.SetAttributes(attributes as HappilAttributes);
 			constructorMember.AddBodyDefinition(() => {
-				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
-				{
-					constructorMember.SetAttributes(attributes as HappilAttributes);
-
-					using ( constructorMember.CreateBodyScope() )
-					{
-						body(constructorMember);
-					}
-				}
+				body(constructorMember);
 			});
 
 			m_HappilClass.AddUndeclaredMember(constructorMember);
@@ -463,6 +456,35 @@ namespace Happil.Fluent
 		//	throw new NotImplementedException();
 		//}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> DecorateWith<TImplementor>() where TImplementor : IDecorationImplementor, new()
+		{
+			var implementor = new TImplementor();
+			implementor.ImplementDecoration<TBase>(this);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> DecorateWith(IDecorationImplementor implementor)
+		{
+			implementor.ImplementDecoration<TBase>(this);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilClassBody<TBase> DecorateWith(IEnumerable<IDecorationImplementor> implementors)
+		{
+			foreach ( var singleImplementor in implementors )
+			{
+				singleImplementor.ImplementDecoration<TBase>(this);
+			}
+
+			return this;
+		}
+		
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -493,15 +515,9 @@ namespace Happil.Fluent
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var constructorMember = new HappilConstructor(m_HappilClass, resolvedArgumentTypes);
 
+			constructorMember.SetAttributes(attributes as HappilAttributes);
 			constructorMember.AddBodyDefinition(() => {
-				using ( ((IHappilMember)constructorMember).CreateTypeTemplateScope() )
-				{
-					constructorMember.SetAttributes(attributes as HappilAttributes);
-					using ( constructorMember.CreateBodyScope() )
-					{
-						invokeBodyDefinition(constructorMember);
-					}
-				}
+				invokeBodyDefinition(constructorMember);
 			});
 
 			m_HappilClass.AddUndeclaredMember(constructorMember);

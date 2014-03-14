@@ -64,62 +64,6 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilClassDefinition ImplementAspects(
-			IHappilClassBody<object> classDefinition,
-			HappilTypeKey key,
-			params AspectImplementorCallback[] aspects)
-		{
-			return ImplementAspects(classDefinition, key, aspects.AsEnumerable());
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static IHappilClassDefinition ImplementAspects(
-			IHappilClassBody<object> classDefinition,
-			HappilTypeKey key,
-			params IAspectImplementor[] aspects)
-		{
-			return ImplementAspects(classDefinition, key, aspects.AsEnumerable());
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static IHappilClassDefinition ImplementAspects(
-			IHappilClassBody<object> classDefinition,
-			HappilTypeKey key,
-			IEnumerable<IAspectImplementor> aspects)
-		{
-			return ImplementAspects(classDefinition, key, aspects.Select(a => new AspectImplementorCallback(a.ImplementAspect)));
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static IHappilClassDefinition ImplementAspects(
-			IHappilClassBody<object> classDefinition,
-			HappilTypeKey key,
-			IEnumerable<AspectImplementorCallback> aspects)
-		{
-			foreach ( var singleAspect in aspects )
-			{
-				singleAspect(classDefinition, key);
-			}
-
-			return classDefinition;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public delegate void AspectImplementorCallback(IHappilClassBody<object> classDefinition, HappilTypeKey key);
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public interface IAspectImplementor
-		{
-			void ImplementAspect(IHappilClassBody<object> classDefinition, HappilTypeKey key);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		internal protected class TypeEntry
 		{
 			internal TypeEntry(IHappilClassDefinitionInternals classDefinition)

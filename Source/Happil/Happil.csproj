@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AspectImplementorBase.cs" />
     <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DelegateShortcuts.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Fluent\IHappilAttributes.cs" />
     <Compile Include="Fluent\IHappilEventBody.cs" />
     <Compile Include="Fluent\IHappilProperty.cs" />
+    <Compile Include="IDecorationImplementor.cs" />
     <Compile Include="TypeMembers.cs" />
     <Compile Include="Statements\DoWhileStatement.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />

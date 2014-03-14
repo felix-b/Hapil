@@ -21,9 +21,11 @@ namespace Happil.Fluent
 		private readonly Type[] m_ArgumentTypes;
 		private readonly string[] m_ArgumentNames;
 		private readonly bool m_IsStatic;
-		private readonly LinkedList<Action> m_BodyDefinitions;
+		private readonly List<Action> m_BodyDefinitions;
 		private Type[] m_TemplateActualTypePairs = null;
 		private HappilAttributes m_ReturnAttributes = null;
+		private int m_CurrentBodyDefinitionIndex;
+		private HappilLocal<TypeTemplate.TReturn> m_ReturnValueLocal = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -77,7 +79,7 @@ namespace Happil.Fluent
 		{
 			m_HappilClass = happilClass;
 			m_Statements = new List<IHappilStatement>();
-			m_BodyDefinitions = new LinkedList<Action>();
+			m_BodyDefinitions = new List<Action>(capacity: 16);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -563,14 +565,49 @@ namespace Happil.Fluent
 
 		public HappilOperand<TypeTemplate.TReturn> Proceed()
 		{
-			throw new NotImplementedException();
+			if ( m_CurrentBodyDefinitionIndex < m_BodyDefinitions.Count - 1 )
+			{
+				m_CurrentBodyDefinitionIndex++;
+
+				try
+				{
+					var innerDefinition = m_BodyDefinitions[m_CurrentBodyDefinitionIndex];
+					innerDefinition();
+				}
+				finally
+				{
+					m_CurrentBodyDefinitionIndex--;
+				}
+			}
+			
+			return m_ReturnValueLocal;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		public void Return(IHappilOperand<TypeTemplate.TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
+			AddReturnStatement(operand);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void AddReturnStatement(IHappilOperand<TypeTemplate.TReturn> returnValue)
+		{
+			if ( m_CurrentBodyDefinitionIndex > 0 )
+			{
+				if ( object.ReferenceEquals(m_ReturnValueLocal, null) )
+				{
+					m_ReturnValueLocal = this.Local<TypeTemplate.TReturn>();
+				}
+
+				m_ReturnValueLocal.Assign(returnValue.OrNullConstant());
+			}
+			else
+			{
+				//TODO: verify that current scope belongs to this method
+				StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(returnValue));
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -588,12 +625,20 @@ namespace Happil.Fluent
 
 		void IHappilMember.DefineBody()
 		{
-			foreach ( var body in m_BodyDefinitions )
+			m_ReturnValueLocal = null;
+			m_CurrentBodyDefinitionIndex = 0;
+			
+			var outermostDefinition = m_BodyDefinitions.First();
+
+			using ( CreateTypeTemplateScope() )
 			{
-				body();
+				using ( CreateBodyScope() )
+				{
+					outermostDefinition();
+				}
 			}
 
-			
+			DefineReturnAttributes();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -701,14 +746,14 @@ namespace Happil.Fluent
 
 		public void AddBodyDefinition(Action bodyDefinition)
 		{
-			m_BodyDefinitions.AddFirst(bodyDefinition);
+			m_BodyDefinitions.Insert(0, bodyDefinition);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void DefineReturnAttributes()
 		{
-			if ( m_MethodBuilder != null && m_Declaration.ReturnParameter != null && m_ReturnAttributes != null )
+			if ( m_ReturnAttributes != null && m_MethodBuilder != null && m_Declaration.ReturnParameter != null )
 			{
 				var returnParameter = m_MethodBuilder.DefineParameter(0, m_Declaration.ReturnParameter.Attributes, m_Declaration.ReturnParameter.Name);
 
@@ -899,16 +944,17 @@ namespace Happil.Fluent
 
 		public void Return(IHappilOperand<TReturn> operand)
 		{
-			//TODO: verify that current scope belongs to this method
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand.OrNullConstant()));
+			AddReturnStatement(operand.OrNullConstant().CastTo<TypeTemplate.TReturn>());
+			//StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand.OrNullConstant()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void ReturnConst(TReturn constantValue)
 		{
-			//TODO: verify that current scope belongs to this method
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(new HappilConstant<TReturn>(constantValue)));
+			AddReturnStatement(new HappilConstant<TReturn>(constantValue).CastTo<TypeTemplate.TReturn>());
+			////TODO: verify that current scope belongs to this method
+			//StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(new HappilConstant<TReturn>(constantValue)));
 		}
 
 		#endregion

@@ -65,5 +65,9 @@ namespace Happil.Fluent
 
 		EventSelectors.Untyped<TBase> AllEvents(Func<EventInfo, bool> where = null);
 		//EventSelectors.Typed<TBase, TDelegate> Events<TDelegate>(Func<EventInfo, bool> where = null);
+
+		IHappilClassBody<TBase> DecorateWith<TImplementor>() where TImplementor : IDecorationImplementor, new();
+		IHappilClassBody<TBase> DecorateWith(IDecorationImplementor implementor);
+		IHappilClassBody<TBase> DecorateWith(IEnumerable<IDecorationImplementor> implementors);
 	}
 }

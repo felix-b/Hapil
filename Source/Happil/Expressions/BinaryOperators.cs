@@ -663,12 +663,10 @@ namespace Happil.Expressions
 					throw new NotSupportedException("Cast type must be a constant type known in advance.");
 				}
 
-				var castType = TypeTemplate.Resolve(typeConstant.Value);
-
 				left.EmitTarget(il);
 				left.EmitLoad(il);
 
-				Helpers.EmitCast(il, left.OperandType, castType);
+				Helpers.EmitCast(il, left.OperandType, typeConstant.Value);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

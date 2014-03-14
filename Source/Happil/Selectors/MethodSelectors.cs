@@ -74,9 +74,9 @@ namespace Happil.Selectors
 			internal IHappilClassBody<TBase> DefineMembers<TReturn>(
 				Func<IHappilMethodBodyBase, IHappilAttributes> attributes,
 				Action<HappilMethod> invokeBodyDefinition,
-				bool extendIfImplemented = false)
+				bool decorateIfImplemented = false)
 			{
-				var methodsToImplement = (extendIfImplemented ? SelectedMethods : OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods));
+				var methodsToImplement = (decorateIfImplemented ? SelectedMethods : OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedMethods));
 
 				foreach ( var declaration in methodsToImplement )
 				{
@@ -87,15 +87,10 @@ namespace Happil.Selectors
 							? (HappilMethod)new VoidHappilMethod(OwnerBody.HappilClass, declaration)
 							: (HappilMethod)new HappilMethod<TReturn>(OwnerBody.HappilClass, declaration));
 
-					using ( methodMember.CreateTypeTemplateScope() )
-					{
-						methodMember.SetAttributes(attributes);
-						using ( methodMember.CreateBodyScope() )
-						{
-							invokeBodyDefinition(methodMember);
-						}
-						methodMember.DefineReturnAttributes();
-					}
+					methodMember.SetAttributes(attributes);
+					methodMember.AddBodyDefinition(() => {
+						invokeBodyDefinition(methodMember);
+					});
 				}
 				
 				return OwnerBody;
@@ -141,11 +136,11 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public IHappilClassBody<TBase> Extend(
+			public IHappilClassBody<TBase> Decorate(
 				Func<IHappilMethodBodyBase, IHappilAttributes> attributes = null,
 				Action<IHappilMethodBodyTemplate> body = null)
 			{
-				return DefineMembers<TypeTemplate.TReturn>(attributes, body, extendIfImplemented: true);
+				return DefineMembers<TypeTemplate.TReturn>(attributes, body, decorateIfImplemented: true);
 			}
 		}
 
