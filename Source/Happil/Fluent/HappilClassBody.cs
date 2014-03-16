@@ -278,6 +278,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodSelectors.Untyped<TBase> Method(MethodInfo methodInfo)
+		{
+			return new MethodSelectors.Untyped<TBase>(this, new[] { methodInfo });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodSelectors.Untyped<TBase> AllMethods(Func<MethodInfo, bool> where = null)
 		{
 			return new MethodSelectors.Untyped<TBase>(

@@ -31,6 +31,7 @@ namespace Happil.Expressions
 			m_Setter = m_Property.GetSetMethod();
 
 			var scope = StatementScope.Current;
+			scope.Consume(target);
 
 			foreach ( var argument in m_IndexArguments )
 			{

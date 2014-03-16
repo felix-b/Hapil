@@ -280,6 +280,36 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(StaticTargetOne.SetMe, Is.EqualTo("98765"));
 		}
 
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanTraverseFuncitonFollowedByProperty()
+		{
+			//-- Arrange
+
+			StaticTargetOne.ResetTimesCalled();
+			StaticTargetOne.SetMe = "ABC";
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
+					var temp1 = m.Local<string>(initialValue: Static.Prop(() => StaticTargetOne.SetMe));
+					var temp2 = m.Local<string>();
+					temp2.Assign(temp1.Func<Type>(x => x.GetType).Prop<string>(x => x.FullName));
+					m.Return(temp2);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+			var result = obj.CallTheTarget(null);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("System.String"));
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]

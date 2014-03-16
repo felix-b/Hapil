@@ -20,6 +20,7 @@ namespace Happil.Fluent
 		private readonly List<IHappilStatement> m_Statements;
 		private readonly Type[] m_ArgumentTypes;
 		private readonly string[] m_ArgumentNames;
+		private readonly bool[] m_ArgumentIsOut;
 		private readonly bool m_IsStatic;
 		private readonly List<Action> m_BodyDefinitions;
 		private Type[] m_TemplateActualTypePairs = null;
@@ -54,6 +55,7 @@ namespace Happil.Fluent
 
 			m_ArgumentTypes = declaration.GetParameters().Select(p => p.ParameterType).ToArray();
 			m_ArgumentNames = declaration.GetParameters().Select(p => p.Name).ToArray();
+			m_ArgumentIsOut = declaration.GetParameters().Select(p => p.IsOut).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +73,7 @@ namespace Happil.Fluent
 			m_Declaration = m_MethodBuilder;
 			m_ArgumentTypes = argumentTypes;
 			m_ArgumentNames = CreateDefaultArgumentNames(argumentTypes);
+			m_ArgumentIsOut = new bool[m_ArgumentTypes.Length]; // all false
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -817,6 +820,13 @@ namespace Happil.Fluent
 		internal protected virtual string[] GetArgumentNames()
 		{
 			return m_ArgumentNames;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected virtual bool[] GetArgumentIsOut()
+		{
+			return m_ArgumentIsOut;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

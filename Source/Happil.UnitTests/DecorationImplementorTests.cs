@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Happil.Fluent;
 using NUnit.Framework;
@@ -13,7 +14,7 @@ namespace Happil.UnitTests
 	public class DecorationImplementorTests : ClassPerTestCaseFixtureBase
 	{
 		[Test]
-		public void SingleActionLogAspect()
+		public void CanImplementDecoratorFromScratch()
 		{
 			//-- Arrange
 
@@ -24,7 +25,7 @@ namespace Happil.UnitTests
 				.Method<int>(x => x.Three).Implement(m => m.ReturnConst(123))
 				.Method<string, int>(x => x.Four).Implement((m, s) => m.ReturnConst(456))
 				.Method<int, string>(x => x.Five).Throw<ExceptionRepository.TestExceptionOne>("EXCEPTION-5")
-				.DecorateWith<ActionLogAspect>()
+				.DecorateWith<FromScratchActionLogAspect>()
 			);
 			DefineClassByKey(new HappilTypeKey(primaryInterface: typeof(AncestorRepository.IFewMethods)));
 
@@ -51,7 +52,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void TwoActionLogAspects()
+		public void CanCombineTwoDecoratorsInPipeline()
 		{
 			//-- Arrange
 
@@ -62,8 +63,8 @@ namespace Happil.UnitTests
 				.Method<int>(x => x.Three).Implement(m => m.ReturnConst(123))
 				.Method<string, int>(x => x.Four).Implement((m, s) => m.ReturnConst(456))
 				.Method<int, string>(x => x.Five).Throw<ExceptionRepository.TestExceptionOne>("EXCEPTION-5")
-				.DecorateWith(new ActionLogAspect(logPrefix: "INNER"))
-				.DecorateWith(new ActionLogAspect(logPrefix: "OUTER"))
+				.DecorateWith(new FromScratchActionLogAspect(logPrefix: "INNER"))
+				.DecorateWith(new FromScratchActionLogAspect(logPrefix: "OUTER"))
 			);
 			DefineClassByKey(new HappilTypeKey(primaryInterface: typeof(AncestorRepository.IFewMethods)));
 
@@ -95,23 +96,73 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CanDeriveImplementorFromBase()
+		{
+			//-- Arrange
+
+			OnDefineNewClass(key => DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.AllMethods(where: m => m.IsVoid()).Implement(m => { })
+				.Method<int>(x => x.Three).Implement(m => m.ReturnConst(123))
+				.Method<string, int>(x => x.Four).Implement((m, s) => m.ReturnConst(456))
+				.Method<int, string>(x => x.Five).Implement((m, n) => 
+					m.Switch(n)
+						.Case(0).Do(() => m.Throw<InvalidOperationException>("E0"))
+						.Case(1).Do(() => m.Throw<ExceptionRepository.TestExceptionOne>("E1"))
+						.Default(() => m.Return(n.Func<string>(x => x.ToString)))
+				)
+				.DecorateWith<BasedActionLogAspect>()
+			);
+			DefineClassByKey(new HappilTypeKey(primaryInterface: typeof(AncestorRepository.IFewMethods)));
+
+			ActionLog = new List<string>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+
+			obj.One();
+			var resultFour = obj.Four("ABC");
+			ExpectException<InvalidOperationException>(() => obj.Five(0), "E0");
+			var resultFiveOf1 = obj.Five(1);
+			var resultFiveOf123 = obj.Five(123);
+
+			//-- Assert
+
+			Assert.That(resultFour, Is.EqualTo(456));
+			Assert.That(resultFiveOf1, Is.Null);
+			Assert.That(resultFiveOf123, Is.EqualTo("123"));
+			
+			Assert.That(ActionLog, Is.EqualTo(new[] { 
+				"ON-BEFORE:One", "ON-RETURN-VOID:One", "ON-SUCCESS:One", "ON-AFTER:One",
+				"ON-BEFORE:Four", "ON-RETURN-VALUE:Four=456", "ON-SUCCESS:Four", "ON-AFTER:Four",
+				"ON-BEFORE:Five", "ON-EXCEPTION-UNKNOWN:Five=InvalidOperationException:E0", "ON-FAILURE:Five", "ON-AFTER:Five",
+				"ON-BEFORE:Five", "ON-EXCEPTION-ONE:Five=E1", "ON-FAILURE:Five", "ON-AFTER:Five",
+				"ON-BEFORE:Five", "ON-RETURN-VALUE:Five=123", "ON-SUCCESS:Five", "ON-AFTER:Five"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static List<string> ActionLog { get; set; }
 	
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ActionLogAspect : IDecorationImplementor
+		private class FromScratchActionLogAspect : IDecorationImplementor
 		{
 			private readonly string m_LogPrefix;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public ActionLogAspect() : this("1")
+			public FromScratchActionLogAspect() : this("1")
 			{
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public ActionLogAspect(string logPrefix)
+			public FromScratchActionLogAspect(string logPrefix)
 			{
 				m_LogPrefix = logPrefix;
 			}
@@ -128,11 +179,11 @@ namespace Happil.UnitTests
 						Static.Prop(() => ActionLog).Add(m.Const(m_LogPrefix + "-ON-BEFORE:" + m.MethodInfo.Name));
 
 						m.Try(() => {
-							var decoratedReturnValue = m.Proceed();
+							var returnValueExpression = m.Proceed();
 
-							if ( !object.ReferenceEquals(decoratedReturnValue, null) )
+							if ( !object.ReferenceEquals(returnValueExpression, null) )
 							{
-								var returnValue = m.Local<TypeTemplate.TReturn>(initialValue: decoratedReturnValue);
+								var returnValue = m.Local<TypeTemplate.TReturn>(initialValue: returnValueExpression);
 								Static.Prop(() => ActionLog).Add(m.Const(m_LogPrefix + "-ON-RETURN-VALUE:" + m.MethodInfo.Name + "=") + returnValue.Func<string>(x => x.ToString));
 								Static.Prop(() => ActionLog).Add(m.Const(m_LogPrefix + "-ON-SUCCESS:" + m.MethodInfo.Name));
 								m.Return(returnValue);
@@ -152,6 +203,53 @@ namespace Happil.UnitTests
 						});
 					}
 				);
+			}
+
+			#endregion
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class BasedActionLogAspect : DecorationImplementorBase
+		{
+			#region Overrides of DecorationImplementorBase
+
+			public override void OnMethod(MethodInfo info, MethodDecorationBuilder decoration)
+			{
+				decoration
+					.OnBefore(m => 
+						Static.Prop(() => ActionLog).Add(m.Const("ON-BEFORE:" + info.Name))
+					)
+					.OnReturnValue((m, retVal) =>
+						Static.Prop(() => ActionLog).Add(m.Const("ON-RETURN-VALUE:" + info.Name + "=") + retVal.Func<string>(x => x.ToString))
+					)
+					.OnReturnVoid(m =>
+						Static.Prop(() => ActionLog).Add(m.Const("ON-RETURN-VOID:" + info.Name))
+					)
+					.OnSuccess(m =>
+						Static.Prop(() => ActionLog).Add(m.Const("ON-SUCCESS:" + info.Name))
+					)
+					.OnException<ExceptionRepository.TestExceptionOne>((m, e) => {
+						Static.Prop(() => ActionLog).Add(m.Const("ON-EXCEPTION-ONE:" + m.MethodInfo.Name + "=") + e.Prop(x => x.Message));
+						if ( !m.MethodInfo.IsVoid() )
+						{
+							m.Return(m.Default<TypeTemplate.TReturn>());
+						}
+					})
+					.OnException<Exception>((m, e) => {
+						Static.Prop(() => ActionLog).Add(
+							m.Const("ON-EXCEPTION-UNKNOWN:" + m.MethodInfo.Name + "=") + 
+							e.Func<Type>(x => x.GetType).Prop<string>(x => x.Name) + 
+							m.Const(":") + 
+							e.Prop(x => x.Message));
+						m.Throw();
+					})
+					.OnFailure(m => 
+						Static.Prop(() => ActionLog).Add(m.Const("ON-FAILURE:" + info.Name))
+					)
+					.OnAfter(m => 
+						Static.Prop(() => ActionLog).Add(m.Const("ON-AFTER:" + info.Name))
+					);
 			}
 
 			#endregion

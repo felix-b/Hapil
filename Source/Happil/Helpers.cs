@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using Happil.Statements;
 
@@ -32,17 +33,7 @@ namespace Happil
 		{
 			if ( target != null )
 			{
-				if ( target.OperandType.IsValueType )
-				{
-					target.EmitTarget(il);
-					target.EmitAddress(il);
-					il.Emit(OpCodes.Constrained, target.OperandType);
-				}
-				else
-				{
-					target.EmitTarget(il);
-					target.EmitLoad(il);
-				}
+				EmitCallTarget(il, target);
 			}
 
 			var methodParameters = (method is MethodBuilder || method is ConstructorBuilder ? null : method.GetParameters());
@@ -357,6 +348,35 @@ namespace Happil
 			}
 
 			return arrayLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static void EmitCallTarget(ILGenerator il, IHappilOperand target)
+		{
+			target.EmitTarget(il);
+
+			if ( target.OperandType.IsValueType )
+			{
+				if ( target is ICanEmitAddress )
+				{
+					target.EmitAddress(il);
+				}
+				else
+				{
+					target.EmitLoad(il);
+
+					var temp = il.DeclareLocal(target.OperandType);
+					il.Emit(OpCodes.Stloc, temp);
+					il.Emit(OpCodes.Ldloca, (short)temp.LocalIndex);
+				}
+
+				il.Emit(OpCodes.Constrained, target.OperandType);
+			}
+			else
+			{
+				target.EmitLoad(il);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

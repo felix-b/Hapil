@@ -8,10 +8,10 @@ using Happil.Fluent;
 using Happil.Statements;
 using NUnit.Framework;
 
-namespace Happil.UnitTests.Fluent
+namespace Happil.UnitTests.Expressions
 {
 	[TestFixture]
-	public class OperandTests
+	public class ExpressionTreeTests
 	{
 		private StatementScope m_StatementScope;
 

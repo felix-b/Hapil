@@ -42,9 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AspectImplementorBase.cs" />
     <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="DecorationImplementorBase.cs" />
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="EnumerableShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />

@@ -10,6 +10,7 @@ namespace Happil.Fluent
 	{
 		private readonly Type[] m_ArgumentTypes;
 		private readonly string[] m_ArgumentNames;
+		private readonly bool[] m_ArgumentIsOut;
 		private readonly ConstructorBuilder m_ConstructorBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -19,6 +20,7 @@ namespace Happil.Fluent
 		{
 			m_ArgumentTypes = new Type[0];
 			m_ArgumentNames = new string[0];
+			m_ArgumentIsOut = new bool[0];
 
 			m_ConstructorBuilder = happilClass.TypeBuilder.DefineConstructor(
 				MethodAttributes.Private | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig | MethodAttributes.Static,
@@ -33,6 +35,7 @@ namespace Happil.Fluent
 		{
 			m_ArgumentTypes = argumentTypes;
 			m_ArgumentNames = CreateDefaultArgumentNames(argumentTypes);
+			m_ArgumentIsOut = new bool[argumentTypes.Length]; // all false
 
 			m_ConstructorBuilder = happilClass.TypeBuilder.DefineConstructor(
 				MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
@@ -142,6 +145,13 @@ namespace Happil.Fluent
 		internal protected override string[] GetArgumentNames()
 		{
 			return m_ArgumentNames;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected override bool[] GetArgumentIsOut()
+		{
+			return m_ArgumentIsOut;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -618,6 +618,104 @@ namespace Happil.UnitTests.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void TestCall()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut>(cls => cls.Unary).Implement((m, input) => {
+					var target = m.Local<string>(initialValue: input.Prop<string>(x => x.StringValue));
+					var output = m.Local(m.New<InOut>());
+					
+					output.Prop<string>(x => x.StringValue).Assign(target.Func<string, string, string>(x => x.Replace, m.Const("@"), m.Const("#")));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Unary(new InOut() { StringValue = "A@B@C" });
+
+			//-- Assert
+
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.StringValue, Is.EqualTo("A#B#C"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCallChain()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut>(cls => cls.Unary).Implement((m, input) => {
+					var target = m.Local<string>(initialValue: input.Prop<string>(x => x.StringValue));
+					var output = m.Local(m.New<InOut>());
+
+					output.Prop<string>(x => x.StringValue).Assign(target
+						.Func<string, string, string>(x => x.Replace, m.Const("@"), m.Const("#"))
+						.Func<int, int, string>(x => x.Substring, m.Const(1), m.Const(3))
+						.Func<string>(x => x.ToLower)
+						.Func<int, char, string>(x => x.PadLeft, m.Const(10), m.Const('Z')));
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Unary(new InOut() { StringValue = "A@B@C" });
+
+			//-- Assert
+
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.StringValue, Is.EqualTo("ZZZZZZZ#b#"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestCallChainMixedWithProperties()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IOperatorTester>()
+				.Method<InOut, InOut>(cls => cls.Unary).Implement((m, input) => {
+					var output = m.Local(m.New<InOut>());
+
+					output.Prop(x => x.StringValue).Assign(input
+						.Prop(x => x.StringValue)
+						.Func<int, string>(x => x.PadRight, m.Const(15))
+						.Prop(x => x.Length)
+						.Func<string>(x => x.ToString));
+
+					m.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+			var result = tester.Unary(new InOut() { StringValue = "ABC" });
+
+			//-- Assert
+
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.StringValue, Is.EqualTo("15"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static int[] OutputArray { get; set; }
 	}
 }

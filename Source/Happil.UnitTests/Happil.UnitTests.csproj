@@ -68,7 +68,7 @@
     <Compile Include="Fluent\CSharpTests.cs" />
     <Compile Include="Fluent\HappilEventTests.cs" />
     <Compile Include="Fluent\InvocationTests.cs" />
-    <Compile Include="Fluent\OperandTests.cs" />
+    <Compile Include="Expressions\ExpressionTreeTests.cs" />
     <Compile Include="Fluent\StatementTests.cs" />
     <Compile Include="HappilFactoryTests.cs" />
     <Compile Include="HappilFactoryBaseTests.cs" />

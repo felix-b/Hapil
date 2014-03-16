@@ -43,6 +43,7 @@ namespace Happil.Fluent
 		MethodSelectors.Functions1Arg<TBase, TArg1, TReturn> Method<TArg1, TReturn>(Expression<Func<TBase, Func<TArg1, TReturn>>> function);
 		MethodSelectors.Functions2Args<TBase, TArg1, TArg2, TReturn> Method<TArg1, TArg2, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TReturn>>> function);
 		MethodSelectors.Functions3Args<TBase, TArg1, TArg2, TArg3, TReturn> Method<TArg1, TArg2, TArg3, TReturn>(Expression<Func<TBase, Func<TArg1, TArg2, TArg3, TReturn>>> function);
+		MethodSelectors.Untyped<TBase> Method(MethodInfo methodInfo);
 		MethodSelectors.Untyped<TBase> AllMethods(Func<MethodInfo, bool> where = null);
 		MethodSelectors.Void<TBase> VoidMethods(Func<MethodInfo, bool> where = null);
 		MethodSelectors.Void1Arg<TBase, TArg1> VoidMethods<TArg1>(Func<MethodInfo, bool> where = null);

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Happil.Fluent
 {
-	internal class HappilEvent : IHappilMember
+	public class HappilEvent : IHappilMember
 	{
 		private const MethodAttributes ContainedMethodAttributes = 
 			MethodAttributes.Public | 
@@ -29,7 +29,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilEvent(HappilClass happilClass, EventInfo declaration)
+		internal HappilEvent(HappilClass happilClass, EventInfo declaration)
 		{
 			m_HappilClass = happilClass;
 			m_Declaration = declaration;
@@ -73,19 +73,6 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void SetAttributes(Func<HappilAttributes> attributes)
-		{
-			if ( attributes != null )
-			{
-				foreach ( var attribute in attributes().GetAttributes() )
-				{
-					m_EventBuilder.SetCustomAttribute(attribute);
-				}
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		MemberInfo IHappilMember.Declaration
 		{
 			get
@@ -108,6 +95,16 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilEvent Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new HappilAttributeBuilder<TAttribute>(values);
+			m_EventBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void RaiseEvent(IHappilMethodBodyBase m, IHappilOperand args)
 		{
 			using ( CreateTypeTemplateScope() )
@@ -125,6 +122,19 @@ namespace Happil.Fluent
 			get
 			{
 				return m_BackingField;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void SetAttributes(Func<HappilAttributes> attributes)
+		{
+			if ( attributes != null )
+			{
+				foreach ( var attribute in attributes().GetAttributes() )
+				{
+					m_EventBuilder.SetCustomAttribute(attribute);
+				}
 			}
 		}
 

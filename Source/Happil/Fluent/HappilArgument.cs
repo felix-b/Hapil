@@ -12,6 +12,7 @@ namespace Happil.Fluent
 		private readonly byte m_Index;
 		private readonly string m_Name;
 		private readonly bool m_IsByRef;
+		private readonly bool m_IsOut;
 		private readonly ParameterBuilder m_ParameterBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ namespace Happil.Fluent
 			m_Index = index;
 			m_Name = ownerMethod.GetArgumentNames()[index - indexBase];
 			m_IsByRef = ownerMethod.GetArgumentTypes()[index - indexBase].IsByRef;
+			m_IsOut = ownerMethod.GetArgumentIsOut()[index - indexBase];
 			m_ParameterBuilder = ownerMethod.DefineParameter(index - indexBase);
 		}
 
@@ -66,6 +68,16 @@ namespace Happil.Fluent
 			get
 			{
 				return m_IsByRef;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool IsOut
+		{
+			get
+			{
+				return m_IsOut;
 			}
 		}
 
