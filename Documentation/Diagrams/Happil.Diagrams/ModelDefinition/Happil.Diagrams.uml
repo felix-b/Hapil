@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="dd3e4df7-8296-4a40-b681-5aadd12251b4"
   name="Happil.Diagrams" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -2962,6 +2962,729 @@ generated</body>
             concurrency="Sequential"
             isQuery="false" />
         </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+        name="AbstractMember"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1d1e9928-be77-469e-adfd-9fd693fce571"
+        name="ClassType"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="d9bede14-c387-4cdd-8e99-74600eeade55"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+              LastKnownName="AbstractMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9ce6907d-e062-46e3-95a3-49a4d2f30795"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e638a990-ad80-43d8-bcbb-960d10cbe160"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="6e5b0ee9-4df2-4415-8309-b9cc7ff413ff"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="1d80c730-02bd-437e-b57b-72d666c8564c"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="21220b8b-3265-4c50-aa3e-b67483dcff4e"
+        name="MethodMember"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="2143640a-8ef5-45f1-9544-72b8ec5328de"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+              LastKnownName="AbstractMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="83d6fd40-3f68-42ac-875c-c317dfca5159"
+        name="PropertyMember"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="f10886ad-c87f-489c-8740-a2c881fc0bf3"
+            name="BackingField">
+            <classMoniker
+              Id="2abad2b7-c7c2-4ac1-8c73-8da4e3afecbf"
+              LastKnownName="FieldMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+          <dependency
+            Id="eb02ff0a-90dd-434d-a21e-25028ef1b80f"
+            name="GetterMethod, SetterMethod">
+            <classMoniker
+              Id="21220b8b-3265-4c50-aa3e-b67483dcff4e"
+              LastKnownName="MethodMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="63d626b2-9f35-4d6c-a01f-44facac8cdbb"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+              LastKnownName="AbstractMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2abad2b7-c7c2-4ac1-8c73-8da4e3afecbf"
+        name="FieldMember"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="7d274125-0b72-49e2-84e2-b74d46c79925"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+              LastKnownName="AbstractMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="fe36994a-c100-4fe4-a0e0-9efbb540e0ca"
+        name="EventMember"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="0b9f5d8e-f2fe-4126-8046-d4ef8051d414"
+            name="AddMethod, RemoveMethod">
+            <classMoniker
+              Id="21220b8b-3265-4c50-aa3e-b67483dcff4e"
+              LastKnownName="MethodMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="4ba91c5f-7297-4ae3-89b9-39dffc0cea9b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d"
+              LastKnownName="AbstractMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="a2538603-e785-4ca6-9166-9e4ba9847af7"
+        name="ConstructorMember"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="bbe772f1-ade7-4602-a0b4-99a7309c3bbb"
+            isSubstitutable="false">
+            <classMoniker
+              Id="21220b8b-3265-4c50-aa3e-b67483dcff4e"
+              LastKnownName="MethodMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7d690b13-85b6-4e63-a70b-22490535bf8c"
+        name="TemplateMethod"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="e1962358-0749-4174-a2b6-45b96d7f1b1e"
+            isSubstitutable="false">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6e0aafe8-2169-4a95-9988-c46a62e3a30c"
+        name="Method&lt;TReturn&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="5c459442-9765-43d5-9322-3188cfecf1b2"
+            isSubstitutable="false">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+        name="AbstractMethodView"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="bc0d6957-2bda-41a9-ac7c-43ea9961953c">
+            <classMoniker
+              Id="21220b8b-3265-4c50-aa3e-b67483dcff4e"
+              LastKnownName="MethodMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="145cfb83-18ba-403f-b4eb-c9aa2c9972f0"
+        name="VoidMethod"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="037105bf-12df-4b09-bd9a-85add6b86a35"
+            isSubstitutable="false">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7a28404c-7a42-4622-b721-9c0922989a49"
+        name="Constructor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="c8ffd02a-7f4e-438f-9e4c-238daa41041d"
+            isSubstitutable="false">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="c90d04b3-0010-4f34-b13b-272700cadba0"
+        name="AbstractPropertyView&lt;T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="129b3daf-2f8b-44f3-b5f3-a4cf53459e18">
+            <classMoniker
+              Id="83d6fd40-3f68-42ac-875c-c317dfca5159"
+              LastKnownName="PropertyMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="aee2b063-552f-4dc3-9104-0b9e0fd676fc"
+            isSubstitutable="false">
+            <classMoniker
+              Id="9f4a4c49-2df2-43b9-871e-55c98145f422"
+              LastKnownName="AbstractMutableOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="11b08b10-51e3-4cf2-a3d0-80026f1fd94a"
+        name="Property&lt;T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="c88f01ec-5db9-4471-b4ff-f3cc771d5833"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c90d04b3-0010-4f34-b13b-272700cadba0"
+              LastKnownName="AbstractPropertyView&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="47f30b6e-1af9-4c89-b417-b3a858134558"
+        name="Property&lt;TIndex, T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="88501014-2505-486f-8b01-aeb6244ee591"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c90d04b3-0010-4f34-b13b-272700cadba0"
+              LastKnownName="AbstractPropertyView&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1b3ff40a-b6df-4c17-9b86-170d5904bd2e"
+        name="Property&lt;TIndex1, TIndex2, T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="65f745fa-a646-4c85-aa20-40c4a985c46e"
+            isSubstitutable="false">
+            <classMoniker
+              Id="c90d04b3-0010-4f34-b13b-272700cadba0"
+              LastKnownName="AbstractPropertyView&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f01a4079-dcb8-4ad3-9754-c1d70cda7250"
+        name="Field&lt;T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="07b6d268-5f9c-4d73-a5c8-032a322cee97">
+            <classMoniker
+              Id="2abad2b7-c7c2-4ac1-8c73-8da4e3afecbf"
+              LastKnownName="FieldMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="a2875c68-c4bc-43f1-a8b9-9833884dbc2e"
+            isSubstitutable="false">
+            <classMoniker
+              Id="9f4a4c49-2df2-43b9-871e-55c98145f422"
+              LastKnownName="AbstractMutableOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8da24a6d-103f-4a22-8d03-5f2002bc4c63"
+        name="Event&lt;THandler&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="892de73d-f29e-4b7e-af0f-c0e30632d18e">
+            <classMoniker
+              Id="fe36994a-c100-4fe4-a0e0-9efbb540e0ca"
+              LastKnownName="EventMember"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="068d52be-f893-4fe4-89fb-5e2f4adcc68a"
+        name="AbstractOperand&lt;T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="aa5c5607-35b8-413b-9e2e-eb3b32719e84">
+            <interfaceMoniker
+              Id="a1238305-8e8c-4fa5-8560-22f5d596d87e"
+              LastKnownName="IOperand&lt;out T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="3fa8624f-dad9-473a-9a47-5322e2a58f7c"
+            name="EmitTarget"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="483a6bb7-6658-4e0c-8b7e-f465baa521f6"
+            name="EmitLoad"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="d06b6336-695e-48af-9d48-6575422afce7"
+            name="EmitStore"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="27d34f99-dbc2-4a26-b0ba-d30030826983"
+            name="EmitAddress"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9f4a4c49-2df2-43b9-871e-55c98145f422"
+        name="AbstractMutableOperand&lt;T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="57394ce4-f086-4b0a-9e76-009dfae0c7de"
+            isSubstitutable="false">
+            <classMoniker
+              Id="068d52be-f893-4fe4-89fb-5e2f4adcc68a"
+              LastKnownName="AbstractOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9384a980-54e6-45cf-a6d4-53b536dcb080"
+        name="FieldOperand"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="44f7825f-97e9-43ac-9e68-f7f79f141ae0"
+        name="Class2"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9abde2bc-9a42-4277-965c-649867046e7f"
+        name="Local&lt;T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="d6774f01-6d12-448e-8cc9-a6803a034fd7">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="df767736-eb40-4040-a50b-e5828cad9a4d"
+            isSubstitutable="false">
+            <classMoniker
+              Id="9f4a4c49-2df2-43b9-871e-55c98145f422"
+              LastKnownName="AbstractMutableOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="286e8575-cd10-4730-b32a-efb95a86a3bd"
+        name="Argument&lt;T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="645d9788-aa7f-4a2a-b8ea-5246d49e1c58">
+            <classMoniker
+              Id="653029a7-3daa-4afa-9620-dd0d4ea91117"
+              LastKnownName="AbstractMethodView"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="a108ae60-6560-43ba-8c6b-62eaf40ae519"
+            isSubstitutable="false">
+            <classMoniker
+              Id="9f4a4c49-2df2-43b9-871e-55c98145f422"
+              LastKnownName="AbstractMutableOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="64368587-1bfe-4843-8ebe-cda3c4e7e6c2"
+        name="AbstractExpression&lt;T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="840ce0d1-d2c9-4eb7-be6d-ca8c6cd7896f"
+            isSubstitutable="false">
+            <classMoniker
+              Id="068d52be-f893-4fe4-89fb-5e2f4adcc68a"
+              LastKnownName="AbstractOperand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="e130cd98-00d1-41ca-97c1-0562bc734287"
+        name="UnaryExpression&lt;TOperand, T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="121f76cf-8069-4564-a773-f14e95e353bb">
+            <classMoniker
+              Id="bb4d0a4b-fcfb-4af3-86b1-afefbee633d4"
+              LastKnownName="AbstractUnaryOperator&lt;TOperand, T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="30b0bb77-0676-4a7a-9531-e475b4d639f6"
+            isSubstitutable="false">
+            <classMoniker
+              Id="64368587-1bfe-4843-8ebe-cda3c4e7e6c2"
+              LastKnownName="AbstractExpression&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7a57fa4e-c596-4885-89c5-34e05c35306b"
+        name="BinaryExpression&lt;TLeft, TRight, T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="79244340-a9da-42fe-82f2-fc794daf4658">
+            <classMoniker
+              Id="51b614cf-ee29-432e-b1a3-f4fc6e7f221a"
+              LastKnownName="AbstractBinaryOperator&lt;TLeft, TRight, T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="78fd7481-f90f-405f-a507-c60bacf2e867"
+            isSubstitutable="false">
+            <classMoniker
+              Id="64368587-1bfe-4843-8ebe-cda3c4e7e6c2"
+              LastKnownName="AbstractExpression&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="bb4d0a4b-fcfb-4af3-86b1-afefbee633d4"
+        name="AbstractUnaryOperator&lt;TOperand, T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="51b614cf-ee29-432e-b1a3-f4fc6e7f221a"
+        name="AbstractBinaryOperator&lt;TLeft, TRight, T&gt;"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="a1238305-8e8c-4fa5-8560-22f5d596d87e"
+        name="IOperand&lt;out T&gt;"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedAttributes>
+          <property
+            Id="6d565b51-2f38-4581-8507-f7556bcf2bb2"
+            name="OperandType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="ed18a9cc-fc45-4d4c-bdc1-5ab93f2c9e78"
+            name="HasTarget"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="90941be9-d90f-4478-9def-e4f24ef8f059"
+            name="IsMutable"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="1ccd4e70-1e36-4ace-b3ce-6eec91e43208"
+            name="CanEmitAddress"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributes>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8dc8e38d-d032-4dd8-a0d0-d1118e2dc8d2"
+        name="Class&lt;TBase&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="15e7699e-0da6-4ce7-a794-5968f3ca1ad0">
+            <classMoniker
+              Id="1d1e9928-be77-469e-adfd-9fd693fce571"
+              LastKnownName="ClassType"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
       </class>
     </packageHasNamedElement>
   </packagedElements>

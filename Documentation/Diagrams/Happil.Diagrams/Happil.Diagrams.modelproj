@@ -32,6 +32,13 @@
     <Content Include="ModelDefinition\Package_2041.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Redesign1.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Redesign1.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Redesign1.classdiagram</DependentUpon>
+    </Content>
     <Content Include="Selectors.classdiagram">
       <SubType>Content</SubType>
     </Content>
