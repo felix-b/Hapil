@@ -8,7 +8,7 @@ using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	public class HappilField<T> : HappilAssignable<T>, IHappilMember, ICanEmitAddress
+	public class HappilField : IHappilMember
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly FieldBuilder m_FieldBuilder;
@@ -20,8 +20,7 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//TODO: remove this constructor (update unit tests)
-		internal HappilField(string name)
-			: base(ownerMethod: null)
+		internal HappilField(string name, Type fieldType)
 		{
 			m_HappilClass = null;
 			m_Name = name;
@@ -29,14 +28,13 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilField(HappilClass happilClass, string name, bool isStatic = false)
-			: base(ownerMethod: null)
+		internal HappilField(HappilClass happilClass, string name, Type fieldType, bool isStatic = false)
 		{
 			m_HappilClass = happilClass;
 			m_Name = happilClass.TakeMemberName(name);
 			m_IsStatic = isStatic;
 
-			var actualType = TypeTemplate.Resolve<T>();
+			var actualType = TypeTemplate.Resolve(fieldType);
 			var attributes = (isStatic ? FieldAttributes.Private | FieldAttributes.Static : FieldAttributes.Private);
 
 			m_FieldBuilder = happilClass.TypeBuilder.DefineField(m_Name, actualType, attributes);
@@ -45,22 +43,11 @@ namespace Happil.Fluent
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private HappilField(HappilClass happilClass, string name, bool isStatic, FieldBuilder fieldBuilder)
-			: base(ownerMethod: null)
 		{
 			m_HappilClass = happilClass;
 			m_Name = name;
 			m_IsStatic = isStatic;
 			m_FieldBuilder = fieldBuilder;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public override bool HasTarget
-		{
-			get
-			{
-				return !m_IsStatic;
-			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -110,64 +97,20 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override string ToString()
+		public FieldAccessOperand<T> AsOperand<T>()
 		{
-			return string.Format("Field{{{0}}}", m_Name);
+			var targetOperand = (m_IsStatic ? null : new HappilThis<object>(ownerMethod: null));
+			return new FieldAccessOperand<T>(targetOperand, m_FieldBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region Overrides of HappilOperand<T>
-
-		internal override HappilClass OwnerClass
-		{
-			get
-			{
-				return m_HappilClass;
-			}
-		}
-
-		#endregion
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilField<T> Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+		public HappilField Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
 			where TAttribute : Attribute
 		{
 			var builder = new HappilAttributeBuilder<TAttribute>(values);
 			m_FieldBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
 			return this;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		protected override void OnEmitTarget(ILGenerator il)
-		{
-			if ( !m_IsStatic )
-			{
-				il.Emit(OpCodes.Ldarg_0); // push 'this' reference onto stack
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitLoad(ILGenerator il)
-		{
-			il.Emit(m_IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, m_FieldBuilder);  // push field value onto stack
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitStore(ILGenerator il)
-		{
-			il.Emit(m_IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, m_FieldBuilder);  // pop value from stack into field
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void OnEmitAddress(ILGenerator il)
-		{
-			il.Emit(m_IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_FieldBuilder);  // push field address onto stack
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,9 +128,12 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilField<TConvert> ConvertTo<TConvert>()
+		internal HappilClass OwnerClass
 		{
-			return new HappilField<TConvert>(m_HappilClass, m_Name, m_IsStatic, m_FieldBuilder);
+			get
+			{
+				return m_HappilClass;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

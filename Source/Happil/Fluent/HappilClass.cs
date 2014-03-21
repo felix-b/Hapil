@@ -33,7 +33,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> GetBody<TBase>()
+		internal HappilClassBody<TBase> GetBody<TBase>()
 		{
 			IHappilClassDefinition body;
 
@@ -43,7 +43,7 @@ namespace Happil.Fluent
 				m_BodiesByBaseType.Add(typeof(TBase), body);
 			}
 
-			return (IHappilClassBody<TBase>)body;
+			return (HappilClassBody<TBase>)body;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<TField> GetBackingFieldAs<TField>(PropertyInfo declaration)
+		public HappilField GetPropertyBackingField(PropertyInfo declaration)
 		{
 			var property = m_Members.OfType<IHappilProperty>().FirstOrDefault(p => p.Declaration == declaration);
 
@@ -130,7 +130,7 @@ namespace Happil.Fluent
 				throw new ArgumentException(string.Format("Property '{0}' was not implemented by this class.", declaration.Name));
 			}
 
-			return property.GetBackingFieldAs<TField>();
+			return property.BackingField;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

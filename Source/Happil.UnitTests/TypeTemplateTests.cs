@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using NUnit.Framework;
 using Repo = Happil.UnitTests.AncestorRepository;
@@ -79,7 +80,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			HappilField<TT.TBase> remoteField, localField;
+			FieldAccessOperand<TT.TBase> remoteField, localField;
 
 			OnDefineNewClass(key => Module.DeriveClassFrom<Repo.BaseTwo>(TestCaseClassName)
 				.Field<TT.TBase>("m_Remote", out remoteField)
@@ -138,7 +139,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			HappilField<TT.TPrimary> remoteField, localField;
+			FieldAccessOperand<TT.TPrimary> remoteField, localField;
 
 			OnDefineNewClass(key => Module.DeriveClassFrom<object>(TestCaseClassName)
 				.Field<TT.TPrimary>("m_Remote", out remoteField)

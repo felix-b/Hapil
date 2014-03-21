@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using NUnit.Framework;
 
@@ -16,8 +17,8 @@ namespace Happil.UnitTests.Fluent
 		{
 			//-- Arrange
 
-			HappilField<int> intField;
-			HappilField<string> stringField;
+			FieldAccessOperand<int> intField;
+			FieldAccessOperand<string> stringField;
 
 			DeriveClassFrom<AncestorRepository.BaseOne>()
 				.Field<int>("m_IntField", out intField)
@@ -83,8 +84,8 @@ namespace Happil.UnitTests.Fluent
 		{
 			//-- Arrange
 
-			HappilField<int> intField;
-			HappilField<string> stringField;
+			FieldAccessOperand<int> intField;
+			FieldAccessOperand<string> stringField;
 
 			DeriveClassFrom<object>()
 				.StaticField<int>("s_IntField", out intField)

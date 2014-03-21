@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
@@ -30,9 +31,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
+		public FieldAccessOperand<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
 		{
-			return OwnerClass.GetBackingFieldAs<TProperty>(declaration);
+			return OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

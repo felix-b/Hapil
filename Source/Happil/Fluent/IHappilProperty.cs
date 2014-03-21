@@ -8,7 +8,7 @@ namespace Happil.Fluent
 {
 	internal interface IHappilProperty
 	{
-		HappilField<T> GetBackingFieldAs<T>();
 		PropertyInfo Declaration { get; }
+		HappilField BackingField { get; }
 	}
 }

@@ -4,22 +4,23 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
-	public class HappilProperty<T> : HappilAssignable<T>, IHappilMember, IHappilProperty
+	public class HappilProperty : /*HappilOperand<T>,*/ IHappilMember, IHappilProperty
 	{
 		private readonly HappilClass m_HappilClass;
 		private readonly PropertyInfo m_Declaration;
 		private readonly PropertyBuilder m_PropertyBuilder;
-		private readonly HappilMethod<T> m_GetterMethod;
+		private readonly HappilMethod m_GetterMethod;
 		private readonly VoidHappilMethod m_SetterMethod;
-		private readonly BodyBase m_Body;
+		private HappilField m_BackingField;
+		private Action m_BodyDefinition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal HappilProperty(HappilClass happilClass, PropertyInfo declaration)
-			: base(ownerMethod: null)
 		{
 			m_HappilClass = happilClass;
 			m_Declaration = declaration;
@@ -33,7 +34,8 @@ namespace Happil.Fluent
 
 			if ( getterDeclaration != null )
 			{
-				m_GetterMethod = new HappilMethod<T>(happilClass, getterDeclaration);
+				var closedGetterMethodType = typeof(HappilMethod<>).MakeGenericType(getterDeclaration.ReturnType);
+				m_GetterMethod = (HappilMethod)Activator.CreateInstance(closedGetterMethodType, happilClass, getterDeclaration);
 				m_PropertyBuilder.SetGetMethod(m_GetterMethod.MethodBuilder);
 			}
 
@@ -44,19 +46,17 @@ namespace Happil.Fluent
 				m_SetterMethod = new VoidHappilMethod(happilClass, setterDeclaration);
 				m_PropertyBuilder.SetSetMethod(m_SetterMethod.MethodBuilder);
 			}
-
-			m_Body = CreatePropertyBody();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override bool HasTarget
-		{
-			get
-			{
-				return !(m_Declaration.GetGetMethod() ?? m_Declaration.GetSetMethod()).IsStatic;
-			}
-		}
+		//public override bool HasTarget
+		//{
+		//	get
+		//	{
+		//		return !(m_Declaration.GetGetMethod() ?? m_Declaration.GetSetMethod()).IsStatic;
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ namespace Happil.Fluent
 
 		void IHappilMember.DefineBody()
 		{
-			m_Body.DefineMemberBody();
+			m_BodyDefinition();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilProperty<T> Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
+		public HappilProperty Set<TAttribute>(Action<IHappilAttributeBuilder<TAttribute>> values = null)
 			where TAttribute : Attribute
 		{
 			var builder = new HappilAttributeBuilder<TAttribute>(values);
@@ -123,21 +123,19 @@ namespace Happil.Fluent
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<TConvert> GetBackingFieldAs<TConvert>()
-		{
-			using ( TypeTemplate.CreateScope<TypeTemplate.TProperty>(this.OperandType) )
-			{
-				return BackingField.ConvertTo<TConvert>();
-			}
-		}
-
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public HappilField<T> BackingField
+		public HappilField BackingField
 		{
 			get
 			{
-				return m_Body.BackingField;
+				if ( object.ReferenceEquals(m_BackingField, null) )
+				{
+					m_BackingField = OwnerClass.GetBody<object>().DefineField(
+						"m_" + m_PropertyBuilder.Name,
+						m_PropertyBuilder.PropertyType,
+						isStatic: false);
+				}
+
+				return m_BackingField;
 			}
 		}
 
@@ -153,31 +151,41 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitTarget(ILGenerator il)
+		public Type OperandType
 		{
-			throw new NotSupportedException();
+			get
+			{
+				return m_Declaration.PropertyType;
+			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitLoad(ILGenerator il)
-		{
-			throw new NotSupportedException();
-		}
+		//protected override void OnEmitTarget(ILGenerator il)
+		//{
+		//	throw new NotSupportedException();
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitStore(ILGenerator il)
-		{
-			throw new NotSupportedException();
-		}
+		//protected override void OnEmitLoad(ILGenerator il)
+		//{
+		//	throw new NotSupportedException();
+		//}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitAddress(ILGenerator il)
-		{
-			throw new NotSupportedException();
-		}
+		//protected override void OnEmitStore(ILGenerator il)
+		//{
+		//	throw new NotSupportedException();
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//protected override void OnEmitAddress(ILGenerator il)
+		//{
+		//	throw new NotSupportedException();
+		//}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -194,7 +202,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal override HappilClass OwnerClass
+		internal HappilClass OwnerClass
 		{
 			get
 			{
@@ -214,11 +222,23 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal BodyBase Body
+		internal BodyBase GetPropertyBody<T>()
 		{
-			get
+			var indexArgTypes = m_Declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray();
+
+			switch ( indexArgTypes.Length )
 			{
-				return m_Body;
+				case 0:
+					var closedNoArgsType = typeof(BodyNoArgs<>).MakeGenericType(typeof(T));
+					return (BodyBase)Activator.CreateInstance(closedNoArgsType, this);
+				case 1:
+					var closed1ArgType = typeof(Body1Arg<,>).MakeGenericType(indexArgTypes[0], typeof(T));
+					return (BodyBase)Activator.CreateInstance(closed1ArgType, this);
+				case 2:
+					var closed2ArgsType = typeof(Body2Args<,,>).MakeGenericType(indexArgTypes[0], indexArgTypes[1], typeof(T));
+					return (BodyBase)Activator.CreateInstance(closed2ArgsType, this);
+				default:
+					throw new NotSupportedException("Indexer properties with more than 2 arguments are not supported.");
 			}
 		}
 
@@ -228,34 +248,13 @@ namespace Happil.Fluent
 		{
 			get
 			{
-				return m_Body.DefineMemberBody;
+				return m_BodyDefinition;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private BodyBase CreatePropertyBody()
-		{
-			var indexArgTypes = m_Declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray();
-
-			switch ( indexArgTypes.Length )
-			{
-				case 0:
-					return new BodyNoArgs(this);
-				case 1:
-					var closed1ArgType = typeof(Body1Arg<>).MakeGenericType(typeof(T), indexArgTypes[0]);
-					return (BodyBase)Activator.CreateInstance(closed1ArgType, this);
-				case 2:
-					var closed2ArgsType = typeof(Body2Args<,>).MakeGenericType(typeof(T), indexArgTypes[0], indexArgTypes[1]);
-					return (BodyBase)Activator.CreateInstance(closed2ArgsType, this);
-				default:
-					throw new NotSupportedException("Indexer properties with more than 2 arguments are not supported.");
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private HappilMethod<T> GetValidGetterMethod()
+		private HappilMethod GetValidGetterMethod()
 		{
 			if ( m_GetterMethod == null )
 			{
@@ -283,11 +282,10 @@ namespace Happil.Fluent
 		{
 			private Delegate m_GetterBodyDefinition;
 			private Delegate m_SetterBodyDefinition;
-			private HappilField<T> m_BackingField;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected BodyBase(HappilProperty<T> ownerProperty)
+			protected BodyBase(HappilProperty ownerProperty)
 			{
 				this.OwnerProperty = ownerProperty;
 			}
@@ -332,23 +330,18 @@ namespace Happil.Fluent
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public HappilField<T> BackingField
+			public HappilField BackingField
 			{
 				get
 				{
-					if ( object.ReferenceEquals(m_BackingField, null) )
-					{
-						m_BackingField = OwnerProperty.OwnerClass.GetBody<object>().Field<T>("m_" + OwnerProperty.PropertyBuilder.Name);
-					}
-
-					return m_BackingField;
+					return OwnerProperty.BackingField;
 				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected HappilProperty<T> OwnerProperty { get; private set; }
-			protected HappilMethod<T> GetterMethod { get; set; }
+			protected HappilProperty OwnerProperty { get; private set; }
+			protected HappilMethod GetterMethod { get; set; }
 			protected VoidHappilMethod SetterMethod { get; set; }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -397,9 +390,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class BodyNoArgs : BodyBase, IHappilPropertyBody<T>
+		private class BodyNoArgs<T> : BodyBase, IHappilPropertyBody<T>
 		{
-			public BodyNoArgs(HappilProperty<T> ownerProperty)
+			public BodyNoArgs(HappilProperty ownerProperty)
 				: base(ownerProperty)
 			{
 			}
@@ -422,6 +415,16 @@ namespace Happil.Fluent
 				return null;
 			}
 
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			FieldAccessOperand<T> IHappilPropertyBody<T>.BackingField
+			{
+				get
+				{
+					return BackingField.AsOperand<T>();
+				}
+			}
+
 			#endregion
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -437,7 +440,7 @@ namespace Happil.Fluent
 					{
 						using ( GetterMethod.CreateBodyScope() )
 						{
-							typedGetterDefinition(GetterMethod);
+							typedGetterDefinition(GetterMethod.GetMethodBody<T>());
 						}
 					}
 				}
@@ -457,9 +460,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Body1Arg<TIndex1> : BodyBase, IHappilPropertyBody<TIndex1, T>
+		private class Body1Arg<TIndex1, T> : BodyBase, IHappilPropertyBody<TIndex1, T>
 		{
-			public Body1Arg(HappilProperty<T> ownerProperty)
+			public Body1Arg(HappilProperty ownerProperty)
 				: base(ownerProperty)
 			{
 			}
@@ -482,6 +485,16 @@ namespace Happil.Fluent
 				return null;
 			}
 
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			FieldAccessOperand<T> IHappilPropertyBody<TIndex1, T>.BackingField
+			{
+				get
+				{
+					return BackingField.AsOperand<T>();
+				}
+			}
+
 			#endregion
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -500,7 +513,7 @@ namespace Happil.Fluent
 						{
 							using ( GetterMethod.CreateBodyScope() )
 							{
-								typedGetterDefinition(GetterMethod, new HappilArgument<TIndex1>(GetterMethod, 1));
+								typedGetterDefinition(GetterMethod.GetMethodBody<T>(), new HappilArgument<TIndex1>(GetterMethod, 1));
 							}
 						}
 					}
@@ -521,9 +534,9 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Body2Args<TIndex1, TIndex2> : BodyBase, IHappilPropertyBody<TIndex1, TIndex2, T>
+		private class Body2Args<TIndex1, TIndex2, T> : BodyBase, IHappilPropertyBody<TIndex1, TIndex2, T>
 		{
-			public Body2Args(HappilProperty<T> ownerProperty)
+			public Body2Args(HappilProperty ownerProperty)
 				: base(ownerProperty)
 			{
 			}
@@ -544,6 +557,16 @@ namespace Happil.Fluent
 			{
 				SetterBodyDefinition = body;
 				return null;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			FieldAccessOperand<T> IHappilPropertyBody<TIndex1, TIndex2, T>.BackingField
+			{
+				get
+				{
+					return BackingField.AsOperand<T>();
+				}
 			}
 
 			#endregion
@@ -572,7 +595,7 @@ namespace Happil.Fluent
 							using ( GetterMethod.CreateBodyScope() )
 							{
 								typedGetterDefinition(
-									GetterMethod, 
+									GetterMethod.GetMethodBody<T>(), 
 									new HappilArgument<TIndex1>(GetterMethod, 1), 
 									new HappilArgument<TIndex2>(GetterMethod, 2));
 							}

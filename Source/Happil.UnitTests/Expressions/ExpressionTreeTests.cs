@@ -38,8 +38,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
 
 			//-- Act
 
@@ -58,8 +58,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
 
 			//-- Act
 
@@ -78,9 +78,9 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
-			var field3 = new HappilField<int>("f3");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
+			var field3 = CreateField<int>("f3");
 			var const4 = new HappilConstant<int>(123);
 
 			//-- Act
@@ -102,9 +102,9 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
-			var field3 = new HappilField<int>("f3");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
+			var field3 = CreateField<int>("f3");
 			var const4 = new HappilConstant<int>(123);
 
 			//-- Act
@@ -126,8 +126,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<bool>("f1");
-			var field2 = new HappilField<bool>("f2");
+			var field1 = CreateField<bool>("f1");
+			var field2 = CreateField<bool>("f2");
 
 			//-- Act
 
@@ -148,8 +148,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
 
 			//-- Act
 
@@ -170,8 +170,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
 
 			//-- Act
 
@@ -193,9 +193,9 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<int>("f2");
-			var field3 = new HappilField<int>("f3");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<int>("f2");
+			var field3 = CreateField<int>("f3");
 			var const4 = new HappilConstant<int>(123);
 
 			//-- Act
@@ -228,8 +228,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
-			var field2 = new HappilField<long>("f2");
+			var field1 = CreateField<int>("f1");
+			var field2 = CreateField<long>("f2");
 
 			//-- Act
 
@@ -250,8 +250,8 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<string>("f1");
-			var field2 = new HappilField<object>("f2");
+			var field1 = CreateField<string>("f1");
+			var field2 = CreateField<object>("f2");
 
 			//-- Act
 
@@ -272,7 +272,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
+			var field1 = CreateField<int>("f1");
 
 			//-- Act
 
@@ -293,7 +293,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
+			var field1 = CreateField<int>("f1");
 
 			//-- Act
 
@@ -314,7 +314,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
+			var field1 = CreateField<int>("f1");
 
 			//-- Act
 
@@ -335,7 +335,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			var field1 = new HappilField<int>("f1");
+			var field1 = CreateField<int>("f1");
 
 			//-- Act
 
@@ -347,6 +347,13 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{-- Field{f1}}"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private FieldAccessOperand<T> CreateField<T>(string name)
+		{
+			return new FieldAccessOperand<T>(new HappilThis<object>(null), name);
 		}
 	}
 }

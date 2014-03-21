@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using Happil.Selectors;
 using Moq;
@@ -422,7 +423,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			HappilField<int> counterField;
+			FieldAccessOperand<int> counterField;
 
 			DeriveClassFrom<AncestorRepository.BaseThree>()
 				.DefaultConstructor()
@@ -457,7 +458,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			HappilField<int> counterField;
+			FieldAccessOperand<int> counterField;
 
 			DeriveClassFrom<AncestorRepository.BaseThree>()
 				.DefaultConstructor()

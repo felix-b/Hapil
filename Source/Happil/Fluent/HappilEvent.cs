@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
@@ -23,7 +24,7 @@ namespace Happil.Fluent
 		private readonly HappilClass m_HappilClass;
 		private readonly EventInfo m_Declaration;
 		private readonly EventBuilder m_EventBuilder;
-		private readonly HappilField<TypeTemplate.TEventHandler> m_BackingField;
+		private readonly HappilField m_BackingField;
 		private readonly VoidHappilMethod m_AddMethod;
 		private readonly VoidHappilMethod m_RemoveMethod;
 
@@ -37,7 +38,7 @@ namespace Happil.Fluent
 
 			using ( CreateTypeTemplateScope() )
 			{
-				m_BackingField = new HappilField<TypeTemplate.TEventHandler>(happilClass, "m_" + declaration.Name + "EventHandler");
+				m_BackingField = new HappilField(happilClass, "m_" + declaration.Name + "EventHandler", typeof(TypeTemplate.TEventHandler));
 
 				m_AddMethod = new VoidHappilMethod(happilClass, declaration.GetAddMethod(), ContainedMethodAttributes);
 				m_EventBuilder.SetAddOnMethod(m_AddMethod.MethodBuilder);
@@ -109,19 +110,19 @@ namespace Happil.Fluent
 		{
 			using ( CreateTypeTemplateScope() )
 			{
-				m.If(m_BackingField != m.Const<TypeTemplate.TEventHandler>(null)).Then(() => {
-					m_BackingField.Invoke(m.This<TypeTemplate.TBase>(), args);
+				m.If(m_BackingField.AsOperand<TypeTemplate.TEventHandler>() != m.Const<TypeTemplate.TEventHandler>(null)).Then(() => {
+					m_BackingField.AsOperand<TypeTemplate.TEventHandler>().Invoke(m.This<TypeTemplate.TBase>(), args);
 				});
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<TypeTemplate.TEventHandler> BackingField
+		public FieldAccessOperand<TypeTemplate.TEventHandler> BackingField
 		{
 			get
 			{
-				return m_BackingField;
+				return m_BackingField.AsOperand<TypeTemplate.TEventHandler>();
 			}
 		}
 
@@ -162,7 +163,7 @@ namespace Happil.Fluent
 		{
 			var oldHandler = m.Local<TypeTemplate.TEventHandler>();
 			var newHandler = m.Local<TypeTemplate.TEventHandler>();
-			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: m_BackingField);
+			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: m_BackingField.AsOperand<TypeTemplate.TEventHandler>());
 
 			m.Do(loop => {
 				oldHandler.Assign(lastHandler);
@@ -172,7 +173,7 @@ namespace Happil.Fluent
 					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
 
 				lastHandler.Assign(Static.GenericFunc((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
-					m_BackingField,
+					m_BackingField.AsOperand<TypeTemplate.TEventHandler>(),
 					newHandler,
 					oldHandler));
 			}).While(lastHandler != oldHandler);
@@ -184,7 +185,7 @@ namespace Happil.Fluent
 		{
 			var oldHandler = m.Local<TypeTemplate.TEventHandler>();
 			var newHandler = m.Local<TypeTemplate.TEventHandler>();
-			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: m_BackingField);
+			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: m_BackingField.AsOperand<TypeTemplate.TEventHandler>());
 
 			m.Do(loop => {
 				oldHandler.Assign(lastHandler);
@@ -194,7 +195,7 @@ namespace Happil.Fluent
 					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
 
 				lastHandler.Assign(Static.GenericFunc((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
-					m_BackingField,
+					m_BackingField.AsOperand<TypeTemplate.TEventHandler>(),
 					newHandler,
 					oldHandler));
 			}).While(lastHandler != oldHandler);

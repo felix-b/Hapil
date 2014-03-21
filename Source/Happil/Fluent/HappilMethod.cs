@@ -595,7 +595,7 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void AddReturnStatement(IHappilOperand<TypeTemplate.TReturn> returnValue)
+		internal protected void AddReturnStatement(IHappilOperand<TypeTemplate.TReturn> returnValue)
 		{
 			if ( m_CurrentBodyDefinitionIndex > 0 )
 			{
@@ -883,10 +883,31 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private TStatement AddStatement<TStatement>(TStatement statement) where TStatement : IHappilStatement
+		internal TStatement AddStatement<TStatement>(TStatement statement) where TStatement : IHappilStatement
 		{
 			StatementScope.Current.AddStatement(statement);
 			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal IHappilMethodBodyTemplate GetMethodBodyTemplate()
+		{
+			return new Happil.StronglyTyped.MethodBody(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal IHappilMethodBody<TReturn> GetMethodBody<TReturn>()
+		{
+			return new Happil.StronglyTyped.MethodBody<TReturn>(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal IVoidHappilMethodBody GetVoidMethodBody()
+		{
+			return new Happil.StronglyTyped.VoidMethodBody(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

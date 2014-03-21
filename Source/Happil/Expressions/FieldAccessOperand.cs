@@ -8,18 +8,38 @@ using Happil.Fluent;
 
 namespace Happil.Expressions
 {
-	internal class FieldAccessOperand<T> : HappilAssignable<T>
+	public class FieldAccessOperand<T> : HappilAssignable<T>
 	{
 		private readonly IHappilOperand m_Target;
 		private readonly FieldInfo m_Field;
+		private readonly string m_Name;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand(IHappilOperand target, FieldInfo field)
+		internal FieldAccessOperand(IHappilOperand target, FieldInfo field)
 			: base(ownerMethod: null)
 		{
 			m_Target = target;
 			m_Field = field;
+			m_Name = field.Name;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//TODO: get rid of thus one; change tests accordingly
+		internal FieldAccessOperand(IHappilOperand target, string name)
+			: base(ownerMethod: null)
+		{
+			m_Target = target;
+			m_Field = null;
+			m_Name = name;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override string ToString()
+		{
+			return string.Format("Field{{{0}}}", m_Name);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

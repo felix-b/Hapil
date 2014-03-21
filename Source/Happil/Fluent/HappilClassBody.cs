@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Happil.Expressions;
 using Happil.Selectors;
 
 namespace Happil.Fluent
@@ -100,16 +101,15 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<T> Field<T>(string name)
+		public FieldAccessOperand<T> Field<T>(string name)
 		{
-			var field = new HappilField<T>(m_HappilClass, name, isStatic: false);
-			m_HappilClass.AddUndeclaredMember(field);
-			return field;
+			var field = DefineField<T>(name, isStatic: false);
+			return field.AsOperand<T>(); //TODO: check that T is compatible with field type
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> Field<T>(string name, out HappilField<T> field)
+		public IHappilClassBody<TBase> Field<T>(string name, out FieldAccessOperand<T> field)
 		{
 			field = this.Field<T>(name);
 			return this;
@@ -117,25 +117,25 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> Field<T>(string name, IHappilAttributes attributes, out HappilField<T> field)
+		public IHappilClassBody<TBase> Field<T>(string name, IHappilAttributes attributes, out FieldAccessOperand<T> field)
 		{
-			field = this.Field<T>(name);
-			field.SetAttributes(attributes as HappilAttributes);
+			var fieldMember = DefineField<T>(name, isStatic: false);
+			fieldMember.SetAttributes(attributes as HappilAttributes);
+			field = fieldMember.AsOperand<T>();
 			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilField<T> StaticField<T>(string name)
+		public FieldAccessOperand<T> StaticField<T>(string name)
 		{
-			var field = new HappilField<T>(m_HappilClass, name, isStatic: true);
-			m_HappilClass.AddUndeclaredMember(field);
-			return field;
+			var fieldMember = DefineField<T>(name, isStatic: true);
+			return fieldMember.AsOperand<T>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> StaticField<T>(string name, out HappilField<T> field)
+		public IHappilClassBody<TBase> StaticField<T>(string name, out FieldAccessOperand<T> field)
 		{
 			field = this.StaticField<T>(name);
 			return this;
@@ -143,10 +143,11 @@ namespace Happil.Fluent
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilClassBody<TBase> StaticField<T>(string name, IHappilAttributes attributes, out HappilField<T> field)
+		public IHappilClassBody<TBase> StaticField<T>(string name, IHappilAttributes attributes, out FieldAccessOperand<T> field)
 		{
-			field = this.StaticField<T>(name);
-			field.SetAttributes(attributes as HappilAttributes);
+			var fieldMember = DefineField<T>(name, isStatic: true);
+			fieldMember.SetAttributes(attributes as HappilAttributes);
+			field = fieldMember.AsOperand<T>();
 			return this;
 		}
 
@@ -499,6 +500,22 @@ namespace Happil.Fluent
 		public MemberInfo[] GetImplementableMembers()
 		{
 			return m_ImplementableMembers;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilField DefineField(string name, Type fieldType, bool isStatic)
+		{
+			var field = new HappilField(m_HappilClass, name, fieldType, isStatic);
+			m_HappilClass.AddUndeclaredMember(field);
+			return field;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal HappilField DefineField<T>(string name, bool isStatic)
+		{
+			return DefineField(name, typeof(T), isStatic);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using NUnit.Framework;
 
@@ -61,7 +62,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			HappilField<TimeSpan> field;
+			FieldAccessOperand<TimeSpan> field;
 
 			DeriveClassFrom<AncestorRepository.ObjectCreationTester>()
 				.DefaultConstructor()
@@ -88,7 +89,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			HappilField<TimeSpan> field;
+			FieldAccessOperand<TimeSpan> field;
 
 			DeriveClassFrom<AncestorRepository.ObjectCreationTester>()
 				.DefaultConstructor()

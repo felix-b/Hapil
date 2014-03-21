@@ -53,7 +53,7 @@ namespace Happil.Selectors
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			internal IHappilClassBody<TBase> DefineMembers<TProperty>(Action<HappilProperty<TProperty>.BodyBase> invokeAccessorBodyDefinitions)
+			internal IHappilClassBody<TBase> DefineMembers<TProperty>(Action<HappilProperty.BodyBase> invokeAccessorBodyDefinitions)
 			{
 				var propertiesToImplement = OwnerBody.HappilClass.TakeNotImplementedMembers(SelectedProperties);
 
@@ -64,9 +64,9 @@ namespace Happil.Selectors
 						var copyOfDeclaration = declaration;
 						var propertyMember = OwnerBody.HappilClass.GetOrAddDeclaredMember(
 							copyOfDeclaration,
-							memberFactory: () => new HappilProperty<TProperty>(OwnerBody.HappilClass, copyOfDeclaration));
+							memberFactory: () => new HappilProperty(OwnerBody.HappilClass, copyOfDeclaration));
 
-						invokeAccessorBodyDefinitions(propertyMember.Body);
+						invokeAccessorBodyDefinitions(propertyMember.GetPropertyBody<TypeTemplate.TProperty>());
 					}
 				}
 
@@ -85,11 +85,11 @@ namespace Happil.Selectors
 						body.SetAttributes(attributes((IHappilPropertyBody<TProperty>)body) as HappilAttributes);
 					}
 
-					((IHappilPropertyBody<TProperty>)body).Get(m => m.Return(body.BackingField));
+					((IHappilPropertyBody<TProperty>)body).Get(m => m.Return(body.BackingField.AsOperand<TProperty>()));
 
 					if ( body.Declaration.CanWrite )
 					{
-						((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.Assign(value));
+						((IHappilPropertyBody<TProperty>)body).Set((m, value) => body.BackingField.AsOperand<TProperty>().Assign(value));
 					}
 				});
 

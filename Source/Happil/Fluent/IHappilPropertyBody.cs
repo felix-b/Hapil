@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Happil.Expressions;
 
 namespace Happil.Fluent
 {
@@ -16,19 +17,19 @@ namespace Happil.Fluent
 	{
 		IHappilPropertyGetter Get(Action<IHappilMethodBody<TProperty>> body);
 		IHappilPropertySetter Set(Action<IVoidHappilMethodBody, HappilArgument<TProperty>> body);
-		HappilField<TProperty> BackingField { get; }
+		FieldAccessOperand<TProperty> BackingField { get; }
 	}
 	public interface IHappilPropertyBody<TIndex, TProperty> : IHappilPropertyBody
 	{
 		IHappilPropertyGetter Get(Action<IHappilMethodBody<TProperty>, HappilArgument<TIndex>> body);
 		IHappilPropertySetter Set(Action<IVoidHappilMethodBody, HappilArgument<TIndex>, HappilArgument<TProperty>> body);
-		HappilField<TProperty> BackingField { get; }
+		FieldAccessOperand<TProperty> BackingField { get; }
 	}
 	public interface IHappilPropertyBody<TIndex1, TIndex2, TProperty> : IHappilPropertyBody
 	{
 		IHappilPropertyGetter Get(Action<IHappilMethodBody<TProperty>, HappilArgument<TIndex1>, HappilArgument<TIndex2>> body);
 		IHappilPropertySetter Set(Action<IVoidHappilMethodBody, HappilArgument<TIndex1>, HappilArgument<TIndex2>, HappilArgument<TProperty>> body);
-		HappilField<TProperty> BackingField { get; }
+		FieldAccessOperand<TProperty> BackingField { get; }
 	}
 	public interface IHappilPropertyGetter
 	{

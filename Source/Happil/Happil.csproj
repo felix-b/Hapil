@@ -69,6 +69,7 @@
     <Compile Include="Fluent\IHappilEventBody.cs" />
     <Compile Include="Fluent\IHappilProperty.cs" />
     <Compile Include="IDecorationImplementor.cs" />
+    <Compile Include="StronglyTyped\MethodBody.cs" />
     <Compile Include="TypeMembers.cs" />
     <Compile Include="Statements\DoWhileStatement.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />

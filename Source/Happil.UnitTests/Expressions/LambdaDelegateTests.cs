@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Fluent;
 using NUnit.Framework;
 
@@ -61,7 +62,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			HappilField<Func<string, bool>> predicateField;
+			FieldAccessOperand<Func<string, bool>> predicateField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field("m_Predicate", out predicateField)
@@ -89,7 +90,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			HappilField<Func<string, bool>> predicateField;
+			FieldAccessOperand<Func<string, bool>> predicateField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field("m_Predicate", out predicateField)
@@ -150,7 +151,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			HappilField<MyAccumulator> accumulatorField;
+			FieldAccessOperand<MyAccumulator> accumulatorField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field<MyAccumulator>("m_Accumulator", out accumulatorField)
