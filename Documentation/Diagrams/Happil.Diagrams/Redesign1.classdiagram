@@ -1,31 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="227d9a7b-56e3-478d-81f4-db3ca39ad212" name="Redesign1" linkedPackageId="7a38c6b9-cb32-4ba6-a55b-a3d0c9715602" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
-  <profileInstances>
-    <packageHasProfileInstances Id="d75663f1-31cb-4666-aad6-73b2f7f9d4c5">
-      <profileInstance Id="c397ff1e-8d04-4e79-a2f8-3130cf56e461" name="StandardProfileL2">
-        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
-      </profileInstance>
-      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
-    </packageHasProfileInstances>
-    <packageHasProfileInstances Id="627523a0-b2ef-4200-8219-0c71da6d2591">
-      <profileInstance Id="aaa3bd8a-2d8f-4eba-92ba-19eb0f054843" name="StandardProfileL3">
-        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
-      </profileInstance>
-      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
-    </packageHasProfileInstances>
-  </profileInstances>
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
-      <class Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" name="AbstractMember" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" name="MemberBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="d20e4681-39d6-4fca-9d54-f6eebba9c12d" />
+        <ownedOperationsInternal>
+          <operation Id="6390eed2-da07-4db4-93bc-327d1f821716" name="Write" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0e535240-2021-4ae5-b8f2-ae6a0363de1f" />
+          </operation>
+          <operation Id="75a65b88-e35c-4469-80e1-051cf9f150f0" name="Compile" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="935208dc-2739-468c-9341-3ba5dc2c8a25" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="79ed1167-1797-4e5d-b448-6175c6718bb5" name="ClassType" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="79ed1167-1797-4e5d-b448-6175c6718bb5" name="ClassCompiler" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="1d1e9928-be77-469e-adfd-9fd693fce571" />
         <targetEnds>
           <association Id="e97b8a92-0b8e-4f09-b0f6-d3e27456c7a6" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
-            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="AbstractMember" />
+            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="c4711c08-c8c9-49ff-8f9a-86d39d95821b" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
@@ -50,7 +44,41 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="d9bede14-c387-4cdd-8e99-74600eeade55" />
           </association>
+          <association Id="af566515-2293-4afd-9f16-243d8a42cc33" isDerived="false" sourceEndRoleName="Writers" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="665d835d-e38a-4714-b79e-4e5699ac699e" LastKnownName="ClassWriterBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c6660fb1-2100-4692-81f5-c03eb68a1cb9" name="Writers" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b8ca8916-f541-484b-b799-a0ea62cd8757" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="aef22ec2-3e95-4bd2-ac1a-83519645dd53" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="e4b3a2e7-85a5-49e1-8651-0967805a2a27" name="Lower" value="*">
+                      <elementDefinition Id="b369325a-fe48-4dc9-baad-2371202939d0" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="cef4495d-3ae7-4e23-8444-67481031ca7b" name="Upper" value="*">
+                      <elementDefinition Id="9274a79d-5a4c-4807-b8fc-5d8c42d79844" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="cc1b6526-92fa-4b5b-aec8-fa4f973041f7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="0342ad18-9982-4f4f-9375-04b7814db83b" />
+          </association>
         </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="c5933423-cff5-4af7-b7c8-be408906bb9e" name="Write" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="760fccc8-3dad-482c-9aa4-be8e06c03bc1" />
+          </operation>
+          <operation Id="5a0c4a16-44cc-4449-ad63-5560840e292e" name="Compile" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="bd2e0875-9cce-4d62-bca1-3231d068f908" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -58,10 +86,64 @@
         <elementDefinition Id="21220b8b-3265-4c50-aa3e-b67483dcff4e" />
         <generalsInternal>
           <generalization Id="4b98f5a8-039a-4e4a-9759-d220266baf23" isSubstitutable="false">
-            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="AbstractMember" />
+            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <elementDefinition Id="2143640a-8ef5-45f1-9544-72b8ec5328de" />
           </generalization>
         </generalsInternal>
+        <targetEnds>
+          <association Id="08e14597-0a0f-46e2-8827-e8c6ef029874" isDerived="false" sourceEndRoleName="Writers" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3dd37ee6-6829-4b44-8611-64125d906f3f" name="Writers" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="86c407fc-f448-4340-8cb2-8be730c00c1c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="83b05819-b2b6-4186-b945-459c8feab607" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="e3c9a2a9-c1e7-4af1-a9c1-4d6a42f2fa98" name="Lower" value="*">
+                      <elementDefinition Id="822b30a1-1359-4132-ae96-ec6794c87008" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="af891bf4-c533-4fc7-910d-52de6ff06d3e" name="Upper" value="*">
+                      <elementDefinition Id="22b43f86-a75e-4f48-9694-4474ba879883" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="6280e81b-2f84-4f2a-b611-c81f1d54c083" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="81134faa-c832-4a70-9768-8a93d83d25cb" />
+          </association>
+          <association Id="a15d05c4-24c5-4979-a6a5-51fcaba10391" isDerived="false" sourceEndRoleName="Statements" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="106f5357-e156-45ad-8d4d-9ac56380d693" name="Statements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="d2e7a4c7-3554-4073-9b97-f993acb1d21b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="423bb3f1-9707-4045-a950-602761a5cef3" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="359934ed-471e-4ca7-be15-1b926fa28d6a" name="Lower" value="*">
+                      <elementDefinition Id="164ceabc-7c92-43ba-b643-d67328643c7a" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="e5c7644f-2e0f-4c0a-a636-4495758fde81" name="Upper" value="*">
+                      <elementDefinition Id="fef120a6-cebe-4c7d-a881-dff984ee78ce" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="f7d450b8-0968-4c76-b2ac-84876a122bda" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="bde07f9d-e70a-464f-b2e8-11f9851a5544" />
+          </association>
+        </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -79,10 +161,38 @@
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="7a2e12d0-0675-4a4e-be14-8821b7d57385" isSubstitutable="false">
-            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="AbstractMember" />
+            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <elementDefinition Id="63d626b2-9f35-4d6c-a01f-44facac8cdbb" />
           </generalization>
         </generalsInternal>
+        <targetEnds>
+          <association Id="c14361e8-eb04-4fd1-8852-e10eea683c5a" isDerived="false" sourceEndRoleName="Writers" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="PropertyWriterBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3959494e-9a2d-4617-83a2-36c491f5d969" name="Writers" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="39cfbdc2-c13c-4e60-9be9-83a5fd0915fc" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="41fdeef7-ebb1-462c-8061-bea74d0676e8" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="5e55fbd6-aa0b-4598-a901-63d30064baf8" name="Lower" value="*">
+                      <elementDefinition Id="2267f66c-159b-4bcc-b223-7875487f2f22" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="f2a30520-a6fd-4c44-ae42-4e4f5f780726" name="Upper" value="*">
+                      <elementDefinition Id="24c65580-4f8d-4a62-9830-02294eebd9c9" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="63dc8dd3-b0fc-4470-b5d3-b3248b33df5e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="98405c18-94cb-408e-8b97-66a2575cc113" />
+          </association>
+        </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -90,10 +200,38 @@
         <elementDefinition Id="2abad2b7-c7c2-4ac1-8c73-8da4e3afecbf" />
         <generalsInternal>
           <generalization Id="3e544c80-4d9f-43ee-b0ec-0d8142e4dfe6" isSubstitutable="false">
-            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="AbstractMember" />
+            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <elementDefinition Id="7d274125-0b72-49e2-84e2-b74d46c79925" />
           </generalization>
         </generalsInternal>
+        <targetEnds>
+          <association Id="af617446-a509-490d-b836-6a3615649f47" isDerived="false" sourceEndRoleName="Writers" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="38e632d2-96f8-4652-95b6-5c46e6730926" LastKnownName="FieldWriterBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="452bd1fa-7ab6-4787-91a0-327ea5b60e43" name="Writers" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="f23861e0-9c30-4f5f-8ba8-502a043dab77" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="282f7f69-cd4d-4d31-885c-e93e3cc12da4" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="5794b0ce-d978-4a44-8af5-c3ab1de712e4" name="Lower" value="*">
+                      <elementDefinition Id="50354187-9662-42fc-b83d-ddbf5c69a255" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="ae2b496d-589b-47c7-b69e-3ba06fc6b541" name="Upper" value="*">
+                      <elementDefinition Id="eb86efdd-61c4-440f-b9ae-23efd323f6bd" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="0810c5c3-0e91-43be-b22b-6ab059877636" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="48445379-95aa-4610-b0b7-49558d5bc101" />
+          </association>
+        </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -107,10 +245,38 @@
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="febbc4ad-a4b1-4b7e-8096-25db845c1448" isSubstitutable="false">
-            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="AbstractMember" />
+            <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <elementDefinition Id="4ba91c5f-7297-4ae3-89b9-39dffc0cea9b" />
           </generalization>
         </generalsInternal>
+        <targetEnds>
+          <association Id="cb5076eb-fab9-455a-9ab9-97a4bfa243e4" isDerived="false" sourceEndRoleName="Writers" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="ed4044c4-d348-4f44-a77f-06fa25f9db4f" LastKnownName="EventWriterBase" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="24b5f641-8c38-4741-afa4-0cc37f93707b" name="Writers" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="6a13ea95-0717-4f56-b8a2-e5ce057c14bf" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="aaad90ea-1c3e-4930-9b22-1a2c57d57a3e" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="f931117c-cada-4207-a857-11316ea12af7" name="Lower" value="*">
+                      <elementDefinition Id="71dddc94-0777-43f1-af53-0988676a3206" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="2fa39e1c-397a-4a2c-bd6a-5e78ef869536" name="Upper" value="*">
+                      <elementDefinition Id="2524295c-a6f5-47b1-818d-9e025d81a6b9" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="45eafcb3-4fa2-4d38-8a40-80081f94fe8d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c3e02b49-b0ef-4d43-a989-2f8259229514" />
+          </association>
+        </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -125,105 +291,123 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="d682aaa8-31eb-431c-8dc3-6028e28a766b" name="TemplateMethod" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="d682aaa8-31eb-431c-8dc3-6028e28a766b" name="TemplateMethodWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="7d690b13-85b6-4e63-a70b-22490535bf8c" />
         <generalsInternal>
           <generalization Id="0886ad33-8664-4da0-99c1-335fae15012f" isSubstitutable="false">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="e1962358-0749-4174-a2b6-45b96d7f1b1e" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="49fef44b-182a-4c0a-873b-59d1425acbae" name="Method&lt;TReturn&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="49fef44b-182a-4c0a-873b-59d1425acbae" name="MethodWriter&lt;TReturn&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="6e0aafe8-2169-4a95-9988-c46a62e3a30c" />
         <generalsInternal>
           <generalization Id="aacd69bb-fee5-4d6b-9f39-01da345040f2" isSubstitutable="false">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="5c459442-9765-43d5-9322-3188cfecf1b2" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="603efed8-b226-48b3-b78f-36a9219a0ba4" name="AbstractMethodView" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="603efed8-b226-48b3-b78f-36a9219a0ba4" name="MethodWriterBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="653029a7-3daa-4afa-9620-dd0d4ea91117" />
         <suppliersInternal>
-          <dependency Id="111beb6c-e684-40d4-901d-d07431686e80">
+          <dependency Id="111beb6c-e684-40d4-901d-d07431686e80" name="OwnerMethod">
             <classMoniker Id="ed8dbcb8-420c-4890-b515-ad12ab1681b2" LastKnownName="MethodMember" />
             <elementDefinition Id="bc0d6957-2bda-41a9-ac7c-43ea9961953c" />
           </dependency>
         </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="cf2bf79a-24d7-4870-9e94-f262fc9bc2b1" name="WriteCallback" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="031cfc5d-bf9a-44df-8ed3-170fc13f5034" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="caea668e-567c-460c-80f4-3cf8c8891e52" name="Flush" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="5df0092c-61fd-4684-a143-9b74a712b658" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="61b01cca-b09e-4459-a758-ff7bba155521" name="VoidMethod" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="61b01cca-b09e-4459-a758-ff7bba155521" name="VoidMethodWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="145cfb83-18ba-403f-b4eb-c9aa2c9972f0" />
         <generalsInternal>
           <generalization Id="71ece27f-14cd-4759-851e-8cc5428cba21" isSubstitutable="false">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="037105bf-12df-4b09-bd9a-85add6b86a35" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="b32e894d-2f8a-449f-9371-bfd38dc8b749" name="Constructor" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="b32e894d-2f8a-449f-9371-bfd38dc8b749" name="ConstructorWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="7a28404c-7a42-4622-b721-9c0922989a49" />
         <generalsInternal>
           <generalization Id="937784c9-1690-4e0b-a49b-7e7ee59eb3c5" isSubstitutable="false">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="c8ffd02a-7f4e-438f-9e4c-238daa41041d" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="37539b88-600e-46b5-ae00-79b73fbfc553" name="AbstractPropertyView&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="37539b88-600e-46b5-ae00-79b73fbfc553" name="PropertyWriterBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="c90d04b3-0010-4f34-b13b-272700cadba0" />
         <suppliersInternal>
-          <dependency Id="3f13035a-7ff4-4b1f-9de9-b67819a837a0">
+          <dependency Id="3f13035a-7ff4-4b1f-9de9-b67819a837a0" name="OwnerProperty">
             <classMoniker Id="5cb45760-16dd-4181-af59-417ceebb6c52" LastKnownName="PropertyMember" />
             <elementDefinition Id="129b3daf-2f8b-44f3-b5f3-a4cf53459e18" />
           </dependency>
+          <dependency Id="77c158b6-890f-4119-b2e6-50759ff6ffd8" name="Getter &amp; Setter method writers">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
+            <elementDefinition Id="0ccddce6-9726-4fed-ab28-ba95cf3eabaa" />
+          </dependency>
         </suppliersInternal>
-        <generalsInternal>
-          <generalization Id="72fcd788-55e7-4db1-b965-cce768b41b08" isSubstitutable="false">
-            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="AbstractMutableOperand&lt;T&gt;" />
-            <elementDefinition Id="aee2b063-552f-4dc3-9104-0b9e0fd676fc" />
-          </generalization>
-        </generalsInternal>
+        <ownedAttributesInternal>
+          <property Id="8cca3388-d963-42aa-aeff-b9f3e9b40082" name="WriteCallback" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="080e395d-8e9a-4312-aa94-9b9b9602e82e" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="6d2bc60e-4d35-43d3-bce9-e299d0e7e4c8" name="Flush" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="34111b69-c7e9-4cb1-b093-05cc6757a841" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="4564ae86-c14b-4fff-9236-8826183b1599" name="Property&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="4564ae86-c14b-4fff-9236-8826183b1599" name="PropertyWriter&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="11b08b10-51e3-4cf2-a3d0-80026f1fd94a" />
         <generalsInternal>
           <generalization Id="43e79c3a-64ff-427a-9307-1a4900317b44" isSubstitutable="false">
-            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="AbstractPropertyView&lt;T&gt;" />
+            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="PropertyWriterBase" />
             <elementDefinition Id="c88f01ec-5db9-4471-b4ff-f3cc771d5833" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="ca294556-24f1-4393-a65f-601ca4320f26" name="Property&lt;TIndex, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="ca294556-24f1-4393-a65f-601ca4320f26" name="PropertyWriter&lt;TIndex, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="47f30b6e-1af9-4c89-b417-b3a858134558" />
         <generalsInternal>
           <generalization Id="d0b4630f-0f21-4cbb-8457-cccca82ab6df" isSubstitutable="false">
-            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="AbstractPropertyView&lt;T&gt;" />
+            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="PropertyWriterBase" />
             <elementDefinition Id="88501014-2505-486f-8b01-aeb6244ee591" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="5a066722-d5ad-433a-b554-e6cac431f598" name="Property&lt;TIndex1, TIndex2, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="5a066722-d5ad-433a-b554-e6cac431f598" name="PropertyWriter&lt;TIndex1, TIndex2, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="1b3ff40a-b6df-4c17-9b86-170d5904bd2e" />
         <generalsInternal>
           <generalization Id="73aa5b22-4a7f-4685-8294-9904d319fcb1" isSubstitutable="false">
-            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="AbstractPropertyView&lt;T&gt;" />
+            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="PropertyWriterBase" />
             <elementDefinition Id="65f745fa-a646-4c85-aa20-40c4a985c46e" />
           </generalization>
         </generalsInternal>
@@ -232,79 +416,102 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="40b26fe7-484a-471a-9a6a-b0618e88a598" name="Field&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="f01a4079-dcb8-4ad3-9754-c1d70cda7250" />
-        <suppliersInternal>
-          <dependency Id="ecc7cdfd-47da-43d2-9231-6cc629a01014">
-            <classMoniker Id="ce7d1055-a8a1-450d-9085-f8b435022e37" LastKnownName="FieldMember" />
-            <elementDefinition Id="07b6d268-5f9c-4d73-a5c8-032a322cee97" />
-          </dependency>
-        </suppliersInternal>
         <generalsInternal>
           <generalization Id="17df09a5-ce94-43e7-b478-7a044c42bd02" isSubstitutable="false">
-            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="AbstractMutableOperand&lt;T&gt;" />
+            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="MutableOperand&lt;T&gt;" />
             <elementDefinition Id="a2875c68-c4bc-43f1-a8b9-9833884dbc2e" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="ed4044c4-d348-4f44-a77f-06fa25f9db4f" name="Event&lt;THandler&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="ed4044c4-d348-4f44-a77f-06fa25f9db4f" name="EventWriterBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="8da24a6d-103f-4a22-8d03-5f2002bc4c63" />
         <suppliersInternal>
-          <dependency Id="4f49fe5a-c977-45d6-8419-d4fe7f0cbcbb">
+          <dependency Id="4f49fe5a-c977-45d6-8419-d4fe7f0cbcbb" name="OwnerEvent">
             <classMoniker Id="d919fed0-d822-4e7f-af6a-2b86bc70533f" LastKnownName="EventMember" />
             <elementDefinition Id="892de73d-f29e-4b7e-af0f-c0e30632d18e" />
           </dependency>
         </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="e0115060-86f6-4d56-ace5-cd9de2c15397" name="WriteCallback" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="9edd6438-d6f7-4e27-b2ef-10cd789b33d2" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="0ced6d92-ba71-4aea-a9ef-fa48ae4c1701" name="Flush" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="a9b257dc-aacf-48ab-8e3e-b71de56850a3" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" name="AbstractOperand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" name="Operand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="068d52be-f893-4fe4-89fb-5e2f4adcc68a" />
         <suppliersInternal>
           <interfaceRealization Id="ce475f4d-b34b-402a-b55b-701ea081b3f4">
             <interfaceMoniker Id="c80906de-f183-49af-bae5-2aebfaacb6ae" LastKnownName="IOperand&lt;out T&gt;" />
             <elementDefinition Id="aa5c5607-35b8-413b-9e2e-eb3b32719e84" />
           </interfaceRealization>
+          <interfaceRealization Id="76b576b7-b586-4613-bb23-8782d2ed6440">
+            <interfaceMoniker Id="4b8fc1d5-e017-4efe-85ce-cf91ddbbe516" LastKnownName="IOperandEmitter" />
+            <elementDefinition Id="5384f7b1-7dec-4f14-b67e-257ff19a14b5" />
+          </interfaceRealization>
         </suppliersInternal>
         <ownedOperationsInternal>
-          <operation Id="dc47392c-1396-4006-bce4-be3d2f1d564a" name="EmitTarget" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="3fa8624f-dad9-473a-9a47-5322e2a58f7c" />
+          <operation Id="b3aa81f9-cb8a-4f7f-b024-b0215f1bf655" name="EmitAddress" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="75c8b529-c8eb-4e1a-a9af-678f3ff58cbd" />
           </operation>
-          <operation Id="727db546-f20a-4407-b7ea-44ee2f0db1c6" name="EmitLoad" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="483a6bb7-6658-4e0c-8b7e-f465baa521f6" />
+          <operation Id="5aeee342-6139-4f7a-8034-f502418fefa0" name="EmitLoad" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="5b033ed1-620e-4001-8deb-e5d68ec62589" />
           </operation>
-          <operation Id="8e720e66-e00e-41df-bfcc-010fb02f1c54" name="EmitStore" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="d06b6336-695e-48af-9d48-6575422afce7" />
+          <operation Id="104354ea-c07f-4c31-be5b-551dfcbb74ad" name="EmitStore" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="2d6d71b6-5c74-4164-963e-136bbef0845b" />
           </operation>
-          <operation Id="8a53df31-b273-4e2f-96bc-99d18c68a612" name="EmitAddress" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="27d34f99-dbc2-4a26-b0ba-d30030826983" />
+          <operation Id="e9ef80d1-bc3e-4a7c-a501-514e2b1502fc" name="EmitTarget" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="e35acfaa-5a8d-4f5a-ae68-a43785f5c741" />
+          </operation>
+          <operation Id="c0ba44ba-d71b-40a4-81b3-22fd463cbef0" name="CastTo&lt;T&gt;" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="26213933-9beb-48f8-bfb6-917357071e1e" />
           </operation>
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" name="AbstractMutableOperand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" name="MutableOperand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="9f4a4c49-2df2-43b9-871e-55c98145f422" />
         <generalsInternal>
           <generalization Id="635209a3-2bf5-4ba5-89ac-8ba05a605167" isSubstitutable="false">
-            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="AbstractOperand&lt;T&gt;" />
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
             <elementDefinition Id="57394ce4-f086-4b0a-9e76-009dfae0c7de" />
           </generalization>
         </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="93671efb-85cb-4de9-a448-6e19ae438e4f" name="Assign" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="9c8e36a5-58e4-412e-9665-6e3025cab792" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="892b0458-d412-4759-8572-000fbefd6e80" name="IOperand&lt;T&gt;" direction="In" isUnique="false">
+                  <elementDefinition Id="a61a0683-844e-4ccd-80d9-52a1e200b852" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <class Id="fdcc097b-f4ee-4654-863e-c47df055a8b9" name="Local&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="9abde2bc-9a42-4277-965c-649867046e7f" />
         <suppliersInternal>
-          <dependency Id="336c5d10-2b46-4036-9809-618740d7e0bc">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+          <dependency Id="336c5d10-2b46-4036-9809-618740d7e0bc" name="OwnerMethod">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="d6774f01-6d12-448e-8cc9-a6803a034fd7" />
           </dependency>
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="307d4430-2b3c-4d18-a54c-41b20291b0c0" isSubstitutable="false">
-            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="AbstractMutableOperand&lt;T&gt;" />
+            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="MutableOperand&lt;T&gt;" />
             <elementDefinition Id="df767736-eb40-4040-a50b-e5828cad9a4d" />
           </generalization>
         </generalsInternal>
@@ -314,106 +521,1101 @@
       <class Id="10e65c87-af86-47cf-af30-4c9810159289" name="Argument&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="286e8575-cd10-4730-b32a-efb95a86a3bd" />
         <suppliersInternal>
-          <dependency Id="f697f725-b2f0-41c8-8695-b824c0122270">
-            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="AbstractMethodView" />
+          <dependency Id="f697f725-b2f0-41c8-8695-b824c0122270" name="OwnerMethod">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
             <elementDefinition Id="645d9788-aa7f-4a2a-b8ea-5246d49e1c58" />
           </dependency>
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="21738dc4-978a-46d7-88ca-3aa760ea6844" isSubstitutable="false">
-            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="AbstractMutableOperand&lt;T&gt;" />
+            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="MutableOperand&lt;T&gt;" />
             <elementDefinition Id="a108ae60-6560-43ba-8c6b-62eaf40ae519" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" name="AbstractExpression&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" name="ExpressionOperand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="64368587-1bfe-4843-8ebe-cda3c4e7e6c2" />
         <generalsInternal>
           <generalization Id="f1d16209-1ef5-4cf0-b5d7-6e9218a4c7a3" isSubstitutable="false">
-            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="AbstractOperand&lt;T&gt;" />
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
             <elementDefinition Id="840ce0d1-d2c9-4eb7-be6d-ca8c6cd7896f" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="b659f75c-dd78-4045-94d7-50a2551d6c99" name="UnaryExpression&lt;TOperand, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="b659f75c-dd78-4045-94d7-50a2551d6c99" name="UnaryExpressionOperand&lt;TOperand, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="e130cd98-00d1-41ca-97c1-0562bc734287" />
         <suppliersInternal>
-          <dependency Id="1be31f6a-97bb-40d1-9f19-5120b35c1f11">
-            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="AbstractUnaryOperator&lt;TOperand, T&gt;" />
+          <dependency Id="1be31f6a-97bb-40d1-9f19-5120b35c1f11" name="Operator">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
             <elementDefinition Id="121f76cf-8069-4564-a773-f14e95e353bb" />
           </dependency>
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="3735b826-cb20-466b-b9aa-04556b54f692" isSubstitutable="false">
-            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="AbstractExpression&lt;T&gt;" />
+            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="ExpressionOperand&lt;T&gt;" />
             <elementDefinition Id="30b0bb77-0676-4a7a-9531-e475b4d639f6" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="1e376401-1463-4b92-a028-feb319ca433b" name="BinaryExpression&lt;TLeft, TRight, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="1e376401-1463-4b92-a028-feb319ca433b" name="BinaryExpressionOperand&lt;TLeft, TRight, T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="7a57fa4e-c596-4885-89c5-34e05c35306b" />
         <suppliersInternal>
-          <dependency Id="3d4d59e9-de72-41d0-876b-d8af5dfe1e65">
-            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="AbstractBinaryOperator&lt;TLeft, TRight, T&gt;" />
+          <dependency Id="3d4d59e9-de72-41d0-876b-d8af5dfe1e65" name="Operator">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
             <elementDefinition Id="79244340-a9da-42fe-82f2-fc794daf4658" />
           </dependency>
         </suppliersInternal>
         <generalsInternal>
           <generalization Id="4ade7ef6-0b2c-4f0b-86cf-2b48f25bc0c5" isSubstitutable="false">
-            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="AbstractExpression&lt;T&gt;" />
+            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="ExpressionOperand&lt;T&gt;" />
             <elementDefinition Id="78fd7481-f90f-405f-a507-c60bacf2e867" />
           </generalization>
         </generalsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="fb69409b-d6c6-480e-b446-b78bd4daf313" name="AbstractUnaryOperator&lt;TOperand, T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="fb69409b-d6c6-480e-b446-b78bd4daf313" name="UnaryOperatorBase&lt;TOperand, T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="bb4d0a4b-fcfb-4af3-86b1-afefbee633d4" />
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" name="AbstractBinaryOperator&lt;TLeft, TRight, T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
+      <class Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" name="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="51b614cf-ee29-432e-b1a3-f4fc6e7f221a" />
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <Interface Id="c80906de-f183-49af-bae5-2aebfaacb6ae" name="IOperand&lt;out T&gt;" isAbstract="false" isLeaf="false">
         <elementDefinition Id="a1238305-8e8c-4fa5-8560-22f5d596d87e" />
+        <generalsInternal>
+          <generalization Id="2643c1cc-73e7-4af9-882b-1ea80ba46134" isSubstitutable="false">
+            <interfaceMoniker Id="1e8fa532-a530-44ab-b15d-8566b534eadf" LastKnownName="IOperand" />
+            <elementDefinition Id="890cc330-f8f6-4b07-a7b8-0840ad833249" />
+          </generalization>
+        </generalsInternal>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="665d835d-e38a-4714-b79e-4e5699ac699e" name="ClassWriterBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8dc8e38d-d032-4dd8-a0d0-d1118e2dc8d2" />
+        <suppliersInternal>
+          <dependency Id="ebfa26f7-3582-4ed9-a4bb-37804c01b1af" name="OwnerClass">
+            <classMoniker Id="79ed1167-1797-4e5d-b448-6175c6718bb5" LastKnownName="ClassCompiler" />
+            <elementDefinition Id="15e7699e-0da6-4ce7-a794-5968f3ca1ad0" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="ca7d35ff-5bf6-47f4-b7b2-85f34ca3211c" name="WriteCallback" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="e10f604e-657e-4bca-93da-acea5c2ba4e8" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="a575d988-2e91-459a-bf68-e1a988c9182d" name="Flush" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="377a9069-5815-47ba-bf16-e52312c59f52" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c96d4caf-a65b-4ffa-9317-da9225533ec4" name="Property&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a57772f7-0adb-45b1-8a4d-3b5d4e56014e" />
+        <suppliersInternal>
+          <interfaceRealization Id="fe8fed06-4df1-4370-8fc0-dbc479a8d609">
+            <interfaceMoniker Id="62404514-2756-4ce8-938c-f2e7269ca9e0" LastKnownName="INonPostfixNotation" />
+            <elementDefinition Id="9df7b270-7767-49e0-a6b2-dc0b39946c4b" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="d1031862-937f-4406-8b77-d8ed7048462a" isSubstitutable="false">
+            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="MutableOperand&lt;T&gt;" />
+            <elementDefinition Id="03337c74-040b-479a-a174-68e6d5297336" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f78cca7e-f7e6-438c-b1f0-f2643c020663" name="Function&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c59502ca-ff17-4b67-9c80-08f9d577035c" />
+        <generalsInternal>
+          <generalization Id="14569691-51cd-4484-9a23-8ab6dee00365" isSubstitutable="false">
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
+            <elementDefinition Id="8ab10944-4c7f-408d-84b3-3eac4b442f89" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="4b8fc1d5-e017-4efe-85ce-cf91ddbbe516" name="IOperandEmitter" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2c3cd435-9f71-4d5b-ad8a-ebea17ad41df" />
         <ownedAttributes>
-          <property Id="377e4d80-6b36-441f-8834-90e884ffcffc" name="OperandType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="6d565b51-2f38-4581-8507-f7556bcf2bb2" />
+          <property Id="2c6ecf0d-9e6a-41ab-8f85-f55238a41c76" name="HasTarget" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="e661bc28-98ff-4e69-b632-d7da834d2480" />
           </property>
-          <property Id="a0fa38dd-1121-412d-a806-b1769527b341" name="HasTarget" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="ed18a9cc-fc45-4d4c-bdc1-5ab93f2c9e78" />
+          <property Id="61bdb541-83e0-48a2-843c-4e8d5b9d471d" name="CanEmitAddress" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="28fc8f4d-a157-471e-bec5-8010d03427ed" />
           </property>
-          <property Id="a6b272d4-d52b-47e3-bbd4-15ea005c1822" name="IsMutable" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="90941be9-d90f-4478-9def-e4f24ef8f059" />
+          <property Id="cf34a63b-8ad3-421e-9d0d-e1a044236cbd" name="IsMutable" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="3b9092f1-1d79-4367-91da-a10b9f54e9b1" />
           </property>
-          <property Id="75d19c35-5977-410f-b6d6-4b4563e1eb8b" name="CanEmitAddress" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="1ccd4e70-1e36-4ace-b3ce-6eec91e43208" />
+        </ownedAttributes>
+        <ownedOperations>
+          <operation Id="0250211d-6a4f-49a8-bffa-bb6b8e745597" name="EmitAddress" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="bd947c42-63de-4000-9a07-255570e706db" />
+          </operation>
+          <operation Id="b6cea378-e874-4156-b95a-3a846e80356f" name="EmitLoad" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="6415ba31-cb76-4ced-9853-9e1d595b4c81" />
+          </operation>
+          <operation Id="880b94e9-70a3-4393-b22b-af7b662bb3c4" name="EmitStore" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="e1117b16-213a-48b1-a167-4316b122ead9" />
+          </operation>
+          <operation Id="b80dd5e1-bcdf-4b2e-b6fd-e2405ca1b56e" name="EmitTarget" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="4d516043-d061-4e89-b11a-a8861e3d6276" />
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="1e8fa532-a530-44ab-b15d-8566b534eadf" name="IOperand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="a05f2d5d-50bd-4e29-9c18-f0e6d456d49d" />
+        <ownedAttributes>
+          <property Id="aec96394-09a6-480e-ac5d-96ddfe5b8d95" name="OperandType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="b01e7ee0-1914-45f9-b005-a685d4fa479f" />
+          </property>
+        </ownedAttributes>
+        <ownedOperations>
+          <operation Id="672cc63b-70cf-4739-98f7-34de8c7adc02" name="CastTo&lt;T&gt;" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="fc032d84-c1db-4630-8fc3-b04372e12b02" />
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="327a0804-4891-4e22-9716-576f0cf120a8" name="StatementBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="471451d4-cdf8-4a08-8a85-25d52124870e" />
+        <ownedOperationsInternal>
+          <operation Id="4fd15910-949d-453b-a337-d4055845d571" name="Compile" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="b0e285f2-2902-4815-97e1-9e049ad5dd8f" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d19b611f-7459-4bbf-b3b8-b2f280c204e2" name="AutomaticPropertyWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="dc56770c-0509-4215-8654-86353ce45802" />
+        <generalsInternal>
+          <generalization Id="0b19345b-39ed-4f93-b30b-9f7ba7f49d2d" isSubstitutable="false">
+            <classMoniker Id="37539b88-600e-46b5-ae00-79b73fbfc553" LastKnownName="PropertyWriterBase" />
+            <elementDefinition Id="3bb2fc48-cac6-41fa-a2dc-bf5510400ba0" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="5fc6ed98-7086-4b36-afff-b4b0036d7fbe" name="ThrowMethodWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="efdff4c4-5d16-4034-baf7-3ad30f30af15" />
+        <generalsInternal>
+          <generalization Id="38497a76-a32d-4722-b319-dbe22cb45b28" isSubstitutable="false">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
+            <elementDefinition Id="3805d491-809d-481d-a143-97af6825bb13" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c75585db-ec51-48f9-9fe8-463ff9473c22" name="EmptyMethodWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1c647d92-c073-47d5-9779-c85884b8229b" />
+        <generalsInternal>
+          <generalization Id="1199426e-3473-4f0e-9166-ed6e7efa2d15" isSubstitutable="false">
+            <classMoniker Id="603efed8-b226-48b3-b78f-36a9219a0ba4" LastKnownName="MethodWriterBase" />
+            <elementDefinition Id="66c445c1-696a-4373-a787-54a48805a1f7" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="057a1596-b982-4c3d-9f6a-1f76999b9ac8" name="AutomaticEventWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="db55abaa-0e40-453c-8c21-afba8cdab0fa" />
+        <generalsInternal>
+          <generalization Id="f1c6d8bf-e23f-4a77-bc05-c2bb88a219c9" isSubstitutable="false">
+            <classMoniker Id="ed4044c4-d348-4f44-a77f-06fa25f9db4f" LastKnownName="EventWriterBase" />
+            <elementDefinition Id="d3b87b61-9b67-4e12-ba82-39259b17a8ba" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="27fc1d61-a0d7-49ba-a927-f536b52e86bd" name="ClassImplementationWriter&lt;TBase&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2408832b-9f24-422f-b49e-74b9b053aac9" />
+        <generalsInternal>
+          <generalization Id="027e67e1-4ef3-4c4e-b80d-f512cfb6d2e0" isSubstitutable="false">
+            <classMoniker Id="665d835d-e38a-4714-b79e-4e5699ac699e" LastKnownName="ClassWriterBase" />
+            <elementDefinition Id="10a1f7cd-8893-4d4a-92e4-922220a6c453" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e97906c4-7909-44dc-b804-0a4ce648d39b" name="ClassDecorationWriter&lt;TBase&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f7feff61-6e8e-4774-b347-d59dfe443f91" />
+        <generalsInternal>
+          <generalization Id="dd794079-67c3-492a-93ca-195bdfd320d5" isSubstitutable="false">
+            <classMoniker Id="665d835d-e38a-4714-b79e-4e5699ac699e" LastKnownName="ClassWriterBase" />
+            <elementDefinition Id="9cf04c43-9cee-4ace-8e05-d99419cf1d2f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="38e632d2-96f8-4652-95b6-5c46e6730926" name="FieldWriterBase" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="84c5967b-37f2-4eb0-95e5-9d5cd02212c2" />
+        <suppliersInternal>
+          <dependency Id="6d74d6b9-507c-465e-8479-fbc05fdaa459" name="OwnerField">
+            <classMoniker Id="ce7d1055-a8a1-450d-9085-f8b435022e37" LastKnownName="FieldMember" />
+            <elementDefinition Id="97acbd28-47c8-4d28-b0ed-c46ca3780a2b" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="33d7a3d6-b4f2-4be8-a072-0dd4471462de" name="WriteCallback" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="fdd5e88c-e59f-44e0-952f-7bd2c7f9cf91" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="c895aee5-8c41-41d6-904a-6a221d93833e" name="Flush" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="701bd4ad-ea89-4114-a83e-6242b6b943c0" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4d76cece-d8d4-4618-90e7-1f3bcfaf7c7d" name="FieldWriter&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="408c1a81-cd5c-42df-9e93-8f281360d9de" />
+        <generalsInternal>
+          <generalization Id="86c2230d-77d9-4bd4-8fc6-262537fdf542" isSubstitutable="false">
+            <classMoniker Id="38e632d2-96f8-4652-95b6-5c46e6730926" LastKnownName="FieldWriterBase" />
+            <elementDefinition Id="36d386e8-a166-40d4-b9df-0a63398745ad" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property Id="cb9223db-6466-4925-8574-3a6152ec1aba" name="Operand" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="f17dd3f6-e3ec-448f-ab06-5805f81ca6cf" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b6d97d81-a103-4201-ad2c-5b36c74f55e2" name="TraitMixer" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a8664a65-dcc9-42ea-b11d-35e736d89c04" />
+        <generalsInternal>
+          <generalization Id="d771a263-7e41-466a-83b8-2e0658658946" isSubstitutable="false">
+            <classMoniker Id="665d835d-e38a-4714-b79e-4e5699ac699e" LastKnownName="ClassWriterBase" />
+            <elementDefinition Id="fdcd333f-0f8e-4993-badf-6d460e7f9728" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a2c36785-c645-4765-b24f-4451e94c76cb" name="IfStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c140d54f-04a6-4513-94e7-18fd63b3dbe3" />
+        <generalsInternal>
+          <generalization Id="6ce2fa4c-df28-47be-9734-ddf98a347727" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="5bac9c86-ec5d-4e7f-ae48-f645a4dfc8c2" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d12f1909-d98b-40ab-b498-e5752dc76978" name="SwitchStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1b79b368-2247-46fd-84aa-b232caea6a59" />
+        <generalsInternal>
+          <generalization Id="9e6d7d02-1c43-48c0-bdfd-53d8f6c169b8" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="7d38b6b6-98b2-49fd-99c8-4d21623b28a2" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="0b91401c-47f1-4e02-bb93-1d26489966e6" name="LoopStatementBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="be1d917f-9dcf-4b7e-8146-d800ade22eca" />
+        <generalsInternal>
+          <generalization Id="77fcfe35-678f-4b3e-97ab-4316473f3851" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="9c61db7a-ee21-4611-8433-26593e31b603" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4202ec95-724a-45d4-a843-2f87056e8d6c" name="DoWhileStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9f9c206c-5896-4201-bd98-ace9d81e65a0" />
+        <generalsInternal>
+          <generalization Id="ec2f7dcc-a2da-458d-92d5-6183d2edb2f4" isSubstitutable="false">
+            <classMoniker Id="0b91401c-47f1-4e02-bb93-1d26489966e6" LastKnownName="LoopStatementBase" />
+            <elementDefinition Id="79a9a612-790a-47bb-bd51-3c8f42092e26" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="11083a3e-5069-4f66-9830-d5c72bf2711d" name="ForStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c1f08b99-9c71-45a4-874f-d1405ef99e2f" />
+        <generalsInternal>
+          <generalization Id="4287331e-2871-41e1-870c-fa20437392d5" isSubstitutable="false">
+            <classMoniker Id="0b91401c-47f1-4e02-bb93-1d26489966e6" LastKnownName="LoopStatementBase" />
+            <elementDefinition Id="250c8e6c-9d53-4dbe-81dc-e145f07dd2bc" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="398ec1e9-721e-4d1d-915e-c57234e14047" name="ForeachStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="011b1945-9b35-497a-8b4b-4522624ff2d7" />
+        <generalsInternal>
+          <generalization Id="e719675a-74cd-4f51-be3e-cab4217b512a" isSubstitutable="false">
+            <classMoniker Id="0b91401c-47f1-4e02-bb93-1d26489966e6" LastKnownName="LoopStatementBase" />
+            <elementDefinition Id="baf51dc0-e61b-4421-99cf-36af321d0e53" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d285f141-41fc-4de4-bee8-27557041e057" name="WhileStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4dbe0f97-c80a-4ab5-9015-8dc5b653c5e9" />
+        <generalsInternal>
+          <generalization Id="7affb258-cbc5-4e45-92c8-0ccc8d7cde54" isSubstitutable="false">
+            <classMoniker Id="0b91401c-47f1-4e02-bb93-1d26489966e6" LastKnownName="LoopStatementBase" />
+            <elementDefinition Id="cb999429-8015-4191-9b1e-52e20532bbf6" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="1921375e-a2bf-44b1-a6ee-235953d3bc54" name="TryStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="abe7eb09-6352-4f75-9bdc-700197afb8e4" />
+        <generalsInternal>
+          <generalization Id="37f1be63-919c-4fcc-9055-5f68ffa6975d" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="6e29c3d4-729f-410f-bfb7-058e41763f38" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d009dae3-eb37-45fd-a5a1-61414bfa3a87" name="ThrowStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1650f739-7375-4dd3-80b7-229b8f33ac8f" />
+        <generalsInternal>
+          <generalization Id="382ee377-1173-4cb9-8999-0254fb28a145" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="ec25bbba-0594-4edc-be8e-674910bd3e6a" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b1d3ed17-05bf-4f03-b373-21709f90fc1c" name="RethrowStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="94e3c1b1-3447-4473-a368-cb1aeb0417e5" />
+        <generalsInternal>
+          <generalization Id="09ae0ebf-5dc7-4fbd-ac02-2c8c14ccfca6" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="28289797-1e1a-4a96-b767-ad4c63834ab5" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="07a710d6-32fe-4876-87c9-16e15a9462c4" name="UsingStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="fcbcd6da-7bba-4d8f-a930-97dbc9f791a4" />
+        <generalsInternal>
+          <generalization Id="1d56c1b5-54b6-4952-896a-18fc3c3d5063" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="70418df1-5d17-4de6-9005-52ba2a66fc8e" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="0e5268a0-01c2-477b-af0f-e7983e62afff" name="LockStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c214e221-f92a-40df-bceb-8b9e8c3b7e29" />
+        <generalsInternal>
+          <generalization Id="e2d99ff2-3342-444a-849a-39453fdbd2eb" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="a41aeb50-5e1e-4450-a4c3-18fdd92f68a5" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e7b76bf8-5cad-4e8d-96c6-e9c16af58c65" name="CallStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="b0ab45f9-1cad-498b-8733-4fcbef9c3e1f" />
+        <generalsInternal>
+          <generalization Id="e0acf028-0a3f-4c23-af7a-d1e0cece0ebb" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="e02a5eb3-4e3e-4c50-9ef7-21aa1af4d05b" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4cf362a2-f3b5-4548-9ab0-a3c78e9bbd86" name="ExpressionStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8e9140ce-8bc4-432e-94ab-4509ccdbe43d" />
+        <generalsInternal>
+          <generalization Id="1b4efda9-a2fc-45de-9a3c-2e6cf893d8a6" isSubstitutable="false">
+            <classMoniker Id="327a0804-4891-4e22-9716-576f0cf120a8" LastKnownName="StatementBase" />
+            <elementDefinition Id="41ac0015-1971-44af-b15b-f0b773b27ff7" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e2944075-5ac9-4ab0-beab-4a3b9d2f4bdf" name="Delegate" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="3b33ecec-001a-4c4b-aecf-cf4275024e0d" />
+        <generalsInternal>
+          <generalization Id="b2a50bae-2415-40f3-8ec6-d1f0b140f863" isSubstitutable="false">
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
+            <elementDefinition Id="ff1e3c6b-d1f7-43e4-97b3-a2715f5d017e" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="5e70888c-792e-4609-840b-dc3bf4303527" name="AnonyomousDelegate" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="d09f722d-58fe-4ab1-b58e-5886f5a93878" />
+        <generalsInternal>
+          <generalization Id="212a7bfa-abfa-41b1-a176-0da1b53ba6e0" isSubstitutable="false">
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
+            <elementDefinition Id="9b563066-cafe-4c8f-a46c-2d4797868322" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d35d982e-2b9c-4785-badc-c358fca531be" name="OperatorBitwiseNot" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2a2c55c6-67e4-4c15-9e44-18b391b35ed8" />
+        <generalsInternal>
+          <generalization Id="911d6a82-1d37-4fa5-ba03-a86b0b48c1f0" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="c67c9e2d-a210-43dd-935f-2c65f2562a34" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="1101ce15-a6ba-4b89-a95c-6b4a0acdb0d2" name="OperatorLogicalNot" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ad46fd26-33c9-4b6b-ae73-c6f66db57d16" />
+        <generalsInternal>
+          <generalization Id="cac5b2cd-ada6-4359-8b61-f298ff23ab04" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="cb031f1e-3f18-494a-b48c-22a2600b040f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="2136b001-860d-413a-8db4-16955b72b713" name="OperatorPlus" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="64bef3e1-b648-423d-b4c1-5295ec815a69" />
+        <generalsInternal>
+          <generalization Id="1eae7930-f451-4f13-a555-1354d460fcee" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="b6982b3b-0fed-4134-8a1f-3b905a2fb6f6" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c18d1952-9c8a-489f-b72e-cab93b8ef36f" name="OperatorNegation" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="52d354a8-11ce-40dc-a7f0-dffe71a39d58" />
+        <generalsInternal>
+          <generalization Id="2637d4bc-53db-4f7e-927f-8ac2d76b3367" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="ec32d78c-99fb-411f-8fc9-0b72a051b123" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="72338c64-33b1-42d8-89c0-8d3e801fb24c" name="OperatorIncrement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4bd111fb-7d9f-484a-8bb1-b33beba7fe93" />
+        <suppliersInternal>
+          <interfaceRealization Id="8389bb8f-1c9e-4971-b4ca-53217cc60cdb">
+            <interfaceMoniker Id="37d7df07-d1d6-4fac-ab01-8ed0c869f3c6" LastKnownName="IDontLeaveValueOnStack" />
+            <elementDefinition Id="3f16583c-89ce-4142-abe7-4af10ffa1450" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="1a3884ef-0a7e-46f3-b079-79fe68c33189" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="6208e012-679b-434d-99a5-7e6162dd803a" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="b040c4c0-15b2-45e6-9931-7d2f9e522ef4" name="ForceLeaveValueOnStack" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="846ac423-d41a-4895-ad13-58d5eabedc2d" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="66445a07-d186-4492-93d1-004e101f5185" name="OperatorNewArray" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7c4e450f-0fd0-47f6-ab9f-054b7c576eb8" />
+        <generalsInternal>
+          <generalization Id="6500621f-2528-4d2e-b526-6140e708e73f" isSubstitutable="false">
+            <classMoniker Id="fb69409b-d6c6-480e-b446-b78bd4daf313" LastKnownName="UnaryOperatorBase&lt;TOperand, T&gt;" />
+            <elementDefinition Id="a0fc205c-70c0-4cc1-983c-4edbfd26e0f7" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="701ed4a3-923b-4779-98aa-ea88c8835ea3" name="ArrayElement&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c9f13762-4b78-4414-9a44-a38d7596c8b0" />
+        <generalsInternal>
+          <generalization Id="4cda6d91-682b-43bb-8bc1-ab01bd4208af" isSubstitutable="false">
+            <classMoniker Id="be5704ce-c012-46c6-90b4-aadb7ebd55c4" LastKnownName="MutableOperand&lt;T&gt;" />
+            <elementDefinition Id="5aa6a522-36d3-4629-b31e-66e063a858be" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="838ae97e-654a-4d2e-954d-f7443f2a569c" name="TernaryConditionalOperator" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="b834cf9e-38fd-401c-ae2e-0017a7ddbb6b" />
+        <generalsInternal>
+          <generalization Id="05c483fb-d411-4ae8-ac5d-23bf80b2912e" isSubstitutable="false">
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
+            <elementDefinition Id="712666be-6252-4f86-954c-c6bc660a8642" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7e57d56b-50a9-47db-acf6-f765b95864f4" name="NewObjectExpression" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="fddfe0e9-4154-4943-b518-98b2b3edfd96" />
+        <generalsInternal>
+          <generalization Id="e7ecd19d-8189-419b-97db-db2db72dce84" isSubstitutable="false">
+            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="ExpressionOperand&lt;T&gt;" />
+            <elementDefinition Id="4d325d47-099c-4518-8865-5bbc5b70f0f8" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="bdae96d0-98de-4750-9dba-b0a3bfc99d3c" name="NewStructExpression" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="e1f495f9-8d36-4796-9f11-7cd5fa2ba074" />
+        <suppliersInternal>
+          <interfaceRealization Id="0e8d749f-eea1-4d38-9d9f-fa96b116dc90">
+            <interfaceMoniker Id="ed0674ef-53c9-4f3c-8f97-c894afe29184" LastKnownName="IValueTypeInitializer" />
+            <elementDefinition Id="b9c981ca-0f90-4619-8e1c-d0d2ff45d447" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="cbd0c7d2-5250-45c1-b96d-4af4a237a6c1" isSubstitutable="false">
+            <classMoniker Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" LastKnownName="ExpressionOperand&lt;T&gt;" />
+            <elementDefinition Id="5c0e98f6-e092-4ec3-9822-5d38f171d08c" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="02e2f246-1cea-4210-a8f8-912a38e47e3f" name="OperatorAdd" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0f881c8d-2799-4f37-af71-73411b318e3d" />
+        <generalsInternal>
+          <generalization Id="fb4ab966-9784-4f59-86f7-779008aa36a6" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="cfce4254-e491-4f76-a8ff-3e583638cd39" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7a48a25c-5416-4bff-b5fe-55b8aa4b13e0" name="OperatorAssign" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8f870e48-826f-448a-8673-b6c9e997c4e7" />
+        <suppliersInternal>
+          <interfaceRealization Id="3fd2c919-399d-44b9-9ef6-48f9ca93dc72">
+            <interfaceMoniker Id="37d7df07-d1d6-4fac-ab01-8ed0c869f3c6" LastKnownName="IDontLeaveValueOnStack" />
+            <elementDefinition Id="828f52a8-48e3-4a4f-975b-84fed1807ef6" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="ad2199b3-f38b-4268-bff1-5b819ee3d98a" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="5d3eb3bf-8432-487c-80f1-146b9e3b9d71" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="8f822897-8d9f-430f-af66-daab50fa9971" name="ForceLeaveValueOnStack" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="38aa0dcb-5285-4289-9884-f99570151587" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9b07aafa-d24f-444a-838a-a91e2c95e67b" name="OperatorBitwiseAnd&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="03a01b7b-298f-4d65-869c-c869c7ef1e16" />
+        <generalsInternal>
+          <generalization Id="d3ce2e2e-a33e-4930-8275-08c35751788c" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="d497f495-e847-4bc6-9490-45757f85d240" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a4f49605-2b4f-4fcf-8c91-3797899e8b13" name="OperatorBitwiseOr&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0eb709fe-4cd7-417c-b6be-5e051df46d13" />
+        <generalsInternal>
+          <generalization Id="bc858a3e-f70e-425a-b259-1c81f2f25922" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="fa201ec9-3156-4b9b-afea-bc8d347838c8" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d7a58251-0cde-43b2-87b3-f6a326cc6e39" name="OperatorBitwiseXor&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1fc1e93b-69ba-42d4-8b18-a49442cb9e08" />
+        <generalsInternal>
+          <generalization Id="abdede08-b836-4b1a-bd43-c9b148e40637" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="d075e110-fb59-47df-b7e8-730ee71758d8" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="fe81d29e-d804-42a7-b909-1616ad19be0e" name="OperatorCastOrThrow&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8b341efc-47b2-44f5-8bea-c9c43fe33518" />
+        <generalsInternal>
+          <generalization Id="efaa7a7b-1f5b-4e1c-9db5-c34bfeb940a9" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="3265a561-50d6-41f5-bcf0-6d583635ac2b" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9f5beb7a-1239-4d24-9286-b2e6a720be7a" name="OperatorDivide&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ca05c4e3-8377-43f7-8d0f-8856a9efe5a3" />
+        <generalsInternal>
+          <generalization Id="8cb5417d-ce36-41f3-a1d1-af50544f78bb" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="d3817a88-fe3b-4c32-b7c0-db006df6db68" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="1bd05403-4e5f-4df7-b905-7735651093c1" name="OperatorEqual&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="e22518b6-62dc-4ade-88c8-5c4b8a2ade35" />
+        <generalsInternal>
+          <generalization Id="0b2780af-fed3-4126-9256-87598f50ef7e" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="2940bcbe-d1a3-4900-92d6-1009437ae1ed" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="8956a747-469a-4cef-a1bd-1e7982f16234" name="OperatorGreaterThan&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2af29f20-2a3f-40d3-9431-ddf00a466542" />
+        <generalsInternal>
+          <generalization Id="1ba63108-1d0f-41e2-bb78-b9eae64d8f0f" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="8c5679c2-0df9-4d9c-aa36-3b684eeb6f3f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="3cf3371d-b294-4a9d-a809-03775c6def32" name="OperatorGreaterThanOrEqual&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="615336d6-bb9d-4bba-8d51-58daa91b66b1" />
+        <generalsInternal>
+          <generalization Id="2902e493-b306-4979-9ef7-1a0416cacce5" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="fc01bac5-8ba1-4436-af93-89802d44419e" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="3347d912-f0fc-437b-a642-b6c2955542a9" name="OperatorLeftShift&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="6787dcd7-5d72-4922-ba0a-5aa8ec502f13" />
+        <generalsInternal>
+          <generalization Id="bc2a7358-03fe-4a5c-a5f5-42eeeb7ca82d" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="c66b6d32-be75-4ea0-bc9e-914396addd06" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d95c399c-52af-42a4-aac7-e2c7465e9031" name="OperatorLessThan&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="07011745-c1b5-4d87-b3e8-4419aa84dc1c" />
+        <generalsInternal>
+          <generalization Id="cd95ee0d-c9f3-48cf-9562-b7ce8c2e9257" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="4c9ea23e-4f54-4ce4-a22a-ff8b45394554" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d9642172-58ae-4eef-88a8-66e17a563efa" name="OperatorLessThanOrEqual&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0c6c590e-aae0-43b2-8dc5-1713298d1355" />
+        <generalsInternal>
+          <generalization Id="7a35eb37-0890-4197-8535-cd5f921df7fd" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="ca949111-7c1e-49d4-be66-3e2e4129a7e1" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="bf537bb6-7685-4a6e-bd95-6e4e03884786" name="OperatorLogicalAnd" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ac560f0a-86f1-495a-9f6f-532f140a8c58" />
+        <generalsInternal>
+          <generalization Id="ed2ecf33-b635-4914-962c-f058bcd3fbcb" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="631d3e19-2bfb-4759-8153-2755f959adcd" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e035e77d-9d1a-4588-857e-d503653bab4c" name="OperatorLogicalOr" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ff18f898-b251-46fa-8802-ae11b6d3da8a" />
+        <generalsInternal>
+          <generalization Id="e7f8a6b8-8b06-4d47-8f6b-3235fe6e59de" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="a0a01c9d-3330-469f-86e4-c968fdb2556f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="71cbd960-c3ce-41e5-864c-44d11b743953" name="OperatorLogicalXor" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="3e43114b-0c5d-4b3f-9e92-c97bcfa3a686" />
+        <generalsInternal>
+          <generalization Id="6be05757-f87a-4313-a23c-de99f8870b9e" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="5150ed63-ee16-4e64-aa7d-d198e4afecc2" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="432d72f5-baa6-41a9-86bb-36709b6ada8f" name="OperatorModulus&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="aaf6617f-fde2-45ab-98e9-3b2d72dfecd1" />
+        <generalsInternal>
+          <generalization Id="99af57f2-8c32-4355-8c07-142ddb2771c8" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="7db9dcd4-c12c-4343-b8cc-39b490c706d6" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="0432811c-8902-455e-acf4-df9dbe04acdb" name="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5a706225-4c6d-44fa-b2f6-4434bc748f0f" />
+        <generalsInternal>
+          <generalization Id="5506ef83-ca62-459a-bf9c-b4235f97e9c0" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="1ffd9a58-bae8-4003-957c-4671bfae4a58" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a536c0a6-ca69-41a8-959c-b1e6a590880b" name="OperatorMultiply&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="3df5d7aa-7e8f-450d-8d50-adc40a9f578e" />
+        <generalsInternal>
+          <generalization Id="9b2cf65e-32da-4eb1-b221-341984eaf77d" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="fc7c89e5-26ad-4449-97c9-5c07def18357" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="cb61991e-1d7c-4d10-9af4-62b824c65f6a" name="OperatorNotEqual&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="29d724b6-6358-4e92-843b-dbd127bc22c1" />
+        <generalsInternal>
+          <generalization Id="cfd7149e-6cb7-4699-9694-78d70e074e6f" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="e9dfe763-4780-4263-8526-ad7edc9b5c8f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="34f51a16-0118-444d-944a-dd8eb558e70b" name="OperatorNullCoalesce&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="3ae25c2e-13b6-43f6-83b9-d736d79a2645" />
+        <generalsInternal>
+          <generalization Id="21cf3035-baed-40e0-9e5a-86ecc0b14d58" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="ea200ea6-dbb7-4244-9185-4bd9c10e3156" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="39d37156-7678-4361-8b0b-5efd52d079a6" name="OperatorRightShift&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7e8cca4a-98bf-47f0-9ae5-659e7738d4f7" />
+        <generalsInternal>
+          <generalization Id="30627069-8a54-431a-9013-04974086da92" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="0bda6b02-9894-4fb0-91ea-12072ea4f7f6" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="fcd8ddd4-966e-4fb9-9017-e1f6a9c3e3c4" name="OperatorSubtract&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0893ed3c-8854-4bfc-a090-846720f05a31" />
+        <generalsInternal>
+          <generalization Id="eeaf5d5e-c6a8-411e-bcc0-3a280193152a" isSubstitutable="false">
+            <classMoniker Id="0432811c-8902-455e-acf4-df9dbe04acdb" LastKnownName="OverloadableBinaryOperatorBase&lt;TLeft, TRight&gt;" />
+            <elementDefinition Id="6a183a42-bcaa-4726-ae87-7669bd2d1b5d" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4285cbb5-08fd-4589-9db8-67ff9325ff8a" name="OperatorTryCast&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="d5f0bacd-d8d1-46bf-8644-2e2dc9a237fd" />
+        <generalsInternal>
+          <generalization Id="b66d6736-b2af-4bc4-950a-f2709cd7d4b8" isSubstitutable="false">
+            <classMoniker Id="ac52e492-28ba-4e0b-8a20-dd9f09edba7c" LastKnownName="BinaryOperatorBase&lt;TLeft, TRight, T&gt;" />
+            <elementDefinition Id="c1c809d8-ef73-41c2-9b7c-d964b5d0de50" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="37d7df07-d1d6-4fac-ab01-8ed0c869f3c6" name="IDontLeaveValueOnStack" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="f4ebf18c-f2cb-4261-9004-6aade7558fc9" />
+        <ownedOperations>
+          <operation Id="a8733f4a-34c8-49b9-8f24-d26ae6d70ab2" name="ForceLeaveValueOnStack" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="ebf62b84-c633-4034-89e3-7935d0fd7c06" />
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="62404514-2756-4ce8-938c-f2e7269ca9e0" name="INonPostfixNotation" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="7f49074e-e832-4a49-b047-cfb2ef4c39e6" />
+        <ownedAttributes>
+          <property Id="85d60207-9d03-4794-bf90-fdc6d6954d11" name="RightSide" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="131d3b7f-c594-4d9c-a5ab-3bdd1f2d00ae" />
           </property>
         </ownedAttributes>
       </Interface>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="665d835d-e38a-4714-b79e-4e5699ac699e" name="Class&lt;TBase&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="8dc8e38d-d032-4dd8-a0d0-d1118e2dc8d2" />
+      <Interface Id="ed0674ef-53c9-4f3c-8f97-c894afe29184" name="IValueTypeInitializer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="a6dad1dd-001e-4196-bb30-c7bb87501292" />
+        <ownedAttributes>
+          <property Id="69e88cd3-2520-42da-a7c2-058d1e0ee7d2" name="Target" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="b882d6fa-1681-46ab-8783-c845f6db27bc" />
+          </property>
+        </ownedAttributes>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="4467be19-180b-4f9e-b08b-acda3b5ab9a0" name="DynamicModule" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7c3eea74-8a97-458f-abf0-1c27da9277a0" />
         <suppliersInternal>
-          <dependency Id="ebfa26f7-3582-4ed9-a4bb-37804c01b1af">
-            <classMoniker Id="79ed1167-1797-4e5d-b448-6175c6718bb5" LastKnownName="ClassType" />
-            <elementDefinition Id="15e7699e-0da6-4ce7-a794-5968f3ca1ad0" />
+          <dependency Id="d76cfdfd-f787-4405-a6d6-a9ca5767d11d">
+            <classMoniker Id="a242f0e4-d6e8-405f-8903-2a3374ee0158" LastKnownName="AssemblyBuilder" />
+            <elementDefinition Id="941022f5-f214-4792-ad18-382c801abf27" />
+          </dependency>
+          <dependency Id="2f3bb3a8-00ee-4234-945a-22e3a7105e3c">
+            <classMoniker Id="a774513b-f0df-4c59-ad92-387e359927cf" LastKnownName="ModuleBuilder" />
+            <elementDefinition Id="5dd7305d-11eb-4896-9846-f3f09551929d" />
           </dependency>
         </suppliersInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a242f0e4-d6e8-405f-8903-2a3374ee0158" name="AssemblyBuilder" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5aec3f11-18ad-4ba0-ade7-4f33e2fd99fd" />
+        <targetEnds>
+          <association Id="0d017d4a-21b2-464e-a8ea-972ead5ac62b" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="a774513b-f0df-4c59-ad92-387e359927cf" LastKnownName="ModuleBuilder" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d368e2d4-6c12-4a2f-b718-3a4e73f3c9e2" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="f036ed3a-763d-49e4-8ec3-2565f5090ea0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7757c4ae-b4e7-4c91-9f49-2a4e4715a532" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="690c19b9-ca49-406d-b280-d520ae81d8c9" name="Lower" value="*">
+                      <elementDefinition Id="722b0438-2b53-480c-a95e-ebb0a75d2073" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="2cf02f93-3217-42c9-b7b4-09a4ca91ad32" name="Upper" value="*">
+                      <elementDefinition Id="5c4e4c14-d377-4185-8e0c-2472783bfb3e" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="55ba7b41-c8c9-4e6e-aa32-7faf302926be" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="aa6648be-17e4-44cf-abed-71a51b33b5a3" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a774513b-f0df-4c59-ad92-387e359927cf" name="ModuleBuilder" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7b8810ab-d43e-4a19-a14c-89b92ca1d3b0" />
+        <targetEnds>
+          <association Id="d97fbc85-59b8-48a3-ad49-440efd6f1dd3" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="7631a91f-1244-4a3c-b5c4-78d71a69f26f" LastKnownName="RuntimeType" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8b392c77-8deb-49ad-8a16-bff121c59efa" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="4a49d02f-9112-46aa-a26a-dc8a8571ff4f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4a6b8dc0-147f-4be5-ba7e-4adc4af75df0" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="fff53818-2a77-4359-9628-b8970b9ce326" name="Lower" value="*">
+                      <elementDefinition Id="618cd27e-d060-45bd-af5d-98204e7f4eb1" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="14cdfdc9-c2ca-4730-a960-5402029956f7" name="Upper" value="*">
+                      <elementDefinition Id="07fe27af-7458-441e-8c5d-766ced099362" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="0a2f143f-a56e-4c95-9733-97a6b7af3675" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="cb129c08-2137-4d6f-b359-9b1abe4a159c" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="72e0ec2b-e02e-4bc1-b450-36b3135a46f7" name="ObjectFactoryBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7aeb4636-6125-40f4-a9c2-2c3a817a8e9d" />
+        <suppliersInternal>
+          <dependency Id="db3eb626-6e73-4ca4-9b55-a50149cd177a">
+            <classMoniker Id="4467be19-180b-4f9e-b08b-acda3b5ab9a0" LastKnownName="DynamicModule" />
+            <elementDefinition Id="4574584a-3d4f-4a06-8c83-a6fa81a8ccab" />
+          </dependency>
+          <dependency Id="65528409-c36b-4854-b2fb-caee27d6b010" name="cache miss">
+            <classMoniker Id="79ed1167-1797-4e5d-b448-6175c6718bb5" LastKnownName="ClassCompiler" />
+            <elementDefinition Id="714c487f-f8d2-41b4-96b6-a5132daf3189" />
+          </dependency>
+        </suppliersInternal>
+        <targetEnds>
+          <association Id="a53b01f3-bc30-47ff-b5f1-5ee136e62d1c" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="cache" isAbstract="false">
+            <classMoniker Id="7293766f-b625-44fe-8ec0-b9a8addd14b4" LastKnownName="TypeEntry" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="167ee107-ad55-4726-85af-8939321429e1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="692eb591-12a0-48de-a8c4-279efb581d55" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0798d20d-2c5e-4e29-9544-ebee4ce06416" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="e087f04d-7310-48b2-9538-af2f1208ff33" name="Lower" value="*">
+                      <elementDefinition Id="e57960cd-721f-4104-8f87-185156c3b18e" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="7ffc8b36-db1f-4c10-a002-b061ee4e4312" name="Upper" value="*">
+                      <elementDefinition Id="c2f8ee70-6b11-4312-b83a-7c7670cc1955" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="0c5f21f9-332d-4796-a151-2e1bc8baa18f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="27ab6ff2-2bd3-45b2-a75f-f4df91fc4f8a" />
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="4d4d1dea-34c5-4720-81fd-709dc6b7f9ff" name="CompileNewClass" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="3b6e6c8a-69d7-4372-bffb-7f271cca844d" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7293766f-b625-44fe-8ec0-b9a8addd14b4" name="TypeEntry" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="50247d7f-735d-412e-862b-8d9dddc17de3" />
+        <suppliersInternal>
+          <dependency Id="9bb96486-ebe2-4336-a3e6-550b782490b1" name="created type">
+            <classMoniker Id="7631a91f-1244-4a3c-b5c4-78d71a69f26f" LastKnownName="RuntimeType" />
+            <elementDefinition Id="c3520650-c253-4bd2-a147-475e163ea1bd" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="efbb7c08-d950-4925-8855-8f716c1f8703" name="FactoryMethods" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="979bb255-1f73-4740-8466-0df0b09c4857" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="eb888b35-1826-4bff-b109-69b635eafdb5" name="CreateInstance" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="8fe19e5c-1afc-4ea4-b354-4495054ea4f9" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7631a91f-1244-4a3c-b5c4-78d71a69f26f" name="RuntimeType" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="fdeeca6e-d456-4040-a25b-bc891492cfbf" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7bf19c64-3183-4e8c-8915-7defb4795fea" name="AConcreteObjectFactory" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9de7eaa8-1122-4fab-94b3-1b1dcae451f3" />
+        <generalsInternal>
+          <generalization Id="949f818a-ecd0-4621-927d-8ad7422c00c3" isSubstitutable="false">
+            <classMoniker Id="72e0ec2b-e02e-4bc1-b450-36b3135a46f7" LastKnownName="ObjectFactoryBase" />
+            <elementDefinition Id="b44de112-45c8-459a-b682-6ff92a22759e" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="34c5e500-eab4-440f-b345-f40cbd2f56b8" name="PublicApiMethods" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0619f06e-866e-4c99-be54-8fc83d039d21" />
+          </operation>
+          <operation Id="fa771893-5849-44e6-9f00-bbac83b18079" name="CompileNewClass" visibility="Protected" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="04fdcfed-db86-41ea-bc4f-4a385c9acc9d" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="7a38c6b9-cb32-4ba6-a55b-a3d0c9715602" name="Happil.Diagrams">
     <elementDefinition Id="dd3e4df7-8296-4a40-b681-5aadd12251b4" />
+    <profileInstances>
+      <packageHasProfileInstances Id="d75663f1-31cb-4666-aad6-73b2f7f9d4c5">
+        <profileInstance Id="c397ff1e-8d04-4e79-a2f8-3130cf56e461" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="627523a0-b2ef-4200-8219-0c71da6d2591">
+        <profileInstance Id="aaa3bd8a-2d8f-4eba-92ba-19eb0f054843" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
   </package>
 </logicalClassDesignerModel>
