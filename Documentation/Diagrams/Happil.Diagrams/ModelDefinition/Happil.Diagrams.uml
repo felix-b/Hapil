@@ -2994,10 +2994,20 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="1d1e9928-be77-469e-adfd-9fd693fce571"
-        name="ClassCompiler"
+        name="ClassType"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="5a3dc01b-6363-4508-9c1e-2857170d288b"
+            name="Key">
+            <classMoniker
+              Id="4768a2de-4cab-421a-8000-b5e848ff630c"
+              LastKnownName="TypeKey"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </dependency>
+        </suppliersInternal>
         <targetEnds>
           <association
             Id="d9bede14-c387-4cdd-8e99-74600eeade55"
@@ -4097,7 +4107,7 @@ generated</body>
             name="OwnerClass">
             <classMoniker
               Id="1d1e9928-be77-469e-adfd-9fd693fce571"
-              LastKnownName="ClassCompiler"
+              LastKnownName="ClassType"
               LastKnownLocation="Happil.Diagrams.uml" />
           </dependency>
         </suppliersInternal>
@@ -4379,7 +4389,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="2408832b-9f24-422f-b49e-74b9b053aac9"
-        name="ClassImplementationWriter&lt;TBase&gt;"
+        name="ImplementationClassWriter&lt;TBase&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -4398,7 +4408,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="f7feff61-6e8e-4774-b347-d59dfe443f91"
-        name="ClassDecorationWriter&lt;TBase&gt;"
+        name="DecorationClassWriter&lt;TBase&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -4491,7 +4501,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="a8664a65-dcc9-42ea-b11d-35e736d89c04"
-        name="TraitMixer"
+        name="TraitMixerClassWriter&lt;TTrait&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -4776,7 +4786,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="3b33ecec-001a-4c4b-aecf-cf4275024e0d"
-        name="Delegate"
+        name="Delegate&lt;T&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -4803,7 +4813,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="d09f722d-58fe-4ab1-b58e-5886f5a93878"
-        name="AnonyomousDelegate"
+        name="AnonyomousDelegate&lt;T&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -4974,7 +4984,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="b834cf9e-38fd-401c-ae2e-0017a7ddbb6b"
-        name="TernaryConditionalOperator"
+        name="TernaryConditionalOperand&lt;T&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -5040,7 +5050,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="0f881c8d-2799-4f37-af71-73411b318e3d"
-        name="OperatorAdd"
+        name="OperatorAdd&lt;T&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -5059,7 +5069,7 @@ generated</body>
     <packageHasNamedElement>
       <class
         Id="8f870e48-826f-448a-8673-b6c9e997c4e7"
-        name="OperatorAssign"
+        name="OperatorAssign&lt;T&gt;"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -5771,7 +5781,7 @@ generated</body>
             name="cache miss">
             <classMoniker
               Id="1d1e9928-be77-469e-adfd-9fd693fce571"
-              LastKnownName="ClassCompiler"
+              LastKnownName="ClassType"
               LastKnownLocation="Happil.Diagrams.uml" />
           </dependency>
         </suppliersInternal>
@@ -5927,6 +5937,61 @@ generated</body>
             concurrency="Sequential"
             isQuery="false" />
         </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="4768a2de-4cab-421a-8000-b5e848ff630c"
+        name="TypeKey"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="c06784a6-6fd3-4fa9-a9d3-49a1e209592e"
+            name="BaseType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="71b00de6-0f1c-4d24-bf51-9f99cad31a44"
+            name="PrimaryInterface"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="6f97a3b6-8e57-43cf-bc78-bae533dd8f26"
+            name="SecondaryInterfaces"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="06613e20-60c6-40a2-a46c-b8e846469501"
+            name="TraitTypes"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
   </packagedElements>

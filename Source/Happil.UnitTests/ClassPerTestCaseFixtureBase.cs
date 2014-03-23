@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Happil.Fluent;
+using Happil;
+using Happil.Members;
+using Happil.Writers;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
@@ -10,9 +12,8 @@ namespace Happil.UnitTests
 	[TestFixture]
 	public abstract class ClassPerTestCaseFixtureBase
 	{
-		private HappilModule m_Module;
-		private HappilClass m_Class;
-		private IHappilClassDefinition m_ClassDefinition;
+		private DynamicModule m_Module;
+		private ClassType m_Class;
 		private TestFactory m_Factory;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -20,7 +21,7 @@ namespace Happil.UnitTests
 		[TestFixtureSetUp]
 		public void BaseFixtureSetUp()
 		{
-			m_Module = new HappilModule(
+			m_Module = new DynamicModule(
 				"Happil.UnitTests.EmittedBy" + this.GetType().Name,
 				allowSave: this.ShouldSaveAssembly,
 				saveDirectory: TestContext.CurrentContext.TestDirectory);
@@ -54,19 +55,17 @@ namespace Happil.UnitTests
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected IHappilClassBody<TBase> DeriveClassFrom<TBase>()
+		protected ClassImplementationWriter<TBase> DeriveClassFrom<TBase>()
 		{
-			m_ClassDefinition = m_Module.DeriveClassFrom<TBase>(TestCaseClassName);
-			m_Class = ((IHappilClassDefinitionInternals)m_ClassDefinition).HappilClass;
-			
-			return ((IHappilClassBody<TBase>)m_ClassDefinition);
+			m_Class = m_Module.DeriveClassFrom<TBase>(key: null, classFullName: TestCaseClassName);
+			return new ClassImplementationWriter<TBase>(m_Class);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void OnDefineNewClass(Func<HappilTypeKey, IHappilClassDefinition> callback)
+		protected void OnDefineNewClass(Func<TypeKey, ClassWriterBase> callback)
 		{
-			m_Factory = CreateTestFactory(m_Module, classDefinition: null, classDefinitionCallback: callback);
+			m_Factory = CreateTestFactory(m_Module, classType: null, classDefinitionCallback: callback);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -136,11 +135,11 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected virtual TestFactory CreateTestFactory(
-			HappilModule module,
-			IHappilClassDefinition classDefinition,
-			Func<HappilTypeKey, IHappilClassDefinition> classDefinitionCallback)
+			DynamicModule module,
+			ClassType classType,
+			Func<TypeKey, ClassWriterBase> classDefinitionCallback)
 		{
-			return new TestFactory(module, classDefinition, classDefinitionCallback);
+			return new TestFactory(module, classType, classDefinitionCallback);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,7 +148,7 @@ namespace Happil.UnitTests
 		{
 			if ( m_Factory == null )
 			{
-				m_Factory = CreateTestFactory(m_Module, m_ClassDefinition, classDefinitionCallback: null);
+				m_Factory = CreateTestFactory(m_Module, m_Class, classDefinitionCallback: null);
 				m_Factory.DefineClass();
 			}
 
@@ -158,14 +157,14 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void DefineClassByKey(HappilTypeKey key)
+		internal void DefineClassByKey(TypeKey key)
 		{
 			m_Factory.DefineClassByKey(key);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilModule Module
+		internal DynamicModule Module
 		{
 			get
 			{
@@ -175,7 +174,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilClass Class
+		internal ClassType Class
 		{
 			get
 			{
@@ -206,20 +205,20 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected class TestFactory : HappilFactoryBase
+		protected class TestFactory : ObjectFactoryBase
 		{
-			private readonly IHappilClassDefinition m_ClassDefinition;
-			private readonly Func<HappilTypeKey, IHappilClassDefinition> m_ClassDefinitionCallback;
+			private readonly ClassType m_ClassType;
+			private readonly Func<TypeKey, ClassWriterBase> m_ClassDefinitionCallback;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public TestFactory(
-				HappilModule module, 
-				IHappilClassDefinition classDefinition, 
-				Func<HappilTypeKey, IHappilClassDefinition> classDefinitionCallback)
+				DynamicModule module, 
+				ClassType classType, 
+				Func<TypeKey, ClassWriterBase> classDefinitionCallback)
 				: base(module)
 			{
-				m_ClassDefinition = classDefinition;
+				m_ClassType = classType;
 				m_ClassDefinitionCallback = classDefinitionCallback;
 			}
 
@@ -227,12 +226,12 @@ namespace Happil.UnitTests
 
 			public void DefineClass()
 			{
-				this.ClassTypeEntry = base.GetOrBuildType(new HappilTypeKey(m_ClassDefinition.BaseType));
+				this.ClassTypeEntry = base.GetOrBuildType(new TypeKey(m_ClassType.BaseType));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void DefineClassByKey(HappilTypeKey key)
+			public void DefineClassByKey(TypeKey key)
 			{
 				this.ClassTypeEntry = base.GetOrBuildType(key);
 			}
@@ -243,15 +242,15 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override IHappilClassDefinition DefineNewClass(HappilModule module, HappilTypeKey key)
+			protected override ClassType DefineNewClass(DynamicModule module, TypeKey key)
 			{
-				if ( m_ClassDefinition != null )
+				if ( m_ClassType != null )
 				{
-					return m_ClassDefinition;
+					return m_ClassType;
 				}
 				else
 				{
-					return m_ClassDefinitionCallback(key);
+					return m_ClassDefinitionCallback(key).ClassType;
 				}
 			}
 		}

@@ -75,29 +75,14 @@
     <Compile Include="HappilTypeKeyTests.cs" />
     <Compile Include="HelpersTests.cs" />
     <Compile Include="Milestones\ArsenicTests.cs" />
+    <Compile Include="AncestorRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClassPerTestCaseFixtureBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ObjectFactoryBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Demo\AutomaticPropertiesDemo.cs" />
-    <Compile Include="Selectors\MethodSelectorsTests.cs" />
-    <Compile Include="ClassPerTestCaseFixtureBase.cs" />
-    <Compile Include="SetShortcutsTests.cs" />
-    <Compile Include="SignatureTests.cs" />
-    <Compile Include="Statements\CallStatementTests.cs" />
-    <Compile Include="Statements\DoWhileStatementTests.cs" />
-    <Compile Include="Statements\ForeachStatementTests.cs" />
-    <Compile Include="Statements\ForStatementTests.cs" />
-    <Compile Include="Statements\IfStatementTests.cs" />
-    <Compile Include="Statements\LockStatementTests.cs" />
-    <Compile Include="Statements\ThrowStatementTests.cs" />
-    <Compile Include="Statements\StatementScopeTests.cs" />
-    <Compile Include="Statements\SwitchStatementTests.cs" />
-    <Compile Include="Statements\TryStatementTests.cs" />
-    <Compile Include="Statements\UsingStatementTests.cs" />
-    <Compile Include="Statements\WhileStatementTests.cs" />
-    <Compile Include="CompiledExamples.cs" />
-    <Compile Include="StringShortcutsTests.cs" />
-    <Compile Include="TargetRepository.cs" />
-    <Compile Include="TypeTemplateTests.cs" />
-    <Compile Include="XTupleFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happil\Happil.csproj">
