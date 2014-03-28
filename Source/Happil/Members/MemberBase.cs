@@ -41,5 +41,12 @@ namespace Happil.Members
 
 		internal abstract void Write();
 		internal abstract void Compile();
+	
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual IDisposable CreateTypeTemplateScope()
+		{
+			return null;
+		}
 	}
 }

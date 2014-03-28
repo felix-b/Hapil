@@ -15,10 +15,21 @@ namespace Happil.Writers
 		protected MethodWriterBase(MethodMember ownerMethod)
 		{
 			m_OwnerMethod = ownerMethod;
+			ownerMethod.AddWriter(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodMember OwnerMethod
+		{
+			get
+			{
+				return m_OwnerMethod;
+			}
+		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected abstract void Flush();
 	}
 }

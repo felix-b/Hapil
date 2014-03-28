@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -12,18 +13,18 @@ namespace Happil.Statements
 	{
 		private readonly StatementScope m_Previous;
 		private readonly StatementScope m_Root;
-		private readonly HappilClass m_OwnerClass;
-		private readonly HappilMethod m_OwnerMethod;
-		private readonly List<IHappilStatement> m_StatementList;
+		private readonly ClassType m_OwnerClass;
+		private readonly MethodMember m_OwnerMethod;
+		private readonly List<StatementBase> m_StatementList;
 		private readonly int m_Depth;
-		private readonly TryStatement m_InheritedExceptionStatement;
-		private readonly ExceptionBlockType m_InheritedExceptionBlockType;
-		private readonly TryStatement m_ThisExceptionStatement;
-		private readonly ExceptionBlockType m_ThisExceptionBlockType;
+		//private readonly TryStatement m_InheritedExceptionStatement;
+		//private readonly ExceptionBlockType m_InheritedExceptionBlockType;
+		//private readonly TryStatement m_ThisExceptionStatement;
+		//private readonly ExceptionBlockType m_ThisExceptionBlockType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(HappilClass ownerClass, HappilMethod ownerMethod, List<IHappilStatement> statementList)
+		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, List<StatementBase> statementList)
 		{
 			if ( s_Current != null )
 			{
@@ -35,10 +36,10 @@ namespace Happil.Statements
 			m_OwnerClass = ownerClass;
 			m_Depth = 0;
 			
-			m_ThisExceptionBlockType = ExceptionBlockType.None;
-			m_ThisExceptionStatement = null;
-			m_InheritedExceptionStatement = null;
-			m_InheritedExceptionBlockType = ExceptionBlockType.None;
+			//m_ThisExceptionBlockType = ExceptionBlockType.None;
+			//m_ThisExceptionStatement = null;
+			//m_InheritedExceptionStatement = null;
+			//m_InheritedExceptionBlockType = ExceptionBlockType.None;
 
 			m_Previous = null;
 			m_Root = this;
@@ -47,7 +48,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(List<IHappilStatement> statementList)
+		public StatementScope(List<StatementBase> statementList)
 		{
 			m_Previous = s_Current;
 			m_Root = m_Previous.Root;
@@ -62,24 +63,24 @@ namespace Happil.Statements
 			m_OwnerClass = m_Previous.m_OwnerClass;
 			m_Depth = m_Previous.Depth + 1;
 			
-			m_ThisExceptionBlockType = ExceptionBlockType.None;
-			m_ThisExceptionStatement = null;
-			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
-			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
+			//m_ThisExceptionBlockType = ExceptionBlockType.None;
+			//m_ThisExceptionStatement = null;
+			//m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
+			//m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
 
 			s_Current = this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(List<IHappilStatement> statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
-			: this(statementList)
-		{
-			m_ThisExceptionStatement = exceptionStatement;
-			m_ThisExceptionBlockType = blockType;
-			m_InheritedExceptionStatement = exceptionStatement;
-			m_InheritedExceptionBlockType = blockType;
-		}
+		//public StatementScope(List<StatementBase> statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
+		//	: this(statementList)
+		//{
+		//	m_ThisExceptionStatement = exceptionStatement;
+		//	m_ThisExceptionBlockType = blockType;
+		//	m_InheritedExceptionStatement = exceptionStatement;
+		//	m_InheritedExceptionBlockType = blockType;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -99,27 +100,27 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AddStatement(IHappilStatement statement)
+		public void AddStatement(StatementBase statement)
 		{
 			var effectiveStatementToAdd = statement;
-			var leaveStatement = (statement as ILeaveStatement);
+			//var leaveStatement = (statement as ILeaveStatement);
 
-			if ( leaveStatement != null && m_InheritedExceptionBlockType != ExceptionBlockType.None )
-			{
-				var tryStatement = FindOutermostTryStatementWithin(leaveStatement.HomeScope);
+			//if ( leaveStatement != null && m_InheritedExceptionBlockType != ExceptionBlockType.None )
+			//{
+			//	var tryStatement = FindOutermostTryStatementWithin(leaveStatement.HomeScope);
 
-				if ( tryStatement != null )
-				{
-					effectiveStatementToAdd = tryStatement.WrapLeaveStatement(leaveStatement);
-				}
-			}
+			//	if ( tryStatement != null )
+			//	{
+			//		effectiveStatementToAdd = tryStatement.WrapLeaveStatement(leaveStatement);
+			//	}
+			//}
 			
 			m_StatementList.Add(effectiveStatementToAdd);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RegisterExpressionStatement(IHappilExpression expression)
+		public void RegisterExpressionStatement(IExpressionOperand expression)
 		{
 			if ( expression != null )
 			{
@@ -129,9 +130,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Consume(IHappilOperand operand)
+		public void Consume(IOperand operand)
 		{
-			var expression = (operand as IHappilExpression);
+			var expression = (operand as IExpressionOperand);
 
 			if ( expression != null )
 			{
@@ -141,7 +142,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Consume(IHappilExpression expression)
+		public void Consume(IExpressionOperand expression)
 		{
 			if ( expression != null )
 			{
@@ -160,47 +161,47 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public TryStatement FindOutermostTryStatementWithin(StatementScope homeScope)
-		{
-			TryStatement result = null;
-			var scope = this;
+		//public TryStatement FindOutermostTryStatementWithin(StatementScope homeScope)
+		//{
+		//	TryStatement result = null;
+		//	var scope = this;
 
-			while ( !ReferenceEquals(scope, homeScope) )
-			{
-				if ( scope == null )
-				{
-					throw new Exception("Internal error: bad scope hierarchy.");
-				}
+		//	while ( !ReferenceEquals(scope, homeScope) )
+		//	{
+		//		if ( scope == null )
+		//		{
+		//			throw new Exception("Internal error: bad scope hierarchy.");
+		//		}
 
-				if ( scope.ThisExceptionBlockType == ExceptionBlockType.Finally )
-				{
-					throw new InvalidOperationException("Leaving from withing FINALLY block is not allowed.");
-				}
+		//		if ( scope.ThisExceptionBlockType == ExceptionBlockType.Finally )
+		//		{
+		//			throw new InvalidOperationException("Leaving from withing FINALLY block is not allowed.");
+		//		}
 
-				if ( scope.ThisExceptionBlockType != ExceptionBlockType.None )
-				{
-					result = scope.ThisExceptionStatement;
-				}
+		//		if ( scope.ThisExceptionBlockType != ExceptionBlockType.None )
+		//		{
+		//			result = scope.ThisExceptionStatement;
+		//		}
 
-				scope = scope.m_Previous;
-			}
+		//		scope = scope.m_Previous;
+		//	}
 
-			return result;
-		}
+		//	return result;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilModule OwnerModule
+		public DynamicModule OwnerModule
 		{
 			get
 			{
-				return m_OwnerClass.OwnerModule;
+				return m_OwnerClass.Module;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilClass OwnerClass
+		public ClassType OwnerClass
 		{
 			get
 			{
@@ -210,7 +211,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilMethod OwnerMethod
+		public MethodMember OwnerMethod
 		{
 			get
 			{
@@ -250,43 +251,43 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public TryStatement InheritedExceptionStatement
-		{
-			get
-			{
-				return m_InheritedExceptionStatement;
-			}
-		}
+		//public TryStatement InheritedExceptionStatement
+		//{
+		//	get
+		//	{
+		//		return m_InheritedExceptionStatement;
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ExceptionBlockType InheritedExceptionBlockType
-		{
-			get
-			{
-				return m_InheritedExceptionBlockType;
-			}
-		}
+		//public ExceptionBlockType InheritedExceptionBlockType
+		//{
+		//	get
+		//	{
+		//		return m_InheritedExceptionBlockType;
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public TryStatement ThisExceptionStatement
-		{
-			get
-			{
-				return m_ThisExceptionStatement;
-			}
-		}
+		//public TryStatement ThisExceptionStatement
+		//{
+		//	get
+		//	{
+		//		return m_ThisExceptionStatement;
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ExceptionBlockType ThisExceptionBlockType
-		{
-			get
-			{
-				return m_ThisExceptionBlockType;
-			}
-		}
+		//public ExceptionBlockType ThisExceptionBlockType
+		//{
+		//	get
+		//	{
+		//		return m_ThisExceptionBlockType;
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

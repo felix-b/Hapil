@@ -7,33 +7,41 @@ using System.Text;
 
 namespace Happil.Members
 {
-	public class ConstructorMethodFactory : MethodFactoryBase
+	public class AnonymousMethodFactory : MethodFactoryBase
 	{
-		private readonly ConstructorBuilder m_ConstructorBuilder;
+		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private ConstructorMethodFactory(ClassType ownerClass, ConstructorBuilder constructorBuilder, MethodSignature signature)
+		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic)
 		{
-			m_ConstructorBuilder = constructorBuilder;
-			m_Signature = signature;
+			var methodAttributes = (
+				isStatic ? 
+				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private | MethodAttributes.Static :
+				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private);
 
-			ownerClass.DefineFactoryMethod(constructorBuilder, signature.ArgumentType);
+			m_MethodBuilder = type.TypeBuilder.DefineMethod(
+				type.TakeMemberName("AnonymousMethod"),
+				methodAttributes,
+				returnType,
+				argumentTypes);
+			
+			m_Signature = new MethodSignature(isStatic, argumentTypes, returnType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override ILGenerator GetILGenerator()
 		{
-			return m_ConstructorBuilder.GetILGenerator();
+			return m_MethodBuilder.GetILGenerator();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void EmitCallInstruction(ILGenerator generator, OpCode instruction)
 		{
-			generator.Emit(instruction, m_ConstructorBuilder);
+			generator.Emit(instruction, m_MethodBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,7 +70,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_ConstructorBuilder;
+				return m_MethodBuilder;
 			}
 		}
 
@@ -72,47 +80,22 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_ConstructorBuilder.Name;
+				return m_MethodBuilder.Name;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static ConstructorMethodFactory DefaultConstructor(ClassType type)
+		public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
 		{
-			return InstanceConstructor(type, argumentTypes: Type.EmptyTypes);
+			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static ConstructorMethodFactory InstanceConstructor(ClassType type, Type[] argumentTypes)
+		public static AnonymousMethodFactory StaticMethod(ClassType type, Type[] argumentTypes, Type returnType)
 		{
-			var builder = type.TypeBuilder.DefineConstructor(
-				MethodAttributes.Public | 
-				MethodAttributes.SpecialName | 
-				MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis,
-				argumentTypes);
-			var signature = new MethodSignature(isStatic: false, argumentTypes: argumentTypes);
-
-			return new ConstructorMethodFactory(type, builder, signature);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static ConstructorMethodFactory StaticConstructor(ClassType type)
-		{
-			var builder = type.TypeBuilder.DefineConstructor(
-				MethodAttributes.Private | 
-				MethodAttributes.SpecialName | 
-				MethodAttributes.RTSpecialName | 
-				MethodAttributes.HideBySig | 
-				MethodAttributes.Static,
-				CallingConventions.Standard,
-				Type.EmptyTypes);
-			var signature = new MethodSignature(isStatic: true);
-
-			return new ConstructorMethodFactory(type, builder, signature);
+			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true);
 		}
 	}
 }

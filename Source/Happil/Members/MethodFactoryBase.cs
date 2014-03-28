@@ -7,10 +7,13 @@ using System.Text;
 
 namespace Happil.Members
 {
-	public abstract class MethodFactory
+	public abstract class MethodFactoryBase
 	{
+		public abstract ILGenerator GetILGenerator();
 		public abstract void EmitCallInstruction(ILGenerator generator, OpCode instruction);
 		public abstract MethodSignature Signature { get; }
+		public abstract MethodInfo Declaration { get; }
 		public abstract MethodBase Builder { get; }
+		public abstract string MemberName { get; }
 	}
 }

@@ -37,24 +37,40 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodSignature(bool isStatic, Type returnType, Type[] argumentTypes)
+		public MethodSignature(bool isStatic, Type[] argumentTypes = null, Type returnType = null)
 		{
-			ArgumentType = new Type[argumentTypes.Length];
-			ArgumentUnderlyingType = new Type[argumentTypes.Length];
-			ArgumentIsByRef = new bool[argumentTypes.Length];
-			ArgumentIsOut = new bool[argumentTypes.Length];
+			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes);
 
-			for ( int i = 0 ; i < argumentTypes.Length ; i++ )
+			ArgumentType = new Type[safeArgumentTypes.Length];
+			ArgumentUnderlyingType = new Type[safeArgumentTypes.Length];
+			ArgumentIsByRef = new bool[safeArgumentTypes.Length];
+			ArgumentIsOut = new bool[safeArgumentTypes.Length];
+
+			for ( int i = 0 ; i < safeArgumentTypes.Length ; i++ )
 			{
-				ArgumentType[i] = argumentTypes[i];
+				ArgumentType[i] = safeArgumentTypes[i];
 				ArgumentIsByRef[i] = false;
 				ArgumentIsOut[i] = false;
-				ArgumentUnderlyingType[i] = argumentTypes[i];
+				ArgumentUnderlyingType[i] = safeArgumentTypes[i];
 			}
 
 			ReturnType = returnType;
 			IsVoid = (returnType == null || returnType == typeof(void));
 			IsStatic = isStatic;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Type[] BuildTemplateTypePairs()
+		{
+			var pairs = new Type[(1 + ArgumentCount) * 2];
+
+			pairs[0] = typeof(TypeTemplate.TReturn);
+			pairs[1] = ReturnType;
+
+			TypeTemplate.BuildArgumentsTypePairs(ArgumentType, pairs, arrayStartIndex: 2);
+
+			return pairs;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

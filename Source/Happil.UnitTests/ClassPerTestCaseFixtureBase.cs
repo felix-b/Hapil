@@ -55,10 +55,10 @@ namespace Happil.UnitTests
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected ClassImplementationWriter<TBase> DeriveClassFrom<TBase>()
+		protected ImplementationClassWriter<TBase> DeriveClassFrom<TBase>()
 		{
-			m_Class = m_Module.DeriveClassFrom<TBase>(key: null, classFullName: TestCaseClassName);
-			return new ClassImplementationWriter<TBase>(m_Class);
+			m_Class = m_Module.DefineClass(baseType: typeof(TBase), key: null, classFullName: TestCaseClassName);
+			return new ImplementationClassWriter<TBase>(m_Class);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			protected override ClassType DefineNewClass(DynamicModule module, TypeKey key)
+			protected override ClassType DefineNewClass(TypeKey key)
 			{
 				if ( m_ClassType != null )
 				{
@@ -250,7 +250,7 @@ namespace Happil.UnitTests
 				}
 				else
 				{
-					return m_ClassDefinitionCallback(key).ClassType;
+					return m_ClassDefinitionCallback(key).OwnerClass;
 				}
 			}
 		}

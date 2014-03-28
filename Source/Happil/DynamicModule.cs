@@ -54,17 +54,10 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClassType DeriveClassFrom<TBase>(TypeKey key, string classFullName)
-		{
-			return DeriveClassFrom(typeof(TBase), key, classFullName);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public ClassType DeriveClassFrom(Type baseType, TypeKey key, string classFullName)
+		public ClassType DefineClass(Type baseType, TypeKey key, string classFullName)
 		{
 			var uniqueClassName = m_ClassNames.TakeUniqueName(classFullName);
-			return new ClassType(m_ModuleBuilder, key, uniqueClassName, baseType);
+			return new ClassType(this, key, uniqueClassName, baseType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,5 +80,15 @@ namespace Happil
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public bool CanSave { get; private set; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal ModuleBuilder ModuleBuilder
+		{
+			get
+			{
+				return m_ModuleBuilder;
+			}
+		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Members;
+using Happil.Writers;
 
 namespace Happil
 {
@@ -29,14 +30,46 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected TypeEntry GetOrBuildType(TypeKey key)
+		protected ImplementationClassWriter<TBase> DeriveClassFrom<TBase>(TypeKey key)
 		{
-			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+			var classType = m_Module.DefineClass(typeof(TBase), key, key.SuggestClassName(this));
+			return new ImplementationClassWriter<TBase>(classType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected abstract ClassType DefineNewClass(DynamicModule module, TypeKey key);
+		protected ImplementationClassWriter<TBase> DeriveClassFrom<TBase>(TypeKey key, string classFullName)
+		{
+			var classType = m_Module.DefineClass(typeof(TBase), key, classFullName);
+			return new ImplementationClassWriter<TBase>(classType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected ImplementationClassWriter<object> DeriveClassFrom(Type baseType, TypeKey key)
+		{
+			var classType = m_Module.DefineClass(baseType, key, key.SuggestClassName(this));
+			return new ImplementationClassWriter<object>(classType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected ImplementationClassWriter<object> DeriveClassFrom(Type baseType, TypeKey key, string classFullName)
+		{
+			var classType = m_Module.DefineClass(baseType, key, classFullName);
+			return new ImplementationClassWriter<object>(classType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected abstract ClassType DefineNewClass(TypeKey key);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal TypeEntry GetOrBuildType(TypeKey key)
+		{
+			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -44,17 +77,20 @@ namespace Happil
 		{
 			using ( key.CreateTypeTemplateScope() )
 			{
-				var classType = DefineNewClass(m_Module, key);
+				var classType = DefineNewClass(key);
 				return new TypeEntry(classType);
 			}
 		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal protected class TypeEntry
 		{
 			internal TypeEntry(ClassType classType)
 			{
-				this.DynamicType = classType.TypeBuilder.CreateType();
+				classType.Compile();
+				
+				this.DynamicType = classType.CompiledType;
 				this.FactoryMethods = classType.GetFactoryMethods();
 			}
 

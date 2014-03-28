@@ -8,14 +8,35 @@ namespace Happil.Writers
 {
 	public abstract class ClassWriterBase
 	{
-		private readonly ClassType m_ClassType;
+		private readonly ClassType m_OwnerClass;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected ClassWriterBase(ClassType classType)
+		protected ClassWriterBase(ClassType ownerClass)
 		{
-			m_ClassType = classType;
-			classType.AddWriter(this);
+			m_OwnerClass = ownerClass;
+			ownerClass.AddWriter(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ImplementationClassWriter<TBase> ImplementBase<TBase>()
+		{
+			return new ImplementationClassWriter<TBase>(m_OwnerClass);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ImplementationClassWriter<object> Implement(Type baseType)
+		{
+			return new ImplementationClassWriter<object>(m_OwnerClass, baseType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClassType OwnerClass
+		{
+			get { return m_OwnerClass; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -23,10 +44,10 @@ namespace Happil.Writers
 		internal protected abstract void Flush();
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		public ClassType ClassType
+
+		public static implicit operator ClassType(ClassWriterBase writer)
 		{
-			get { return m_ClassType; }
+			return writer.OwnerClass;
 		}
 	}
 }

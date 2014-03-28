@@ -42,86 +42,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes.cs" />
-    <Compile Include="CollectionShortcuts.cs" />
-    <Compile Include="DecorationImplementorBase.cs" />
-    <Compile Include="DelegateShortcuts.cs" />
-    <Compile Include="EnumerableShortcuts.cs" />
-    <Compile Include="DictionaryShortcuts.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="Expressions\ArrayElementAccessOperand.cs" />
-    <Compile Include="Expressions\FieldAccessOperand.cs" />
-    <Compile Include="Expressions\HappilAnonymousDelegate.cs" />
-    <Compile Include="Expressions\HappilDelegate.cs" />
-    <Compile Include="Expressions\ICanEmitAddress.cs" />
-    <Compile Include="Expressions\IHappilDelegate.cs" />
-    <Compile Include="Expressions\INonPostfixNotation.cs" />
-    <Compile Include="Expressions\IValueTypeInitializer.cs" />
-    <Compile Include="Expressions\NewStructExpression.cs" />
-    <Compile Include="Expressions\PropertyAccessOperand.cs" />
-    <Compile Include="Expressions\TernaryConditionalOperator.cs" />
-    <Compile Include="Expressions\TypeOperators.cs" />
-    <Compile Include="Fluent\HappilAttributeBuilder.cs" />
-    <Compile Include="Fluent\HappilAttributes.cs" />
-    <Compile Include="Fluent\HappilEvent.cs" />
-    <Compile Include="Fluent\IHappilAttributeBuilder.cs" />
-    <Compile Include="Fluent\IHappilAttributes.cs" />
-    <Compile Include="Fluent\IHappilEventBody.cs" />
-    <Compile Include="Fluent\IHappilProperty.cs" />
-    <Compile Include="IDecorationImplementor.cs" />
-    <Compile Include="StronglyTyped\MethodBody.cs" />
-    <Compile Include="TypeMembers.cs" />
-    <Compile Include="Statements\DoWhileStatement.cs" />
-    <Compile Include="Statements\ForeachStatement.cs" />
-    <Compile Include="Statements\ForStatement.cs" />
-    <Compile Include="Statements\ILeaveStatement.cs" />
-    <Compile Include="Statements\LockStatement.cs" />
-    <Compile Include="Statements\LoopStatementBase.cs" />
-    <Compile Include="Fluent\IHappilLoopBody.cs" />
-    <Compile Include="Fluent\IHappilOperandEmitter.cs" />
-    <Compile Include="HappilOperandExtensions.cs" />
-    <Compile Include="SetShortcuts.cs" />
-    <Compile Include="MemberInfoExtensions.cs" />
-    <Compile Include="Selectors\EventSelectors.cs" />
-    <Compile Include="Selectors\MethodSelectors.cs" />
-    <Compile Include="Selectors\PropertySelectors.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="Expressions\BinaryOperators.cs" />
-    <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
-    <Compile Include="Expressions\IOperator.cs" />
-    <Compile Include="Expressions\UnaryOperatorPosition.cs" />
-    <Compile Include="Expressions\UnaryOperators.cs" />
-    <Compile Include="Fluent\HappilAssignable.cs" />
-    <Compile Include="Expressions\HappilBinaryExpression.cs" />
-    <Compile Include="Fluent\HappilClassBody.cs" />
-    <Compile Include="Fluent\HappilConstant.cs" />
-    <Compile Include="Fluent\HappilArgument.cs" />
-    <Compile Include="Fluent\HappilConstructor.cs" />
-    <Compile Include="Fluent\HappilThis.cs" />
-    <Compile Include="Fluent\IHappilClassDefinition.cs" />
-    <Compile Include="Fluent\IHappilClassBody.cs" />
-    <Compile Include="Expressions\HappilExpression.cs" />
-    <Compile Include="Fluent\HappilField.cs" />
-    <Compile Include="Fluent\HappilLocal.cs" />
-    <Compile Include="Fluent\HappilMethod.cs" />
-    <Compile Include="Fluent\IHappilMethodBody.cs" />
-    <Compile Include="Fluent\HappilOperand.cs" />
-    <Compile Include="Fluent\HappilProperty.cs" />
-    <Compile Include="Expressions\HappilUnaryExpression.cs" />
-    <Compile Include="Fluent\IHappilOperand.cs" />
-    <Compile Include="Fluent\IHappilOperandInternals.cs" />
-    <Compile Include="Fluent\Prefix.cs" />
-    <Compile Include="HappilModule.cs" />
-    <Compile Include="Fluent\HappilClass.cs" />
-    <Compile Include="Fluent\IHappilMember.cs" />
-    <Compile Include="HappilFactoryBase.cs" />
-    <Compile Include="HappilTypeKey.cs" />
-    <Compile Include="Expressions\IBinaryOperator.cs" />
-    <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="DynamicModule.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Expressions\ExpressionOperand.cs" />
+    <Compile Include="Expressions\ICanEmitAddress.cs" />
+    <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
+    <Compile Include="Expressions\IExpressionOperand.cs" />
+    <Compile Include="Expressions\IOperator.cs" />
+    <Compile Include="Expressions\IUnaryOperator.cs" />
+    <Compile Include="Expressions\UnaryExpressionOperand.cs" />
+    <Compile Include="Expressions\UnaryOperatorPosition.cs" />
+    <Compile Include="MemberInfoExtensions.cs" />
+    <Compile Include="Members\AnonymousMethodFactory.cs" />
     <Compile Include="Members\ClassType.cs" />
     <Compile Include="Members\ConstructorMethodFactory.cs" />
-    <Compile Include="Members\MethodFactory.cs" />
+    <Compile Include="Members\MethodFactoryBase.cs" />
+    <Compile Include="Members\TypeMemberCache.cs" />
+    <Compile Include="Members\VirtualMethodFactory.cs" />
+    <Compile Include="OperandExtensions.cs" />
+    <Compile Include="Operands\IOperand.cs" />
+    <Compile Include="Operands\IOperandEmitter.cs" />
+    <Compile Include="Operands\Operand.cs" />
+    <Compile Include="Statements\ExpressionStatement.cs" />
+    <Compile Include="Statements\StatementBase.cs" />
+    <Compile Include="Statements\StatementScope.cs" />
+    <Compile Include="TypeExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Writers\AttributeArgumentWriter.cs" />
     <Compile Include="Writers\AttributeWriter.cs" />
     <Compile Include="Members\MemberBase.cs" />
@@ -130,23 +77,19 @@
     <Compile Include="ObjectFactoryBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
-    <Compile Include="TypeExtensions.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TypeKey.cs" />
     <Compile Include="TypeTemplate.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UniqueNameSet.cs" />
-    <Compile Include="Writers\ClassImplementationWriter.cs" />
+    <Compile Include="Writers\EmptyMethodWriter.cs" />
+    <Compile Include="Writers\ImplementationClassWriter.cs" />
     <Compile Include="Writers\ClassWriterBase.cs" />
     <Compile Include="Writers\MethodWriterBase.cs" />
+    <Compile Include="Writers\TemplateMethodWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Expressions\" />
-    <Folder Include="Operands\" />
     <Folder Include="Selectors\" />
-    <Folder Include="Statements\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

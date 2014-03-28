@@ -4,17 +4,17 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Members;
 
 namespace Happil.Statements
 {
-	internal class ExpressionStatement : IHappilStatement
+	internal class ExpressionStatement : StatementBase
 	{
-		private readonly IHappilExpression m_Expression;
+		private readonly IExpressionOperand m_Expression;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ExpressionStatement(IHappilExpression expression)
+		public ExpressionStatement(IExpressionOperand expression)
 		{
 			m_Expression = expression;
 		}
@@ -23,7 +23,7 @@ namespace Happil.Statements
 
 		#region IHappilStatement Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_Expression.ShouldLeaveValueOnStack = false;
 			m_Expression.EmitTarget(il);
@@ -45,7 +45,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilExpression Expression
+		public IExpressionOperand Expression
 		{
 			get
 			{

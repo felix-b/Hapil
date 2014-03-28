@@ -10,27 +10,17 @@ namespace Happil.Members
 {
 	public class MethodMember : MemberBase
 	{
-		private readonly MethodInfo m_MethodDeclaration = null;
-		//private readonly MethodBuilder m_MethodBuilder = null;
-		//private readonly List<MethodWriterBase> m_Writers = null;
+		private readonly MethodFactoryBase m_MethodFactory;
+		private readonly List<MethodWriterBase> m_Writers;
+		private Type[] m_CachedTemplateTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal MethodMember(ClassType ownerClass, string name, MethodInfo methodDeclaration)
-			: base(ownerClass, name)
+		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory)
+			: base(ownerClass, methodFactory.MemberName)
 		{
-			//m_MethodDeclaration = methodDeclaration;
-			//m_MethodBuilder = ownerClass.TypeBuilder.DefineMethod(
-			//	ownerClass.TakeMemberName(methodDeclaration.Name),
-			//	GetMethodAttributesFor(methodDeclaration),
-			//	declaration.ReturnType,
-			//	declaration.GetParameters().Select(p => p.ParameterType).ToArray());
-
-			////if ( !declaration.IsSpecialName )
-			////{
-			//happilClass.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
-			////}
-
+			m_MethodFactory = methodFactory;
+			m_Writers = new List<MethodWriterBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,7 +29,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodDeclaration;
+				return m_MethodFactory.Declaration;
 			}
 		}
 
@@ -49,39 +39,58 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodDeclaration;
+				return m_MethodFactory.Declaration;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodSignature Signature
+		{
+			get
+			{
+				return m_MethodFactory.Signature;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void AddWriter(MethodWriterBase writer)
+		{
+			m_Writers.Add(writer);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal override IDisposable CreateTypeTemplateScope()
+		{
+			if ( m_CachedTemplateTypePairs == null )
+			{
+				m_CachedTemplateTypePairs = Signature.BuildTemplateTypePairs();
+			}
+
+			return TypeTemplate.CreateScope(m_CachedTemplateTypePairs);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal override void Write()
 		{
-			throw new NotImplementedException();
+			foreach ( var writer in m_Writers )
+			{
+				writer.Flush();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal override void Compile()
 		{
-			throw new NotImplementedException();
-		}
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+			var il = m_MethodFactory.GetILGenerator();
 
-		private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration)
-		{
-			var attributes =
-				MethodAttributes.Final |
-				MethodAttributes.HideBySig |
-				MethodAttributes.Public |
-				MethodAttributes.Virtual;
-
-			if ( declaration != null && declaration.DeclaringType != null && declaration.DeclaringType.IsInterface )
-			{
-				attributes |= MethodAttributes.NewSlot;
-			}
-
-			return attributes;
+			il.Emit(OpCodes.Ldarg_0);
+			il.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
+			il.Emit(OpCodes.Ret);
 		}
 	}
 }

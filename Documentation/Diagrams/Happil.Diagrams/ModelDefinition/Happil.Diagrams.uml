@@ -3012,7 +3012,7 @@ generated</body>
           <association
             Id="d9bede14-c387-4cdd-8e99-74600eeade55"
             isDerived="false"
-            sourceEndRoleName=""
+            sourceEndRoleName="Members"
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
@@ -3024,6 +3024,7 @@ generated</body>
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="9ce6907d-e062-46e3-95a3-49a4d2f30795"
+                  name="Members"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -3990,6 +3991,15 @@ generated</body>
         isAbstract="true"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="c93be87f-2d8e-4f3c-a65c-4713330f78c5">
+            <interfaceMoniker
+              Id="628d4fcf-2949-4967-b5ed-ed849bfc5743"
+              LastKnownName="IExpressionOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
         <generalsInternal>
           <generalization
             Id="840ce0d1-d2c9-4eb7-be6d-ca8c6cd7896f"
@@ -4000,6 +4010,16 @@ generated</body>
               LastKnownLocation="Happil.Diagrams.uml" />
           </generalization>
         </generalsInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="fbf88c1c-e68b-4e86-a2b4-6b28af5fef8a"
+            name="CastTo&lt;T&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -5993,6 +6013,37 @@ generated</body>
             isComposite="false" />
         </ownedAttributesInternal>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="628d4fcf-2949-4967-b5ed-ed849bfc5743"
+        name="IExpressionOperand"
+        isAbstract="false"
+        isLeaf="false">
+        <generalsInternal>
+          <generalization
+            Id="4de7e93b-4b35-4e70-bf46-f5696983333d"
+            isSubstitutable="false">
+            <interfaceMoniker
+              Id="a05f2d5d-50bd-4e29-9c18-f0e6d456d49d"
+              LastKnownName="IOperand"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributes>
+          <property
+            Id="ea858bbc-ff93-427d-9a18-3ea53f103ad7"
+            name="ShouldLeaveValueOnStack"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributes>
+      </Interface>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

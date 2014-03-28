@@ -1,19 +1,12 @@
-﻿using Happil.Fluent;
+﻿using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal interface IHappilExpression : IHappilOperand
+	internal abstract class ExpressionOperand<T> : Operand<T>, IExpressionOperand
 	{
-		bool ShouldLeaveValueOnStack { get; set; }
-	}
-
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	internal abstract class HappilExpression<T> : HappilOperand<T>, IHappilExpression
-	{
-		internal HappilExpression(HappilMethod ownerMethod)
-			: base(ownerMethod)
+		internal ExpressionOperand()
 		{
 			ShouldLeaveValueOnStack = true;
 		}
@@ -28,7 +21,7 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void EnsureOperandLeavesValueOnStack(IHappilExpression expressionOperand)
+		protected void EnsureOperandLeavesValueOnStack(IExpressionOperand expressionOperand)
 		{
 			if ( expressionOperand != null )
 			{

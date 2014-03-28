@@ -24,11 +24,11 @@
           </dependency>
         </suppliersInternal>
         <targetEnds>
-          <association Id="e97b8a92-0b8e-4f09-b0f6-d3e27456c7a6" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+          <association Id="e97b8a92-0b8e-4f09-b0f6-d3e27456c7a6" isDerived="false" sourceEndRoleName="Members" targetEndRoleName="" isLeaf="false" isAbstract="false">
             <classMoniker Id="f17ba31e-fb9e-40a5-aa96-6de1df7e178b" LastKnownName="MemberBase" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
-                <memberEnd Id="c4711c08-c8c9-49ff-8f9a-86d39d95821b" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                <memberEnd Id="c4711c08-c8c9-49ff-8f9a-86d39d95821b" name="Members" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
                   <elementDefinition Id="9ce6907d-e062-46e3-95a3-49a4d2f30795" />
                 </memberEnd>
               </associationHasOwnedEnds>
@@ -543,12 +543,23 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="9e41d10f-1a45-4657-9e56-e5397fbc2f66" name="ExpressionOperand&lt;T&gt;" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="64368587-1bfe-4843-8ebe-cda3c4e7e6c2" />
+        <suppliersInternal>
+          <interfaceRealization Id="cddd77a1-905b-4ba4-b418-9fe1510f573e">
+            <interfaceMoniker Id="a12f5300-09de-40e6-a930-313f4492fb6b" LastKnownName="IExpressionOperand" />
+            <elementDefinition Id="c93be87f-2d8e-4f3c-a65c-4713330f78c5" />
+          </interfaceRealization>
+        </suppliersInternal>
         <generalsInternal>
           <generalization Id="f1d16209-1ef5-4cf0-b5d7-6e9218a4c7a3" isSubstitutable="false">
             <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
             <elementDefinition Id="840ce0d1-d2c9-4eb7-be6d-ca8c6cd7896f" />
           </generalization>
         </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="ab19b90b-6aa2-4f7c-acdc-73eae61a4333" name="CastTo&lt;T&gt;" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="fbf88c1c-e68b-4e86-a2b4-6b28af5fef8a" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -1624,6 +1635,22 @@
           </property>
         </ownedAttributesInternal>
       </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="a12f5300-09de-40e6-a930-313f4492fb6b" name="IExpressionOperand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="628d4fcf-2949-4967-b5ed-ed849bfc5743" />
+        <generalsInternal>
+          <generalization Id="be2d6fbf-c2bd-46ce-b47c-0f3fa47f28a5" isSubstitutable="false">
+            <interfaceMoniker Id="1e8fa532-a530-44ab-b15d-8566b534eadf" LastKnownName="IOperand" />
+            <elementDefinition Id="4de7e93b-4b35-4e70-bf46-f5696983333d" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributes>
+          <property Id="f180a6fb-3d93-4a99-9fff-f16da40b887f" name="ShouldLeaveValueOnStack" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="ea858bbc-ff93-427d-9a18-3ea53f103ad7" />
+          </property>
+        </ownedAttributes>
+      </Interface>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="7a38c6b9-cb32-4ba6-a55b-a3d0c9715602" name="Happil.Diagrams">
