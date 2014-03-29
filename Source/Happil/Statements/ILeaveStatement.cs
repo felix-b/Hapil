@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Happil.Statements
 {
-	internal interface ILeaveStatement : IHappilStatement
+	internal interface ILeaveStatement//TODO:redesign : IHappilStatement
 	{
 		StatementScope HomeScope { get; }
 	}

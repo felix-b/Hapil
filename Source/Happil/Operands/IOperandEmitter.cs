@@ -12,8 +12,6 @@ namespace Happil.Operands
 		void EmitLoad(ILGenerator il);
 		void EmitStore(ILGenerator il);
 		void EmitAddress(ILGenerator il);
-		bool HasTarget { get; }
-		bool IsMutable { get; }
 		bool CanEmitAddress { get; }
 	}
 }

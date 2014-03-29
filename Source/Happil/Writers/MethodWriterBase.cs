@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Writers
 {
@@ -16,6 +18,24 @@ namespace Happil.Writers
 		{
 			m_OwnerMethod = ownerMethod;
 			ownerMethod.AddWriter(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<T> Default<T>()
+		{
+			var actualType = TypeTemplate.Resolve<T>();
+
+			if ( actualType.IsPrimitive || !actualType.IsValueType )
+			{
+				var constant = Helpers.CreateConstant(actualType, actualType.GetDefaultValue());
+				return constant.CastTo<T>();
+				//new ConstantOperand<T>(default(T));
+			}
+			else
+			{
+				return new NewStructExpression<T>();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

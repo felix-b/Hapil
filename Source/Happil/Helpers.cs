@@ -6,8 +6,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Members;
+using Happil.Operands;
 using Happil.Expressions;
-using Happil.Fluent;
 using Happil.Statements;
 
 namespace Happil
@@ -29,7 +30,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void EmitCall(ILGenerator il, IHappilOperand target, MethodBase method, params IHappilOperand[] arguments)
+		public static void EmitCall(ILGenerator il, IOperand target, MethodBase method, params IOperand[] arguments)
 		{
 			if ( target != null )
 			{
@@ -71,15 +72,15 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand CreateConstant(Type type, object value)
+		public static IOperand CreateConstant(Type type, object value)
 		{
-			var constantType = typeof(HappilConstant<>).MakeGenericType(type);
-			return (IHappilOperand)Activator.CreateInstance(constantType, new object[] { value });
+			var constantType = typeof(ConstantOperand<>).MakeGenericType(type);
+			return (IOperand)Activator.CreateInstance(constantType, new object[] { value });
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand GetLambdaArgumentAsConstant(Expression argument)
+		public static IOperand GetLambdaArgumentAsConstant(Expression argument)
 		{
 			var argumentLambda = Expression.Lambda<Func<object>>(argument);
 			var argumentValueFunc = argumentLambda.Compile();
@@ -108,7 +109,7 @@ namespace Happil
 				var resolvedReturnType = TypeTemplate.Resolve(originalDeclaration.ReturnType);
 				var resolvedParameterTypes = originalDeclaration.GetParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
 
-				resolvedDeclaration = TypeMembers.Of(resolvedDeclaringType)
+				resolvedDeclaration = TypeMemberCache.Of(resolvedDeclaringType)
 					.Methods.Where(m => m.Name == originalDeclaration.Name)
 					.OfSignature(resolvedReturnType, resolvedParameterTypes)
 					.Single();
@@ -180,7 +181,7 @@ namespace Happil
 			if ( TypeTemplate.IsTemplateType(originalFieldInfo.DeclaringType) )
 			{
 				var resolvedDeclaringType = TypeTemplate.Resolve(originalFieldInfo.DeclaringType);
-				return TypeMembers.Of(resolvedDeclaringType).Fields.Single(m => m.Name == originalFieldInfo.Name);
+				return TypeMemberCache.Of(resolvedDeclaringType).Fields.Single(m => m.Name == originalFieldInfo.Name);
 			}
 			else
 			{
@@ -199,7 +200,7 @@ namespace Happil
 				var resolvedDeclaringType = TypeTemplate.Resolve(propertyInfo.DeclaringType);
 				var resolvedPropertyType = TypeTemplate.Resolve(propertyInfo.PropertyType);
 				var resolvedParameterTypes = propertyInfo.GetIndexParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
-				var resolvedPropertyInfo = TypeMembers.Of(resolvedDeclaringType)
+				var resolvedPropertyInfo = TypeMemberCache.Of(resolvedDeclaringType)
 					.Properties.Where(p => p.Name == propertyInfo.Name)
 					.OfSignature(resolvedPropertyType, resolvedParameterTypes)
 					.Single();
@@ -228,7 +229,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<T> OrNullConstant<T>(this IHappilOperand<T> operand)
+		public static IOperand<T> OrNullConstant<T>(this IOperand<T> operand)
 		{
 			if ( operand != null )
 			{
@@ -242,7 +243,7 @@ namespace Happil
 				throw new NotSupportedException(string.Format("Null is not a valid value for type '{0}'.", type.FullName));
 			}
 
-			return new HappilConstant<T>(default(T));
+			return new ConstantOperand<T>(default(T));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -322,37 +323,39 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilLocal<T[]> BuildArrayLocal<T>(params T[] constantValues)
-		{
-			var method = StatementScope.Current.OwnerMethod;
-			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(constantValues.Length)));
+		//TODO:redesign
+		//public static LocalOperand<T[]> BuildArrayLocal<T>(params T[] constantValues)
+		//{
+		//	var method = StatementScope.Current.OwnerMethod;
+		//	var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(constantValues.Length)));
 
-			for ( int i = 0 ; i < constantValues.Length ; i++ )
-			{
-				arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
-			}
+		//	for ( int i = 0 ; i < constantValues.Length ; i++ )
+		//	{
+		//		arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
+		//	}
 
-			return arrayLocal;
-		}
+		//	return arrayLocal;
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//TODO:redesign
+		//public static HappilLocal<T[]> BuildArrayLocal<T>(params IHappilOperand<T>[] values)
+		//{
+		//	var method = StatementScope.Current.OwnerMethod;
+		//	var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(values.Length)));
+
+		//	for ( int i = 0 ; i < values.Length ; i++ )
+		//	{
+		//		arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(values[i]);
+		//	}
+
+		//	return arrayLocal;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilLocal<T[]> BuildArrayLocal<T>(params IHappilOperand<T>[] values)
-		{
-			var method = StatementScope.Current.OwnerMethod;
-			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(values.Length)));
-
-			for ( int i = 0 ; i < values.Length ; i++ )
-			{
-				arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(values[i]);
-			}
-
-			return arrayLocal;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private static void EmitCallTarget(ILGenerator il, IHappilOperand target)
+		private static void EmitCallTarget(ILGenerator il, IOperand target)
 		{
 			target.EmitTarget(il);
 

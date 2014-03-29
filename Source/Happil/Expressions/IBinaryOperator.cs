@@ -1,11 +1,11 @@
 ﻿using System.Reflection.Emit;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Expressions
 {
 	internal interface IBinaryOperator<TLeft, TRight> : IOperator
 	{
-		void Emit(ILGenerator il, IHappilOperand<TLeft> left, IHappilOperand<TRight> right);
+		void Emit(ILGenerator il, IOperand<TLeft> left, IOperand<TRight> right);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

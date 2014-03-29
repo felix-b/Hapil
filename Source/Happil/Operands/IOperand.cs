@@ -7,8 +7,10 @@ namespace Happil.Operands
 {
 	public interface IOperand
 	{
-		IOperand<T> CastTo<T>();
+		Operand<T> CastTo<T>();
 		Type OperandType { get; }
+		bool HasTarget { get; }
+		bool IsMutable { get; }
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------

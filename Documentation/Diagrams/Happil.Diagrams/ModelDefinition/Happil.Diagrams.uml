@@ -6045,6 +6045,46 @@ generated</body>
         </ownedAttributes>
       </Interface>
     </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="aa4176c5-5520-4413-9805-4f9f61ed225c"
+        name="ConstantOperand&lt;T&gt;"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="61d4e372-933c-4773-affb-c6aa84d8bb79"
+            isSubstitutable="false">
+            <classMoniker
+              Id="068d52be-f893-4fe4-89fb-5e2f4adcc68a"
+              LastKnownName="Operand&lt;T&gt;"
+              LastKnownLocation="Happil.Diagrams.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="e4cb01c5-8c1d-4b51-b405-15dd72a7bccb"
+        name="IExpressionOperand1"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedAttributes>
+          <property
+            Id="ccf23133-9494-4f03-a0c0-7a0a1e3cf0b0"
+            name="ShouldLeaveValueOnStack"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributes>
+      </Interface>
+    </packageHasNamedElement>
   </packagedElements>
   <primitiveType
     Id="220a3521-e091-4221-bae9-3ef9018e845c"

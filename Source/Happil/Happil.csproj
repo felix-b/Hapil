@@ -42,16 +42,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Expressions\BinaryExpressionOperand.cs" />
+    <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
+    <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
     <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
     <Compile Include="Expressions\IExpressionOperand.cs" />
+    <Compile Include="Expressions\INonPostfixNotation.cs" />
     <Compile Include="Expressions\IOperator.cs" />
     <Compile Include="Expressions\IUnaryOperator.cs" />
+    <Compile Include="Expressions\IValueTypeInitializer.cs" />
+    <Compile Include="Expressions\NewStructExpression.cs" />
+    <Compile Include="Expressions\TypeOperators.cs" />
     <Compile Include="Expressions\UnaryExpressionOperand.cs" />
     <Compile Include="Expressions\UnaryOperatorPosition.cs" />
+    <Compile Include="Expressions\UnaryOperators.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="MemberInfoExtensions.cs" />
     <Compile Include="Members\AnonymousMethodFactory.cs" />
     <Compile Include="Members\ClassType.cs" />
@@ -60,10 +70,16 @@
     <Compile Include="Members\TypeMemberCache.cs" />
     <Compile Include="Members\VirtualMethodFactory.cs" />
     <Compile Include="OperandExtensions.cs" />
+    <Compile Include="Operands\ConstantOperand.cs" />
     <Compile Include="Operands\IOperand.cs" />
     <Compile Include="Operands\IOperandEmitter.cs" />
+    <Compile Include="Operands\LocalOperand.cs" />
+    <Compile Include="Operands\MutableOperand.cs" />
     <Compile Include="Operands\Operand.cs" />
+    <Compile Include="Operands\ThisOperand.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />
+    <Compile Include="Statements\ILeaveStatement.cs" />
+    <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
     <Compile Include="Statements\StatementScope.cs" />
     <Compile Include="TypeExtensions.cs">
@@ -82,6 +98,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UniqueNameSet.cs" />
+    <Compile Include="Writers\ConstructorWriter.cs" />
     <Compile Include="Writers\EmptyMethodWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.cs" />
     <Compile Include="Writers\ClassWriterBase.cs" />

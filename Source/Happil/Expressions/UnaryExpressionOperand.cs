@@ -9,7 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class HappilUnaryExpression<TOperand, TExpr> : ExpressionOperand<TExpr>
+	internal class UnaryExpressionOperand<TOperand, TExpr> : ExpressionOperand<TExpr>
 	{
 		private readonly IUnaryOperator<TOperand> m_Operator;
 		private readonly IOperand m_Operand;
@@ -17,8 +17,7 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilUnaryExpression(
-			MethodMember ownerMethod,
+		public UnaryExpressionOperand(
 			IUnaryOperator<TOperand> @operator, 
 			IOperand<TOperand> operand, 
 			UnaryOperatorPosition position = UnaryOperatorPosition.Prefix)

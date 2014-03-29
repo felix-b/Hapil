@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class HappilBinaryExpression<TLeft, TRight, TExpr> : HappilExpression<TExpr>
+	internal class BinaryExpressionOperand<TLeft, TRight, TExpr> : ExpressionOperand<TExpr>
 	{
 		private readonly IBinaryOperator<TLeft, TRight> m_Operator;
-		private readonly IHappilOperand<TLeft> m_Left;
-		private readonly IHappilOperand<TRight> m_Right;
+		private readonly IOperand<TLeft> m_Left;
+		private readonly IOperand<TRight> m_Right;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilBinaryExpression(
-			HappilMethod ownerMethod, 
+		public BinaryExpressionOperand(
 			IBinaryOperator<TLeft, TRight> @operator, 
-			IHappilOperand<TLeft> left, 
-			IHappilOperand<TRight> right)
-			: base(ownerMethod)
+			IOperand<TLeft> left, 
+			IOperand<TRight> right)
 		{
 			m_Left = left;
 			m_Right = right;
@@ -29,11 +28,11 @@ namespace Happil.Expressions
 
 			var scope = StatementScope.Current;
 
-			scope.Consume(left as IHappilExpression);
-			scope.Consume(right as IHappilExpression);
+			scope.Consume(left as IExpressionOperand);
+			scope.Consume(right as IExpressionOperand);
 			// since the unregister method only checks the last statement, the following line is 
 			// required to remove dependency on the order of left and right registration:
-			scope.Consume(left as IHappilExpression);
+			scope.Consume(left as IExpressionOperand);
 			
 			scope.RegisterExpressionStatement(this);
 		}
@@ -47,27 +46,28 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region Overrides of HappilOperand<TExpr>
+		//TODO:redesign?
+		//#region Overrides of HappilOperand<TExpr>
 
-		internal override HappilClass OwnerClass
-		{
-			get
-			{
-				var ownerClass = base.OwnerClass;
+		//internal override ClassType OwnerClass
+		//{
+		//	get
+		//	{
+		//		var ownerClass = base.OwnerClass;
 
-				if ( ownerClass != null )
-				{
-					return ownerClass;
-				}
+		//		if ( ownerClass != null )
+		//		{
+		//			return ownerClass;
+		//		}
 
-				var leftOwnerClass = m_Left.GetOwnerClass();
-				var rightOwnerClass = m_Right.GetOwnerClass();
+		//		var leftOwnerClass = m_Left.GetOwnerClass();
+		//		var rightOwnerClass = m_Right.GetOwnerClass();
 
-				return (leftOwnerClass ?? rightOwnerClass);
-			}
-		}
+		//		return (leftOwnerClass ?? rightOwnerClass);
+		//	}
+		//}
 
-		#endregion
+		//#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -83,8 +83,8 @@ namespace Happil.Expressions
 
 			if ( ShouldLeaveValueOnStack )
 			{
-				EnsureOperandLeavesValueOnStack(m_Left as IHappilExpression);
-				EnsureOperandLeavesValueOnStack(m_Right as IHappilExpression);
+				EnsureOperandLeavesValueOnStack(m_Left as IExpressionOperand);
+				EnsureOperandLeavesValueOnStack(m_Right as IExpressionOperand);
 
 				if ( dontLeaveValueOnStack != null )
 				{
@@ -117,14 +117,13 @@ namespace Happil.Expressions
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class HappilBinaryExpression<TOperand, TExpr> : HappilBinaryExpression<TOperand, TOperand, TExpr>
+	internal class BinaryExpressionOperand<TOperand, TExpr> : BinaryExpressionOperand<TOperand, TOperand, TExpr>
 	{
-		public HappilBinaryExpression(
-			HappilMethod ownerMethod,
+		public BinaryExpressionOperand(
 			IBinaryOperator<TOperand, TOperand> @operator, 
-			IHappilOperand<TOperand> left, 
-			IHappilOperand<TOperand> right)
-			: base(ownerMethod, @operator, left, right)
+			IOperand<TOperand> left, 
+			IOperand<TOperand> right)
+			: base(@operator, left, right)
 		{
 		}
 	}

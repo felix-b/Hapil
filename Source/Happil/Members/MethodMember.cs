@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Operands;
+using Happil.Statements;
 using Happil.Writers;
 
 namespace Happil.Members
@@ -12,6 +14,7 @@ namespace Happil.Members
 	{
 		private readonly MethodFactoryBase m_MethodFactory;
 		private readonly List<MethodWriterBase> m_Writers;
+		private readonly List<StatementBase> m_Statements;
 		private Type[] m_CachedTemplateTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -21,6 +24,14 @@ namespace Happil.Members
 		{
 			m_MethodFactory = methodFactory;
 			m_Writers = new List<MethodWriterBase>();
+			m_Statements = new List<StatementBase>();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LocalOperand<T> AddLocal<T>()
+		{
+			return new LocalOperand<T>(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,6 +73,14 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal TStatement AddStatement<TStatement>(TStatement statement) where TStatement : StatementBase
+		{
+			StatementScope.Current.AddStatement(statement);
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal override IDisposable CreateTypeTemplateScope()
 		{
 			if ( m_CachedTemplateTypePairs == null )
@@ -76,9 +95,12 @@ namespace Happil.Members
 
 		internal override void Write()
 		{
-			foreach ( var writer in m_Writers )
+			using ( new StatementScope(OwnerClass, this, m_Statements) )
 			{
-				writer.Flush();
+				foreach ( var writer in m_Writers )
+				{
+					writer.Flush();
+				}
 			}
 		}
 
@@ -88,9 +110,25 @@ namespace Happil.Members
 		{
 			var il = m_MethodFactory.GetILGenerator();
 
-			il.Emit(OpCodes.Ldarg_0);
-			il.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
-			il.Emit(OpCodes.Ret);
+			foreach ( var statement in m_Statements )
+			{
+				statement.Emit(il);
+			}
+
+			if ( Signature.IsVoid )
+			{
+				il.Emit(OpCodes.Ret);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal MethodFactoryBase MethodFactory
+		{
+			get
+			{
+				return m_MethodFactory;
+			}
 		}
 	}
 }

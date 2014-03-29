@@ -1652,6 +1652,17 @@
         </ownedAttributes>
       </Interface>
     </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="688112f4-6637-4eba-a79b-568b83f5dcf4" name="ConstantOperand&lt;T&gt;" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="aa4176c5-5520-4413-9805-4f9f61ed225c" />
+        <generalsInternal>
+          <generalization Id="b1549ee1-dad4-4070-912e-443e63080d24" isSubstitutable="false">
+            <classMoniker Id="86a9e777-e7bf-43db-a5bf-f7b4e33772c7" LastKnownName="Operand&lt;T&gt;" />
+            <elementDefinition Id="61d4e372-933c-4773-affb-c6aa84d8bb79" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="7a38c6b9-cb32-4ba6-a55b-a3d0c9715602" name="Happil.Diagrams">
     <elementDefinition Id="dd3e4df7-8296-4a40-b681-5aadd12251b4" />

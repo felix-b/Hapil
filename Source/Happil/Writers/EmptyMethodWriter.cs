@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Members;
+using Happil.Statements;
 
 namespace Happil.Writers
 {
@@ -17,6 +18,10 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
+			if ( !OwnerMethod.Signature.IsVoid )
+			{
+				OwnerMethod.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(Default<TypeTemplate.TReturn>()));
+			}
 		}
 	}
 }

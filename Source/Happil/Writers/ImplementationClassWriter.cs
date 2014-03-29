@@ -30,6 +30,8 @@ namespace Happil.Writers
 			{
 				ownerClass.AddInterface(m_BaseType);
 			}
+
+			//TODO: validate base type
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -105,6 +107,7 @@ namespace Happil.Writers
 
 			ImplementationClassWriter<TBase> IMethodSelectorBase.Throw<TException>(string message)
 			{
+				//TODO:redesign
 				throw new NotImplementedException();
 			}
 

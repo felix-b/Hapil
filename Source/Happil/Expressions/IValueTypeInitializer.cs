@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Expressions
 {
 	internal interface IValueTypeInitializer
 	{
-		IHappilOperand Target { set; }
+		IOperand Target { set; }
 	}
 }

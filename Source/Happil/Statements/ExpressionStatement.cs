@@ -21,8 +21,6 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
-
 		public override void Emit(ILGenerator il)
 		{
 			m_Expression.ShouldLeaveValueOnStack = false;
@@ -30,18 +28,12 @@ namespace Happil.Statements
 			m_Expression.EmitLoad(il);
 		}
 
-		#endregion
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region Overrides of Object
 
 		public override string ToString()
 		{
 			return m_Expression.ToString();
 		}
-
-		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

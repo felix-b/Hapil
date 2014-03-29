@@ -4,34 +4,29 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
-
-//
-// T  0A >0A
-// L    
-// A
-// F
-// P  
 
 namespace Happil.Expressions
 {
-	internal class NewStructExpression<TStruct> : HappilExpression<TStruct>, IValueTypeInitializer
+	internal class NewStructExpression<TStruct> : ExpressionOperand<TStruct>, IValueTypeInitializer
 	{
 		private readonly Type m_StructType;
 		private readonly ConstructorInfo m_Constructor;
-		private readonly IHappilOperand[] m_ConstructorArguments;
-		private IHappilOperand m_Target;
+		private readonly IOperand[] m_ConstructorArguments;
+		private readonly MethodMember m_OwnerMethod;
+		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public NewStructExpression(IHappilOperand[] constructorArguments = null)
-			: base(ownerMethod: StatementScope.Current.OwnerMethod)
+		public NewStructExpression(IOperand[] constructorArguments = null)
 		{
 			var statementScope = StatementScope.Current;
 
+			m_OwnerMethod = statementScope.OwnerMethod;
 			m_StructType = TypeTemplate.Resolve<TStruct>();
-			m_ConstructorArguments = (constructorArguments ?? new IHappilOperand[0]);
+			m_ConstructorArguments = (constructorArguments ?? new IOperand[0]);
 
 			if ( m_ConstructorArguments.Length > 0 )
 			{
@@ -56,7 +51,7 @@ namespace Happil.Expressions
 
 		#region IValueTypeInitializer Members
 
-		public IHappilOperand Target
+		public IOperand Target
 		{
 			set
 			{
@@ -77,7 +72,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			HappilLocal<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? OwnerMethod.Local<TStruct>() : null);
+			LocalOperand<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_OwnerMethod.AddLocal<TStruct>() : null);
 			var effectiveTarget = (m_Target ?? tempLocal);
 
 			if ( effectiveTarget != null )

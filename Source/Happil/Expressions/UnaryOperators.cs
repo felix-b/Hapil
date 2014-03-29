@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
@@ -19,7 +20,7 @@ namespace Happil.Expressions
 
 		public class OperatorLogicalNot : IUnaryOperator<bool>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<bool> operand)
+			public void Emit(ILGenerator il, IOperand<bool> operand)
 			{
 				operand.EmitTarget(il);
 				operand.EmitLoad(il);
@@ -40,7 +41,7 @@ namespace Happil.Expressions
 
 		public class OperatorBitwiseNot<T> : IUnaryOperator<T>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
+			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				operand.EmitTarget(il);
 				operand.EmitLoad(il);
@@ -60,7 +61,7 @@ namespace Happil.Expressions
 
 		public class OperatorPlus<T> : IUnaryOperator<T>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
+			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				var overloads = TypeOperators.GetOperators(operand.OperandType);
 
@@ -89,7 +90,7 @@ namespace Happil.Expressions
 
 		public class OperatorNegation<T> : IUnaryOperator<T>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
+			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				var overloads = TypeOperators.GetOperators(operand.OperandType);
 
@@ -120,7 +121,7 @@ namespace Happil.Expressions
 		{
 			private readonly UnaryOperatorPosition m_Position;
 			private readonly bool m_Positive;
-			private readonly HappilMethod m_OwnerMethod;
+			private readonly MethodMember m_OwnerMethod;
 			private bool m_ShouldLeaveValueOnStack;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,7 +146,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
+			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				if ( m_Position == UnaryOperatorPosition.Prefix || !m_ShouldLeaveValueOnStack )
 				{
@@ -166,7 +167,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private void EmitPostfixVersion(ILGenerator il, IHappilOperand<T> operand)
+			private void EmitPostfixVersion(ILGenerator il, IOperand<T> operand)
 			{
 				operand.EmitTarget(il);
 
@@ -174,7 +175,7 @@ namespace Happil.Expressions
 
 				if ( operand.HasTarget )
 				{
-					var temp = m_OwnerMethod.Local<T>();
+					var temp = m_OwnerMethod.AddLocal<T>();
 
 					temp.EmitStore(il);
 					operand.EmitTarget(il);
@@ -186,7 +187,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private void EmitPrefixVersion(ILGenerator il, IHappilOperand<T> operand)
+			private void EmitPrefixVersion(ILGenerator il, IOperand<T> operand)
 			{
 				if ( operand.HasTarget )
 				{
@@ -198,7 +199,7 @@ namespace Happil.Expressions
 
 				if ( operand.HasTarget && m_ShouldLeaveValueOnStack )
 				{
-					var temp = m_OwnerMethod.Local<T>();
+					var temp = m_OwnerMethod.AddLocal<T>();
 
 					temp.EmitStore(il);
 					operand.EmitStore(il);
@@ -212,7 +213,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private void EmitIncrement(ILGenerator il, IHappilOperand<T> operand)
+			private void EmitIncrement(ILGenerator il, IOperand<T> operand)
 			{
 				var overloads = TypeOperators.GetOperators(operand.OperandType);
 
@@ -249,12 +250,12 @@ namespace Happil.Expressions
 		public class OperatorCall<T> : IUnaryOperator<T>, IDontLeaveValueOnStack
 		{
 			private readonly MethodBase m_Method;
-			private readonly IHappilOperand[] m_Arguments;
+			private readonly IOperand[] m_Arguments;
 			private bool m_ShouldLeaveValueOnStack;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public OperatorCall(MethodBase method, params IHappilOperand[] arguments)
+			public OperatorCall(MethodBase method, params IOperand[] arguments)
 			{
 				m_Method = method;
 				m_Arguments = arguments;
@@ -284,7 +285,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void Emit(ILGenerator il, IHappilOperand<T> operand)
+			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				Helpers.EmitCall(il, operand, m_Method, m_Arguments);
 
@@ -319,7 +320,7 @@ namespace Happil.Expressions
 
 		public class OperatorNewArray<TElement> : IUnaryOperator<int>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<int> lengthOperand)
+			public void Emit(ILGenerator il, IOperand<int> lengthOperand)
 			{
 				lengthOperand.EmitTarget(il);
 				lengthOperand.EmitLoad(il);

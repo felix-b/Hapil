@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
 	/// <summary>
 	/// Return statement for void methods
 	/// </summary>
-	internal class ReturnStatement : IHappilStatement, ILeaveStatement
+	internal class ReturnStatement : StatementBase, ILeaveStatement
 	{
-		private readonly TryStatement m_ExceptionStatement;
+		//TODO:redesign 
+		//private readonly TryStatement m_ExceptionStatement;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ReturnStatement()
 		{
-			m_ExceptionStatement = StatementScope.Current.InheritedExceptionStatement;
+			//TODO:redesign 
+			//m_ExceptionStatement = StatementScope.Current.InheritedExceptionStatement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ret);
 		}
@@ -47,13 +50,13 @@ namespace Happil.Statements
 	/// <typeparam name="T">
 	/// The type of the return value.
 	/// </typeparam>
-	internal class ReturnStatement<T> : IHappilStatement, ILeaveStatement
+	internal class ReturnStatement<T> : StatementBase, ILeaveStatement
 	{
-		private readonly IHappilOperand<T> m_Operand;
+		private readonly IOperand<T> m_Operand;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ReturnStatement(IHappilOperand<T> operand)
+		public ReturnStatement(IOperand<T> operand)
 		{
 			m_Operand = operand;
 			StatementScope.Current.Consume(operand);
@@ -61,7 +64,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_Operand.EmitTarget(il);
 			m_Operand.EmitLoad(il);

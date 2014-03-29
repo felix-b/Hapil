@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Statements;
 
 namespace Happil.Expressions
 {
@@ -35,7 +36,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public virtual void Emit(ILGenerator il, IHappilOperand<TLeft> left, IHappilOperand<TRight> right)
+			public virtual void Emit(ILGenerator il, IOperand<TLeft> left, IOperand<TRight> right)
 			{
 				var typeOverloads = TypeOperators.GetOperators(left.OperandType);
 				var overload = m_OverloadSelector(typeOverloads);
@@ -105,7 +106,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -143,7 +144,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -181,7 +182,7 @@ namespace Happil.Expressions
 			}
 		} 
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -219,7 +220,7 @@ namespace Happil.Expressions
 			}
 		} 
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -251,7 +252,7 @@ namespace Happil.Expressions
 
 		public class OperatorLogicalAnd : IBinaryOperator<bool>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
+			public void Emit(ILGenerator il, IOperand<bool> left, IOperand<bool> right)
 			{
 				var falseLabel = il.DefineLabel();
 				var endLabel = il.DefineLabel();
@@ -286,7 +287,7 @@ namespace Happil.Expressions
 
 		public class OperatorLogicalOr : IBinaryOperator<bool>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
+			public void Emit(ILGenerator il, IOperand<bool> left, IOperand<bool> right)
 			{
 				var trueLabel = il.DefineLabel();
 				var endLabel = il.DefineLabel();
@@ -321,7 +322,7 @@ namespace Happil.Expressions
 
 		public class OperatorLogicalXor : IBinaryOperator<bool>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<bool> left, IHappilOperand<bool> right)
+			public void Emit(ILGenerator il, IOperand<bool> left, IOperand<bool> right)
 			{
 				left.EmitTarget(il);
 				left.EmitLoad(il);
@@ -350,7 +351,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		throw new NotImplementedException();
 		//	}
@@ -373,7 +374,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		throw new NotImplementedException();
 		//	}
@@ -396,7 +397,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		throw new NotImplementedException();
 		//	}
@@ -419,7 +420,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<int> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -457,7 +458,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<int> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<int> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -495,7 +496,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		var overloads = TypeOperators.GetOperators(left.OperandType);
 
@@ -534,7 +535,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public override void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 			{
 				base.Emit(il, left, right);
 
@@ -556,7 +557,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		left.EmitTarget(il);
 		//		left.EmitLoad(il);
@@ -585,7 +586,7 @@ namespace Happil.Expressions
 			}
 		}
 		//{
-		//	public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+		//	public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 		//	{
 		//		left.EmitTarget(il);
 		//		left.EmitLoad(il);
@@ -615,7 +616,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 	
-			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public override void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 			{
 				base.Emit(il, left, right);
 	
@@ -638,7 +639,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public override void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 			{
 				base.Emit(il, left, right);
 
@@ -654,9 +655,9 @@ namespace Happil.Expressions
 
 		public class OperatorCastOrThrow<T> : IBinaryOperator<T, Type>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<Type> right)
+			public void Emit(ILGenerator il, IOperand<T> left, IOperand<Type> right)
 			{
-				var typeConstant = (right as HappilConstant<Type>);
+				var typeConstant = (right as ConstantOperand<Type>);
 
 				if ( object.ReferenceEquals(typeConstant, null) )
 				{
@@ -681,9 +682,9 @@ namespace Happil.Expressions
 
 		public class OperatorTryCast<T> : IBinaryOperator<T, Type>
 		{
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<Type> right)
+			public void Emit(ILGenerator il, IOperand<T> left, IOperand<Type> right)
 			{
-				var typeConstant = (right as HappilConstant<Type>);
+				var typeConstant = (right as ConstantOperand<Type>);
 
 				if ( object.ReferenceEquals(typeConstant, null) )
 				{
@@ -725,7 +726,7 @@ namespace Happil.Expressions
 		{
 			#region IBinaryOperator<T,T> Members
 
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 			{
 				var endLabel = il.DefineLabel();
 
@@ -762,7 +763,7 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void Emit(ILGenerator il, IHappilOperand<T> left, IHappilOperand<T> right)
+			public void Emit(ILGenerator il, IOperand<T> left, IOperand<T> right)
 			{
 				var nonPostfix = (left as INonPostfixNotation);
 

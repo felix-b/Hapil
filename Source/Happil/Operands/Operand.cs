@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Expressions;
 using Happil.Members;
 
 namespace Happil.Operands
@@ -23,9 +24,12 @@ namespace Happil.Operands
 
 		#region IOperand Members
 
-		public IOperand<TOther> CastTo<TOther>()
+		public Operand<TCast> CastTo<TCast>()
 		{
-			throw new NotImplementedException();
+			return new BinaryExpressionOperand<T, Type, TCast>(
+				@operator: new BinaryOperators.OperatorCastOrThrow<T>(),
+				left: this,
+				right: new ConstantOperand<Type>(TypeTemplate.Resolve<TCast>()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -126,6 +130,16 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		
+		public static implicit operator Operand<T>(T value) 
+		{
+			if ( value is IOperand )
+			{
+				return (Operand<T>)value;
+			}
+			else
+			{
+				return new ConstantOperand<T>(value);
+			}
+		}
 	}
 }

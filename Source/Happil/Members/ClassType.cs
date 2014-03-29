@@ -128,12 +128,18 @@ namespace Happil.Members
 
 			foreach ( var member in m_Members )
 			{
-				member.Write();
+				using ( member.CreateTypeTemplateScope() )
+				{
+					member.Write();
+				}
 			}
 
 			foreach ( var member in m_Members )
 			{
-				member.Compile();
+				using ( member.CreateTypeTemplateScope() )
+				{
+					member.Compile();
+				}
 			}
 
 			m_CompiledType = m_TypeBuilder.CreateType();
