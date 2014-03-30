@@ -11,6 +11,7 @@ namespace Happil.Members
 	{
 		private readonly ConstructorBuilder m_ConstructorBuilder;
 		private readonly MethodSignature m_Signature;
+		private readonly ParameterBuilder[] m_Parameters;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -20,6 +21,12 @@ namespace Happil.Members
 			m_Signature = signature;
 
 			ownerClass.DefineFactoryMethod(constructorBuilder, signature.ArgumentType);
+
+			m_Parameters = signature.ArgumentName.Select((argName, argIndex) => m_ConstructorBuilder.DefineParameter(
+				argIndex,
+				ParameterAttributes.None,
+				argName)).ToArray();
+
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -63,6 +70,16 @@ namespace Happil.Members
 			get
 			{
 				return m_ConstructorBuilder;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override ParameterBuilder[] Parameters
+		{
+			get
+			{
+				return m_Parameters;
 			}
 		}
 

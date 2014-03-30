@@ -12,6 +12,7 @@ namespace Happil.Members
 		private readonly MethodInfo m_Declaration;
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
+		private readonly ParameterBuilder[] m_Parameters;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +27,8 @@ namespace Happil.Members
 
 			type.TypeBuilder.DefineMethodOverride(m_MethodBuilder, declaration);
 			m_Signature = new MethodSignature(declaration);
+
+			m_Parameters = m_Declaration.GetParameters().Select(p => m_MethodBuilder.DefineParameter(p.Position + 1, p.Attributes, p.Name)).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,6 +72,16 @@ namespace Happil.Members
 			get
 			{
 				return m_MethodBuilder;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override ParameterBuilder[] Parameters
+		{
+			get
+			{
+				return m_Parameters;
 			}
 		}
 

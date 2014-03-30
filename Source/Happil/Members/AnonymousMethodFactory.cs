@@ -11,6 +11,7 @@ namespace Happil.Members
 	{
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
+		private readonly ParameterBuilder[] m_Parameters;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -28,6 +29,11 @@ namespace Happil.Members
 				argumentTypes);
 			
 			m_Signature = new MethodSignature(isStatic, argumentTypes, returnType);
+
+			m_Parameters = argumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
+				argIndex,
+				ParameterAttributes.None, 
+				"arg" + (argIndex + 1).ToString())).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +77,16 @@ namespace Happil.Members
 			get
 			{
 				return m_MethodBuilder;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override ParameterBuilder[] Parameters
+		{
+			get
+			{
+				return m_Parameters;
 			}
 		}
 

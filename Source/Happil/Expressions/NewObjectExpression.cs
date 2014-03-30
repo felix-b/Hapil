@@ -2,27 +2,26 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class NewObjectExpression<TObject> : HappilExpression<TObject>
+	internal class NewObjectExpression<TObject> : ExpressionOperand<TObject>
 	{
 		private readonly Type m_ObjectType;
 		private readonly ConstructorInfo m_Constructor;
-		private readonly IHappilOperand[] m_ConstructorArguments;
+		private readonly IOperand[] m_ConstructorArguments;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public NewObjectExpression(IHappilOperand[] constructorArguments)
-			: base(ownerMethod: null)
+		public NewObjectExpression(IOperand[] constructorArguments)
 		{
 			m_ObjectType = TypeTemplate.Resolve<TObject>();
 			m_ConstructorArguments = constructorArguments;
 
 			var argumentTypes = constructorArguments.Select(arg => arg.OperandType).ToArray();
-			m_Constructor = m_ObjectType.GetConstructor(argumentTypes);
+			m_Constructor = m_ObjectType.GetConstructor(argumentTypes); //TODO: use MemberTypeCache for this
 
 			if ( m_Constructor == null )
 			{

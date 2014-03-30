@@ -4,20 +4,19 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Expressions
 {
-	public class FieldAccessOperand<T> : HappilAssignable<T>
+	public class FieldAccessOperand<T> : MutableOperand<T>
 	{
-		private readonly IHappilOperand m_Target;
+		private readonly IOperand m_Target;
 		private readonly FieldInfo m_Field;
 		private readonly string m_Name;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal FieldAccessOperand(IHappilOperand target, FieldInfo field)
-			: base(ownerMethod: null)
+		internal FieldAccessOperand(IOperand target, FieldInfo field)
 		{
 			m_Target = target;
 			m_Field = field;
@@ -27,8 +26,7 @@ namespace Happil.Expressions
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//TODO: get rid of thus one; change tests accordingly
-		internal FieldAccessOperand(IHappilOperand target, string name)
-			: base(ownerMethod: null)
+		internal FieldAccessOperand(IOperand target, string name)
 		{
 			m_Target = target;
 			m_Field = null;

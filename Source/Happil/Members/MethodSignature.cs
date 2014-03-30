@@ -13,6 +13,7 @@ namespace Happil.Members
 		{
 			var parameters = declaration.GetParameters();
 
+			ArgumentName = new string[parameters.Length];
 			ArgumentType = new Type[parameters.Length];
 			ArgumentUnderlyingType = new Type[parameters.Length];
 			ArgumentIsByRef = new bool[parameters.Length];
@@ -20,6 +21,7 @@ namespace Happil.Members
 
 			for ( int i = 0 ; i < parameters.Length ; i++ )
 			{
+				ArgumentName[i] = parameters[i].Name;
 				ArgumentType[i] = parameters[i].ParameterType;
 				ArgumentIsByRef[i] = parameters[i].ParameterType.IsByRef;
 				ArgumentIsOut[i] = parameters[i].IsOut;
@@ -41,6 +43,7 @@ namespace Happil.Members
 		{
 			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes);
 
+			ArgumentName = safeArgumentTypes.Select((type, index) => "arg" + index).ToArray();
 			ArgumentType = new Type[safeArgumentTypes.Length];
 			ArgumentUnderlyingType = new Type[safeArgumentTypes.Length];
 			ArgumentIsByRef = new bool[safeArgumentTypes.Length];
@@ -75,6 +78,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public string[] ArgumentName { get; private set; }
 		public Type[] ArgumentType { get; private set; }
 		public Type[] ArgumentUnderlyingType { get; private set; }
 		public bool[] ArgumentIsByRef { get; private set; }

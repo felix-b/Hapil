@@ -14,6 +14,7 @@ namespace Happil.Members
 		public abstract MethodSignature Signature { get; }
 		public abstract MethodInfo Declaration { get; }
 		public abstract MethodBase Builder { get; }
+		public abstract ParameterBuilder[] Parameters { get; }
 		public abstract string MemberName { get; }
 	}
 }

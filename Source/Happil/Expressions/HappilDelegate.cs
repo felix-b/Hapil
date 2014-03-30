@@ -4,20 +4,20 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Members;
 
 namespace Happil.Expressions
 {
-	internal class HappilDelegate<TDelegate> : HappilOperand<TDelegate>
+	internal class HappilDelegate<TDelegate> : Operand<TDelegate>
 	{
-		private readonly IHappilOperand m_Target;
+		private readonly IOperand m_Target;
 		private readonly MethodInfo m_Method;
 		private readonly ConstructorInfo m_Constructor;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilDelegate(IHappilOperand target, MethodInfo method) 
-			: base(ownerMethod: null)
+		public HappilDelegate(IOperand target, MethodInfo method) 
 		{
 			m_Target = target;
 			m_Method = method;

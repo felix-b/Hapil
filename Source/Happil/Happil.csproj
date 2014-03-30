@@ -45,9 +45,12 @@
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Expressions\ArrayElementAccessOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
+    <Compile Include="Expressions\FieldAccessOperand.cs" />
+    <Compile Include="Expressions\HappilDelegate.cs" />
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
     <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
@@ -56,7 +59,10 @@
     <Compile Include="Expressions\IOperator.cs" />
     <Compile Include="Expressions\IUnaryOperator.cs" />
     <Compile Include="Expressions\IValueTypeInitializer.cs" />
+    <Compile Include="Expressions\NewObjectExpression.cs" />
     <Compile Include="Expressions\NewStructExpression.cs" />
+    <Compile Include="Expressions\PropertyAccessOperand.cs" />
+    <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />
     <Compile Include="Expressions\UnaryExpressionOperand.cs" />
     <Compile Include="Expressions\UnaryOperatorPosition.cs" />
@@ -70,6 +76,7 @@
     <Compile Include="Members\TypeMemberCache.cs" />
     <Compile Include="Members\VirtualMethodFactory.cs" />
     <Compile Include="OperandExtensions.cs" />
+    <Compile Include="Operands\Argument.cs" />
     <Compile Include="Operands\ConstantOperand.cs" />
     <Compile Include="Operands\IOperand.cs" />
     <Compile Include="Operands\IOperandEmitter.cs" />

@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class TernaryConditionalOperator<T> : HappilOperand<T>
+	internal class TernaryConditionalOperator<T> : Operand<T>
 	{
-		private readonly IHappilOperand<bool> m_Condition;
-		private readonly IHappilOperand<T> m_OnTrue;
-		private readonly IHappilOperand<T> m_OnFalse;
+		private readonly IOperand<bool> m_Condition;
+		private readonly IOperand<T> m_OnTrue;
+		private readonly IOperand<T> m_OnFalse;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public TernaryConditionalOperator(IHappilOperand<bool> condition, IHappilOperand<T> onTrue, IHappilOperand<T> onFalse) 
-			: base(ownerMethod: null) //TODO: get rid of ownerMethod?
+		public TernaryConditionalOperator(IOperand<bool> condition, IOperand<T> onTrue, IOperand<T> onFalse) 
 		{
 			m_Condition = condition;
 			m_OnTrue = onTrue;

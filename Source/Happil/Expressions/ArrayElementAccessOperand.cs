@@ -4,20 +4,19 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class ArrayElementAccessOperand<T> : HappilAssignable<T>
+	internal class ArrayElementAccessOperand<T> : MutableOperand<T>
 	{
-		private readonly IHappilOperand m_Array;
-		private readonly IHappilOperand m_Index;
+		private readonly IOperand m_Array;
+		private readonly IOperand m_Index;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ArrayElementAccessOperand(IHappilOperand array, IHappilOperand index)
-			: base(ownerMethod: null)
+		public ArrayElementAccessOperand(IOperand array, IOperand index)
 		{
 			m_Array = array;
 			m_Index = index;

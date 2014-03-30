@@ -4,18 +4,19 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Members;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class HappilAnonymousDelegate<TArg1, TReturn> : HappilOperand<Func<TArg1, TReturn>>, IHappilDelegate
+	internal class HappilAnonymousDelegate<TArg1, TReturn> : Operand<Func<TArg1, TReturn>> //TODO:redesign, IHappilDelegate
 	{
-		private readonly HappilMethod<TReturn> m_Method;
+		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAnonymousDelegate(HappilClass happilClass, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>> body)
+		public HappilAnonymousDelegate(ClassType happilClass, Action<MethodWriter<TReturn>, HappilArgument<TArg1>> body)
 			: base(ownerMethod: null)
 		{
 			m_Method = new HappilMethod<TReturn>(happilClass, "<Anonymous>", typeof(TReturn), new[] { typeof(TArg1) });

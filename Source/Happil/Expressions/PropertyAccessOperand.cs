@@ -4,24 +4,23 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	public class PropertyAccessOperand<T> : HappilAssignable<T>, INonPostfixNotation
+	public class PropertyAccessOperand<T> : MutableOperand<T>, INonPostfixNotation
 	{
-		private readonly IHappilOperand m_Target;
+		private readonly IOperand m_Target;
 		private readonly PropertyInfo m_Property;
-		private readonly IHappilOperand[] m_IndexArguments;
+		private readonly IOperand[] m_IndexArguments;
 		private readonly MethodInfo m_Getter;
 		private readonly MethodInfo m_Setter;
-		private IHappilOperand m_Value;
+		private IOperand m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyAccessOperand(IHappilOperand target, PropertyInfo property, params IHappilOperand[] indexArguments)
-			: base(ownerMethod: null)
+		public PropertyAccessOperand(IOperand target, PropertyInfo property, params IOperand[] indexArguments)
 		{
 			m_Target = target;
 			m_Property = property;
@@ -53,7 +52,7 @@ namespace Happil.Expressions
 
 		#region INonPostfixNotation Members
 
-		IHappilOperand INonPostfixNotation.RightSide
+		IOperand INonPostfixNotation.RightSide
 		{
 			set
 			{
