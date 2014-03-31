@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,25 +9,25 @@ using Happil.Statements;
 
 namespace Happil.Writers
 {
-	public class TemplateMethodWriter : MethodWriterBase
+	public class FunctionMethodWriter<TReturn> : MethodWriterBase
 	{
-		public TemplateMethodWriter(MethodMember ownerMethod)
+		public FunctionMethodWriter(MethodMember ownerMethod)
 			: base(ownerMethod)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Return(IOperand<TypeTemplate.TReturn> operand)
+		public void Return(IOperand<TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
+			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Return()
+		public void Return(TReturn constantValue)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement());
+			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(new ConstantOperand<TReturn>(constantValue)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

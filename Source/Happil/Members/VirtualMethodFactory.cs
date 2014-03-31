@@ -13,6 +13,7 @@ namespace Happil.Members
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
 		private readonly ParameterBuilder[] m_Parameters;
+		private readonly ParameterBuilder m_ReturnParameter;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -29,6 +30,18 @@ namespace Happil.Members
 			m_Signature = new MethodSignature(declaration);
 
 			m_Parameters = m_Declaration.GetParameters().Select(p => m_MethodBuilder.DefineParameter(p.Position + 1, p.Attributes, p.Name)).ToArray();
+
+			if ( !m_Signature.IsVoid )
+			{
+				m_ReturnParameter = m_MethodBuilder.DefineParameter(0, ParameterAttributes.Retval, strParamName: null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void SetAttribute(CustomAttributeBuilder attribute)
+		{
+			m_MethodBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,6 +95,16 @@ namespace Happil.Members
 			get
 			{
 				return m_Parameters;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override ParameterBuilder ReturnParameter
+		{
+			get
+			{
+				return m_ReturnParameter;
 			}
 		}
 

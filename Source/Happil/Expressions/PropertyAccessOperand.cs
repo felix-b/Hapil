@@ -9,6 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
+	//TODO:redesign:rename and move to Operands
 	public class PropertyAccessOperand<T> : MutableOperand<T>, INonPostfixNotation
 	{
 		private readonly IOperand m_Target;

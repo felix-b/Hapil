@@ -51,13 +51,7 @@ namespace Happil.Operands
 		public Argument<T> Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
 			where TAttribute : Attribute
 		{
-			var writer = new AttributeArgumentWriter<TAttribute>();
-			
-			if ( values != null )
-			{
-				values(writer);
-			}
-
+			var writer = new AttributeArgumentWriter<TAttribute>(values);
 			m_ParameterBuilder.SetCustomAttribute(writer.GetAttributeBuilder());
 			return this;
 		}

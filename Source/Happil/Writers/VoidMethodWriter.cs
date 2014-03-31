@@ -8,18 +8,11 @@ using Happil.Statements;
 
 namespace Happil.Writers
 {
-	public class TemplateMethodWriter : MethodWriterBase
+	public class VoidMethodWriter : MethodWriterBase
 	{
-		public TemplateMethodWriter(MethodMember ownerMethod)
+		public VoidMethodWriter(MethodMember ownerMethod)
 			: base(ownerMethod)
 		{
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void Return(IOperand<TypeTemplate.TReturn> operand)
-		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

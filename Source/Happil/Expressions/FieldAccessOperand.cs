@@ -25,16 +25,6 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO: get rid of thus one; change tests accordingly
-		internal FieldAccessOperand(IOperand target, string name)
-		{
-			m_Target = target;
-			m_Field = null;
-			m_Name = name;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public override string ToString()
 		{
 			return string.Format("Field{{{0}}}", m_Name);

@@ -788,7 +788,7 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="38e632d2-96f8-4652-95b6-5c46e6730926" name="FieldWriterBase" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="38e632d2-96f8-4652-95b6-5c46e6730926" name="FieldWriterBase" isAbstract="true" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="84c5967b-37f2-4eb0-95e5-9d5cd02212c2" />
         <suppliersInternal>
           <dependency Id="6d74d6b9-507c-465e-8479-fbc05fdaa459" name="OwnerField">

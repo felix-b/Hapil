@@ -19,6 +19,16 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public AttributeArgumentWriter(Action<AttributeArgumentWriter<TAttribute>> values)
+		{
+			if ( values != null )
+			{
+				values(this);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public AttributeArgumentWriter<TAttribute> Arg<T>(T value)
 		{
 			if ( m_NamedFields.Count > 0 || m_NamedProperties.Count > 0 )

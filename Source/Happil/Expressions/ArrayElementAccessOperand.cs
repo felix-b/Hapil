@@ -9,6 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
+	//TODO:redesign:rename and move to Operands
 	internal class ArrayElementAccessOperand<T> : MutableOperand<T>
 	{
 		private readonly IOperand m_Array;

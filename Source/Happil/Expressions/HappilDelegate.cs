@@ -9,6 +9,7 @@ using Happil.Members;
 
 namespace Happil.Expressions
 {
+	//TODO:redesign:rename and move
 	internal class HappilDelegate<TDelegate> : Operand<TDelegate>
 	{
 		private readonly IOperand m_Target;

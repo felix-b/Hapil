@@ -21,13 +21,7 @@ namespace Happil.Writers
 
 		public AttributeWriter Set<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> arguments = null) where TAttribute : Attribute
 		{
-			var argumentWriter = new AttributeArgumentWriter<TAttribute>();
-
-			if ( arguments != null )
-			{
-				arguments(argumentWriter);
-			}
-
+			var argumentWriter = new AttributeArgumentWriter<TAttribute>(arguments);
 			var attributeBuilder = argumentWriter.GetAttributeBuilder();
 			m_ApplyAction(attributeBuilder);
 			

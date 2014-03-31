@@ -4448,7 +4448,7 @@ generated</body>
       <class
         Id="84c5967b-37f2-4eb0-95e5-9d5cd02212c2"
         name="FieldWriterBase"
-        isAbstract="false"
+        isAbstract="true"
         isLeaf="false"
         isActiveClass="false">
         <suppliersInternal>

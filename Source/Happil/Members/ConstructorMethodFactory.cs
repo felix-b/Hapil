@@ -23,10 +23,16 @@ namespace Happil.Members
 			ownerClass.DefineFactoryMethod(constructorBuilder, signature.ArgumentType);
 
 			m_Parameters = signature.ArgumentName.Select((argName, argIndex) => m_ConstructorBuilder.DefineParameter(
-				argIndex,
+				argIndex + 1,
 				ParameterAttributes.None,
 				argName)).ToArray();
+		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void SetAttribute(CustomAttributeBuilder attribute)
+		{
+			m_ConstructorBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -80,6 +86,16 @@ namespace Happil.Members
 			get
 			{
 				return m_Parameters;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override ParameterBuilder ReturnParameter
+		{
+			get
+			{
+				return null;
 			}
 		}
 
