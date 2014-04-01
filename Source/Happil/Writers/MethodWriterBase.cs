@@ -126,6 +126,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal protected abstract void Flush();
+		protected internal abstract void Flush();
 	}
 }

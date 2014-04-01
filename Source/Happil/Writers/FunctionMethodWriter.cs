@@ -11,9 +11,14 @@ namespace Happil.Writers
 {
 	public class FunctionMethodWriter<TReturn> : MethodWriterBase
 	{
-		public FunctionMethodWriter(MethodMember ownerMethod)
+		private readonly Action<FunctionMethodWriter<TReturn>> m_Script;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public FunctionMethodWriter(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>> script)
 			: base(ownerMethod)
 		{
+			m_Script = script;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,6 +39,10 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
+			if ( m_Script != null )
+			{
+				m_Script(this);
+			}
 		}
 	}
 }

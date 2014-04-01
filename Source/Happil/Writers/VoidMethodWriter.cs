@@ -10,9 +10,14 @@ namespace Happil.Writers
 {
 	public class VoidMethodWriter : MethodWriterBase
 	{
-		public VoidMethodWriter(MethodMember ownerMethod)
+		private readonly Action<VoidMethodWriter> m_Script;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public VoidMethodWriter(MethodMember ownerMethod, Action<VoidMethodWriter> script)
 			: base(ownerMethod)
 		{
+			m_Script = script;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +31,10 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
+			if ( m_Script != null )
+			{
+				m_Script(this);
+			}
 		}
 	}
 }

@@ -67,7 +67,7 @@ namespace Happil.Expressions
 				}
 			}
 
-			m_Operator.Emit(il, (ExpressionOperand<TOperand>)m_Operand);
+			m_Operator.Emit(il, (IOperand<TOperand>)m_Operand);
 
 			if ( !ShouldLeaveValueOnStack && dontLeaveValueOnStack == null )
 			{

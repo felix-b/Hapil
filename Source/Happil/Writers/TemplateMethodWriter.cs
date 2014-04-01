@@ -10,9 +10,14 @@ namespace Happil.Writers
 {
 	public class TemplateMethodWriter : MethodWriterBase
 	{
-		public TemplateMethodWriter(MethodMember ownerMethod)
+		private readonly Action<TemplateMethodWriter> m_Script;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TemplateMethodWriter(MethodMember ownerMethod, Action<TemplateMethodWriter> script)
 			: base(ownerMethod)
 		{
+			m_Script = script;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,6 +38,10 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
+			if ( m_Script != null )
+			{
+				m_Script(this);
+			}
 		}
 	}
 }

@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="UniqueNameSet.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\DefaultConstructorWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Events.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Properties.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Fields.cs" />
