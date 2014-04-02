@@ -75,6 +75,7 @@
     <Compile Include="Members\AnonymousMethodFactory.cs" />
     <Compile Include="Members\ClassType.cs" />
     <Compile Include="Members\ConstructorMethodFactory.cs" />
+    <Compile Include="Members\EventMember.cs" />
     <Compile Include="Members\FieldMember.cs" />
     <Compile Include="Members\MethodFactoryBase.cs" />
     <Compile Include="Members\PropertyMember.cs" />
@@ -90,13 +91,20 @@
     <Compile Include="Operands\Operand.cs" />
     <Compile Include="Operands\ThisOperand.cs" />
     <Compile Include="Statements\CallStatement.cs" />
+    <Compile Include="Statements\DoWhileStatement.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />
+    <Compile Include="Statements\ForeachStatement.cs" />
+    <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
+    <Compile Include="Statements\ILoopBody.cs" />
+    <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
     <Compile Include="Statements\StatementScope.cs" />
     <Compile Include="Statements\ThrowStatement.cs" />
+    <Compile Include="Statements\WhileStatement.cs" />
+    <Compile Include="Static.cs" />
     <Compile Include="TypeExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -113,8 +121,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UniqueNameSet.cs" />
+    <Compile Include="Writers\AutomaticEventWriter.cs" />
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />
     <Compile Include="Writers\PropertyWriter.cs" />
     <Compile Include="Writers\PropertyWriterBase.cs" />

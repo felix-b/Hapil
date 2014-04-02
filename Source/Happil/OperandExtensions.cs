@@ -37,16 +37,16 @@ namespace Happil
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//internal static HappilClass GetOwnerClass(this IHappilOperand operand)
+		//internal static HappilClass GetOwnerClass(this IOperand operand)
 		//{
-		//	return ((IHappilOperandInternals)operand).OwnerClass;
+		//	return ((IOperandInternals)operand).OwnerClass;
 		//}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//internal static HappilMethod GetOwnerMethod(this IHappilOperand operand)
+		//internal static HappilMethod GetOwnerMethod(this IOperand operand)
 		//{
-		//	return ((IHappilOperandInternals)operand).OwnerMethod;
+		//	return ((IOperandInternals)operand).OwnerMethod;
 		//}
 	}
 }

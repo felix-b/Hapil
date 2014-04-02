@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
+using Happil.Expressions;
 
 namespace Happil.Statements
 {
 	internal class ForStatement : 
 		LoopStatementBase, 
-		IHappilStatement, 
 		IHappilForWhileSyntax, 
 		IHappilForNextSyntax, 
 		IHappilForDoSyntax
 	{
-		private readonly List<IHappilStatement> m_PreconditionBlock;
-		private readonly List<IHappilStatement> m_NextBlock;
-		private readonly List<IHappilStatement> m_BodyBlock;
-		private IHappilOperand<bool> m_Condition;
+		private readonly List<StatementBase> m_PreconditionBlock;
+		private readonly List<StatementBase> m_NextBlock;
+		private readonly List<StatementBase> m_BodyBlock;
+		private IOperand<bool> m_Condition;
 		private Label m_LoopNextLabel;
 		private Label m_LoopEndLabel;
 
@@ -25,9 +26,9 @@ namespace Happil.Statements
 
 		public ForStatement(Action precondition)
 		{
-			m_PreconditionBlock = new List<IHappilStatement>();
-			m_NextBlock = new List<IHappilStatement>();
-			m_BodyBlock = new List<IHappilStatement>();
+			m_PreconditionBlock = new List<StatementBase>();
+			m_NextBlock = new List<StatementBase>();
+			m_BodyBlock = new List<StatementBase>();
 
 			using ( new StatementScope(m_PreconditionBlock) )
 			{
@@ -37,9 +38,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_LoopNextLabel = il.DefineLabel();
 			m_LoopEndLabel = il.DefineLabel();
@@ -81,7 +82,7 @@ namespace Happil.Statements
 
 		#region IHappilForWhileSyntax Members
 
-		public IHappilForNextSyntax While(IHappilOperand<bool> condition)
+		public IHappilForNextSyntax While(IOperand<bool> condition)
 		{
 			m_Condition = condition;
 			StatementScope.Current.Consume(condition);
@@ -110,7 +111,7 @@ namespace Happil.Statements
 
 		#region IHappilForDoSyntax Members
 
-		public void Do(Action<IHappilLoopBody> body)
+		public void Do(Action<ILoopBody> body)
 		{
 			using ( new StatementScope(m_BodyBlock) )
 			{
@@ -145,7 +146,7 @@ namespace Happil.Statements
 
 	public interface IHappilForWhileSyntax
 	{
-		IHappilForNextSyntax While(IHappilOperand<bool> condition);
+		IHappilForNextSyntax While(IOperand<bool> condition);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -159,21 +160,21 @@ namespace Happil.Statements
 
 	public interface IHappilForDoSyntax
 	{
-		void Do(Action<IHappilLoopBody> body);
+		void Do(Action<ILoopBody> body);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	public class HappilForShortSyntax
 	{
-		private readonly HappilMethod m_Method;
-		private readonly HappilOperand<int> m_From;
-		private readonly HappilOperand<int> m_To;
+		private readonly MethodMember m_Method;
+		private readonly Operand<int> m_From;
+		private readonly Operand<int> m_To;
 		private readonly int m_Increment;
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilForShortSyntax(HappilMethod method, HappilOperand<int> from, HappilOperand<int> to, int increment)
+		internal HappilForShortSyntax(MethodMember method, Operand<int> from, Operand<int> to, int increment)
 		{
 			m_Method = method;
 			m_From = from;
@@ -186,9 +187,9 @@ namespace Happil.Statements
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Do(Action<IHappilLoopBody, HappilLocal<int>> body)
+		public void Do(Action<ILoopBody, LocalOperand<int>> body)
 		{
-			var counter = m_Method.Local<int>();
+			var counter = m_Method.AddLocal<int>();
 			ForStatement statement;
 
 			if ( m_Increment > 0 )
@@ -206,7 +207,7 @@ namespace Happil.Statements
 				throw new ArgumentException("Increment cannot be zero.");
 			}
 
-			statement.Next(() => counter.Assign(counter + m_Method.Const(m_Increment)));
+			statement.Next(() => counter.Assign(counter + new ConstantOperand<int>(m_Increment)));
 			statement.Do(loop => {
 				body(loop, counter);
 			});

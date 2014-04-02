@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil
@@ -20,7 +20,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Void<TArg1>(Action<TArg1> member, IHappilOperand<TArg1> arg1)
+		public static void Void<TArg1>(Action<TArg1> member, IOperand<TArg1> arg1)
 		{
 			var method = GetValidStaticMethod(member);
 			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1));
@@ -28,7 +28,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Void<TArg1, TArg2>(Action<TArg1, TArg2> member, IHappilOperand<TArg1> arg1, IHappilOperand<TArg2> arg2)
+		public static void Void<TArg1, TArg2>(Action<TArg1, TArg2> member, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
 		{
 			var method = GetValidStaticMethod(member);
 			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2));
@@ -38,9 +38,9 @@ namespace Happil
 
 		public static void Void<TArg1, TArg2, TArg3>(
 			Action<TArg1, TArg2, TArg3> member, 
-			IHappilOperand<TArg1> arg1, 
-			IHappilOperand<TArg2> arg2, 
-			IHappilOperand<TArg3> arg3)
+			IOperand<TArg1> arg1, 
+			IOperand<TArg2> arg2, 
+			IOperand<TArg3> arg3)
 		{
 			var method = GetValidStaticMethod(member);
 			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3));
@@ -48,65 +48,65 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TReturn> Func<TReturn>(Func<TReturn> member)
+		public static Operand<TReturn> Func<TReturn>(Func<TReturn> member)
 		{
 			var method = GetValidStaticMethod(member);
-			return new HappilUnaryExpression<object, TReturn>(null, new UnaryOperators.OperatorCall<object>(method), null);
+			return new UnaryExpressionOperand<object, TReturn>(new UnaryOperators.OperatorCall<object>(method), null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TReturn> Func<TArg1, TReturn>(Func<TArg1, TReturn> member, IHappilOperand<TArg1> arg1)
+		public static Operand<TReturn> Func<TArg1, TReturn>(Func<TArg1, TReturn> member, IOperand<TArg1> arg1)
 		{
 			var method = GetValidStaticMethod(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1);
-			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TReturn> Func<TArg1, TArg2, TReturn>(
+		public static Operand<TReturn> Func<TArg1, TArg2, TReturn>(
 			Func<TArg1, TArg2, TReturn> member, 
-			IHappilOperand<TArg1> arg1, 
-			IHappilOperand<TArg2> arg2)
+			IOperand<TArg1> arg1, 
+			IOperand<TArg2> arg2)
 		{
 			var method = GetValidStaticMethod(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method,arg1, arg2);
 
-			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
 			Func<TArg1, TArg2, TArg3, TReturn> member,
-			IHappilOperand<TArg1> arg1,
-			IHappilOperand<TArg2> arg2,
-			IHappilOperand<TArg3> arg3)
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
 		{
 			var method = GetValidStaticMethod(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
 
-			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
+		public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
 			Expression<Func<TArg1, TArg2, TArg3, TReturn>> member,
-			IHappilOperand<TArg1> arg1,
-			IHappilOperand<TArg2> arg2,
-			IHappilOperand<TArg3> arg3)
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
 		{
 			var method = Helpers.ResolveMethodFromLambda(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
 
-			return new HappilUnaryExpression<object, TReturn>(null, @operator, null);
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<TProp> Prop<TProp>(Expression<Func<TProp>> propertyOrField)
+		public static MutableOperand<TProp> Prop<TProp>(Expression<Func<TProp>> propertyOrField)
 		{
 			var member = Helpers.GetMemberFromLambda(propertyOrField);
 

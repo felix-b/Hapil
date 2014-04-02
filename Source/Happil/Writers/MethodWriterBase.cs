@@ -5,6 +5,7 @@ using System.Text;
 using Happil.Expressions;
 using Happil.Members;
 using Happil.Operands;
+using Happil.Statements;
 
 namespace Happil.Writers
 {
@@ -53,6 +54,29 @@ namespace Happil.Writers
 		public Operand<T> Const<T>(T constantValue)
 		{
 			return new ConstantOperand<T>(constantValue);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LocalOperand<T> Local<T>()
+		{
+			return new LocalOperand<T>(m_OwnerMethod);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LocalOperand<T> Local<T>(IOperand<T> initialValue)
+		{
+			var local = new LocalOperand<T>(m_OwnerMethod);
+			local.Assign(initialValue);
+			return local;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LocalOperand<T> Local<T>(T initialValueConst)
+		{
+			return Local<T>(new ConstantOperand<T>(initialValueConst));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,6 +140,13 @@ namespace Happil.Writers
 		public Argument<T> Arg8<T>()
 		{
 			return new Argument<T>(m_OwnerMethod, 8);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilDoWhileSyntax Do(Action<ILoopBody> body)
+		{
+			return OwnerMethod.AddStatement(new DoWhileStatement(body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

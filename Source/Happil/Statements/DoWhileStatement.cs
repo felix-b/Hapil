@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Expressions;
 
 namespace Happil.Statements
 {
-	internal class DoWhileStatement : LoopStatementBase, IHappilStatement, IHappilDoWhileSyntax
+	internal class DoWhileStatement : LoopStatementBase, IHappilDoWhileSyntax
 	{
-		private readonly List<IHappilStatement> m_BodyBlock;
-		private IHappilOperand<bool> m_Condition = null;
+		private readonly List<StatementBase> m_BodyBlock;
+		private IOperand<bool> m_Condition = null;
 		private Label m_LoopStartLabel;
 		private Label m_LoopEndLabel;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public DoWhileStatement(Action<IHappilLoopBody> body)
+		public DoWhileStatement(Action<ILoopBody> body)
 		{
-			m_BodyBlock = new List<IHappilStatement>();
+			m_BodyBlock = new List<StatementBase>();
 
 			using ( new StatementScope(m_BodyBlock) )
 			{
@@ -28,9 +29,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_LoopStartLabel = il.DefineLabel();
 			m_LoopEndLabel = il.DefineLabel();
@@ -60,7 +61,7 @@ namespace Happil.Statements
 
 		#region IHappilDoWhileSyntax Members
 
-		public void While(IHappilOperand<bool> condition)
+		public void While(IOperand<bool> condition)
 		{
 			m_Condition = condition;
 			StatementScope.Current.Consume(condition);
@@ -93,6 +94,6 @@ namespace Happil.Statements
 
 	public interface IHappilDoWhileSyntax
 	{
-		void While(IHappilOperand<bool> condition);
+		void While(IOperand<bool> condition);
 	}
 }

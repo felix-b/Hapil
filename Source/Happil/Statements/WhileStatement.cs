@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Expressions;
 
 namespace Happil.Statements
 {
-	internal class WhileStatement : LoopStatementBase, IHappilStatement, IHappilWhileSyntax
+	internal class WhileStatement : LoopStatementBase, IHappilWhileSyntax
 	{
-		private readonly IHappilOperand<bool> m_Condition;
-		private readonly List<IHappilStatement> m_BodyBlock;
+		private readonly IOperand<bool> m_Condition;
+		private readonly List<StatementBase> m_BodyBlock;
 		private Label m_LoopStartLabel;
 		private Label m_LoopEndLabel;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public WhileStatement(IHappilOperand<bool> condition)
+		public WhileStatement(IOperand<bool> condition)
 		{
 			m_Condition = condition;
-			m_BodyBlock = new List<IHappilStatement>();
+			m_BodyBlock = new List<StatementBase>();
 
 			StatementScope.Current.Consume(condition);
 		}
@@ -28,7 +29,7 @@ namespace Happil.Statements
 
 		#region IHappilStatement Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_LoopStartLabel = il.DefineLabel();
 			m_LoopEndLabel = il.DefineLabel();
@@ -55,7 +56,7 @@ namespace Happil.Statements
 
 		#region IHappilWhileSyntax Members
 
-		public void Do(Action<IHappilLoopBody> body)
+		public void Do(Action<ILoopBody> body)
 		{
 			using ( new StatementScope(m_BodyBlock) )
 			{
@@ -90,6 +91,6 @@ namespace Happil.Statements
 
 	public interface IHappilWhileSyntax
 	{
-		void Do(Action<IHappilLoopBody> body);
+		void Do(Action<ILoopBody> body);
 	}
 }

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Expressions;
 
 namespace Happil.Statements
 {
-	internal abstract class LoopStatementBase : IHappilLoopBody
+	internal abstract class LoopStatementBase : StatementBase, ILoopBody
 	{
 		private readonly StatementScope m_HomeScope;
 
@@ -49,7 +50,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ContinueStatement : IHappilStatement, ILeaveStatement
+		private class ContinueStatement : StatementBase, ILeaveStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
 
@@ -64,7 +65,7 @@ namespace Happil.Statements
 
 			#region IHappilStatement Members
 
-			public void Emit(ILGenerator il)
+			public override void Emit(ILGenerator il)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopStartLabel);
 			}
@@ -88,7 +89,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class BreakStatement : IHappilStatement, ILeaveStatement
+		private class BreakStatement : StatementBase, ILeaveStatement
 		{
 			private readonly LoopStatementBase m_OwnerLoop;
 
@@ -103,7 +104,7 @@ namespace Happil.Statements
 
 			#region IHappilStatement Members
 
-			public void Emit(ILGenerator il)
+			public override void Emit(ILGenerator il)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopEndLabel);
 			}

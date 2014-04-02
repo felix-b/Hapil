@@ -340,7 +340,7 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//TODO:redesign
-		//public static HappilLocal<T[]> BuildArrayLocal<T>(params IHappilOperand<T>[] values)
+		//public static HappilLocal<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
 		//{
 		//	var method = StatementScope.Current.OwnerMethod;
 		//	var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(values.Length)));

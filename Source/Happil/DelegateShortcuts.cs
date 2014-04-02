@@ -14,7 +14,7 @@ namespace Happil
 	public static class DelegateShortcuts
 	{
 		//TODO:redesign
-		//public static void Invoke(this IHappilOperand<TypeTemplate.TEventHandler> eventDelegate, IHappilOperand sender, IHappilOperand eventArgs)
+		//public static void Invoke(this IOperand<TypeTemplate.TEventHandler> eventDelegate, IOperand sender, IOperand eventArgs)
 		//{
 		//	StatementScope.Current.AddStatement(new CallStatement(
 		//		eventDelegate, 
@@ -24,14 +24,14 @@ namespace Happil
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public static void Invoke(this IHappilOperand<Action> action)
+		//public static void Invoke(this IOperand<Action> action)
 		//{
 		//	StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action>().Invoke));
 		//}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public static void Invoke<TArg>(this IHappilOperand<Action<TArg>> action, IHappilOperand<TArg> arg)
+		//public static void Invoke<TArg>(this IOperand<Action<TArg>> action, IOperand<TArg> arg)
 		//{
 		//	StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action<TArg>>().Invoke, arg));
 		//}
@@ -39,9 +39,9 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static void Invoke<TArg1, TArg2>(
-		//	this IHappilOperand<Action<TArg1, TArg2>> action, 
-		//	IHappilOperand<TArg1> arg1, 
-		//	IHappilOperand<TArg2> arg2)
+		//	this IOperand<Action<TArg1, TArg2>> action, 
+		//	IOperand<TArg1> arg1, 
+		//	IOperand<TArg2> arg2)
 		//{
 		//	StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action<TArg1, TArg2>>().Invoke, arg1, arg2));
 		//}
@@ -49,17 +49,17 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static void Invoke<TArg1, TArg2, TArg3>(
-		//	this IHappilOperand<Action<TArg1, TArg2, TArg3>> action, 
-		//	IHappilOperand<TArg1> arg1, 
-		//	IHappilOperand<TArg2> arg2,
-		//	IHappilOperand<TArg3> arg3)
+		//	this IOperand<Action<TArg1, TArg2, TArg3>> action, 
+		//	IOperand<TArg1> arg1, 
+		//	IOperand<TArg2> arg2,
+		//	IOperand<TArg3> arg3)
 		//{
 		//	StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action<TArg1, TArg2, TArg3>>().Invoke, arg1, arg2, arg3));
 		//}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public static HappilOperand<TResult> Invoke<TResult>(this IHappilOperand<Func<TResult>> func)
+		//public static HappilOperand<TResult> Invoke<TResult>(this IOperand<Func<TResult>> func)
 		//{
 		//	var @operator = new UnaryOperators.OperatorCall<Func<TResult>>(GetReflectionCache<Func<TResult>>().Invoke);
 		//	return new HappilUnaryExpression<Func<TResult>, TResult>(null, @operator, func);
@@ -68,8 +68,8 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static HappilOperand<TResult> Invoke<TArg, TResult>(
-		//	this IHappilOperand<Func<TArg, TResult>> func,
-		//	IHappilOperand<TArg> arg)
+		//	this IOperand<Func<TArg, TResult>> func,
+		//	IOperand<TArg> arg)
 		//{
 		//	var @operator = new UnaryOperators.OperatorCall<Func<TArg, TResult>>(GetReflectionCache<Func<TArg, TResult>>().Invoke, arg);
 		//	return new HappilUnaryExpression<Func<TArg, TResult>, TResult>(null, @operator, func);
@@ -78,9 +78,9 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static HappilOperand<TResult> Invoke<TArg1, TArg2, TResult>(
-		//	this IHappilOperand<Func<TArg1, TArg2, TResult>> func,
-		//	IHappilOperand<TArg1> arg1,
-		//	IHappilOperand<TArg2> arg2)
+		//	this IOperand<Func<TArg1, TArg2, TResult>> func,
+		//	IOperand<TArg1> arg1,
+		//	IOperand<TArg2> arg2)
 		//{
 		//	var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TResult>>(
 		//		GetReflectionCache<Func<TArg1, TArg2, TResult>>().Invoke, 
@@ -92,10 +92,10 @@ namespace Happil
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static HappilOperand<TResult> Invoke<TArg1, TArg2, TArg3, TResult>(
-		//	this IHappilOperand<Func<TArg1, TArg2, TArg3, TResult>> func,
-		//	IHappilOperand<TArg1> arg1,
-		//	IHappilOperand<TArg2> arg2,
-		//	IHappilOperand<TArg3> arg3)
+		//	this IOperand<Func<TArg1, TArg2, TArg3, TResult>> func,
+		//	IOperand<TArg1> arg1,
+		//	IOperand<TArg2> arg2,
+		//	IOperand<TArg3> arg3)
 		//{
 		//	var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TResult>>(
 		//		GetReflectionCache<Func<TArg1, TArg2, TArg3, TResult>>().Invoke,
