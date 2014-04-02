@@ -126,8 +126,10 @@ namespace Happil.Members
 				writer.Flush();
 			}
 
-			foreach ( var member in m_Members )
+			for ( int i = 0 ; i < m_Members.Count ; i++ )
 			{
+				var member = m_Members[i];
+
 				using ( member.CreateTypeTemplateScope() )
 				{
 					member.Write();

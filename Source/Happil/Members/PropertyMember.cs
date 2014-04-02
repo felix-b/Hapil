@@ -36,7 +36,6 @@ namespace Happil.Members
 			{
 				m_GetterMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, getterDeclaration));
 				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
-				ownerClass.AddMember(m_GetterMethod);
 			}
 
 			var setterDeclaration = declaration.GetSetMethod();
@@ -45,7 +44,6 @@ namespace Happil.Members
 			{
 				m_SetterMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, setterDeclaration));
 				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
-				ownerClass.AddMember(m_SetterMethod);
 			}
 		}
 
@@ -127,6 +125,30 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal override IDisposable CreateTypeTemplateScope()
+		{
+			var indexParameters = m_Declaration.GetIndexParameters();
+
+			switch ( indexParameters.Length )
+			{
+				case 0:
+					return TypeTemplate.CreateScope<TypeTemplate.TProperty>(m_Declaration.PropertyType);
+				case 1:
+					return TypeTemplate.CreateScope(
+						typeof(TypeTemplate.TProperty), m_Declaration.PropertyType,
+						typeof(TypeTemplate.TIndex1), indexParameters[0].ParameterType);
+				case 2:
+					return TypeTemplate.CreateScope(
+						typeof(TypeTemplate.TProperty), m_Declaration.PropertyType,
+						typeof(TypeTemplate.TIndex1), indexParameters[0].ParameterType,
+						typeof(TypeTemplate.TIndex2), indexParameters[1].ParameterType);
+				default:
+					throw new NotSupportedException("Properties with more than 2 indexer parameters are not supported.");
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal void AddWriter(PropertyWriterBase writer)
 		{
 			m_Writers.Add(writer);
@@ -140,13 +162,43 @@ namespace Happil.Members
 			{
 				writer.Flush();
 			}
+
+			if ( m_GetterMethod != null )
+			{
+				using ( m_GetterMethod.CreateTypeTemplateScope() )
+				{
+					m_GetterMethod.Write();
+				}
+			}
+
+			if ( m_SetterMethod != null )
+			{
+				using ( m_SetterMethod.CreateTypeTemplateScope() )
+				{
+					m_SetterMethod.Write();
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal override void Compile()
 		{
-			// nothing
+			if ( m_GetterMethod != null )
+			{
+				using ( m_GetterMethod.CreateTypeTemplateScope() )
+				{
+					m_GetterMethod.Compile();
+				}
+			}
+
+			if ( m_SetterMethod != null )
+			{
+				using ( m_SetterMethod.CreateTypeTemplateScope() )
+				{
+					m_SetterMethod.Compile();
+				}
+			}
 		}
 	}
 }

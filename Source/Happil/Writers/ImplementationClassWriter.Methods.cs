@@ -256,7 +256,7 @@ namespace Happil.Writers
 		public interface IMethodSelectorBase : IEnumerable<MethodInfo>
 		{
 			ImplementationClassWriter<TBase> ImplementEmpty();
-			ImplementationClassWriter<TBase> Throw<TException>(string message);
+			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
 			ImplementationClassWriter<TBase> ForEach(Action<MethodInfo> action);
 		}
 
@@ -420,8 +420,7 @@ namespace Happil.Writers
 
 			ImplementationClassWriter<TBase> IMethodSelectorBase.Throw<TException>(string message)
 			{
-				//TODO:redesign
-				throw new NotImplementedException();
+				return DefineMethodImplementations(method => new ThrowMethodWriter(method, typeof(TException), message));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

@@ -96,6 +96,7 @@
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
     <Compile Include="Statements\StatementScope.cs" />
+    <Compile Include="Statements\ThrowStatement.cs" />
     <Compile Include="TypeExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -124,6 +125,7 @@
     <Compile Include="Writers\ImplementationClassWriter.Constructors.cs" />
     <Compile Include="Writers\FunctionMethodWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Methods.cs" />
+    <Compile Include="Writers\ThrowMethodWriter.cs" />
     <Compile Include="Writers\VoidMethodWriter.cs" />
     <Compile Include="Writers\FieldWriter.cs" />
     <Compile Include="Writers\EmptyMethodWriter.cs" />

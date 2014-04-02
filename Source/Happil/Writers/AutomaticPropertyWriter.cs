@@ -11,18 +11,24 @@ namespace Happil.Writers
 		public AutomaticPropertyWriter(PropertyMember ownerProperty)
 			: base(ownerProperty)
 		{
-			if ( ownerProperty.GetterMethod != null )
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected internal override void Flush()
+		{
+			if ( OwnerProperty.GetterMethod != null )
 			{
 				var getter = new TemplateMethodWriter(
-					OwnerProperty.GetterMethod, 
-					w => w.Return(ownerProperty.BackingField.AsOperand<TypeTemplate.TReturn>()));
+					OwnerProperty.GetterMethod,
+					w => w.Return(OwnerProperty.BackingField.AsOperand<TypeTemplate.TReturn>()));
 			}
 
-			if ( ownerProperty.SetterMethod != null )
+			if ( OwnerProperty.SetterMethod != null )
 			{
 				var setter = new TemplateMethodWriter(
 					OwnerProperty.SetterMethod,
-					w => ownerProperty.BackingField.AsOperand<TypeTemplate.TArg1>().Assign(w.Arg1<TypeTemplate.TArg1>()));
+					w => OwnerProperty.BackingField.AsOperand<TypeTemplate.TProperty>().Assign(w.Arg1<TypeTemplate.TProperty>()));
 			}
 		}
 	}

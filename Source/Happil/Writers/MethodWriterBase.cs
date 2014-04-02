@@ -50,6 +50,13 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Operand<T> Const<T>(T constantValue)
+		{
+			return new ConstantOperand<T>(constantValue);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public Argument<T> Argument<T>(int position)
 		{
 			return new Argument<T>(m_OwnerMethod, (byte)position);

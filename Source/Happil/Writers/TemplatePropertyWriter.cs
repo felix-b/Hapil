@@ -9,10 +9,21 @@ namespace Happil.Writers
 {
 	public class TemplatePropertyWriter : PropertyWriterBase
 	{
-		public TemplatePropertyWriter(PropertyMember ownerProperty, Action<TemplatePropertyWriter> script)
+		public TemplatePropertyWriter(
+			PropertyMember ownerProperty,
+			Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterGetter> getterScript,
+			Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterSetter> setterScript)
 			: base(ownerProperty)
 		{
-			script(this);
+			if ( getterScript != null )
+			{
+				getterScript(this);
+			}
+
+			if ( setterScript != null )
+			{
+				setterScript(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

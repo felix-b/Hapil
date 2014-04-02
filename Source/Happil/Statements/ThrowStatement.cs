@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Happil.Statements
 {
-	internal class ThrowStatement : IHappilStatement
+	internal class ThrowStatement : StatementBase
 	{
 		private readonly Type m_ExceptionType;
 		private readonly string m_Message;
@@ -35,7 +35,7 @@ namespace Happil.Statements
 
 		#region IHappilStatement Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			if ( m_Message != null )
 			{

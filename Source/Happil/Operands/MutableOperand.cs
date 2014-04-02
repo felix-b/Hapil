@@ -30,20 +30,17 @@ namespace Happil.Operands
 			}
 			else
 			{
-				throw new NotImplementedException();
-				//TODO:redesign
-				//return new HappilBinaryExpression<T, T>(
-				//	base.OwnerMethod, 
-				//	@operator: new BinaryOperators.OperatorAssign<T>(), 
-				//	left: this, 
-				//	right: value);
+				return new BinaryExpressionOperand<T, T>(
+					@operator: new BinaryOperators.OperatorAssign<T>(),
+					left: this,
+					right: value);
 			}
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//TODO:redesign
-		//public HappilOperand<T> AssignConst(T constantValue)
+		//public Operand<T> AssignConst(T constantValue)
 		//{
 		//	return new HappilBinaryExpression<T, T>(
 		//		base.OwnerMethod,
@@ -54,26 +51,22 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public HappilOperand<T> PostfixPlusPlus()
-		//{
-		//	return new HappilUnaryExpression<T, T>(
-		//		base.OwnerMethod,
-		//		@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Postfix, positive: true),
-		//		operand: this,
-		//		position: UnaryOperatorPosition.Postfix);
-		//}
+		public Operand<T> PostfixPlusPlus()
+		{
+			return new UnaryExpressionOperand<T, T>(
+				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Postfix, positive: true),
+				operand: this,
+				position: UnaryOperatorPosition.Postfix);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public HappilOperand<T> PostfixMinusMinus()
-		//{
-		//	return new HappilUnaryExpression<T, T>(
-		//		base.OwnerMethod,
-		//		@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Postfix, positive: false),
-		//		operand: this,
-		//		position: UnaryOperatorPosition.Postfix);
-		//}
+		public Operand<T> PostfixMinusMinus()
+		{
+			return new UnaryExpressionOperand<T, T>(
+				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Postfix, positive: false),
+				operand: this,
+				position: UnaryOperatorPosition.Postfix);
+		}
 	}
 }
