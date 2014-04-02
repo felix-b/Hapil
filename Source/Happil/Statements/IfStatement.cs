@@ -3,41 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
-	internal class IfStatement : IHappilStatement, IHappilIfBody, IHappilIfBodyThen
+	internal class IfStatement : StatementBase, IHappilIfBody, IHappilIfBodyThen
 	{
 		private readonly bool m_ConditionIsAlwaysTrue;
-		private readonly IHappilOperand<bool> m_Condition;
-		private readonly List<IHappilStatement> m_ThenBlock;
-		private readonly List<IHappilStatement> m_ElseBlock;
+		private readonly IOperand<bool> m_Condition;
+		private readonly List<StatementBase> m_ThenBlock;
+		private readonly List<StatementBase> m_ElseBlock;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IfStatement(IHappilOperand<bool> condition)
+		public IfStatement(IOperand<bool> condition)
 			: this(condition, conditionIsAlwaysTrue: false)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IfStatement(IHappilOperand<bool> condition, bool conditionIsAlwaysTrue)
+		public IfStatement(IOperand<bool> condition, bool conditionIsAlwaysTrue)
 		{
 			m_Condition = condition;
 			m_ConditionIsAlwaysTrue = conditionIsAlwaysTrue;
-			m_ThenBlock = new List<IHappilStatement>();
-			m_ElseBlock = new List<IHappilStatement>();
+			m_ThenBlock = new List<StatementBase>();
+			m_ElseBlock = new List<StatementBase>();
 
 			StatementScope.Current.Consume(condition);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			if ( m_ConditionIsAlwaysTrue )
 			{
@@ -81,7 +81,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilIfBody ElseIf(IHappilOperand<bool> condition)
+		public IHappilIfBody ElseIf(IOperand<bool> condition)
 		{
 			var nestedIf = new IfStatement(condition);
 			m_ElseBlock.Add(nestedIf);
@@ -149,7 +149,7 @@ namespace Happil.Statements
 
 	public interface IHappilIfBodyThen
 	{
-		IHappilIfBody ElseIf(IHappilOperand<bool> condition);
+		IHappilIfBody ElseIf(IOperand<bool> condition);
 		void Else(Action elseBodyDefinition);
 	}
 }

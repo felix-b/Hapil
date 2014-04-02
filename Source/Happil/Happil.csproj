@@ -50,6 +50,9 @@
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
     <Compile Include="Expressions\FieldAccessOperand.cs" />
+    <Compile Include="Expressions\HappilAnonymousDelegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Expressions\HappilDelegate.cs" />
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
@@ -74,6 +77,7 @@
     <Compile Include="Members\ConstructorMethodFactory.cs" />
     <Compile Include="Members\FieldMember.cs" />
     <Compile Include="Members\MethodFactoryBase.cs" />
+    <Compile Include="Members\PropertyMember.cs" />
     <Compile Include="Members\TypeMemberCache.cs" />
     <Compile Include="Members\VirtualMethodFactory.cs" />
     <Compile Include="OperandExtensions.cs" />
@@ -85,7 +89,9 @@
     <Compile Include="Operands\MutableOperand.cs" />
     <Compile Include="Operands\Operand.cs" />
     <Compile Include="Operands\ThisOperand.cs" />
+    <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />
+    <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
@@ -106,7 +112,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UniqueNameSet.cs" />
+    <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\TemplatePropertyWriter.cs" />
+    <Compile Include="Writers\PropertyWriter.cs" />
+    <Compile Include="Writers\PropertyWriterBase.cs" />
     <Compile Include="Writers\DefaultConstructorWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Events.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Properties.cs" />

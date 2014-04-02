@@ -5,27 +5,27 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
-	internal class CallStatement : IHappilStatement
+	internal class CallStatement : StatementBase
 	{
-		private readonly IHappilOperand m_Target;
+		private readonly IOperand m_Target;
 		private readonly MethodBase m_Method;
-		private readonly IHappilOperand[] m_Arguments;
+		private readonly IOperand[] m_Arguments;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CallStatement(IHappilOperand target, MethodBase method, params IHappilOperand[] arguments)
+		public CallStatement(IOperand target, MethodBase method, params IOperand[] arguments)
 		{
 			var scope = StatementScope.Current;
 	
-			scope.Consume(target as IHappilExpression);
+			scope.Consume(target);
 
 			foreach ( var argument in arguments )
 			{
-				scope.Consume(argument as IHappilExpression);			
+				scope.Consume(argument);			
 			}
 
 			m_Target = target;
@@ -35,9 +35,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			Helpers.EmitCall(il, m_Target, m_Method, m_Arguments);
 		}

@@ -7,6 +7,7 @@ using System.Text;
 using Happil.Operands;
 using Happil.Members;
 using Happil.Statements;
+using Happil.Writers;
 
 namespace Happil.Expressions
 {
@@ -16,15 +17,15 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAnonymousDelegate(ClassType happilClass, Action<MethodWriter<TReturn>, HappilArgument<TArg1>> body)
-			: base(ownerMethod: null)
+		public HappilAnonymousDelegate(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			m_Method = new HappilMethod<TReturn>(happilClass, "<Anonymous>", typeof(TReturn), new[] { typeof(TArg1) });
+			var methodFactory = AnonymousMethodFactory.InstanceMethod(classType, new[] { typeof(TArg1) }, typeof(TReturn));
+			m_Method = new MethodMember(classType, methodFactory);
 
-			happilClass.AddUndeclaredMember(m_Method);
-			m_Method.AddBodyDefinition(() => {
-				body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0));
-			});
+			classType.AddMember(m_Method);
+			var writer = new FunctionMethodWriter<TReturn>(
+				m_Method, 
+				w => body(w, w.Arg1<TArg1>()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ namespace Happil.Expressions
 		protected override void OnEmitLoad(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ldnull);
-			il.Emit(OpCodes.Ldftn, m_Method.MethodBuilder);
+			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
 
@@ -71,21 +72,21 @@ namespace Happil.Expressions
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : HappilOperand<Func<TArg1, TArg2, TReturn>>, IHappilDelegate
+	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>
 	{
-		private readonly HappilMethod<TReturn> m_Method;
+		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAnonymousDelegate(HappilClass happilClass, Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
-			: base(ownerMethod: null)
+		public HappilAnonymousDelegate(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			m_Method = new HappilMethod<TReturn>(happilClass, "<Anonymous>", typeof(TReturn), new[] { typeof(TArg1), typeof(TArg2) });
-			m_Method.AddBodyDefinition(() => {
-				body(m_Method, new HappilArgument<TArg1>(m_Method, index: 0), new HappilArgument<TArg2>(m_Method, index: 1));
-			});
+			var methodFactory = AnonymousMethodFactory.InstanceMethod(classType, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
+			m_Method = new MethodMember(classType, methodFactory);
 
-			happilClass.AddUndeclaredMember(m_Method);
+			classType.AddMember(m_Method);
+			var writer = new FunctionMethodWriter<TReturn>(
+				m_Method, 
+				w => body(w, w.Arg1<TArg1>(), w.Arg2<TArg2>()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,7 +101,7 @@ namespace Happil.Expressions
 		protected override void OnEmitLoad(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ldnull);
-			il.Emit(OpCodes.Ldftn, m_Method.MethodBuilder);
+			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
 

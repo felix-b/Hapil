@@ -23,6 +23,15 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
+			where TAttribute : Attribute
+		{
+			var builder = new AttributeArgumentWriter<TAttribute>(values);
+			m_OwnerMethod.MethodFactory.SetAttribute(builder.GetAttributeBuilder());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public Operand<T> Default<T>()
 		{
 			var actualType = TypeTemplate.Resolve<T>();
@@ -41,9 +50,9 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Argument<T> Argument<T>(byte index)
+		public Argument<T> Argument<T>(int position)
 		{
-			return new Argument<T>(m_OwnerMethod, index);
+			return new Argument<T>(m_OwnerMethod, (byte)position);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -12,8 +12,6 @@ namespace Happil.Writers
 {
 	public partial class ImplementationClassWriter<TBase> : ClassWriterBase
 	{
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public ITemplateMethodSelector AllMethods(Func<MethodInfo, bool> where = null)
 		{
 			return new MethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, TypeMemberCache.Of<TBase>().ImplementableMethods.SelectIf(where));
