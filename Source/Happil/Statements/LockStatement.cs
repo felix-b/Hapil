@@ -5,33 +5,33 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
-using Happil.Fluent;
+using Happil.Operands;
 
 // ReSharper disable ConvertToLambdaExpression
 // ReSharper disable ConvertClosureToMethodGroup
 
 namespace Happil.Statements
 {
-	internal class LockStatement : IHappilStatement, IHappilLockSyntax
+	internal class LockStatement : StatementBase, IHappilLockSyntax
 	{
-		private readonly IHappilOperand<object> m_SyncRoot;
+		private readonly IOperand<object> m_SyncRoot;
 		private readonly int m_MillisecondsTimeout;
-		private readonly List<IHappilStatement> m_BodyBlock;
+		private readonly List<StatementBase> m_BodyBlock;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public LockStatement(IHappilOperand<object> syncRoot, int millisecondsTimeout)
+		public LockStatement(IOperand<object> syncRoot, int millisecondsTimeout)
 		{
 			m_SyncRoot = syncRoot;
 			m_MillisecondsTimeout = millisecondsTimeout;
-			m_BodyBlock = new List<IHappilStatement>();
+			m_BodyBlock = new List<StatementBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			foreach ( var statement in m_BodyBlock )
 			{
@@ -51,7 +51,7 @@ namespace Happil.Statements
 
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
-				var m = scope.OwnerMethod;
+				var m = scope.OwnerMethod.TransparentWriter;
 
 				m.If(!Static.Func(Monitor.TryEnter, m_SyncRoot, m.Const(m_MillisecondsTimeout))).Then(() => 
 					m.Throw<TimeoutException>(timeoutExceptionMessage)

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Statements;
 
 namespace Happil.Operands
 {
@@ -123,6 +126,216 @@ namespace Happil.Operands
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void(Expression<Func<T, Action>> member)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void(Func<MethodInfo, bool> methodSelector)
+		{
+			var method = this.Members.SelectVoids(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void(MethodInfo method)
+		{
+			ValidateMemberIsMethodOfType(method);
+			StatementScope.Current.AddStatement(new CallStatement(this, method));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1>(Expression<Func<T, Action<TArg1>>> member, IOperand<TArg1> arg1)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1>(MethodInfo method, IOperand<TArg1> arg1)
+		{
+			ValidateMemberIsMethodOfType(method);
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
+		{
+			var method = this.Members.SelectVoids<TArg1>(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2>(Expression<Func<T, Action<TArg1, TArg2>>> member, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
+		{
+			var method = this.Members.SelectVoids<TArg1, TArg2>(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2, TArg3>(
+			Expression<Func<T, Action<TArg1, TArg2, TArg3>>> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2, arg3));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Void<TArg1, TArg2, TArg3>(
+			Func<MethodInfo, bool> methodSelector,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
+		{
+			var method = this.Members.SelectVoids<TArg1, TArg2>(methodSelector).Single();
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TReturn>(Expression<Func<T, Func<TReturn>>> member)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TReturn>(Func<MethodInfo, bool> methodSelector)
+		{
+			var method = this.Members.SelectFuncs<TReturn>(methodSelector).Single();
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TReturn>(MethodInfo method)
+		{
+			ValidateMemberIsMethodOfType(method);
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TReturn>(Expression<Func<T, Func<TArg1, TReturn>>> member, IOperand<TArg1> arg1)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1);
+			return new UnaryExpressionOperand<T, TReturn>(@operator, this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TReturn>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TReturn>(methodSelector).Single();
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arg1), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TReturn>(MethodInfo method, IOperand<TArg1> arg1)
+		{
+			ValidateMemberIsMethodOfType(method);
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arg1), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TArg2, TReturn>(
+			Expression<Func<T, Func<TArg1, TArg2, TReturn>>> member, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1, arg2);
+
+			return new UnaryExpressionOperand<T, TReturn>(@operator, this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TArg2, TReturn>(
+			Func<MethodInfo, bool> methodSelector,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TArg2, TReturn>(methodSelector).Single();
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arg1, arg2), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+			Expression<Func<T, Func<TArg1, TArg2, TArg3, TReturn>>> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
+		{
+			var method = ValidateMemberIsMethodOfType(Helpers.ResolveMethodFromLambda(member));
+			var @operator = new UnaryOperators.OperatorCall<T>(method, arg1, arg2, arg3);
+
+			return new UnaryExpressionOperand<T, TReturn>(@operator, this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+			Func<MethodInfo, bool> methodSelector,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3)
+		{
+			var method = this.Members.SelectFuncs<TArg1, TArg2, TArg3, TReturn>(methodSelector).Single();
+			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arg1, arg2, arg3), this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TProp> Prop<TProp>(Expression<Func<T, TProp>> property)
+		{
+			return new PropertyAccessOperand<TProp>(
+				target: this,
+				property: Helpers.GetPropertyInfoArrayFromLambda(property).First());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TProp> Prop<TProp>(Func<PropertyInfo, bool> propertySelector)
+		{
+			return new PropertyAccessOperand<TProp>(
+				target: this,
+				property: this.Members.SelectProps<TProp>(propertySelector).Single());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TProp> Prop<TProp>(PropertyInfo property)
+		{
+			return new PropertyAccessOperand<TProp>(this, property);
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -489,6 +702,32 @@ namespace Happil.Operands
 			{
 				throw new ArgumentException("Operator ~ is only supported on types int, uint, long, ulong.");
 			}
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static MethodInfo ValidateMemberIsMethodOfType(MemberInfo member)
+		{
+			var method = (member as MethodInfo);
+
+			if ( method == null )
+			{
+				throw new ArgumentException(string.Format(
+					"Member {0} cannot be invoked because it is not a method.",
+					member.Name));
+			}
+
+			var allBaseTypes = typeof(T).GetTypeHierarchy();
+			var resolvedBaseTypes = allBaseTypes.Select(TypeTemplate.Resolve).ToArray();
+
+			if ( !resolvedBaseTypes.Contains(member.DeclaringType) )
+			{
+				throw new ArgumentException(string.Format(
+					"Member {0} cannot be invoked because it is not a method of type {1}.",
+					member.Name, typeof(T).FullName));
+			}
+
+			return method;
 		}
 	}
 }

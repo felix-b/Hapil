@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Happil.Statements
 {
-	internal class RethrowStatement : IHappilStatement
+	internal class RethrowStatement : StatementBase
 	{
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Rethrow);
 		}

@@ -6,127 +6,127 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil
 {
 	public static class CollectionShortcuts
 	{
-		public static HappilOperand<int> IndexOf<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		public static Operand<int> IndexOf<T>(this IOperand<ICollection<T>> collection, IOperand<T> item)
 		{
 			var @operator = new UnaryOperators.OperatorCall<ICollection<T>>(GetReflectionCache<T>().IndexOf, item);
-			return new HappilUnaryExpression<ICollection<T>, int>(null, @operator, collection);
+			return new UnaryExpressionOperand<ICollection<T>, int>(@operator, collection);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Insert<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<int> index, IHappilOperand<T> item)
+		public static void Insert<T>(this IOperand<ICollection<T>> collection, IOperand<int> index, IOperand<T> item)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Insert, index, item));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void RemoveAt<T>(this IHappilOperand<IList<T>> collection, IHappilOperand<int> index)
+		public static void RemoveAt<T>(this IOperand<IList<T>> collection, IOperand<int> index)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().RemoveAt, index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<IList<T>> collection, IHappilOperand<int> index)
+		public static MutableOperand<T> ItemAt<T>(this IOperand<IList<T>> collection, IOperand<int> index)
 		{
 			return new PropertyAccessOperand<T>(collection, GetReflectionCache<T>().Item, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<T> ItemAt<T>(this IHappilOperand<IList<T>> collection, int index)
+		public static MutableOperand<T> ItemAt<T>(this IOperand<IList<T>> collection, int index)
 		{
-			return ItemAt(collection, new HappilConstant<int>(index));
+			return ItemAt(collection, new ConstantOperand<int>(index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<T> ElementAt<T>(this IHappilOperand<T[]> array, IHappilOperand<int> index)
+		public static MutableOperand<T> ElementAt<T>(this IOperand<T[]> array, IOperand<int> index)
 		{
 			return new ArrayElementAccessOperand<T>(array, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<T> ElementAt<T>(this IHappilOperand<T[]> array, int index)
+		public static MutableOperand<T> ElementAt<T>(this IOperand<T[]> array, int index)
 		{
-			return ElementAt(array, new HappilConstant<int>(index));
+			return ElementAt(array, new ConstantOperand<int>(index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Add<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		public static void Add<T>(this IOperand<ICollection<T>> collection, IOperand<T> item)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Add, item));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Clear<T>(this IHappilOperand<ICollection<T>> collection)
+		public static void Clear<T>(this IOperand<ICollection<T>> collection)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Clear));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> Contains<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		public static IOperand<bool> Contains<T>(this IOperand<ICollection<T>> collection, IOperand<T> item)
 		{
 			var @operator = new UnaryOperators.OperatorCall<ICollection<T>>(GetReflectionCache<T>().Contains, item);
-			return new HappilUnaryExpression<ICollection<T>, bool>(null, @operator, collection);
+			return new UnaryExpressionOperand<ICollection<T>, bool>(@operator, collection);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void CopyTo<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T[]> array, IHappilOperand<int> arrayIndex)
+		public static void CopyTo<T>(this IOperand<ICollection<T>> collection, IOperand<T[]> array, IOperand<int> arrayIndex)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().CopyTo, array, arrayIndex));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<int> Count<T>(this IHappilOperand<ICollection<T>> collection)
+		public static IOperand<int> Count<T>(this IOperand<ICollection<T>> collection)
 		{
 			return new PropertyAccessOperand<int>(collection, GetReflectionCache<T>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> IsReadOnly<T>(this IHappilOperand<ICollection<T>> collection)
+		public static IOperand<bool> IsReadOnly<T>(this IOperand<ICollection<T>> collection)
 		{
 			return new PropertyAccessOperand<bool>(collection, GetReflectionCache<T>().IsReadOnly);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> Remove<T>(this IHappilOperand<ICollection<T>> collection, IHappilOperand<T> item)
+		public static IOperand<bool> Remove<T>(this IOperand<ICollection<T>> collection, IOperand<T> item)
 		{
 			var @operator = new UnaryOperators.OperatorCall<ICollection<T>>(GetReflectionCache<T>().Remove, item);
-			return new HappilUnaryExpression<ICollection<T>, bool>(null, @operator, collection);
+			return new UnaryExpressionOperand<ICollection<T>, bool>(@operator, collection);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<int> Length<T>(this IHappilOperand<T[]> array)
+		public static Operand<int> Length<T>(this IOperand<T[]> array)
 		{
 			return new PropertyAccessOperand<int>(array, s_ArrayLength);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType = 
+		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByItemType =
 			new ConcurrentDictionary<Type, ReflectionCache>();
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static readonly PropertyInfo s_ArrayLength = 
+		private static readonly PropertyInfo s_ArrayLength =
 			typeof(Array).GetProperty("Length");
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ namespace Happil
 				Contains = Helpers.GetMethodInfo<Expression<Func<ICollection<T>, bool>>>(x => x.Contains(default(T)));
 				CopyTo = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.CopyTo(new T[0], 0));
 				Remove = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.Remove(default(T)));
-				
+
 				Count = Helpers.GetPropertyInfo<Expression<Func<ICollection<T>, int>>>(x => x.Count);
 				IsReadOnly = Helpers.GetPropertyInfo<Expression<Func<ICollection<T>, bool>>>(x => x.IsReadOnly);
 				Item = typeof(IList<T>).GetProperty("Item");

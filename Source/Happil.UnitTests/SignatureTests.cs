@@ -632,53 +632,53 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//[Test]
-		//public void InterfaceEvents_ImplementAllAutomatic()
-		//{
-		//	//-- Arrange
+		[Test]
+		public void InterfaceEvents_ImplementAllAutomatic()
+		{
+			//-- Arrange
 
-		//	var eventLog = new List<string>();
+			var eventLog = new List<string>();
 
-		//	DeriveClassFrom<object>()
-		//		.DefaultConstructor()
-		//		.ImplementInterface<AncestorRepository.IFewEvents>()
-		//		.AllEvents().ImplementAutomatic()
-		//		.Method(intf => intf.RaiseOne).Implement(m => {
-		//			m.RaiseEvent("EventOne", Static.Prop(() => EventArgs.Empty));	
-		//		})
-		//		.Method<string, string>(intf => intf.RaiseTwo).Implement((m, input) => {
-		//			var eventArgs = m.Local(m.New<AncestorRepository.InOutEventArgs>());
-		//			eventArgs.Prop(x => x.InputValue).Assign(input);
-		//			m.RaiseEvent("EventTwo", eventArgs);
-		//			m.Return(eventArgs.Prop(x => x.OutputValue));
-		//		});
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewEvents>()
+				.AllEvents().ImplementAutomatic()
+				.Method(intf => intf.RaiseOne).Implement(m => {
+					m.RaiseEvent("EventOne", Static.Prop(() => EventArgs.Empty));
+				})
+				.Method<string, string>(intf => intf.RaiseTwo).Implement((m, input) => {
+					var eventArgs = m.Local(m.New<AncestorRepository.InOutEventArgs>());
+					eventArgs.Prop(x => x.InputValue).Assign(input);
+					m.RaiseEvent("EventTwo", eventArgs);
+					m.Return(eventArgs.Prop(x => x.OutputValue));
+				});
 
-		//	//-- Act
+			//-- Act
 
-		//	var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingDefaultConstructor();
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingDefaultConstructor();
 
-		//	obj.EventOne += (sender, args) => eventLog.Add("EventOne.A:" + args.ToString());
-		//	obj.EventOne += (sender, args) => eventLog.Add("EventOne.B:" + args.ToString());
+			obj.EventOne += (sender, args) => eventLog.Add("EventOne.A:" + args.ToString());
+			obj.EventOne += (sender, args) => eventLog.Add("EventOne.B:" + args.ToString());
 
-		//	obj.EventTwo += (sender, args) => {
-		//		eventLog.Add("EventTwo.A:" + args.InputValue);
-		//		args.OutputValue = "AAA";
-		//	};
-		//	obj.EventTwo += (sender, args) => {
-		//		eventLog.Add("EventTwo.B:" + args.InputValue);
-		//		args.OutputValue = "BBB";
-		//	};
+			obj.EventTwo += (sender, args) => {
+				eventLog.Add("EventTwo.A:" + args.InputValue);
+				args.OutputValue = "AAA";
+			};
+			obj.EventTwo += (sender, args) => {
+				eventLog.Add("EventTwo.B:" + args.InputValue);
+				args.OutputValue = "BBB";
+			};
 
-		//	obj.RaiseOne();
-		//	var output = obj.RaiseTwo("INPUT");
+			obj.RaiseOne();
+			var output = obj.RaiseTwo("INPUT");
 
-		//	//-- Assert
+			//-- Assert
 
-		//	Assert.That(output, Is.EqualTo("BBB"));
-		//	Assert.That(eventLog, Is.EqualTo(new[] {
-		//		"EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs",
-		//		"EventTwo.A:INPUT", "EventTwo.B:INPUT"
-		//	}));
-		//}
+			Assert.That(output, Is.EqualTo("BBB"));
+			Assert.That(eventLog, Is.EqualTo(new[] {
+				"EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs",
+				"EventTwo.A:INPUT", "EventTwo.B:INPUT"
+			}));
+		}
 	}
 }

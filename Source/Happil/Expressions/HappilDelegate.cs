@@ -9,8 +9,13 @@ using Happil.Members;
 
 namespace Happil.Expressions
 {
-	//TODO:redesign:rename and move
-	internal class HappilDelegate<TDelegate> : Operand<TDelegate>
+	//TODO:redesign:rename and move to Operands
+	public interface IHappilDelegate
+	{
+	}
+
+	//TODO:redesign:rename and move to Operands
+	public class HappilDelegate<TDelegate> : Operand<TDelegate>, IHappilDelegate
 	{
 		private readonly IOperand m_Target;
 		private readonly MethodInfo m_Method;

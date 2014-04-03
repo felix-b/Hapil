@@ -11,7 +11,8 @@ using Happil.Writers;
 
 namespace Happil.Expressions
 {
-	internal class HappilAnonymousDelegate<TArg1, TReturn> : Operand<Func<TArg1, TReturn>> //TODO:redesign, IHappilDelegate
+	//TODO:redesign: rename
+	internal class HappilAnonymousDelegate<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IHappilDelegate
 	{
 		private readonly MethodMember m_Method;
 
@@ -72,7 +73,7 @@ namespace Happil.Expressions
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>
+	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>, IHappilDelegate
 	{
 		private readonly MethodMember m_Method;
 

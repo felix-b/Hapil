@@ -8,6 +8,7 @@ using Happil.Operands;
 
 namespace Happil.Expressions
 {
+	//TODO:redesign: rename and move to Operands
 	public class FieldAccessOperand<T> : MutableOperand<T>
 	{
 		private readonly IOperand m_Target;

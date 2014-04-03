@@ -13,6 +13,13 @@ namespace Happil.Writers
 {
 	public partial class ImplementationClassWriter<TBase> : ClassWriterBase
 	{
+		public ITemplateEventSelector AllEvents(Func<EventInfo, bool> where = null)
+		{
+			return new EventSelector(this, m_Members.ImplementableEvents.SelectIf(where));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public interface IEventSelectorBase : IEnumerable<EventInfo>
 		{
 			ImplementationClassWriter<TBase> ImplementAutomatic();
@@ -21,7 +28,16 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class EventSelector<TEvent> : IEventSelectorBase
+		public interface ITemplateEventSelector : IEventSelectorBase
+		{
+			ImplementationClassWriter<TBase> Implement(
+				Func<TemplateEventWriter, EventWriterBase.IEventWriterAddOn> add,
+				Func<TemplateEventWriter, EventWriterBase.IEventWriterRemoveOn> remove);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class EventSelector : IEventSelectorBase, ITemplateEventSelector
 		{
 			private readonly ClassType m_OwnerClass;
 			private readonly ImplementationClassWriter<TBase> m_ClassWriter;
@@ -81,6 +97,19 @@ namespace Happil.Writers
 				}
 
 				return m_ClassWriter;
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region ITemplateEventSelector Members
+
+			ImplementationClassWriter<TBase> ITemplateEventSelector.Implement(
+				Func<TemplateEventWriter, EventWriterBase.IEventWriterAddOn> add,
+				Func<TemplateEventWriter, EventWriterBase.IEventWriterRemoveOn> remove)
+			{
+				return DefineEventImplementations(@event => new TemplateEventWriter(@event, add, remove));
 			}
 
 			#endregion

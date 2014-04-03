@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
-	internal class SwitchStatement<T> : IHappilStatement, IHappilSwitchSyntax<T>
+	internal class SwitchStatement<T> : StatementBase, IHappilSwitchSyntax<T>
 	{
-		private readonly IHappilOperand<T> m_Value;
+		private readonly IOperand<T> m_Value;
 		private readonly SortedDictionary<T, CaseBlock> m_CasesByValue;
 		private CaseBlock m_Default;
 		private Label m_DefaultLabel;
@@ -18,7 +18,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public SwitchStatement(IHappilOperand<T> value)
+		public SwitchStatement(IOperand<T> value)
 		{
 			m_Value = value;
 			m_CasesByValue = new SortedDictionary<T, CaseBlock>();
@@ -27,9 +27,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_EndLabel = il.DefineLabel();
 			m_DefaultLabel = (m_Default != null ? il.DefineLabel() : m_EndLabel);
@@ -166,11 +166,11 @@ namespace Happil.Statements
 			{
 				if ( m_Value.OperandType.GetIntegralTypeSize() <= sizeof(int) )
 				{
-					new HappilConstant<int>(Math.Abs((int)adjustment)).EmitLoad(il);
+					new ConstantOperand<int>(Math.Abs((int)adjustment)).EmitLoad(il);
 				}
 				else
 				{
-					new HappilConstant<long>(Math.Abs(adjustment)).EmitLoad(il);
+					new ConstantOperand<long>(Math.Abs(adjustment)).EmitLoad(il);
 				}
 
 				il.Emit(adjustment < 0 ? OpCodes.Sub : OpCodes.Add);
@@ -184,7 +184,7 @@ namespace Happil.Statements
 			foreach ( var block in m_CasesByValue.Values )
 			{
 				var operatorEqual = new BinaryOperators.OperatorEqual<T>();
-				operatorEqual.Emit(il, m_Value, new HappilConstant<T>(block.Value));
+				operatorEqual.Emit(il, m_Value, new ConstantOperand<T>(block.Value));
 
 				block.Label = il.DefineLabel();
 				il.Emit(OpCodes.Brtrue, block.Label);
@@ -212,7 +212,7 @@ namespace Happil.Statements
 		{
 			private readonly SwitchStatement<T> m_OwnerStatement;
 			private readonly T m_Value;
-			private readonly List<IHappilStatement> m_Body;
+			private readonly List<StatementBase> m_Body;
 			private readonly long m_Int64;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ namespace Happil.Statements
 			{
 				m_OwnerStatement = ownerStatement;
 				m_Value = value;
-				m_Body = new List<IHappilStatement>();
+				m_Body = new List<StatementBase>();
 
 				if ( typeof(T).IsPrimitive || typeof(T).IsEnum )
 				{

@@ -17,9 +17,20 @@ namespace Happil.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected MethodWriterBase(MethodMember ownerMethod)
+			: this(ownerMethod, attachToOwner: true)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected MethodWriterBase(MethodMember ownerMethod, bool attachToOwner)
 		{
 			m_OwnerMethod = ownerMethod;
-			ownerMethod.AddWriter(this);
+
+			if ( attachToOwner )
+			{
+				ownerMethod.AddWriter(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -144,9 +155,352 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IHappilIfBody If(IOperand<bool> condition)
+		{
+			return OwnerMethod.AddStatement(new IfStatement(condition));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilIfBody If(IOperand<bool> condition, bool isTautology)
+		{
+			return OwnerMethod.AddStatement(new IfStatement(condition, isTautology));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<T> Iif<T>(IOperand<bool> condition, IOperand<T> onTrue, IOperand<T> onFalse)
+		{
+			return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<T> Iif<T>(IOperand<bool> condition, bool isTautology, IOperand<T> onTrue, IOperand<T> onFalse)
+		{
+			if ( !isTautology )
+			{
+				return new TernaryConditionalOperator<T>(condition, onTrue, onFalse);
+			}
+			else
+			{
+				var scope = StatementScope.Current;
+				scope.Consume(condition);
+				scope.Consume(onFalse);
+
+				return (Operand<T>)onTrue;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilWhileSyntax While(IOperand<bool> condition)
+		{
+			return OwnerMethod.AddStatement(new WhileStatement(condition));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilDoWhileSyntax Do(Action<ILoopBody> body)
 		{
 			return OwnerMethod.AddStatement(new DoWhileStatement(body));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilForShortSyntax For(ConstantOperand<int> from, IOperand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(OwnerMethod, from, to.CastTo<int>(), increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilForShortSyntax For(IOperand<int> from, ConstantOperand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(OwnerMethod, from.CastTo<int>(), to, increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public HappilForShortSyntax For(IOperand<int> from, IOperand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(OwnerMethod, from.CastTo<int>(), to.CastTo<int>(), increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilForWhileSyntax For(Action precondition)
+		{
+			return OwnerMethod.AddStatement(new ForStatement(precondition));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilForeachInSyntax<T> Foreach<T>(LocalOperand<T> element)
+		{
+			return OwnerMethod.AddStatement(new ForeachStatement<T>(element));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilForeachDoSyntax<T> ForeachElementIn<T>(IOperand<IEnumerable<T>> collection)
+		{
+			var element = this.Local<T>();
+			var statement = new ForeachStatement<T>(element);
+
+			OwnerMethod.AddStatement(statement);
+			statement.In(collection);
+
+			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilUsingSyntax Using(IOperand<IDisposable> disposable)
+		{
+			return OwnerMethod.AddStatement(new UsingStatement(disposable));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilLockSyntax Lock(IOperand<object> syncRoot, int millisecondsTimeout)
+		{
+			return OwnerMethod.AddStatement(new LockStatement(syncRoot, millisecondsTimeout));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilCatchSyntax Try(Action body)
+		{
+			return OwnerMethod.AddStatement(new TryStatement(body));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IHappilSwitchSyntax<T> Switch<T>(IOperand<T> value)
+		{
+			return OwnerMethod.AddStatement(new SwitchStatement<T>(value));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ThisOperand<TBase> This<TBase>()
+		{
+			return new ThisOperand<TBase>();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void RaiseEvent(string eventName, IOperand<EventArgs> eventArgs)
+		{
+			var eventMember = m_OwnerMethod.OwnerClass.GetMemberByName<EventMember>(eventName);
+
+			using ( eventMember.CreateTypeTemplateScope() )
+			{
+				If(eventMember.BackingField.AsOperand<TypeTemplate.TEventHandler>() != Const<TypeTemplate.TEventHandler>(null)).Then(() => {
+					eventMember.BackingField.AsOperand<TypeTemplate.TEventHandler>().Invoke(This<TypeTemplate.TBase>(), eventArgs);
+				});
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IOperand<TObject> New<TObject>(params IOperand[] constructorArguments)
+		{
+			if ( TypeTemplate.Resolve<TObject>().IsValueType )
+			{
+				return new NewStructExpression<TObject>(constructorArguments);
+			}
+			else
+			{
+				return new NewObjectExpression<TObject>(constructorArguments);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IOperand<TElement[]> NewArray<TElement>(IOperand<int> length)
+		{
+			return new UnaryExpressionOperand<int, TElement[]>(
+				@operator: new UnaryOperators.OperatorNewArray<TElement>(),
+				operand: length);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IOperand<TElement[]> NewArray<TElement>(params TElement[] constantValues)
+		{
+			return NewArray<TElement>(constantValues.Select(v => new ConstantOperand<TElement>(v)).ToArray());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public IOperand<TElement[]> NewArray<TElement>(params IOperand<TElement>[] values)
+		{
+			var arrayLocal = Local<TElement[]>(NewArray<TElement>(Const(values.Length)));
+
+			for ( int i = 0 ; i < values.Length ; i++ )
+			{
+				arrayLocal.ElementAt(i).Assign(values[i]);
+			}
+
+			return arrayLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Throw<TException>(string message) where TException : Exception
+		{
+			OwnerMethod.AddStatement(new ThrowStatement(typeof(TException), message));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Throw()
+		{
+			OwnerMethod.AddStatement(new RethrowStatement());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
+		{
+			return new HappilAnonymousDelegate<TArg1, TReturn>(OwnerMethod.OwnerClass, body);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(
+			ref IHappilDelegate site,
+			Action<FunctionMethodWriter<TReturn>,
+			Argument<TArg1>> body)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Delegate(body);
+			}
+
+			return (HappilAnonymousDelegate<TArg1, TReturn>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
+			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
+		{
+			return new HappilAnonymousDelegate<TArg1, TArg2, TReturn>(m_OwnerMethod.OwnerClass, body);
+		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
+		//	ref IHappilDelegate site,
+		//	Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
+		//{
+		//	if ( site == null )
+		//	{
+		//		site = (IHappilDelegate)Delegate(body);
+		//	}
+
+		//	return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		//{
+		//	var method = Helpers.ResolveMethodFromLambda(methodSelector);
+		//	return new HappilDelegate<TMethod>(target, method);
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
+		//{
+		//	return Delegate<TArg1, TResult>((m, arg1) => m.Return(expression(arg1)));
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
+		//	ref IHappilDelegate site,
+		//	Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
+		//{
+		//	if ( site == null )
+		//	{
+		//		site = (IHappilDelegate)Lambda(expression);
+		//	}
+
+		//	return (HappilAnonymousDelegate<TArg1, TResult>)site;
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+		//	ref IHappilDelegate site,
+		//	Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
+		//{
+		//	if ( site == null )
+		//	{
+		//		site = (IHappilDelegate)Lambda(expression);
+		//	}
+
+		//	return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+		//	Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
+		//{
+		//	return Delegate<TArg1, TArg2, TResult>((m, arg1, arg2) => m.Return(expression(arg1, arg2)));
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public void EmitFromLambda(Expression<Action> lambda)
+		//{
+		//	var callInfo = (MethodCallExpression)lambda.Body;
+		//	var methodInfo = callInfo.Method;
+		//	var arguments = callInfo.Arguments.Select(Helpers.GetLambdaArgumentAsConstant).ToArray();
+		//	var happilExpression = new HappilUnaryExpression<object, object>(
+		//		ownerMethod: this,
+		//		@operator: new UnaryOperators.OperatorCall<object>(methodInfo, arguments),
+		//		operand: null);
+
+		//	//var arguments = new IHappilOperandInternals[callInfo.Arguments.Count];
+
+		//	//for ( int i = 0 ; i < arguments.Length ; i++ )
+		//	//{
+		//	//	//var argument = callInfo.Arguments[i];
+
+
+		//	//	//Expression<Func<object>> argumentLambda = Expression.Lambda<Func<object>>(argument);
+		//	//	//var argumentValueFunc = argumentLambda.Compile();
+		//	//	//var argumentValue = argumentValueFunc();
+
+		//	//	arguments[i] = Helpers.GetLambdaArgumentAsConstant(callInfo.Arguments[i]);
+		//	//}
+
+		//	//m_HappilClass.CurrentScope.AddStatement();
+		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>> action)
+		{
+			//TODO:redesign - does this method work correctly?
+			var argumentTypes = OwnerMethod.Signature.ArgumentType;
+			var indexBase = (OwnerMethod.Signature.IsStatic ? 0 : 1);
+
+			for ( byte i = 0 ; i < argumentTypes.Length ; i++ )
+			{
+				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(argumentTypes[i]) )
+				{
+					var argument = this.Argument<TypeTemplate.TArgument>((byte)(i + indexBase));
+					action(argument);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

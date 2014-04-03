@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
-	internal class UsingStatement : IHappilStatement, IHappilUsingSyntax
+	internal class UsingStatement : StatementBase, IHappilUsingSyntax
 	{
-		private readonly IHappilOperand<IDisposable> m_Disposable;
-		private readonly List<IHappilStatement> m_BodyBlock;
+		private readonly IOperand<IDisposable> m_Disposable;
+		private readonly List<StatementBase> m_BodyBlock;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public UsingStatement(IHappilOperand<IDisposable> disposable)
+		public UsingStatement(IOperand<IDisposable> disposable)
 		{
 			m_Disposable = disposable;
-			m_BodyBlock = new List<IHappilStatement>();
+			m_BodyBlock = new List<StatementBase>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			foreach ( var statement in m_BodyBlock )
 			{
@@ -42,7 +42,7 @@ namespace Happil.Statements
 		{
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
-				var method = scope.OwnerMethod;
+				var method = scope.OwnerMethod.TransparentWriter;
 				var disposable = method.Local<IDisposable>(initialValue: m_Disposable.CastTo<IDisposable>());
 
 				method.Try(() => {

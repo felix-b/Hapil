@@ -25,6 +25,7 @@ namespace Happil.Members
 		private readonly List<EventWriterBase> m_Writers;
 		private readonly MethodMember m_AddMethod;
 		private readonly MethodMember m_RemoveMethod;
+		private readonly string m_UniqueName;
 		private FieldMember m_BackingField;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,8 +35,10 @@ namespace Happil.Members
 		{
 			m_Writers = new List<EventWriterBase>();
 			m_Declaration = declaration;
+			m_UniqueName = ownerClass.TakeMemberName(declaration.Name);
+			
 			m_EventBuilder = ownerClass.TypeBuilder.DefineEvent(
-				ownerClass.TakeMemberName(declaration.Name),
+				m_UniqueName,
 				declaration.Attributes,
 				declaration.EventHandlerType);
 
@@ -89,6 +92,16 @@ namespace Happil.Members
 				}
 
 				return m_BackingField;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override string Name
+		{
+			get
+			{
+				return m_UniqueName;
 			}
 		}
 

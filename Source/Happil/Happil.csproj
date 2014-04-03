@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
@@ -92,17 +93,23 @@
     <Compile Include="Operands\ThisOperand.cs" />
     <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\DoWhileStatement.cs" />
+    <Compile Include="Statements\ExceptionBlockType.cs" />
     <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
     <Compile Include="Statements\ILoopBody.cs" />
+    <Compile Include="Statements\LockStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
+    <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
     <Compile Include="Statements\StatementScope.cs" />
+    <Compile Include="Statements\SwitchStatement.cs" />
     <Compile Include="Statements\ThrowStatement.cs" />
+    <Compile Include="Statements\TryStatement.cs" />
+    <Compile Include="Statements\UsingStatement.cs" />
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Static.cs" />
     <Compile Include="TypeExtensions.cs">
@@ -124,6 +131,7 @@
     <Compile Include="Writers\AutomaticEventWriter.cs" />
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />
     <Compile Include="Writers\PropertyWriter.cs" />
@@ -136,6 +144,7 @@
     <Compile Include="Writers\FunctionMethodWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.Methods.cs" />
     <Compile Include="Writers\ThrowMethodWriter.cs" />
+    <Compile Include="Writers\TransparentMethodWriter.cs" />
     <Compile Include="Writers\VoidMethodWriter.cs" />
     <Compile Include="Writers\FieldWriter.cs" />
     <Compile Include="Writers\EmptyMethodWriter.cs" />

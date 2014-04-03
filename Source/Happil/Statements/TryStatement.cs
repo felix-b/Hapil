@@ -4,15 +4,15 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
-	internal class TryStatement : IHappilStatement, IHappilCatchSyntax
+	internal class TryStatement : StatementBase, IHappilCatchSyntax
 	{
-		private readonly List<IHappilStatement> m_TryBlock;
+		private readonly List<StatementBase> m_TryBlock;
 		private readonly List<CatchBlock> m_CatchBlocks;
-		private readonly List<IHappilStatement> m_FinallyBlock;
+		private readonly List<StatementBase> m_FinallyBlock;
 		private readonly List<LeaveBlock> m_LeaveBlocks;
 		private Label m_EndExceptionBlockLabel;
 		private Label m_EndLeaveBlocksLabel;
@@ -21,9 +21,9 @@ namespace Happil.Statements
 
 		public TryStatement(Action body)
 		{
-			m_TryBlock = new List<IHappilStatement>();
+			m_TryBlock = new List<StatementBase>();
 			m_CatchBlocks = new List<CatchBlock>();
-			m_FinallyBlock = new List<IHappilStatement>();
+			m_FinallyBlock = new List<StatementBase>();
 			m_LeaveBlocks = new List<LeaveBlock>();
 
 			using ( new StatementScope(m_TryBlock, this, ExceptionBlockType.Try) )
@@ -34,9 +34,9 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Members
 
-		public void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il)
 		{
 			m_EndLeaveBlocksLabel = il.DefineLabel();
 			m_EndExceptionBlockLabel = il.BeginExceptionBlock();
@@ -84,7 +84,7 @@ namespace Happil.Statements
 
 		#region IHappilCatchSyntax Members
 
-		public IHappilCatchSyntax Catch<TException>(Action<HappilOperand<TException>> body) where TException : Exception
+		public IHappilCatchSyntax Catch<TException>(Action<Operand<TException>> body) where TException : Exception
 		{
 			m_CatchBlocks.Add(new CatchBlock<TException>(this, body));
 			return this;
@@ -104,7 +104,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilStatement WrapLeaveStatement(ILeaveStatement statement)
+		public StatementBase WrapLeaveStatement(ILeaveStatement statement)
 		{
 			var destination = new LeaveBlock(statement);
 			m_LeaveBlocks.Add(destination);
@@ -122,13 +122,13 @@ namespace Happil.Statements
 
 		private class CatchBlock<TException> : CatchBlock where TException : Exception
 		{
-			public CatchBlock(TryStatement ownerStatement, Action<HappilOperand<TException>> body)
+			public CatchBlock(TryStatement ownerStatement, Action<Operand<TException>> body)
 			{
-				Statements = new List<IHappilStatement>();
+				Statements = new List<StatementBase>();
 
 				using ( var scope = new StatementScope(Statements, ownerStatement, ExceptionBlockType.Catch) )
 				{
-					ExceptionObject = scope.OwnerMethod.Local<TException>();
+					ExceptionObject = scope.OwnerMethod.AddLocal<TException>();
 					body(ExceptionObject);
 				}
 			}
@@ -147,9 +147,9 @@ namespace Happil.Statements
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
-			
-			public List<IHappilStatement> Statements { get; private set; }
-			public HappilLocal<TException> ExceptionObject { get; private set; }
+
+			public List<StatementBase> Statements { get; private set; }
+			public LocalOperand<TException> ExceptionObject { get; private set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class LeaveStatement : IHappilStatement
+		private class LeaveStatement : StatementBase
 		{
 			private readonly LeaveBlock m_Destination;
 
@@ -193,9 +193,9 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			#region IHappilStatement Members
+			#region StatementBase Members
 
-			public void Emit(ILGenerator il)
+			public override void Emit(ILGenerator il)
 			{
 				m_Destination.LeaveLabel = il.DefineLabel();
 				il.Emit(OpCodes.Leave, m_Destination.LeaveLabel);
@@ -209,7 +209,7 @@ namespace Happil.Statements
 
 	public interface IHappilCatchSyntax
 	{
-		IHappilCatchSyntax Catch<TException>(Action<HappilOperand<TException>> body) where TException : Exception;
+		IHappilCatchSyntax Catch<TException>(Action<Operand<TException>> body) where TException : Exception;
 		void Finally(Action body);
 	}
 }

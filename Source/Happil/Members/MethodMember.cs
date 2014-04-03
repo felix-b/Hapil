@@ -15,6 +15,7 @@ namespace Happil.Members
 		private readonly MethodFactoryBase m_MethodFactory;
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly List<StatementBase> m_Statements;
+		private readonly TransparentMethodWriter m_TransparentWriter;
 		private Type[] m_CachedTemplateTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,6 +26,7 @@ namespace Happil.Members
 			m_MethodFactory = methodFactory;
 			m_Writers = new List<MethodWriterBase>();
 			m_Statements = new List<StatementBase>();
+			m_TransparentWriter = new TransparentMethodWriter(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,6 +53,16 @@ namespace Happil.Members
 			get
 			{
 				return m_MethodFactory.Declaration;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override string Name
+		{
+			get
+			{
+				return m_MethodFactory.MemberName;
 			}
 		}
 
@@ -128,6 +140,16 @@ namespace Happil.Members
 			get
 			{
 				return m_MethodFactory;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal TransparentMethodWriter TransparentWriter
+		{
+			get
+			{
+				return m_TransparentWriter;
 			}
 		}
 	}

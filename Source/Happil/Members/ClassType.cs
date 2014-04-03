@@ -25,6 +25,7 @@ namespace Happil.Members
 		private readonly List<ClassWriterBase> m_Writers;
 		private readonly List<MemberBase> m_Members;
 		private readonly Dictionary<MemberInfo, MemberBase> m_MembersByDeclarations;
+		private readonly Dictionary<string, MemberBase> m_MembersByName;
 		private readonly List<MethodInfo> m_FactoryMethods;
 		private readonly UniqueNameSet m_MemberNames;
 		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
@@ -39,6 +40,7 @@ namespace Happil.Members
 			m_Writers = new List<ClassWriterBase>();
 			m_Members = new List<MemberBase>();
 			m_MembersByDeclarations = new Dictionary<MemberInfo, MemberBase>();
+			m_MembersByName = new Dictionary<string, MemberBase>();
 			m_FactoryMethods = new List<MethodInfo>();
 			m_MemberNames = new UniqueNameSet();
 			m_NotImplementedMembers = new HashSet<MemberInfo>();
@@ -103,7 +105,22 @@ namespace Happil.Members
 			if ( member.MemberDeclaration != null )
 			{
 				m_MembersByDeclarations.Add(member.MemberDeclaration, member);
+				m_MembersByName.Add(member.Name, member);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal TMember GetMemberByName<TMember>(string memberName) where TMember : MemberBase
+		{
+			return (TMember)m_MembersByName[memberName];
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal TMember GetMemberByDeclaration<TMember>(MemberInfo declaration) where TMember : MemberBase
+		{
+			return (TMember)m_MembersByDeclarations[declaration];
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
