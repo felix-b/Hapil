@@ -31,6 +31,26 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			var text = new StringBuilder();
+			text.Append("{");
+
+			foreach ( var statement in m_Statements )
+			{
+				text.Append(statement.ToString() + ";");
+			}
+
+			text.Append("}");
+			return text.ToString();
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public LocalOperand<T> AddLocal<T>()
 		{
 			return new LocalOperand<T>(this);

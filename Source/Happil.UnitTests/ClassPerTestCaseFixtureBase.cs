@@ -55,7 +55,7 @@ namespace Happil.UnitTests
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected ImplementationClassWriter<TBase> DeriveClassFrom<TBase>()
+		protected ImplementationClassWriter<TBase> DeriveClassFrom<TBase>(TypeKey key = null)
 		{
 			m_Class = m_Module.DefineClass(baseType: typeof(TBase), key: null, classFullName: TestCaseClassName);
 			return new ImplementationClassWriter<TBase>(m_Class);

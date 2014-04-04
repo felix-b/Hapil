@@ -4,10 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
 using NUnit.Framework;
 
-namespace Happil.UnitTests.Fluent
+namespace Happil.UnitTests.Members
 {
 	[TestFixture]
 	public class ConstructorTests : ClassPerTestCaseFixtureBase
@@ -91,8 +90,8 @@ namespace Happil.UnitTests.Fluent
 				.StaticField<int>("s_IntField", out intField)
 				.StaticField<string>("s_StringField", out stringField)
 				.StaticConstructor(m => {
-					intField.AssignConst(123);
-					stringField.AssignConst("ABC");
+					intField.Assign(123);
+					stringField.Assign("ABC");
 				})
 				.DefaultConstructor()
 				.ImplementInterface<IMyFieldValues>()

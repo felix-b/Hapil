@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using NUnit.Framework;
 using Repo = Happil.UnitTests.AncestorRepository;
 using TT = Happil.TypeTemplate;
@@ -18,14 +18,14 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			OnDefineNewClass(key => Module.DeriveClassFrom<TT.TBase>(TestCaseClassName)
+			OnDefineNewClass(key => DeriveClassFrom<TT.TBase>(key)
 				.DefaultConstructor()
 				.AllProperties().ImplementAutomatic()
 			);
 
 			//-- Act
 
-			DefineClassByKey(new HappilTypeKey(baseType: typeof(Repo.BaseTwo)));
+			DefineClassByKey(new TypeKey(baseType: typeof(Repo.BaseTwo)));
 
 			var obj = CreateClassInstanceAs<Repo.BaseTwo>().UsingDefaultConstructor();
 
@@ -45,19 +45,19 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			OnDefineNewClass(key => Module.DeriveClassFrom<object>(TestCaseClassName)
+			OnDefineNewClass(key => DeriveClassFrom<object>()
 				.DefaultConstructor()
 				.ImplementInterface<TT.TPrimary>()
 				.AllProperties().ImplementAutomatic()
 				.ImplementInterface<IEquatable<TT.TPrimary>>()
 				.Method<TT.TPrimary, bool>(intf => intf.Equals).Implement((m, other) => {
-					m.ReturnConst(true);
+					m.Return(true);
 				})
 			);
 
 			//-- Act
 
-			DefineClassByKey(new HappilTypeKey(primaryInterface: typeof(Repo.IFewReadWriteProperties)));
+			DefineClassByKey(new TypeKey(primaryInterface: typeof(Repo.IFewReadWriteProperties)));
 
 			var obj = CreateClassInstanceAs<Repo.IFewReadWriteProperties>().UsingDefaultConstructor();
 			obj.AnInt = 123;
@@ -82,7 +82,7 @@ namespace Happil.UnitTests
 
 			FieldAccessOperand<TT.TBase> remoteField, localField;
 
-			OnDefineNewClass(key => Module.DeriveClassFrom<Repo.BaseTwo>(TestCaseClassName)
+			OnDefineNewClass(key => DeriveClassFrom<Repo.BaseTwo>()
 				.Field<TT.TBase>("m_Remote", out remoteField)
 				.Field<TT.TBase>("m_Local", out localField)
 				.DefaultConstructor()
@@ -105,7 +105,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			DefineClassByKey(new HappilTypeKey(
+			DefineClassByKey(new TypeKey(
 				baseType: typeof(Repo.BaseTwo),
 				primaryInterface: typeof(Repo.IVersionControlled<Repo.BaseTwo>)));
 
@@ -141,7 +141,7 @@ namespace Happil.UnitTests
 
 			FieldAccessOperand<TT.TPrimary> remoteField, localField;
 
-			OnDefineNewClass(key => Module.DeriveClassFrom<object>(TestCaseClassName)
+			OnDefineNewClass(key => DeriveClassFrom<object>()
 				.Field<TT.TPrimary>("m_Remote", out remoteField)
 				.Field<TT.TPrimary>("m_Local", out localField)
 				.DefaultConstructor()
@@ -165,7 +165,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			DefineClassByKey(new HappilTypeKey(
+			DefineClassByKey(new TypeKey(
 				primaryInterface: typeof(Repo.IFewReadWriteProperties),
 				secondaryInterfaces: typeof(Repo.IVersionControlled<Repo.IFewPropertiesWithIndexers>)));
 
@@ -199,7 +199,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			OnDefineNewClass(key => Module.DeriveClassFrom<TT.TBase>(TestCaseClassName)
+			OnDefineNewClass(key => DeriveClassFrom<TT.TBase>()
 				.Constructor<TT.TBase, TT.TPrimary>((m, @base, primary) => {
 				})
 				.ImplementInterface<TT.TPrimary>()
@@ -208,7 +208,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			DefineClassByKey(new HappilTypeKey(
+			DefineClassByKey(new TypeKey(
 				baseType: typeof(Repo.BaseOne),
 				primaryInterface: typeof(Repo.IOneProperty)));
 

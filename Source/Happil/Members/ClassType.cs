@@ -35,6 +35,8 @@ namespace Happil.Members
 
 		internal ClassType(DynamicModule module, TypeKey key, string classFullName, Type baseType)
 		{
+			var resolvedBaseType = TypeTemplate.Resolve(baseType);
+
 			m_Key = key;
 			m_Module = module;
 			m_Writers = new List<ClassWriterBase>();
@@ -44,9 +46,9 @@ namespace Happil.Members
 			m_FactoryMethods = new List<MethodInfo>();
 			m_MemberNames = new UniqueNameSet();
 			m_NotImplementedMembers = new HashSet<MemberInfo>();
-			m_NotImplementedMembers.UnionWith(TypeMemberCache.Of(baseType).ImplementableMembers);
+			m_NotImplementedMembers.UnionWith(TypeMemberCache.Of(resolvedBaseType).ImplementableMembers);
 			m_CompiledType = null;
-			m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, TypeTemplate.Resolve(baseType));
+			m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, resolvedBaseType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

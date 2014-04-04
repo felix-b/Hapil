@@ -52,10 +52,14 @@
     <Compile Include="ClassPerTestCaseFixtureBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Members\ConstructorTests.cs" />
     <Compile Include="ObjectFactoryBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MethodSelectorsTests.cs" />
     <Compile Include="SignatureTests.cs" />
+    <Compile Include="Operands\AssignmentTests.cs" />
+    <Compile Include="TargetRepository.cs" />
+    <Compile Include="TypeTemplateTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,7 +68,10 @@
       <Name>Happil</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Fluent\" />
+    <Folder Include="Statements\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

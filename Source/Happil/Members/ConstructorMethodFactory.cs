@@ -20,7 +20,10 @@ namespace Happil.Members
 			m_ConstructorBuilder = constructorBuilder;
 			m_Signature = signature;
 
-			ownerClass.DefineFactoryMethod(constructorBuilder, signature.ArgumentType);
+			if ( !signature.IsStatic )
+			{
+				ownerClass.DefineFactoryMethod(constructorBuilder, signature.ArgumentType);
+			}
 
 			m_Parameters = signature.ArgumentName.Select((argName, argIndex) => m_ConstructorBuilder.DefineParameter(
 				argIndex + 1,
@@ -120,13 +123,14 @@ namespace Happil.Members
 
 		public static ConstructorMethodFactory InstanceConstructor(ClassType type, Type[] argumentTypes)
 		{
+			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var builder = type.TypeBuilder.DefineConstructor(
 				MethodAttributes.Public | 
 				MethodAttributes.SpecialName | 
 				MethodAttributes.RTSpecialName,
 				CallingConventions.HasThis,
-				argumentTypes);
-			var signature = new MethodSignature(isStatic: false, argumentTypes: argumentTypes);
+				resolvedArgumentTypes);
+			var signature = new MethodSignature(isStatic: false, argumentTypes: resolvedArgumentTypes);
 
 			return new ConstructorMethodFactory(type, builder, signature);
 		}

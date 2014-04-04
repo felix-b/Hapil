@@ -18,6 +18,8 @@ namespace Happil.Members
 
 		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic)
 		{
+			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
+			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
 			var methodAttributes = (
 				isStatic ? 
 				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private | MethodAttributes.Static :
@@ -26,12 +28,12 @@ namespace Happil.Members
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(
 				type.TakeMemberName("AnonymousMethod"),
 				methodAttributes,
-				returnType,
-				argumentTypes);
-			
-			m_Signature = new MethodSignature(isStatic, argumentTypes, returnType);
+				resolvedReturnType,
+				resolvedArgumentTypes);
 
-			m_Parameters = argumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
+			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, resolvedReturnType);
+
+			m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
 				argIndex + 1,
 				ParameterAttributes.None, 
 				"arg" + (argIndex + 1).ToString())).ToArray();

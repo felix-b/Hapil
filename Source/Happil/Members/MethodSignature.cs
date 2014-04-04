@@ -57,6 +57,7 @@ namespace Happil.Members
 				ArgumentUnderlyingType[i] = safeArgumentTypes[i];
 			}
 
+			ArgumentCount = safeArgumentTypes.Length;
 			ReturnType = returnType;
 			IsVoid = (returnType == null || returnType == typeof(void));
 			IsStatic = isStatic;
