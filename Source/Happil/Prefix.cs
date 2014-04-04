@@ -3,28 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Expressions;
+using Happil.Operands;
 
-namespace Happil.Fluent
+namespace Happil
 {
 	public static class Prefix
 	{
-		public static HappilOperand<T> PlusPlus<T>(HappilAssignable<T> assignable)
+		public static Operand<T> PlusPlus<T>(MutableOperand<T> mutable)
 		{
-			return new HappilUnaryExpression<T, T>(
-				assignable.OwnerMethod,
+			return new UnaryExpressionOperand<T, T>(
 				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Prefix, positive: true),
-				operand: assignable,
+				operand: mutable,
 				position: UnaryOperatorPosition.Prefix);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<T> MinusMinus<T>(HappilAssignable<T> assignable)
+		public static Operand<T> MinusMinus<T>(MutableOperand<T> mutable)
 		{
-			return new HappilUnaryExpression<T, T>(
-				assignable.OwnerMethod,
+			return new UnaryExpressionOperand<T, T>(
 				@operator: new UnaryOperators.OperatorIncrement<T>(UnaryOperatorPosition.Prefix, positive: false),
-				operand: assignable,
+				operand: mutable,
 				position: UnaryOperatorPosition.Prefix);
 		}
 	}

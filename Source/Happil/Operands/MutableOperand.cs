@@ -33,7 +33,7 @@ namespace Happil.Operands
 				return new BinaryExpressionOperand<T, T>(
 					@operator: new BinaryOperators.OperatorAssign<T>(),
 					left: this,
-					right: value);
+					right: value.OrNullConstant());
 			}
 		}
 

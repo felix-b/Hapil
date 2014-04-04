@@ -40,7 +40,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldnull);
+			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
@@ -101,7 +101,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldnull);
+			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}

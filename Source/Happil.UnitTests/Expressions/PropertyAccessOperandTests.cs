@@ -351,8 +351,8 @@ namespace Happil.UnitTests.Expressions
 				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
 				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
 					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
-					indexersObj.Item<string, int>("ABC").AssignConst(999);
-					indexersObj.Item<string, int>("DEF").AssignConst(888);
+					indexersObj.Item<string, int>("ABC").Assign(999);
+					indexersObj.Item<string, int>("DEF").Assign(888);
 					m.Return(null);
 				});
 
@@ -413,9 +413,9 @@ namespace Happil.UnitTests.Expressions
 				.ImplementInterface<AncestorRepository.ITargetObjectCaller>()
 				.Method<object, object>(intf => intf.CallTheTarget).Implement((m, value) => {
 					var indexersObj = m.Local(initialValue: value.CastTo<ObjectWithIndexers>());
-					indexersObj.Item<string, DayOfWeek, int>("AAA", DayOfWeek.Sunday).AssignConst(111);
-					indexersObj.Item<string, DayOfWeek, int>("BBB", DayOfWeek.Monday).AssignConst(222);
-					indexersObj.Item<string, DayOfWeek, int>("CCC", DayOfWeek.Tuesday).AssignConst(333);
+					indexersObj.Item<string, DayOfWeek, int>("AAA", DayOfWeek.Sunday).Assign(111);
+					indexersObj.Item<string, DayOfWeek, int>("BBB", DayOfWeek.Monday).Assign(222);
+					indexersObj.Item<string, DayOfWeek, int>("CCC", DayOfWeek.Tuesday).Assign(333);
 					m.Return(null);
 				});
 

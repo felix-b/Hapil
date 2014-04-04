@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 using NUnit.Framework;
 
@@ -20,7 +22,7 @@ namespace Happil.UnitTests.Expressions
 		[SetUp]
 		public void SetUp()
 		{
-			m_StatementScope = new StatementScope(null, null, new List<IHappilStatement>());
+			m_StatementScope = new StatementScope(null, null, new List<StatementBase>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,7 +49,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, int>>());
 			Assert.That(expression.ToString(), Is.EqualTo("Expr<Int32>{Field{f1} + Field{f2}}"));
 		}
 
@@ -67,7 +69,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<int, bool>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, bool>>());
 			Assert.That(expression.ToString(), Is.EqualTo("Expr<Boolean>{Field{f1} < Field{f2}}"));
 		}
 
@@ -81,7 +83,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new HappilConstant<int>(123);
+			var const4 = new ConstantOperand<int>(123);
 
 			//-- Act
 
@@ -89,7 +91,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<bool, bool>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(), 
 				Is.EqualTo("Expr<Boolean>{Expr<Boolean>{Field{f1} < Field{f2}} && Expr<Boolean>{Field{f3} > Const<Int32>{123}}}"));
@@ -105,7 +107,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new HappilConstant<int>(123);
+			var const4 = new ConstantOperand<int>(123);
 
 			//-- Act
 
@@ -113,7 +115,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<bool, bool>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Boolean>{Expr<Boolean>{Field{f1} < Field{f2}} || Expr<Boolean>{Field{f3} > Const<Int32>{123}}}"));
@@ -135,7 +137,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<bool, bool>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Boolean>{Field{f1} ^^ Field{f2}}"));
@@ -157,7 +159,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{Field{f1} ^ Field{f2}}"));
@@ -179,7 +181,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<bool, bool>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Boolean>{! Expr<Boolean>{Field{f1} < Field{f2}}}"));
@@ -196,7 +198,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new HappilConstant<int>(123);
+			var const4 = new ConstantOperand<int>(123);
 
 			//-- Act
 
@@ -217,7 +219,7 @@ namespace Happil.UnitTests.Expressions
 					"}"	+
 				"}";
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<bool, bool>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<bool, bool>>());
 			Assert.That(expression.ToString(), Is.EqualTo(expectedExpression));
 		}
 
@@ -237,7 +239,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<long, long>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<long, long>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int64>{Expr<Int64>{Field{f1} cast-to Const<Type>{System.Int64}} + Field{f2}}"));
@@ -259,7 +261,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilBinaryExpression<string, string>>());
+			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<string, string>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<String>{Field{f1} + Expr<String>{Field{f2} as Const<Type>{System.String}}}"));
@@ -280,7 +282,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{Field{f1} ++}"));
@@ -301,7 +303,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{Field{f1} --}"));
@@ -322,7 +324,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{++ Field{f1}}"));
@@ -343,7 +345,7 @@ namespace Happil.UnitTests.Expressions
 
 			//-- Assert
 
-			Assert.That(expression, Is.InstanceOf<HappilUnaryExpression<int, int>>());
+			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
 				Is.EqualTo("Expr<Int32>{-- Field{f1}}"));
@@ -351,9 +353,58 @@ namespace Happil.UnitTests.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private FieldAccessOperand<T> CreateField<T>(string name)
+		private TestOperand<T> CreateField<T>(string name)
 		{
-			return new FieldAccessOperand<T>(new HappilThis<object>(null), name);
+			return new TestOperand<T>(name);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class TestOperand<T> : MutableOperand<T>
+		{
+			private readonly string m_Name;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TestOperand(string name)
+			{
+				m_Name = name;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override string ToString()
+			{
+				return string.Format("Field{{{0}}}", m_Name);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+	
+			protected override void OnEmitTarget(ILGenerator il)
+			{
+				throw new NotImplementedException();
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnEmitLoad(ILGenerator il)
+			{
+				throw new NotImplementedException();
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnEmitStore(ILGenerator il)
+			{
+				throw new NotImplementedException();
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnEmitAddress(ILGenerator il)
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

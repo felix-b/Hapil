@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using InOut = Happil.UnitTests.AncestorRepository.OperatorInputOutput;
+using Happil;
 
 namespace Happil.UnitTests.Expressions
 {
@@ -766,7 +767,7 @@ namespace Happil.UnitTests.Expressions
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ICastTester>()
 				.Method<int, object>(intf => intf.CastToObject).Implement((m, num) => {
-					m.Return(num.As<object>());
+					m.Return(num.CastTo<object>());
 				})
 				.AllMethods().Throw<NotImplementedException>();
 
@@ -791,7 +792,7 @@ namespace Happil.UnitTests.Expressions
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.ICastTester>()
 				.Method<int?, object>(intf => intf.CastNullableToObject).Implement((m, nullableNum) => {
-					m.Return(nullableNum.As<object>());
+					m.Return(nullableNum.CastTo<object>());
 				})
 				.AllMethods().Throw<NotImplementedException>();
 
@@ -839,7 +840,6 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(caughtException, Is.Not.Null);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]

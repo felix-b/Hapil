@@ -323,35 +323,33 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public static LocalOperand<T[]> BuildArrayLocal<T>(params T[] constantValues)
-		//{
-		//	var method = StatementScope.Current.OwnerMethod;
-		//	var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(constantValues.Length)));
+		public static LocalOperand<T[]> BuildArrayLocal<T>(params T[] constantValues)
+		{
+			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new ConstantOperand<int>(constantValues.Length)));
 
-		//	for ( int i = 0 ; i < constantValues.Length ; i++ )
-		//	{
-		//		arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(new HappilConstant<T>(constantValues[i]));
-		//	}
+			for ( int i = 0 ; i < constantValues.Length ; i++ )
+			{
+				arrayLocal.ElementAt(new ConstantOperand<int>(i)).Assign(new ConstantOperand<T>(constantValues[i]));
+			}
 
-		//	return arrayLocal;
-		//}
+			return arrayLocal;
+		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public static HappilLocal<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
-		//{
-		//	var method = StatementScope.Current.OwnerMethod;
-		//	var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new HappilConstant<int>(values.Length)));
+		public static LocalOperand<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
+		{
+			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new ConstantOperand<int>(values.Length)));
 
-		//	for ( int i = 0 ; i < values.Length ; i++ )
-		//	{
-		//		arrayLocal.ElementAt(new HappilConstant<int>(i)).Assign(values[i]);
-		//	}
+			for ( int i = 0 ; i < values.Length ; i++ )
+			{
+				arrayLocal.ElementAt(new ConstantOperand<int>(i)).Assign(values[i]);
+			}
 
-		//	return arrayLocal;
-		//}
+			return arrayLocal;
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

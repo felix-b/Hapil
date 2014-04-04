@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Happil.Fluent;
+using Happil.Operands;
 using NUnit.Framework;
 using InOut = Happil.UnitTests.AncestorRepository.OperatorInputOutput;
 
@@ -600,7 +600,7 @@ namespace Happil.UnitTests.Expressions
 				.DefaultConstructor()
 				.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
 					Static.Prop(() => OutputArray).Assign(m.NewArray<int>(123, 456, 789));
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			OutputArray = null;

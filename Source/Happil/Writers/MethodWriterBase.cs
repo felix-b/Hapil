@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
@@ -208,14 +209,14 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilForShortSyntax For(ConstantOperand<int> from, IOperand<int> to, int increment = 1)
+		public HappilForShortSyntax For(Operand<int> from, IOperand<int> to, int increment = 1)
 		{
 			return new HappilForShortSyntax(OwnerMethod, from, to.CastTo<int>(), increment);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilForShortSyntax For(IOperand<int> from, ConstantOperand<int> to, int increment = 1)
+		public HappilForShortSyntax For(IOperand<int> from, Operand<int> to, int increment = 1)
 		{
 			return new HappilForShortSyntax(OwnerMethod, from.CastTo<int>(), to, increment);
 		}
@@ -391,70 +392,70 @@ namespace Happil.Writers
 			return new HappilAnonymousDelegate<TArg1, TArg2, TReturn>(m_OwnerMethod.OwnerClass, body);
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilOperand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
-		//	ref IHappilDelegate site,
-		//	Action<IHappilMethodBody<TReturn>, HappilArgument<TArg1>, HappilArgument<TArg2>> body)
-		//{
-		//	if ( site == null )
-		//	{
-		//		site = (IHappilDelegate)Delegate(body);
-		//	}
+		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
+			ref IHappilDelegate site,
+			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Delegate(body);
+			}
 
-		//	return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
-		//}
+			return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
+		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilOperand<TMethod> MakeDelegate<TTarget, TMethod>(IHappilOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
-		//{
-		//	var method = Helpers.ResolveMethodFromLambda(methodSelector);
-		//	return new HappilDelegate<TMethod>(target, method);
-		//}
+		public Operand<TMethod> MakeDelegate<TTarget, TMethod>(IOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		{
+			var method = Helpers.ResolveMethodFromLambda(methodSelector);
+			return new HappilDelegate<TMethod>(target, method);
+		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
-		//{
-		//	return Delegate<TArg1, TResult>((m, arg1) => m.Return(expression(arg1)));
-		//}
+		public Operand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<Operand<TArg1>, IOperand<TResult>> expression)
+		{
+			return Delegate<TArg1, TResult>((m, arg1) => m.Return(expression(arg1)));
+		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilOperand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
-		//	ref IHappilDelegate site,
-		//	Func<HappilOperand<TArg1>, IHappilOperand<TResult>> expression)
-		//{
-		//	if ( site == null )
-		//	{
-		//		site = (IHappilDelegate)Lambda(expression);
-		//	}
+		public Operand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
+			ref IHappilDelegate site,
+			Func<Operand<TArg1>, IOperand<TResult>> expression)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Lambda(expression);
+			}
 
-		//	return (HappilAnonymousDelegate<TArg1, TResult>)site;
-		//}
+			return (HappilAnonymousDelegate<TArg1, TResult>)site;
+		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
-		//	ref IHappilDelegate site,
-		//	Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
-		//{
-		//	if ( site == null )
-		//	{
-		//		site = (IHappilDelegate)Lambda(expression);
-		//	}
+		public Operand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+			Func<Operand<TArg1>, Operand<TArg2>, IOperand<TResult>> expression)
+		{
+			return Delegate<TArg1, TArg2, TResult>((m, arg1, arg2) => m.Return(expression(arg1, arg2)));
+		}
 
-		//	return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
-		//}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		public Operand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
+			ref IHappilDelegate site,
+			Func<Operand<TArg1>, Operand<TArg2>, IOperand<TResult>> expression)
+		{
+			if ( site == null )
+			{
+				site = (IHappilDelegate)Lambda(expression);
+			}
 
-		//public HappilOperand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
-		//	Func<HappilOperand<TArg1>, HappilOperand<TArg2>, IHappilOperand<TResult>> expression)
-		//{
-		//	return Delegate<TArg1, TArg2, TResult>((m, arg1, arg2) => m.Return(expression(arg1, arg2)));
-		//}
+			return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
+		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 

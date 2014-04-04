@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
+using Happil.Writers;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -15,16 +17,16 @@ namespace Happil.UnitTests.Statements
 	[TestFixture]
 	public class StatementScopeTests
 	{
-		private HappilModule m_Module;
-		private HappilClass m_Class;
-		private HappilMethod m_Method;
+		private DynamicModule m_Module;
+		private ClassType m_Class;
+		private MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp()
 		{
-			m_Module = new HappilModule(
+			m_Module = new DynamicModule(
 				"Happil.UnitTests.EmittedBy" + this.GetType().Name,
 				allowSave: false);
 		}
@@ -35,12 +37,14 @@ namespace Happil.UnitTests.Statements
 		public void SetUp()
 		{
 			StatementScope.Cleanup();
-			
-			var classBody = m_Module.DeriveClassFrom<object>(Guid.NewGuid().ToString());
-			m_Class = ((HappilClassBody<object>)classBody).HappilClass;
 
+			var key = new TypeKey(baseType: typeof(object));
+			m_Class = m_Module.DefineClass(key.BaseType, key, Guid.NewGuid().ToString());
+			
+			var classBody = new ImplementationClassWriter<object>(m_Class);
 			classBody.Method<string>(x => x.ToString).Implement(m => { });
-			m_Method = m_Class.FindMember<HappilMethod>("ToString");
+			
+			m_Method = m_Class.GetMemberByName<MethodMember>("ToString");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -60,7 +64,7 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Act
 			
-			var scope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var scope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			//-- Assert
 
@@ -100,7 +104,7 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Act
 
-			var scope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var scope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			var existsInside = StatementScope.Exists;
 			var currentInside = StatementScope.Current;
@@ -123,11 +127,11 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			//-- Act
-			
-			var nestedRootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+
+			var nestedRootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -137,11 +141,11 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			//-- Act
 
-			var nestedScope = new StatementScope(new List<IHappilStatement>());
+			var nestedScope = new StatementScope(new List<StatementBase>());
 
 			var existsInsideNested = StatementScope.Exists;
 			var currentInsideNested = StatementScope.Current;
@@ -179,12 +183,12 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var statements = new List<IHappilStatement>();
+			var statements = new List<StatementBase>();
 			var rootScope = new StatementScope(m_Class, m_Method, statements);
 
 			//-- Act
 
-			var expression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorNegation<int>(), m_Method.Const(111)); 
+			var expression = new UnaryExpressionOperand<int, int>(new UnaryOperators.OperatorNegation<int>(), new ConstantOperand<int>(111)); 
 
 			//-- Assert
 
@@ -200,7 +204,7 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var statements = new List<IHappilStatement>();
+			var statements = new List<StatementBase>();
 			var rootScope = new StatementScope(m_Class, m_Method, statements);
 
 			//-- Act
@@ -219,13 +223,13 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var statements = new List<IHappilStatement>();
+			var statements = new List<StatementBase>();
 			var rootScope = new StatementScope(m_Class, m_Method, statements);
 
 			//-- Act
 
-			var innerExpression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorNegation<int>(), m_Method.Const(111));
-			var outerExpression = new HappilUnaryExpression<int, int>(m_Method, new UnaryOperators.OperatorPlus<int>(), innerExpression);
+			var innerExpression = new UnaryExpressionOperand<int, int>(new UnaryOperators.OperatorNegation<int>(), m_Method.TransparentWriter.Const(111));
+			var outerExpression = new UnaryExpressionOperand<int, int>(new UnaryOperators.OperatorPlus<int>(), innerExpression);
 
 			//-- Assert
 
@@ -241,7 +245,7 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Act
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			//-- Assert
 
@@ -258,12 +262,12 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 			var tryStatement = new TryStatement(() => { });
 			
 			//-- Act
 
-			var tryScope = new StatementScope(new List<IHappilStatement>(), tryStatement, ExceptionBlockType.Try);
+			var tryScope = new StatementScope(new List<StatementBase>(), tryStatement, ExceptionBlockType.Try);
 
 			//-- Assert
 
@@ -280,13 +284,13 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 			var tryStatement = new TryStatement(() => { });
-			var tryScope = new StatementScope(new List<IHappilStatement>(), tryStatement, ExceptionBlockType.Try);
+			var tryScope = new StatementScope(new List<StatementBase>(), tryStatement, ExceptionBlockType.Try);
 
 			//-- Act
 
-			var innerScope = new StatementScope(new List<IHappilStatement>());
+			var innerScope = new StatementScope(new List<StatementBase>());
 
 			//-- Assert
 
@@ -303,7 +307,7 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			//-- Act
 
@@ -321,9 +325,9 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var innerScope1 = new StatementScope(new List<IHappilStatement>());
-			var innerScope2 = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var innerScope1 = new StatementScope(new List<StatementBase>());
+			var innerScope2 = new StatementScope(new List<StatementBase>());
 
 			//-- Act
 
@@ -342,10 +346,10 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var tryScope = new StatementScope(new List<IHappilStatement>(), new TryStatement(() => { }), ExceptionBlockType.Try);
-			var homeScope = new StatementScope(new List<IHappilStatement>());
-			var innerScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var tryScope = new StatementScope(new List<StatementBase>(), new TryStatement(() => { }), ExceptionBlockType.Try);
+			var homeScope = new StatementScope(new List<StatementBase>());
+			var innerScope = new StatementScope(new List<StatementBase>());
 
 			//-- Act
 
@@ -364,13 +368,13 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 			
 			var tryStatement = new TryStatement(() => { });
-			var tryScope = new StatementScope(new List<IHappilStatement>(), tryStatement, ExceptionBlockType.Try);
+			var tryScope = new StatementScope(new List<StatementBase>(), tryStatement, ExceptionBlockType.Try);
 			
-			var innerScope = new StatementScope(new List<IHappilStatement>());
+			var innerScope = new StatementScope(new List<StatementBase>());
 
 			//-- Act
 
@@ -389,11 +393,11 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 			
 			var tryStatement = new TryStatement(() => { });
-			var tryScope = new StatementScope(new List<IHappilStatement>(), tryStatement, ExceptionBlockType.Try);
+			var tryScope = new StatementScope(new List<StatementBase>(), tryStatement, ExceptionBlockType.Try);
 
 			//-- Act
 
@@ -412,14 +416,14 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 
 			var outerTryStatement = new TryStatement(() => { });
-			var outerTryScope = new StatementScope(new List<IHappilStatement>(), outerTryStatement, ExceptionBlockType.Try);
+			var outerTryScope = new StatementScope(new List<StatementBase>(), outerTryStatement, ExceptionBlockType.Try);
 
 			var innerTryStatement = new TryStatement(() => { });
-			var innerTryScope = new StatementScope(new List<IHappilStatement>(), innerTryStatement, ExceptionBlockType.Try);
+			var innerTryScope = new StatementScope(new List<StatementBase>(), innerTryStatement, ExceptionBlockType.Try);
 
 			//-- Act
 
@@ -438,18 +442,18 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 			
-			var nestedScope1 = new StatementScope(new List<IHappilStatement>());
+			var nestedScope1 = new StatementScope(new List<StatementBase>());
 
 			var outerTryStatement = new TryStatement(() => { });
-			var outerTryScope = new StatementScope(new List<IHappilStatement>(), outerTryStatement, ExceptionBlockType.Try);
+			var outerTryScope = new StatementScope(new List<StatementBase>(), outerTryStatement, ExceptionBlockType.Try);
 
 			var innerTryStatement = new TryStatement(() => { });
-			var innerTryScope = new StatementScope(new List<IHappilStatement>(), innerTryStatement, ExceptionBlockType.Try);
+			var innerTryScope = new StatementScope(new List<StatementBase>(), innerTryStatement, ExceptionBlockType.Try);
 
-			var nestedScope2 = new StatementScope(new List<IHappilStatement>());
+			var nestedScope2 = new StatementScope(new List<StatementBase>());
 
 			//-- Act
 
@@ -468,11 +472,11 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 			
 			var tryStatement = new TryStatement(() => { });
-			var finallyScope = new StatementScope(new List<IHappilStatement>(), tryStatement, ExceptionBlockType.Finally);
+			var finallyScope = new StatementScope(new List<StatementBase>(), tryStatement, ExceptionBlockType.Finally);
 
 			//-- Act
 
@@ -486,14 +490,14 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 
 			var outerTryStatement = new TryStatement(() => { });
-			var outerFinallyScope = new StatementScope(new List<IHappilStatement>(), outerTryStatement, ExceptionBlockType.Finally);
+			var outerFinallyScope = new StatementScope(new List<StatementBase>(), outerTryStatement, ExceptionBlockType.Finally);
 
 			var innerTryStatement = new TryStatement(() => { });
-			var innerTryScope = new StatementScope(new List<IHappilStatement>(), innerTryStatement, ExceptionBlockType.Try);
+			var innerTryScope = new StatementScope(new List<StatementBase>(), innerTryStatement, ExceptionBlockType.Try);
 
 			//-- Act
 
@@ -507,15 +511,15 @@ namespace Happil.UnitTests.Statements
 		{
 			//-- Arrange
 
-			var rootScope = new StatementScope(m_Class, m_Method, new List<IHappilStatement>());
+			var rootScope = new StatementScope(m_Class, m_Method, new List<StatementBase>());
 
 			var outerTryStatement = new TryStatement(() => { });
-			var outerFinallyScope = new StatementScope(new List<IHappilStatement>(), outerTryStatement, ExceptionBlockType.Finally);
+			var outerFinallyScope = new StatementScope(new List<StatementBase>(), outerTryStatement, ExceptionBlockType.Finally);
 
-			var homeScope = new StatementScope(new List<IHappilStatement>());
+			var homeScope = new StatementScope(new List<StatementBase>());
 
 			var innerTryStatement = new TryStatement(() => { });
-			var innerCatchScope = new StatementScope(new List<IHappilStatement>(), innerTryStatement, ExceptionBlockType.Catch);
+			var innerCatchScope = new StatementScope(new List<StatementBase>(), innerTryStatement, ExceptionBlockType.Catch);
 
 			//-- Act
 

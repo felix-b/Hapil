@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil
@@ -14,85 +14,85 @@ namespace Happil
 	public static class DictionaryShortcuts
 	{
 		public static void Add<TKey, TValue>(
-			this IHappilOperand<IDictionary<TKey, TValue>> dictionary, 
-			IHappilOperand<TKey> key, 
-			IHappilOperand<TValue> value)
+			this IOperand<IDictionary<TKey, TValue>> dictionary, 
+			IOperand<TKey> key, 
+			IOperand<TValue> value)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(dictionary, GetReflectionCache<TKey, TValue>().Add, key, value));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void Clear<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
+		public static void Clear<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(dictionary, GetReflectionCache<TKey, TValue>().Clear));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<bool> ContainsKey<TKey, TValue>(
-			this IHappilOperand<IDictionary<TKey, TValue>> dictionary, 
-			IHappilOperand<TKey> key)
+		public static Operand<bool> ContainsKey<TKey, TValue>(
+			this IOperand<IDictionary<TKey, TValue>> dictionary, 
+			IOperand<TKey> key)
 		{
 			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().ContainsKey, key);
-			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
+			return new UnaryExpressionOperand<IDictionary<TKey, TValue>, bool>(@operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilOperand<bool> ContainsValue<TKey, TValue>(
-			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
-			IHappilOperand<TValue> value)
+		public static Operand<bool> ContainsValue<TKey, TValue>(
+			this IOperand<IDictionary<TKey, TValue>> dictionary,
+			IOperand<TValue> value)
 		{
 			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().ContainsValue, value);
-			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
+			return new UnaryExpressionOperand<IDictionary<TKey, TValue>, bool>(@operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> Remove<TKey, TValue>(
-			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
-			IHappilOperand<TKey> key)
+		public static IOperand<bool> Remove<TKey, TValue>(
+			this IOperand<IDictionary<TKey, TValue>> dictionary,
+			IOperand<TKey> key)
 		{
 			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().Remove, key);
-			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
+			return new UnaryExpressionOperand<IDictionary<TKey, TValue>, bool>(@operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> TryGetValue<TKey, TValue>(
-			this IHappilOperand<IDictionary<TKey, TValue>> dictionary,
-			IHappilOperand<TKey> key,
-			IHappilOperand<TValue> value)
+		public static IOperand<bool> TryGetValue<TKey, TValue>(
+			this IOperand<IDictionary<TKey, TValue>> dictionary,
+			IOperand<TKey> key,
+			IOperand<TValue> value)
 		{
 			var @operator = new UnaryOperators.OperatorCall<IDictionary<TKey, TValue>>(GetReflectionCache<TKey, TValue>().TryGetValue, key, value);
-			return new HappilUnaryExpression<IDictionary<TKey, TValue>, bool>(null, @operator, dictionary);
+			return new UnaryExpressionOperand<IDictionary<TKey, TValue>, bool>(@operator, dictionary);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<int> Count<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
+		public static IOperand<int> Count<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new PropertyAccessOperand<int>(dictionary, GetReflectionCache<TKey, TValue>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<ICollection<TKey>> Keys<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
+		public static IOperand<ICollection<TKey>> Keys<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new PropertyAccessOperand<ICollection<TKey>>(dictionary, GetReflectionCache<TKey, TValue>().Keys);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<ICollection<TValue>> Values<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary)
+		public static IOperand<ICollection<TValue>> Values<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new PropertyAccessOperand<ICollection<TValue>>(dictionary, GetReflectionCache<TKey, TValue>().Values);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static HappilAssignable<TValue> Item<TKey, TValue>(this IHappilOperand<IDictionary<TKey, TValue>> dictionary, IHappilOperand<TKey> key)
+		public static MutableOperand<TValue> Item<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary, IOperand<TKey> key)
 		{
 			return new PropertyAccessOperand<TValue>(
 				dictionary, 

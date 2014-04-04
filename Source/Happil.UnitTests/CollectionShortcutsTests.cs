@@ -117,7 +117,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, input) => {
 					var list = m.Local(m.New<List<string>>(input));
-					list.ItemAt(m.Const(1)).AssignConst("ZZZ");
+					list.ItemAt(m.Const(1)).Assign("ZZZ");
 					m.Return(list);
 				});
 
@@ -166,7 +166,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, input) => {
 					var array = m.Local(initialValue: input.ToArray());
-					array.ElementAt(m.Const(1)).AssignConst("ZZZ");
+					array.ElementAt(m.Const(1)).Assign("ZZZ");
 					m.Return(array);
 				});
 
@@ -267,8 +267,8 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, input) => {
 					var array = m.Local(m.NewArray<string>(input.Count() + 2));
-					array.ElementAt(0).AssignConst("^^");
-					array.ElementAt(array.Length() - 1).AssignConst("$$");	
+					array.ElementAt(0).Assign("^^");
+					array.ElementAt(array.Length() - 1).Assign("$$");	
 
 					var list = m.Local(initialValue: input.ToList());
 					list.CopyTo(array, arrayIndex: m.Const(1));

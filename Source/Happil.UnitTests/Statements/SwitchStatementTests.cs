@@ -24,9 +24,9 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>(initialValueConst: 9999);
 
 					m.Switch(input)
-						.Case(0).Do(() => result.AssignConst(1000))
-						.Case(1).Do(() => result.AssignConst(1111))
-						.Case(2).Do(() => result.AssignConst(2222));
+						.Case(0).Do(() => result.Assign(1000))
+						.Case(1).Do(() => result.Assign(1111))
+						.Case(2).Do(() => result.Assign(2222));
 
 					m.Return(result);
 				});
@@ -56,10 +56,10 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>();
 					
 					m.Switch(input)
-						.Case(0).Do(() => result.AssignConst(1000))
-						.Case(1).Do(() => result.AssignConst(1111))
-						.Case(2).Do(() => result.AssignConst(2222))
-						.Default(() => result.AssignConst(9999));
+						.Case(0).Do(() => result.Assign(1000))
+						.Case(1).Do(() => result.Assign(1111))
+						.Case(2).Do(() => result.Assign(2222))
+						.Default(() => result.Assign(9999));
 
 					m.Return(result);
 				});
@@ -89,10 +89,10 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>();
 
 					m.Switch(input)
-						.Case(10).Do(() => result.AssignConst(1000))
-						.Case(11).Do(() => result.AssignConst(1111))
-						.Case(12).Do(() => result.AssignConst(2222))
-						.Default(() => result.AssignConst(9999));
+						.Case(10).Do(() => result.Assign(1000))
+						.Case(11).Do(() => result.Assign(1111))
+						.Case(12).Do(() => result.Assign(2222))
+						.Default(() => result.Assign(9999));
 
 					m.Return(result);
 				});
@@ -122,10 +122,10 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>();
 
 					m.Switch(input)
-						.Case(-10).Do(() => result.AssignConst(1000))
-						.Case(-11).Do(() => result.AssignConst(1111))
-						.Case(-12).Do(() => result.AssignConst(2222))
-						.Default(() => result.AssignConst(9999));
+						.Case(-10).Do(() => result.Assign(1000))
+						.Case(-11).Do(() => result.Assign(1111))
+						.Case(-12).Do(() => result.Assign(2222))
+						.Default(() => result.Assign(9999));
 
 					m.Return(result);
 				});
@@ -155,10 +155,10 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>();
 
 					m.Switch(input)
-						.Case(10).Do(() => result.AssignConst(1000))
-						.Case(12).Do(() => result.AssignConst(2222))
-						.Case(14).Do(() => result.AssignConst(4444))
-						.Default(() => result.AssignConst(9999));
+						.Case(10).Do(() => result.Assign(1000))
+						.Case(12).Do(() => result.Assign(2222))
+						.Case(14).Do(() => result.Assign(4444))
+						.Default(() => result.Assign(9999));
 
 					m.Return(result);
 				});
@@ -188,11 +188,11 @@ namespace Happil.UnitTests.Statements
 					var byteInput = m.Local<byte>(initialValue: input.CastTo<byte>());
 
 					m.Switch(byteInput)
-						.Case(10).Do(() => m.ReturnConst(1000))
-						.Case(11).Do(() => m.ReturnConst(1111))
-						.Case(12).Do(() => m.ReturnConst(2222));
+						.Case(10).Do(() => m.Return(1000))
+						.Case(11).Do(() => m.Return(1111))
+						.Case(12).Do(() => m.Return(2222));
 
-					m.ReturnConst(9999);
+					m.Return(9999);
 				});
 
 			//-- Act
@@ -221,13 +221,13 @@ namespace Happil.UnitTests.Statements
 
 					m.Switch(enumInput)
 						.Case(DayOfWeek.Monday)
-							.Do(() => m.ReturnConst(111))
+							.Do(() => m.Return(111))
 						.Case(DayOfWeek.Tuesday)
-							.Do(() => m.ReturnConst(222))
+							.Do(() => m.Return(222))
 						.Case(DayOfWeek.Thursday)
-							.Do(() => m.ReturnConst(444));
+							.Do(() => m.Return(444));
 
-					m.ReturnConst(999);
+					m.Return(999);
 				});
 
 			//-- Act
@@ -253,10 +253,10 @@ namespace Happil.UnitTests.Statements
 				.DefaultConstructor()
 				.Method<long, long>(x => x.DoTest).Implement((m, input) => {
 					m.Switch(input)
-						.Case(10).Do(() => m.ReturnConst(1000))
-						.Case(12).Do(() => m.ReturnConst(1222))
-						.Case(14).Do(() => m.ReturnConst(1444))
-						.Default(() => m.ReturnConst(9999));
+						.Case(10).Do(() => m.Return(1000))
+						.Case(12).Do(() => m.Return(1222))
+						.Case(14).Do(() => m.Return(1444))
+						.Default(() => m.Return(9999));
 				});
 
 			//-- Act
@@ -282,10 +282,10 @@ namespace Happil.UnitTests.Statements
 				.DefaultConstructor()
 				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
 					m.Switch(input)
-						.Case(10).Do(() => m.ReturnConst(1000))
-						.Case(20).Do(() => m.ReturnConst(2000))
-						.Case(30).Do(() => m.ReturnConst(3000))
-						.Default(() => m.ReturnConst(9999));
+						.Case(10).Do(() => m.Return(1000))
+						.Case(20).Do(() => m.Return(2000))
+						.Case(30).Do(() => m.Return(3000))
+						.Default(() => m.Return(9999));
 				});
 
 			//-- Act
@@ -312,10 +312,10 @@ namespace Happil.UnitTests.Statements
 				.Method<int, int>(x => x.DoTest).Implement((m, input) => {
 					var s = m.Local<string>(input.Func<string>(x => x.ToString));
 					m.Switch(s)
-						.Case("10").Do(() => m.ReturnConst(1000))
-						.Case("20").Do(() => m.ReturnConst(2000))
-						.Case("30").Do(() => m.ReturnConst(3000))
-						.Default(() => m.ReturnConst(9999));
+						.Case("10").Do(() => m.Return(1000))
+						.Case("20").Do(() => m.Return(2000))
+						.Case("30").Do(() => m.Return(3000))
+						.Default(() => m.Return(9999));
 				});
 
 			//-- Act

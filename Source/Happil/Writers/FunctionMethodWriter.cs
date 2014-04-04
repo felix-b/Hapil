@@ -25,7 +25,7 @@ namespace Happil.Writers
 
 		public void Return(IOperand<TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand));
+			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand.OrNullConstant()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

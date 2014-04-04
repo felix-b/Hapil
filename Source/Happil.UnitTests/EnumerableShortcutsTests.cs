@@ -320,7 +320,7 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((m, source) => {
 					Static.Prop(() => OutputDictionary).Assign(source.ToDictionary(s => s.Substring(m.Const(0), m.Const(1))));
-					m.ReturnConst(null);
+					m.Return((string[])null);
 				});
 
 			OutputDictionary = null;

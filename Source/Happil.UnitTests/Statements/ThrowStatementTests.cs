@@ -43,7 +43,7 @@ namespace Happil.UnitTests.Statements
 				DeriveClassFrom<AncestorRepository.StatementTester>()
 					.DefaultConstructor()
 					.Method<int, int>(cls => cls.DoTest).Implement((m, input) => {
-						m.ReturnConst(0);
+						m.Return(0);
 						m.Throw<ExceptionRepository.TestExceptionDefaultCtor>("TestThrowExceptionConstructorNotFound");
 					});
 			}

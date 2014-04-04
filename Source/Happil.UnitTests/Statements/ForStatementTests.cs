@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil;
-using Happil.Fluent;
+using Happil.Operands;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -201,7 +201,7 @@ namespace Happil.UnitTests.Statements
 						m.If(value == 3).Then(loop.Break);
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
@@ -239,7 +239,7 @@ namespace Happil.UnitTests.Statements
 						Static.Prop(() => OutputList1).Add(value);
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();

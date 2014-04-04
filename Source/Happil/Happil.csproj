@@ -44,8 +44,10 @@
   <ItemGroup>
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DelegateShortcuts.cs" />
+    <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EnumerableShortcuts.cs" />
     <Compile Include="Expressions\ArrayElementAccessOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
@@ -91,6 +93,8 @@
     <Compile Include="Operands\MutableOperand.cs" />
     <Compile Include="Operands\Operand.cs" />
     <Compile Include="Operands\ThisOperand.cs" />
+    <Compile Include="Prefix.cs" />
+    <Compile Include="SetShortcuts.cs" />
     <Compile Include="Statements\CallStatement.cs" />
     <Compile Include="Statements\DoWhileStatement.cs" />
     <Compile Include="Statements\ExceptionBlockType.cs" />
@@ -112,6 +116,7 @@
     <Compile Include="Statements\UsingStatement.cs" />
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Static.cs" />
+    <Compile Include="StringShortcuts.cs" />
     <Compile Include="TypeExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -153,9 +158,7 @@
     <Compile Include="Writers\MethodWriterBase.cs" />
     <Compile Include="Writers\TemplateMethodWriter.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Selectors\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -28,7 +28,7 @@ namespace Happil.UnitTests.Statements
 					});
 
 					output.Add(m.Const("AFTER-USING"));
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			InputDisposable = new TestDisposable();
@@ -65,7 +65,7 @@ namespace Happil.UnitTests.Statements
 					});
 
 					output.Add(m.Const("AFTER-USING"));
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			InputDisposable = new TestDisposable();
@@ -109,7 +109,7 @@ namespace Happil.UnitTests.Statements
 					});
 
 					output.Add(m.Const("AFTER-USING"));
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			InputDisposable = null;

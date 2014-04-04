@@ -23,7 +23,7 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>(initialValue: m.Const(999));
 
 					m.If(input == m.Const(0)).Then(() => {
-						result.AssignConst(111);
+						result.Assign(111);
 					});
 
 					m.Return(result);
@@ -54,10 +54,10 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>(initialValue: m.Const(999));
 
 					m.If(input == m.Const(0)).Then(() => {
-						result.AssignConst(111);
+						result.Assign(111);
 					})
 					.Else(() => {
-						result.AssignConst(222);
+						result.Assign(222);
 					});
 
 					m.Return(result);
@@ -88,13 +88,13 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>(initialValue: input);
 
 					m.If(result == m.Const(1)).Then(() => {
-						result.AssignConst(11);
+						result.Assign(11);
 					})
 					.ElseIf(result == m.Const(11)).Then(() => {
-						result.AssignConst(22);
+						result.Assign(22);
 					})
 					.ElseIf(result == m.Const(22)).Then(() => {
-						result.AssignConst(33);
+						result.Assign(33);
 					});
 
 					m.Return(result);
@@ -129,16 +129,16 @@ namespace Happil.UnitTests.Statements
 					var result = m.Local<int>(initialValue: m.Const(999));
 
 					m.If(input == m.Const(1)).Then(() => {
-						result.AssignConst(111);
+						result.Assign(111);
 					})
 					.ElseIf(input == m.Const(2)).Then(() => {
-						result.AssignConst(222);
+						result.Assign(222);
 					})
 					.ElseIf(input == m.Const(3)).Then(() => {
-						result.AssignConst(333);
+						result.Assign(333);
 					})
 					.Else(() => {
-						result.AssignConst(444);
+						result.Assign(444);
 					});
 
 					m.Return(result);
@@ -174,12 +174,12 @@ namespace Happil.UnitTests.Statements
 					var half2 = m.Local<int>(initialValueConst: 22);
 
 					m.If(x == m.Const(1)).Then(() => {
-						half1.AssignConst(111);
-						half2.AssignConst(222);
+						half1.Assign(111);
+						half2.Assign(222);
 
 						m.If(y == m.Const(2)).Then(() => {
-							half1.AssignConst(1111);
-							half2.AssignConst(2222);
+							half1.Assign(1111);
+							half2.Assign(2222);
 						});
 					});
 
@@ -214,16 +214,16 @@ namespace Happil.UnitTests.Statements
 					var half2 = m.Local<int>(initialValueConst: 22);
 
 					m.If(x == m.Const(1)).Then(() => {
-						half1.AssignConst(111);
-						half2.AssignConst(222);
+						half1.Assign(111);
+						half2.Assign(222);
 
 						m.If(y == m.Const(2)).Then(() => {
-							half1.AssignConst(1111);
-							half2.AssignConst(2222);
+							half1.Assign(1111);
+							half2.Assign(2222);
 						})
 						.Else(() => {
-							half1.AssignConst(11111);
-							half2.AssignConst(22222);
+							half1.Assign(11111);
+							half2.Assign(22222);
 						});
 					});
 
@@ -258,14 +258,14 @@ namespace Happil.UnitTests.Statements
 					var half2 = m.Local<int>(initialValueConst: 22);
 
 					m.If(x == m.Const(1)).Then(() => {
-						half1.AssignConst(111);
+						half1.Assign(111);
 
 						m.If(y == m.Const(2)).Then(() => {
-							half1.AssignConst(1111);
-							half2.AssignConst(2222);
+							half1.Assign(1111);
+							half2.Assign(2222);
 						});
 
-						half2.AssignConst(222);
+						half2.Assign(222);
 					});
 
 					m.Return(half1 + half2);

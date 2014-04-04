@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil;
+using Happil.Operands;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Expressions
@@ -129,7 +130,7 @@ namespace Happil.UnitTests.Expressions
 					m.ForeachElementIn(source).Do((loop, item) => {
 						func.Invoke(item);
 					});
-					m.ReturnConst(null);
+					m.Return((string[])null);
 				});
 
 			Output = new List<string>();
@@ -163,7 +164,7 @@ namespace Happil.UnitTests.Expressions
 					m.ForeachElementIn(source).Do((loop, item) => {
 						action.Invoke(item);
 					});
-					m.ReturnConst(null);
+					m.Return((string[])null);
 				});
 
 			//-- Act

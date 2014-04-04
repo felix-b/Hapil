@@ -23,15 +23,15 @@ namespace Happil.UnitTests.Statements
 					m.Try(() => {
 						m.If(input == 888).Then(() => m.Throw<ExceptionRepository.TestExceptionOne>("TEST888"));
 
-						Static.Prop(() => OutputException).AssignConst(null);
-						m.ReturnConst(111);
+						Static.Prop(() => OutputException).Assign((Exception)null);
+						m.Return(111);
 					})
 					.Catch<Exception>(e => {
 						Static.Prop(() => OutputException).Assign(e);
-						m.ReturnConst(999);
+						m.Return(999);
 					});
 
-					m.ReturnConst(-999); // should never get here!
+					m.Return(-999); // should never get here!
 				});
 
 			OutputException = null;
@@ -70,19 +70,19 @@ namespace Happil.UnitTests.Statements
 						m.If(input == 55).Then(() => m.Throw<ExceptionRepository.TestExceptionOne>("TEST55"));
 						m.If(input == 66).Then(() => m.Throw<ExceptionRepository.TestExceptionTwo>("TEST66"));
 
-						Static.Prop(() => OutputException).AssignConst(null);
-						m.ReturnConst(1111);
+						Static.Prop(() => OutputException).Assign((Exception)null);
+						m.Return(1111);
 					})
 					.Catch<ExceptionRepository.TestExceptionOne>(e => {
 						Static.Prop(() => OutputException).Assign(e);
-						m.ReturnConst(5555);
+						m.Return(5555);
 					})
 					.Catch<Exception>(e => {
 						Static.Prop(() => OutputException).Assign(e);
-						m.ReturnConst(9999);
+						m.Return(9999);
 					});
 
-					m.ReturnConst(-9999); // should never get here!
+					m.Return(-9999); // should never get here!
 				});
 
 			OutputException = null;
@@ -126,18 +126,18 @@ namespace Happil.UnitTests.Statements
 						m.If(input == 55).Then(() => m.Throw<ExceptionRepository.TestExceptionOne>("TEST55"));
 						m.If(input == 66).Then(() => m.Throw<ExceptionRepository.TestExceptionTwo>("TEST66"));
 
-						Static.Prop(() => OutputException).AssignConst(null);
-						m.ReturnConst(1111);
+						Static.Prop(() => OutputException).Assign((Exception)null);
+						m.Return(1111);
 					})
 					.Catch<ExceptionRepository.TestExceptionOne>(e => {
 						Static.Prop(() => OutputException).Assign(e);
-						m.ReturnConst(5555);
+						m.Return(5555);
 					})
 					.Finally(() => {
-						Static.Prop(() => OutputString).AssignConst("FINALLY");
+						Static.Prop(() => OutputString).Assign("FINALLY");
 					});
 
-					m.ReturnConst(-9999); // should never get here!
+					m.Return(-9999); // should never get here!
 				});
 
 			OutputException = null;
@@ -213,7 +213,7 @@ namespace Happil.UnitTests.Statements
 					});
 
 					output.Add(m.Const("RETURN"));
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			//-- Act
@@ -267,7 +267,7 @@ namespace Happil.UnitTests.Statements
 						input.Assign(input - 1);
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			OutputList = new List<string>();
@@ -316,7 +316,7 @@ namespace Happil.UnitTests.Statements
 						output.Add(m.Const("END-LOOP"));
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			OutputList = new List<string>();
@@ -368,7 +368,7 @@ namespace Happil.UnitTests.Statements
 						output.Add(m.Const("END-LOOP"));
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			OutputList = new List<string>();
@@ -421,7 +421,7 @@ namespace Happil.UnitTests.Statements
 						output.Add(m.Const("END-LOOP"));
 					});
 
-					m.ReturnConst(0);
+					m.Return(0);
 				});
 
 			OutputList = new List<string>();

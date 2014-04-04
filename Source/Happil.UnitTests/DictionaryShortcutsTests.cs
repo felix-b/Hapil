@@ -49,7 +49,7 @@ namespace Happil.UnitTests
 			DeriveClassFrom<AncestorRepository.DictionaryTester>()
 				.DefaultConstructor()
 				.Method<IDictionary<int, string>>(cls => cls.DoTest).Implement((m, dictionary) => {
-					dictionary.Item(m.Const(123)).AssignConst("ABC");
+					dictionary.Item(m.Const(123)).Assign("ABC");
 				});
 
 			//-- Act
@@ -209,7 +209,7 @@ namespace Happil.UnitTests
 						m.Return(value);
 					})
 					.Else(() => {
-						m.ReturnConst(null);
+						m.Return((string)null);
 					});
 				});
 

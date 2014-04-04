@@ -118,8 +118,15 @@ namespace Happil
 		{
 			var suggestedName = new StringBuilder();
 
-			suggestedName.Append(factory.Module.SimpleName + ".");
-			suggestedName.Append(factory.GetType().Name.TrimSuffix("Factory") + "_");
+			if ( factory != null )
+			{
+				suggestedName.Append(factory.Module.SimpleName + ".");
+				suggestedName.Append(factory.GetType().Name.TrimSuffix("Factory") + "_");
+			}
+			else
+			{
+				suggestedName.Append("ObjectFactory");
+			}
 
 			if ( m_PrimaryInterface != null )
 			{

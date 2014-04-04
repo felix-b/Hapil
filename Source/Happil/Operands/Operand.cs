@@ -55,6 +55,23 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Operand<TCast> As<TCast>()
+		{
+			var castType = TypeTemplate.Resolve<TCast>();
+
+			if ( castType.IsValueType && !castType.IsNullableValueType() )
+			{
+				throw new ArgumentException("The cast type must be a reference type or a nullable value type.");
+			}
+
+			return new BinaryExpressionOperand<T, Type, TCast>(
+				@operator: new BinaryOperators.OperatorTryCast<T>(),
+				left: this,
+				right: new ConstantOperand<Type>(typeof(TCast)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public Type OperandType
 		{
 			get
@@ -335,6 +352,64 @@ namespace Happil.Operands
 		public MutableOperand<TProp> Prop<TProp>(PropertyInfo property)
 		{
 			return new PropertyAccessOperand<TProp>(this, property);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TItem> Item<TIndex, TItem>(Operand<TIndex> indexArg1)
+		{
+			return Item<TIndex, TItem>((IOperand<TIndex>)indexArg1);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TItem> Item<TIndex1, TIndex2, TItem>(Operand<TIndex1> indexArg1, Operand<TIndex2> indexArg2)
+		{
+			return Item<TIndex1, TIndex2, TItem>((IOperand<TIndex1>)indexArg1, (IOperand<TIndex2>)indexArg2);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TItem> Item<TIndex, TItem>(IOperand<TIndex> indexArg1)
+		{
+			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex) });
+
+			if ( indexerProperty == null )
+			{
+				throw new InvalidOperationException("Could not find indexer with specified types.");
+			}
+
+			return new PropertyAccessOperand<TItem>(
+				target: this,
+				property: indexerProperty,
+				indexArguments: indexArg1);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MutableOperand<TItem> Item<TIndex1, TIndex2, TItem>(IOperand<TIndex1> indexArg1, IOperand<TIndex2> indexArg2)
+		{
+			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex1), typeof(TIndex2) });
+
+			if ( indexerProperty == null )
+			{
+				throw new InvalidOperationException("Could not find indexer with specified types.");
+			}
+
+			return new PropertyAccessOperand<TItem>(
+				target: this,
+				property: indexerProperty,
+				indexArguments: new IOperand[] { indexArg1, indexArg2 });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<T> OrDefault(IOperand<T> defaultValue)
+		{
+			return new BinaryExpressionOperand<T, T>(
+				@operator: new BinaryOperators.OperatorNullCoalesce<T>(),
+				left: this,
+				right: defaultValue);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

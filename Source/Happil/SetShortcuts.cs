@@ -6,105 +6,98 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
 using Happil.Statements;
 
 namespace Happil
 {
 	public static class SetShortcuts
 	{
-		public static IHappilOperand<bool> Add<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<T> item)
+		public static IOperand<bool> Add<T>(this IOperand<ISet<T>> set, IOperand<T> item)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().Add, item),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void ExceptWith<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static void ExceptWith<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(set, GetReflectionCache<T>().ExceptWith, other));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void IntersectWith<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static void IntersectWith<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(set, GetReflectionCache<T>().IntersectWith, other));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> IsProperSubsetOf<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> IsProperSubsetOf<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().IsProperSubsetOf, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> IsProperSupersetOf<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> IsProperSupersetOf<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().IsProperSupersetOf, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> IsSubsetOf<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> IsSubsetOf<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().IsSubsetOf, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> IsSupersetOf<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> IsSupersetOf<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().IsSupersetOf, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> Overlaps<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> Overlaps<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().Overlaps, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IHappilOperand<bool> SetEquals<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static IOperand<bool> SetEquals<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
-			return new HappilUnaryExpression<ISet<T>, bool>(
-				ownerMethod: null,
+			return new UnaryExpressionOperand<ISet<T>, bool>(
 				@operator: new UnaryOperators.OperatorCall<ISet<T>>(GetReflectionCache<T>().SetEquals, other),
 				operand: set);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void SymmetricExceptWith<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static void SymmetricExceptWith<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(set, GetReflectionCache<T>().SymmetricExceptWith, other));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void UnionWith<T>(this IHappilOperand<ISet<T>> set, IHappilOperand<IEnumerable<T>> other)
+		public static void UnionWith<T>(this IOperand<ISet<T>> set, IOperand<IEnumerable<T>> other)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(set, GetReflectionCache<T>().UnionWith, other));
 		}
