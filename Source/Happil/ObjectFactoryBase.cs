@@ -66,7 +66,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal TypeEntry GetOrBuildType(TypeKey key)
+		protected internal TypeEntry GetOrBuildType(TypeKey key)
 		{
 			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
 		}

@@ -53,6 +53,20 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public FieldMember GetPropertyBackingField(PropertyInfo declaration)
+		{
+			MemberBase member;
+
+			if ( !m_MembersByDeclarations.TryGetValue(declaration, out member) )
+			{
+				throw new ArgumentException(string.Format("Property '{0}' was not implemented by this class.", declaration.Name));
+			}
+
+			return ((PropertyMember)member).BackingField;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public TypeKey Key
 		{
 			get { return m_Key; }

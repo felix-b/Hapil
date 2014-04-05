@@ -5,13 +5,19 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
+using Happil.Members;
 
 namespace Happil.Operands
 {
 	public class ThisOperand<T> : Operand<T>
 	{
-		internal ThisOperand()
+		private readonly ClassType m_OwnerClass;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal ThisOperand(ClassType ownerClass)
 		{
+			m_OwnerClass = ownerClass;
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -30,11 +36,10 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public FieldAccessOperand<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
-		//{
-		//	return OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
-		//}
+		public FieldAccessOperand<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
+		{
+			return m_OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

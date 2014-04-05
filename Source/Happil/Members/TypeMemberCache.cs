@@ -234,7 +234,7 @@ namespace Happil.Members
 		public static TypeMemberCache Of(Type reflectedType)
 		{
 			return s_TypeMembersByReflectedType.GetOrAdd(
-				reflectedType, 
+				TypeTemplate.Resolve(reflectedType), 
 				key => new TypeMemberCache(key));
 		}
 

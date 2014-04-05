@@ -133,7 +133,15 @@ namespace Happil
 			if ( lambda.Body is UnaryExpression )
 			{
 				var createDelegateCall = (MethodCallExpression)(((UnaryExpression)lambda.Body).Operand);
-				methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value;
+
+				if ( createDelegateCall.Object != null )
+				{
+					methodDeclaration = (MethodInfo)((ConstantExpression)(createDelegateCall.Object)).Value; // works for .NET 4.5
+				}
+				else
+				{
+					methodDeclaration = (MethodInfo)((ConstantExpression)createDelegateCall.Arguments[2]).Value; // works for .NET 4.0
+				}
 			}
 			else if ( lambda.Body is LambdaExpression )
 			{
