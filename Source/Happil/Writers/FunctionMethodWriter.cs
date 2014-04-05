@@ -43,6 +43,8 @@ namespace Happil.Writers
 			{
 				m_Script(this);
 			}
+
+			base.Flush();
 		}
 	}
 }

@@ -28,11 +28,5 @@ namespace Happil.Writers
 		{
 			StatementScope.Current.AddStatement(new ReturnStatement());
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected internal override void Flush()
-		{
-		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Members;
 using Happil.Operands;
 
@@ -44,6 +45,16 @@ namespace Happil.Writers
 				w => script(w, w.Argument<TypeTemplate.TProperty>(indexArgumentCount + 1)));
 			
 			return null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public FieldAccessOperand<TypeTemplate.TProperty> BackingField
+		{
+			get
+			{
+				return OwnerProperty.BackingField.AsOperand<TypeTemplate.TProperty>();
+			}
 		}
 	}
 }

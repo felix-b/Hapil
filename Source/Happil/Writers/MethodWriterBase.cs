@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
@@ -10,7 +11,7 @@ using Happil.Statements;
 
 namespace Happil.Writers
 {
-	public abstract class MethodWriterBase
+	public abstract class MethodWriterBase : MemberWriterBase
 	{
 		private readonly MethodMember m_OwnerMethod;
 		private AttributeWriter m_ReturnAttributeWriter;
@@ -516,18 +517,49 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected AttributeWriter GetReturnAttributeWriter()
+		public AttributeWriter ReturnAttributes
 		{
-			if ( m_ReturnAttributeWriter == null )
+			get
 			{
-				m_ReturnAttributeWriter = new AttributeWriter(attr => m_OwnerMethod.MethodFactory.ReturnParameter.SetCustomAttribute(attr));
-			}
+				if ( m_ReturnAttributeWriter == null )
+				{
+					m_ReturnAttributeWriter = new AttributeWriter();
+				}
 
-			return m_ReturnAttributeWriter;
+				return m_ReturnAttributeWriter;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected internal abstract void Flush();
+		protected internal override void Flush()
+		{
+			if ( m_OwnerMethod.MethodFactory.ReturnParameter != null && m_ReturnAttributeWriter != null )
+			{
+				foreach ( var attribute in m_ReturnAttributeWriter.GetAttributes() )
+				{
+					m_OwnerMethod.MethodFactory.ReturnParameter.SetCustomAttribute(attribute);
+				}
+			}
+
+			base.Flush();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected internal void AddAttributes(Func<MethodMember, AttributeWriter> attributeWriterFactory)
+		{
+			if ( attributeWriterFactory != null )
+			{
+				AttributeWriter.Include(attributeWriterFactory(m_OwnerMethod));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_OwnerMethod.MethodFactory.SetAttribute(attribute);
+		}
 	}
 }

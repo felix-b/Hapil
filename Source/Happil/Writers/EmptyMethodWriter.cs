@@ -22,6 +22,8 @@ namespace Happil.Writers
 			{
 				OwnerMethod.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(Default<TypeTemplate.TReturn>()));
 			}
+
+			base.Flush();
 		}
 	}
 }

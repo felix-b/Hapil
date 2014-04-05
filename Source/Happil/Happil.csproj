@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Writers\AutomaticEventWriter.cs" />
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\MemberWriterBase.cs" />
     <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />

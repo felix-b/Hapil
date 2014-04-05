@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
-using Happil.Fluent;
+using Happil.Operands;
+using Happil.Writers;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
@@ -95,7 +96,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			IHappilClassBody<object> classBody = DeriveClassFrom<object>().DefaultConstructor();
+			ImplementationClassWriter<object> classBody = DeriveClassFrom<object>().DefaultConstructor();
 			ArgumentException caughtException;
 
 			//-- Act
@@ -252,16 +253,16 @@ namespace Happil.UnitTests
 					(m, p1, p2, p3) => { })
 				.Method<int>(intf => intf.Eleven).Implement(
 					Attributes.Set<TestAttributeOne>(a => a.Arg(1100)), 
-					m => m.ReturnConst(0))
+					m => m.Return(0))
 				.Method<string, int>(intf => intf.Thirteen).Implement(
 					Attributes.Set<TestAttributeOne>(a => a.Arg(1300)),
-					(m, p1) => m.ReturnConst(0))
+					(m, p1) => m.Return(0))
 				.Method<TimeSpan, string, int>(intf => intf.Fifteen).Implement(
 					Attributes.Set<TestAttributeOne>(a => a.Arg(1500)),
-					(m, p1, p2) => m.ReturnConst(0))
+					(m, p1, p2) => m.Return(0))
 				.Method<TimeSpan, string, int, object>(intf => intf.Seventeen).Implement(
 					Attributes.Set<TestAttributeOne>(a => a.Arg(1700)),
-					(m, p1, p2, p3) => m.ReturnConst(null))
+					(m, p1, p2, p3) => m.Return(null))
 				.AllMethods().Throw<NotImplementedException>();
 
 			//-- Act
@@ -293,11 +294,11 @@ namespace Happil.UnitTests
 				.DefaultConstructor()
 				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.AllMethods(m => m.IsVoid()).Implement(
-					m => Attributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "VOID_" + m.MethodInfo.Name)),
+					m => Attributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "VOID_" + m.Name)),
 					m => { }
 				)
 				.AllMethods().Implement(
-					m => Attributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "NON_VOID_" + m.MethodInfo.Name)),
+					m => Attributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "NON_VOID_" + m.Name)),
 					m => { m.Return(m.Default<TypeTemplate.TReturn>()); }
 				);
 
@@ -365,7 +366,7 @@ namespace Happil.UnitTests
 				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.AllMethods(m => !m.IsVoid()).Implement(
 					m => {
-						m.ReturnAttributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "NON_VOID_" + m.MethodInfo.Name));
+						m.ReturnAttributes.Set<TestAttributeOne>(a => a.Named(x => x.StringValue, "NON_VOID_" + m.OwnerMethod.Name));
 						m.Return(m.Default<TypeTemplate.TReturn>());
 					}
 				)

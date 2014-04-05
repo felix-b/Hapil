@@ -21,7 +21,7 @@ namespace Happil.Members
 		{
 			m_Declaration = declaration;
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(
-				type.TakeMemberName(declaration.Name),
+				type.TakeMemberName(declaration.Name, mustUseThisName: true),
 				GetMethodAttributesFor(declaration),
 				declaration.ReturnType,
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());

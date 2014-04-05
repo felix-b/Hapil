@@ -39,7 +39,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IEventWriterRemoveOn Set(Action<VoidMethodWriter, Argument<TypeTemplate.TEventHandler>> script)
+		public IEventWriterRemoveOn Remove(Action<VoidMethodWriter, Argument<TypeTemplate.TEventHandler>> script)
 		{
 			var writer = new VoidMethodWriter(
 				OwnerEvent.RemoveMethod,

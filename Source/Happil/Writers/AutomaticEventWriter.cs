@@ -26,10 +26,13 @@ namespace Happil.Writers
 			var setter = new VoidMethodWriter(
 				OwnerEvent.RemoveMethod,
 				w => WriteRemoveOnMethod(w, w.Arg1<TypeTemplate.TEventHandler>()));
+
+			base.Flush();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		//TODO: refactor into template method
 		private void WriteAddOnMethod(VoidMethodWriter m, Argument<TypeTemplate.TEventHandler> value)
 		{
 			var oldHandler = m.Local<TypeTemplate.TEventHandler>();
@@ -52,6 +55,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		//TODO: refactor into template method
 		private void WriteRemoveOnMethod(VoidMethodWriter m, Argument<TypeTemplate.TEventHandler> value)
 		{
 			var oldHandler = m.Local<TypeTemplate.TEventHandler>();

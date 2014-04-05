@@ -9,15 +9,15 @@ using NUnit.Framework;
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class HappilTypeKeyTests
+	public class TypeKeyTests
 	{
 		[Test]
 		public void EqualByBaseClass()
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(baseType: typeof(Stream));
-			var key2 = new HappilTypeKey(baseType: typeof(Stream));
+			var key1 = new TypeKey(baseType: typeof(Stream));
+			var key2 = new TypeKey(baseType: typeof(Stream));
 
 			//-- Assert
 
@@ -31,8 +31,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(baseType: typeof(Stream));
-			var key2 = new HappilTypeKey(baseType: typeof(Random));
+			var key1 = new TypeKey(baseType: typeof(Stream));
+			var key2 = new TypeKey(baseType: typeof(Random));
 
 			//-- Assert
 
@@ -46,8 +46,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(primaryInterface: typeof(IDisposable));
-			var key2 = new HappilTypeKey(primaryInterface: typeof(IDisposable));
+			var key1 = new TypeKey(primaryInterface: typeof(IDisposable));
+			var key2 = new TypeKey(primaryInterface: typeof(IDisposable));
 
 			//-- Assert
 
@@ -61,8 +61,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(primaryInterface: typeof(IDisposable));
-			var key2 = new HappilTypeKey(primaryInterface: typeof(ISerializable));
+			var key1 = new TypeKey(primaryInterface: typeof(IDisposable));
+			var key2 = new TypeKey(primaryInterface: typeof(ISerializable));
 
 			//-- Assert
 
@@ -76,8 +76,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
-			var key2 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
+			var key1 = new TypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
+			var key2 = new TypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
 
 			//-- Assert
 
@@ -91,8 +91,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
-			var key2 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(ISerializable), typeof(IDisposable) });
+			var key1 = new TypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
+			var key2 = new TypeKey(secondaryInterfaces: new[] { typeof(ISerializable), typeof(IDisposable) });
 
 			//-- Assert
 
@@ -106,8 +106,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			var key1 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
-			var key2 = new HappilTypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(IComparable) });
+			var key1 = new TypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(ISerializable) });
+			var key2 = new TypeKey(secondaryInterfaces: new[] { typeof(IDisposable), typeof(IComparable) });
 
 			//-- Assert
 
@@ -116,7 +116,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static void AssertKeysEqual(HappilTypeKey key1, HappilTypeKey key2)
+		private static void AssertKeysEqual(TypeKey key1, TypeKey key2)
 		{
 			var hashCode1 = key1.GetHashCode();
 			var hashCode2 = key2.GetHashCode();
@@ -130,7 +130,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static void AssertKeysNotEqual(HappilTypeKey key1, HappilTypeKey key2)
+		private static void AssertKeysNotEqual(TypeKey key1, TypeKey key2)
 		{
 			Assert.That(key1.Equals(key2), Is.False);
 			Assert.That(key2.Equals(key1), Is.False);

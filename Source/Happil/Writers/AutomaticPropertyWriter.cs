@@ -30,6 +30,8 @@ namespace Happil.Writers
 					OwnerProperty.SetterMethod,
 					w => OwnerProperty.BackingField.AsOperand<TypeTemplate.TProperty>().Assign(w.Arg1<TypeTemplate.TProperty>()));
 			}
+
+			base.Flush();
 		}
 	}
 }

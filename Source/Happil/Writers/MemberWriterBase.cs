@@ -3,58 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Expressions;
 using Happil.Members;
-using Happil.Operands;
 
 namespace Happil.Writers
 {
-	public class FieldWriter : MemberWriterBase
+	public abstract class MemberWriterBase
 	{
-		private readonly FieldMember m_OwnerField;
+		private readonly AttributeWriter m_AttributeWriter;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldWriter(FieldMember ownerField)
+		protected MemberWriterBase()
 		{
-			m_OwnerField = ownerField;
-			ownerField.AddWriter(this);
+			m_AttributeWriter = new AttributeWriter();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldMember Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
-			where TAttribute : Attribute
+		protected abstract void SetCustomAttribute(CustomAttributeBuilder attribute);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected internal virtual void Flush()
 		{
-			AttributeWriter.Set<TAttribute>(values);
-			return m_OwnerField;
+			foreach ( var attribute in m_AttributeWriter.GetAttributes() )
+			{
+				SetCustomAttribute(attribute);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldMember OwnerField
+		protected internal void AddAttributes(AttributeWriter attributeWriter)
+		{
+			if ( attributeWriter != null )
+			{
+				m_AttributeWriter.Include(attributeWriter);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected AttributeWriter AttributeWriter
 		{
 			get
 			{
-				return m_OwnerField;
+				return m_AttributeWriter;
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected internal void AddAttributes(Func<FieldMember, AttributeWriter> attributeWriterFactory)
-		{
-			if ( attributeWriterFactory != null )
-			{
-				AttributeWriter.Include(attributeWriterFactory(m_OwnerField));
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
-		{
-			m_OwnerField.FieldBuilder.SetCustomAttribute(attribute);
 		}
 	}
 }

@@ -68,6 +68,24 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal void AddAttributes(Func<FieldMember, AttributeWriter> attributeWriterFactory)
+		{
+			if ( attributeWriterFactory != null )
+			{
+				var attributeWriter = attributeWriterFactory(this);
+
+				if ( attributeWriter != null )
+				{
+					foreach ( var attribute in attributeWriter.GetAttributes() )
+					{
+						m_FieldBuilder.SetCustomAttribute(attribute);
+					}
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal override void Write()
 		{
 			foreach ( var writer in m_Writers )

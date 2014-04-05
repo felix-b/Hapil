@@ -25,7 +25,7 @@ namespace Happil.Members
 			m_Writers = new List<PropertyWriterBase>();
 			m_Declaration = declaration;
 			m_PropertyBuilder = ownerClass.TypeBuilder.DefineProperty(
-				ownerClass.TakeMemberName(declaration.Name),
+				ownerClass.TakeMemberName(declaration.Name, mustUseThisName: true),
 				declaration.Attributes,
 				declaration.PropertyType,
 				declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray());

@@ -22,11 +22,11 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public string TakeUniqueName(string proposedName)
+		public string TakeUniqueName(string proposedName, bool mustUseThisName = false)
 		{
 			string uniqueName;
 
-			if ( m_NamesInUse.Add(proposedName) )
+			if ( m_NamesInUse.Add(proposedName) || mustUseThisName )
 			{
 				uniqueName = proposedName;
 			}

@@ -8,7 +8,14 @@ using System.Text;
 
 namespace Happil.Writers
 {
-	public class AttributeArgumentWriter<TAttribute>
+	public abstract class AttributeArgumentWriter
+	{
+		public abstract CustomAttributeBuilder GetAttributeBuilder();
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public class AttributeArgumentWriter<TAttribute> : AttributeArgumentWriter
 	{
 		private readonly List<Type> m_ConstructorArgumentTypes = new List<Type>();
 		private readonly List<object> m_ConstructorArgumentValues = new List<object>();
@@ -68,7 +75,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CustomAttributeBuilder GetAttributeBuilder()
+		public override CustomAttributeBuilder GetAttributeBuilder()
 		{
 			var constructor = typeof(TAttribute).GetConstructor(m_ConstructorArgumentTypes.ToArray());
 

@@ -256,6 +256,7 @@ namespace Happil.Writers
 		public interface IMethodSelectorBase : IEnumerable<MethodInfo>
 		{
 			ImplementationClassWriter<TBase> ImplementEmpty();
+			ImplementationClassWriter<TBase> ImplementEmpty(Func<MethodMember, AttributeWriter> attributes);
 			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
 			ImplementationClassWriter<TBase> ForEach(Action<MethodInfo> action);
 		}
@@ -265,6 +266,7 @@ namespace Happil.Writers
 		public interface ITemplateMethodSelector : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<TemplateMethodWriter> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<TemplateMethodWriter> body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -272,38 +274,47 @@ namespace Happil.Writers
 		public interface IVoidMethodSelector : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter> body);
 		}
 		public interface IVoidMethodSelector<TA1> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3, TA4> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body);
 		}
 		public interface IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -311,38 +322,47 @@ namespace Happil.Writers
 		public interface IFunctionMethodSelector<TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body);
 		}
 		public interface IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn> : IMethodSelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body);
+			ImplementationClassWriter<TBase> Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -415,6 +435,10 @@ namespace Happil.Writers
 			{
 				return DefineMethodImplementations(method => new EmptyMethodWriter(method));
 			}
+			ImplementationClassWriter<TBase> IMethodSelectorBase.ImplementEmpty(Func<MethodMember, AttributeWriter> attributes)
+			{
+				return DefineMethodImplementations(method => new EmptyMethodWriter(method));
+			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -445,6 +469,10 @@ namespace Happil.Writers
 			{
 				return DefineMethodImplementations(method => new TemplateMethodWriter(method, body));
 			}
+			ImplementationClassWriter<TBase> ITemplateMethodSelector.Implement(Func<MethodMember, AttributeWriter> attributes, Action<TemplateMethodWriter> body)
+			{
+				return DefineMethodImplementations(attributes, method => new TemplateMethodWriter(method, body));
+			}
 
 			#endregion
 
@@ -456,51 +484,119 @@ namespace Happil.Writers
 			{
 				return DefineMethodImplementations(method => new VoidMethodWriter(method, body));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter> body)
+			{
+				return DefineMethodImplementations(attributes, method => new VoidMethodWriter(method, body));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1>.Implement(Action<VoidMethodWriter, Argument<TA1>> body)
 			{
 				return DefineMethodImplementations(
 					method => new VoidMethodWriter(method,
 					writer => body(writer, writer.Arg1<TA1>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					method => new VoidMethodWriter(method,
+					writer => body(writer, writer.Arg1<TA1>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body)
 			{
 				return DefineMethodImplementations(
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>())));
 			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>())));
+			}
+
 			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>.Implement(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body)
 			{
 				return DefineMethodImplementations(
+					m => new VoidMethodWriter(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>(), w.Arg8<TA8>())));
+			}
+			ImplementationClassWriter<TBase> IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
 					m => new VoidMethodWriter(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>(), w.Arg8<TA8>())));
 			}
@@ -515,51 +611,119 @@ namespace Happil.Writers
 			{
 				return DefineMethodImplementations(method => new FunctionMethodWriter<TReturn>(method, body));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>> body)
+			{
+				return DefineMethodImplementations(attributes, method => new FunctionMethodWriter<TReturn>(method, body));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>> body)
 			{
 				return DefineMethodImplementations(
 					method => new FunctionMethodWriter<TReturn>(method,
 					writer => body(writer, writer.Arg1<TA1>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					method => new FunctionMethodWriter<TReturn>(method,
+					writer => body(writer, writer.Arg1<TA1>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body)
 			{
 				return DefineMethodImplementations(
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>())));
 			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>())));
+			}
+
 			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>.Implement(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body)
 			{
 				return DefineMethodImplementations(
+					m => new FunctionMethodWriter<TReturn>(m,
+					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>(), w.Arg8<TA8>())));
+			}
+			ImplementationClassWriter<TBase> IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>.Implement(Func<MethodMember, AttributeWriter> attributes, Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>, Argument<TA5>, Argument<TA6>, Argument<TA7>, Argument<TA8>> body)
+			{
+				return DefineMethodImplementations(
+					attributes, 
 					m => new FunctionMethodWriter<TReturn>(m,
 					w => body(w, w.Arg1<TA1>(), w.Arg2<TA2>(), w.Arg3<TA3>(), w.Arg4<TA4>(), w.Arg5<TA5>(), w.Arg6<TA6>(), w.Arg7<TA7>(), w.Arg8<TA8>())));
 			}
@@ -571,6 +735,16 @@ namespace Happil.Writers
 			private ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(Func<MethodMember, TWriter> writerFactory)
 				where TWriter : MethodWriterBase
 			{
+				return DefineMethodImplementations<TWriter>(attributeWriterFactory: null, writerFactory: writerFactory);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(
+				Func<MethodMember, AttributeWriter> attributeWriterFactory,
+				Func<MethodMember, TWriter> writerFactory) 
+				where TWriter : MethodWriterBase
+			{
 				var methodsToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedMethods);
 
 				foreach ( var method in methodsToImplement )
@@ -579,7 +753,9 @@ namespace Happil.Writers
 					var methodMember = new MethodMember(m_OwnerClass, methodFactory);
 					
 					m_OwnerClass.AddMember(methodMember);
-					writerFactory(methodMember);
+					
+					var writer = writerFactory(methodMember);
+					writer.AddAttributes(attributeWriterFactory);
 				}
 
 				return m_ClassWriter;

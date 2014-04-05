@@ -49,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AncestorRepository.cs" />
+    <Compile Include="Assumptions\CompiledExamples.cs" />
+    <Compile Include="Assumptions\CSharpTests.cs" />
+    <Compile Include="AttributeTests.cs" />
     <Compile Include="ClassPerTestCaseFixtureBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +89,7 @@
     <Compile Include="Statements\WhileStatementTests.cs" />
     <Compile Include="StringShortcutsTests.cs" />
     <Compile Include="TargetRepository.cs" />
+    <Compile Include="TypeKeyTests.cs" />
     <Compile Include="TypeTemplateTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>

@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
-namespace Happil.UnitTests.Fluent
+namespace Happil.UnitTests.Assumptions
 {
 	[TestFixture]
 	public class CSharpTests

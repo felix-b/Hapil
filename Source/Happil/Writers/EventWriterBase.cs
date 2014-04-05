@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Members;
 
 namespace Happil.Writers
 {
-	public abstract class EventWriterBase
+	public abstract class EventWriterBase : MemberWriterBase
 	{
 		private readonly EventMember m_OwnerEvent;
 
@@ -39,8 +40,19 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected internal virtual void Flush()
+		protected internal void AddAttributes(Func<EventMember, AttributeWriter> attributeWriterFactory)
 		{
+			if ( attributeWriterFactory != null )
+			{
+				AttributeWriter.Include(attributeWriterFactory(m_OwnerEvent));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_OwnerEvent.EventBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

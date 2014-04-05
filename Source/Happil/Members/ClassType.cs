@@ -74,9 +74,9 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal string TakeMemberName(string proposedName)
+		internal string TakeMemberName(string proposedName, bool mustUseThisName = false)
 		{
-			return m_MemberNames.TakeUniqueName(proposedName);
+			return m_MemberNames.TakeUniqueName(proposedName, mustUseThisName);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ namespace Happil.Members
 			if ( member.MemberDeclaration != null )
 			{
 				m_MembersByDeclarations.Add(member.MemberDeclaration, member);
-				m_MembersByName.Add(member.Name, member);
+				m_MembersByName[member.Name] = member;
 			}
 		}
 

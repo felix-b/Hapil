@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
@@ -8,7 +9,7 @@ using Happil.Operands;
 
 namespace Happil.Writers
 {
-	public abstract class PropertyWriterBase
+	public abstract class PropertyWriterBase : MemberWriterBase
 	{
 		private readonly PropertyMember m_OwnerProperty;
 
@@ -41,8 +42,19 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected internal virtual void Flush()
+		protected internal void AddAttributes(Func<PropertyMember, AttributeWriter> attributeWriterFactory)
 		{
+			if ( attributeWriterFactory != null )
+			{
+				AttributeWriter.Include(attributeWriterFactory(m_OwnerProperty));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_OwnerProperty.PropertyBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

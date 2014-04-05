@@ -9,7 +9,7 @@ using NUnit.Framework;
 // ReSharper disable ConvertToLambdaExpression
 // ReSharper disable ConvertClosureToMethodGroup
 
-namespace Happil.UnitTests
+namespace Happil.UnitTests.Assumptions
 {
 	public static class CompiledExamples
 	{

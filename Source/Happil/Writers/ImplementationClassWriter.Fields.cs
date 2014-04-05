@@ -27,15 +27,15 @@ namespace Happil.Writers
 			return this;
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
-		//TODO:redesign
-		//public ImplementationClassWriter<TBase> Field<T>(string name, IHappilAttributes attributes, out FieldAccessOperand<T> field)
-		//{
-		//	var fieldMember = DefineField<T>(name, isStatic: false);
-		//	fieldMember.SetAttributes(attributes as HappilAttributes);
-		//	field = fieldMember.AsOperand<T>();
-		//	return this;
-		//}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ImplementationClassWriter<TBase> Field<T>(string name, Func<FieldMember, AttributeWriter> attributes, out FieldAccessOperand<T> field)
+		{
+			var fieldMember = DefineField<T>(name, isStatic: false);
+			fieldMember.AddAttributes(attributes);
+			field = fieldMember.AsOperand<T>();
+			return this;
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -55,13 +55,12 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign
-		//public ImplementationClassWriter<TBase> StaticField<T>(string name, IHappilAttributes attributes, out FieldAccessOperand<T> field)
-		//{
-		//	var fieldMember = DefineField<T>(name, isStatic: true);
-		//	fieldMember.SetAttributes(attributes as HappilAttributes);
-		//	field = fieldMember.AsOperand<T>();
-		//	return this;
-		//}
+		public ImplementationClassWriter<TBase> StaticField<T>(string name, Func<FieldMember, AttributeWriter> attributes, out FieldAccessOperand<T> field)
+		{
+			var fieldMember = DefineField<T>(name, isStatic: true);
+			fieldMember.AddAttributes(attributes);
+			field = fieldMember.AsOperand<T>();
+			return this;
+		}
 	}
 }

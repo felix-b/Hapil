@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Expressions;
 using Happil.Members;
 using Happil.Operands;
 
@@ -42,6 +43,16 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public FieldAccessOperand<T> BackingField
+		{
+			get
+			{
+				return OwnerProperty.BackingField.AsOperand<T>();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected internal override void Flush()
 		{
 			if ( m_GetterScript != null )
@@ -53,6 +64,8 @@ namespace Happil.Writers
 			{
 				m_SetterScript(this);
 			}
+
+			base.Flush();
 		}
 	}
 
@@ -95,6 +108,16 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public FieldAccessOperand<T> BackingField
+		{
+			get
+			{
+				return OwnerProperty.BackingField.AsOperand<T>();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected internal override void Flush()
 		{
 			if ( m_GetterScript != null )
@@ -106,6 +129,8 @@ namespace Happil.Writers
 			{
 				m_SetterScript(this);
 			}
+
+			base.Flush();
 		}
 	}
 
@@ -150,6 +175,16 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public FieldAccessOperand<T> BackingField
+		{
+			get
+			{
+				return OwnerProperty.BackingField.AsOperand<T>();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected internal override void Flush()
 		{
 			if ( m_GetterScript != null )
@@ -161,6 +196,8 @@ namespace Happil.Writers
 			{
 				m_SetterScript(this);
 			}
+
+			base.Flush();
 		}
 	}
 }

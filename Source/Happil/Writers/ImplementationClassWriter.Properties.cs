@@ -59,6 +59,7 @@ namespace Happil.Writers
 		public interface IPropertySelectorBase : IEnumerable<PropertyInfo>
 		{
 			ImplementationClassWriter<TBase> ImplementAutomatic();
+			ImplementationClassWriter<TBase> ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes);
 			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
 			ImplementationClassWriter<TBase> ForEach(Action<PropertyInfo> action);
 		}
@@ -67,10 +68,18 @@ namespace Happil.Writers
 			ImplementationClassWriter<TBase> Implement(
 				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterSetter> setter = null);
+			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterSetter> setter = null);
 		}
 		public interface IPropertySelector<T> : IPropertySelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
+			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
 		}
@@ -79,10 +88,18 @@ namespace Happil.Writers
 			ImplementationClassWriter<TBase> Implement(
 				Func<PropertyWriter<TIndex1, T>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<TIndex1, T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
+			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<PropertyWriter<TIndex1, T>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<TIndex1, T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
 		}
 		public interface IPropertySelector<TIndex1, TIndex2, T> : IPropertySelectorBase
 		{
 			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyWriter<TIndex1, TIndex2, T>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<TIndex1, TIndex2, T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
+			ImplementationClassWriter<TBase> Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
 				Func<PropertyWriter<TIndex1, TIndex2, T>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<TIndex1, TIndex2, T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
 		}
@@ -142,6 +159,10 @@ namespace Happil.Writers
 			{
 				return DefinePropertyImplementations(p => new AutomaticPropertyWriter(p));
 			}
+			ImplementationClassWriter<TBase> IPropertySelectorBase.ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes)
+			{
+				return DefinePropertyImplementations(attributes, p => new AutomaticPropertyWriter(p));
+			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -174,6 +195,13 @@ namespace Happil.Writers
 			{
 				return DefinePropertyImplementations(p => new TemplatePropertyWriter(p, getter, setter));
 			}
+			ImplementationClassWriter<TBase> ITemplatePropertySelector.Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<TemplatePropertyWriter, PropertyWriterBase.IPropertyWriterSetter> setter)
+			{
+				return DefinePropertyImplementations(attributes, p => new TemplatePropertyWriter(p, getter, setter));
+			}
 
 			#endregion
 
@@ -186,6 +214,13 @@ namespace Happil.Writers
 				Func<PropertyWriter<TProperty>, PropertyWriterBase.IPropertyWriterSetter> setter)
 			{
 				return DefinePropertyImplementations(p => new PropertyWriter<TProperty>(p, getter, setter));
+			}
+			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<PropertyWriter<TProperty>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<TProperty>, PropertyWriterBase.IPropertyWriterSetter> setter)
+			{
+				return DefinePropertyImplementations(attributes, p => new PropertyWriter<TProperty>(p, getter, setter));
 			}
 
 			#endregion
@@ -200,6 +235,13 @@ namespace Happil.Writers
 			{
 				return DefinePropertyImplementations(p => new PropertyWriter<TIndex1, TProperty>(p, getter, setter));
 			}
+			ImplementationClassWriter<TBase> IPropertySelector<TIndex1, TProperty>.Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<PropertyWriter<TIndex1, TProperty>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<TIndex1, TProperty>, PropertyWriterBase.IPropertyWriterSetter> setter)
+			{
+				return DefinePropertyImplementations(attributes, p => new PropertyWriter<TIndex1, TProperty>(p, getter, setter));
+			}
 
 			#endregion
 
@@ -213,6 +255,13 @@ namespace Happil.Writers
 			{
 				return DefinePropertyImplementations(p => new PropertyWriter<TIndex1, TIndex2, TProperty>(p, getter, setter));
 			}
+			ImplementationClassWriter<TBase> IPropertySelector<TIndex1, TIndex2, TProperty>.Implement(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<PropertyWriter<TIndex1, TIndex2, TProperty>, PropertyWriterBase.IPropertyWriterGetter> getter,
+				Func<PropertyWriter<TIndex1, TIndex2, TProperty>, PropertyWriterBase.IPropertyWriterSetter> setter)
+			{
+				return DefinePropertyImplementations(attributes, p => new PropertyWriter<TIndex1, TIndex2, TProperty>(p, getter, setter));
+			}
 
 			#endregion
 
@@ -221,13 +270,25 @@ namespace Happil.Writers
 			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(Func<PropertyMember, TWriter> writerFactory)
 				where TWriter : PropertyWriterBase
 			{
+				return DefinePropertyImplementations<TWriter>(attributes: null, writerFactory: writerFactory);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
+				Func<PropertyMember, AttributeWriter> attributes,
+				Func<PropertyMember, TWriter> writerFactory)
+				where TWriter : PropertyWriterBase
+			{
 				var propertiesToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedProperties);
 
 				foreach ( var property in propertiesToImplement )
 				{
 					var propertyMember = new PropertyMember(m_OwnerClass, property);
 					m_OwnerClass.AddMember(propertyMember);
-					writerFactory(propertyMember);
+					
+					var writer = writerFactory(propertyMember);
+					writer.AddAttributes(attributes);
 				}
 
 				return m_ClassWriter;

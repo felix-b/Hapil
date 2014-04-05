@@ -18,6 +18,7 @@ namespace Happil.Writers
 		protected internal override void Flush()
 		{
 			this.Base();
+			base.Flush();
 		}
 	}
 }
