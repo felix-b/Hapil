@@ -11,7 +11,7 @@ namespace Happil.Writers
 	internal class TransparentMethodWriter : MethodWriterBase
 	{
 		public TransparentMethodWriter(MethodMember ownerMethod)
-			: base(ownerMethod, attachToOwner: false)
+			: base(ownerMethod, MethodWriterModes.Normal, attachToOwner: false)
 		{
 		}
 
@@ -19,14 +19,14 @@ namespace Happil.Writers
 
 		public void Return(IOperand<TypeTemplate.TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
+			AddReturnStatement(operand.OrNullConstant());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void Return()
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement());
+			AddReturnStatement();
 		}
 	}
 }

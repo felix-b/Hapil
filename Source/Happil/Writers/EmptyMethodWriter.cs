@@ -20,7 +20,7 @@ namespace Happil.Writers
 		{
 			if ( !OwnerMethod.Signature.IsVoid )
 			{
-				OwnerMethod.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(Default<TypeTemplate.TReturn>()));
+				AddReturnStatement<TypeTemplate.TReturn>(Default<TypeTemplate.TReturn>());
 			}
 
 			base.Flush();

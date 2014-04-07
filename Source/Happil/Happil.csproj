@@ -90,6 +90,7 @@
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="Operands\Argument.cs" />
     <Compile Include="Operands\ConstantOperand.cs" />
+    <Compile Include="Operands\IMutableOperand.cs" />
     <Compile Include="Operands\IOperand.cs" />
     <Compile Include="Operands\IOperandEmitter.cs" />
     <Compile Include="Operands\LocalOperand.cs" />
@@ -104,11 +105,14 @@
     <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\ForeachStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />
+    <Compile Include="Statements\GotoStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Statements\ILeaveStatement.cs" />
     <Compile Include="Statements\ILoopBody.cs" />
+    <Compile Include="Statements\LabelStatement.cs" />
     <Compile Include="Statements\LockStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
+    <Compile Include="Statements\ProceedStatement.cs" />
     <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
     <Compile Include="Writers\MemberWriterBase.cs" />
+    <Compile Include="Writers\MethodWriterModes.cs" />
     <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />

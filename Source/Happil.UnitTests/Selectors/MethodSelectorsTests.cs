@@ -22,9 +22,9 @@ namespace Happil.UnitTests.Selectors
 
 			base.DeriveClassFrom<object>()
 				.ImplementInterface<IMethodSelectorsTestOne>()
-				.AllMethods(where: m => m.IsVoid()).ForEach(m => voidMethods.Add(m.Name))
-				.AllMethods(where: m => m.ReturnType.IsValueType && !m.IsVoid()).ForEach(m => valueTypeMethods.Add(m.Name))
-				.AllMethods().ForEach(m => allMethods.Add(m.Name));
+				.AllMethods(where: m => m.IsVoid()).ForEachDeclaration(m => voidMethods.Add(m.Name))
+				.AllMethods(where: m => m.ReturnType.IsValueType && !m.IsVoid()).ForEachDeclaration(m => valueTypeMethods.Add(m.Name))
+				.AllMethods().ForEachDeclaration(m => allMethods.Add(m.Name));
 
 			//-- Assert
 

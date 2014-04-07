@@ -25,14 +25,14 @@ namespace Happil.Writers
 
 		public void Return(IOperand<TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(operand.OrNullConstant()));
+			AddReturnStatement(operand.OrNullConstant());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void Return(TReturn constantValue)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(new ConstantOperand<TReturn>(constantValue)));
+			AddReturnStatement(new ConstantOperand<TReturn>(constantValue));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

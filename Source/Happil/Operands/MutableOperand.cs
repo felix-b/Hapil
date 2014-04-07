@@ -6,11 +6,29 @@ using Happil.Expressions;
 
 namespace Happil.Operands
 {
-	public abstract class MutableOperand<T> : Operand<T>
+	public abstract class MutableOperand<T> : Operand<T>, IMutableOperand
 	{
 		internal MutableOperand()
 		{
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IMutableOperand Members
+
+		IOperand IMutableOperand.Assign(IOperand value)
+		{
+			if ( value is IOperand<T> )
+			{
+				return Assign((IOperand<T>)value);
+			}
+			else
+			{
+				return Assign(value.CastTo<T>());
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

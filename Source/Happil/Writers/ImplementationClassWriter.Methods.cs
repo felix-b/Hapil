@@ -258,7 +258,8 @@ namespace Happil.Writers
 			ImplementationClassWriter<TBase> ImplementEmpty();
 			ImplementationClassWriter<TBase> ImplementEmpty(Func<MethodMember, AttributeWriter> attributes);
 			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
-			ImplementationClassWriter<TBase> ForEach(Action<MethodInfo> action);
+			ImplementationClassWriter<TBase> ForEachDeclaration(Action<MethodInfo> action);
+			ImplementationClassWriter<TBase> ForEachMember(Action<MethodMember> action);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -449,11 +450,23 @@ namespace Happil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			ImplementationClassWriter<TBase> IMethodSelectorBase.ForEach(Action<MethodInfo> action)
+			ImplementationClassWriter<TBase> IMethodSelectorBase.ForEachDeclaration(Action<MethodInfo> action)
 			{
 				foreach ( var method in m_SelectedMethods )
 				{
 					action(method);
+				}
+
+				return m_ClassWriter;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			ImplementationClassWriter<TBase> IMethodSelectorBase.ForEachMember(Action<MethodMember> action)
+			{
+				foreach ( var method in m_SelectedMethods )
+				{
+					action(m_OwnerClass.GetMemberByDeclaration<MethodMember>(method));
 				}
 
 				return m_ClassWriter;

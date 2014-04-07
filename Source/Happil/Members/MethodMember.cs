@@ -100,6 +100,12 @@ namespace Happil.Members
 
 		internal void AddWriter(MethodWriterBase writer)
 		{
+			if ( writer.IsDecorator )
+			{
+				writer.SetupDecoratorMode(innerWriters: m_Writers.ToArray());
+				m_Writers.Clear();
+			}
+			
 			m_Writers.Add(writer);
 		}
 
@@ -109,6 +115,13 @@ namespace Happil.Members
 		{
 			StatementScope.Current.AddStatement(statement);
 			return statement;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal Label AddLabel()
+		{
+			return m_MethodFactory.GetILGenerator().DefineLabel();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

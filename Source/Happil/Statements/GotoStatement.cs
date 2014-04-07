@@ -1,42 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
-using Happil.Members;
-using Happil.Operands;
-using Happil.Statements;
+using System.Threading.Tasks;
 
-namespace Happil.Writers
+namespace Happil.Statements
 {
-	public class VoidMethodWriter : MethodWriterBase
+	internal class GotoStatement : StatementBase, ILeaveStatement
 	{
-		private readonly Action<VoidMethodWriter> m_Script;
+		private readonly LabelStatement m_LabelStatement;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public VoidMethodWriter(MethodMember ownerMethod, Action<VoidMethodWriter> script)
-			: base(ownerMethod)
+		public GotoStatement(LabelStatement labelStatement)
 		{
-			m_Script = script;
+			m_LabelStatement = labelStatement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Return()
+		public override void Emit(ILGenerator il)
 		{
-			AddReturnStatement();
+			il.Emit(OpCodes.Br, m_LabelStatement.Label);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected internal override void Flush()
+		public StatementScope HomeScope
 		{
-			if ( m_Script != null )
+			get
 			{
-				m_Script(this);
+				return m_LabelStatement.HomeScope;
 			}
-
-			base.Flush();
 		}
 	}
 }

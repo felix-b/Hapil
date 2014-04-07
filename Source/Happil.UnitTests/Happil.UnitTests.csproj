@@ -93,6 +93,7 @@
     <Compile Include="TargetRepository.cs" />
     <Compile Include="TypeKeyTests.cs" />
     <Compile Include="TypeTemplateTests.cs" />
+    <Compile Include="Writers\DecorationClassWriterTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>

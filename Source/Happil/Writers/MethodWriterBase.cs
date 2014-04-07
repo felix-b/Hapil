@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.NetworkInformation;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
@@ -14,20 +15,27 @@ namespace Happil.Writers
 	public abstract class MethodWriterBase : MemberWriterBase
 	{
 		private readonly MethodMember m_OwnerMethod;
+		private MethodWriterModes m_Mode;
 		private AttributeWriter m_ReturnAttributeWriter;
+		private IMutableOperand m_ReturnValueLocal;
+		private LabelStatement m_LeaveLabel;
+		private MethodWriterBase[] m_InnerWriters;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected MethodWriterBase(MethodMember ownerMethod)
-			: this(ownerMethod, attachToOwner: true)
+			: this(ownerMethod, MethodWriterModes.Normal, attachToOwner: true)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected MethodWriterBase(MethodMember ownerMethod, bool attachToOwner)
+		protected MethodWriterBase(MethodMember ownerMethod, MethodWriterModes mode, bool attachToOwner)
 		{
 			m_OwnerMethod = ownerMethod;
+			m_Mode = mode;
+			m_ReturnValueLocal = null;
+			m_InnerWriters = null;
 
 			if ( attachToOwner )
 			{
@@ -507,6 +515,21 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Operand<TResult> Proceed<TResult>()
+		{
+			if ( !m_Mode.HasFlag(MethodWriterModes.Decorator) )
+			{
+				throw new InvalidOperationException("Proceed is only allowed in the Decorator mode.");
+			}
+
+			var returnValueLocal = (m_OwnerMethod.Signature.IsVoid ? null : m_OwnerMethod.AddLocal<TResult>());
+			m_OwnerMethod.AddStatement(new ProceedStatement(m_OwnerMethod, m_InnerWriters, returnValueLocal));
+
+			return returnValueLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodMember OwnerMethod
 		{
 			get
@@ -527,6 +550,36 @@ namespace Happil.Writers
 				}
 
 				return m_ReturnAttributeWriter;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodWriterModes Mode
+		{
+			get
+			{
+				return m_Mode;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool IsDecorator
+		{
+			get
+			{
+				return m_Mode.HasFlag(MethodWriterModes.Decorator);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool IsDecorated
+		{
+			get
+			{
+				return m_Mode.HasFlag(MethodWriterModes.Decorated);
 			}
 		}
 
@@ -560,6 +613,52 @@ namespace Happil.Writers
 		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
 		{
 			m_OwnerMethod.MethodFactory.SetAttribute(attribute);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void AddReturnStatement()
+		{
+			if ( IsDecorated )
+			{
+				StatementScope.Current.AddStatement(new GotoStatement(m_LeaveLabel));
+			}
+			else
+			{
+				StatementScope.Current.AddStatement(new ReturnStatement());
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void AddReturnStatement<TReturn>(IOperand<TReturn> returnValue)
+		{
+			if ( IsDecorated )
+			{
+				m_ReturnValueLocal.Assign(returnValue);
+				StatementScope.Current.AddStatement(new GotoStatement(m_LeaveLabel));
+			}
+			else
+			{
+				StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(returnValue));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void SetupDecoratedMode(IMutableOperand returnValueLocal, LabelStatement leaveLabel)
+		{
+			m_Mode |= MethodWriterModes.Decorated;
+			m_ReturnValueLocal = returnValueLocal;
+			m_LeaveLabel = leaveLabel;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void SetupDecoratorMode(MethodWriterBase[] innerWriters)
+		{
+			m_Mode |= MethodWriterModes.Decorator;
+			m_InnerWriters = innerWriters;
 		}
 	}
 }

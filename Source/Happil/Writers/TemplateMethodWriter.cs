@@ -11,27 +11,50 @@ namespace Happil.Writers
 	public class TemplateMethodWriter : MethodWriterBase
 	{
 		private readonly Action<TemplateMethodWriter> m_Script;
+		private LocalOperand<TypeTemplate.TReturn> m_ReturnValueLocal;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public TemplateMethodWriter(MethodMember ownerMethod, Action<TemplateMethodWriter> script)
-			: base(ownerMethod)
+			: this(ownerMethod, MethodWriterModes.Normal, script)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public TemplateMethodWriter(MethodMember ownerMethod, MethodWriterModes mode, Action<TemplateMethodWriter> script)
+			: base(ownerMethod, mode, attachToOwner: true)
 		{
 			m_Script = script;
+			m_ReturnValueLocal = null;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void Return(IOperand<TypeTemplate.TReturn> operand)
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement<TypeTemplate.TReturn>(operand));
+			AddReturnStatement(operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void Return()
 		{
-			StatementScope.Current.AddStatement(new ReturnStatement());
+			AddReturnStatement();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LocalOperand<TypeTemplate.TReturn> ReturnValueLocal
+		{
+			get
+			{
+				return m_ReturnValueLocal;
+			}
+			set
+			{
+				m_ReturnValueLocal = value;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
