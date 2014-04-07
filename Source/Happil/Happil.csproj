@@ -46,6 +46,11 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="Decorators\ClassDecoratorBase.cs" />
+    <Compile Include="Decorators\ConstructorDecorationBuilder.cs" />
+    <Compile Include="Decorators\EventDecorationBuilder.cs" />
+    <Compile Include="Decorators\FieldDecorationBuilder.cs" />
+    <Compile Include="Decorators\PropertyDecorationBuilder.cs" />
     <Compile Include="DelegateShortcuts.cs" />
     <Compile Include="DictionaryShortcuts.cs" />
     <Compile Include="DynamicModule.cs" />
@@ -83,6 +88,7 @@
     <Compile Include="Members\ConstructorMethodFactory.cs" />
     <Compile Include="Members\EventMember.cs" />
     <Compile Include="Members\FieldMember.cs" />
+    <Compile Include="Members\MemberKind.cs" />
     <Compile Include="Members\MethodFactoryBase.cs" />
     <Compile Include="Members\PropertyMember.cs" />
     <Compile Include="Members\TypeMemberCache.cs" />
@@ -143,7 +149,10 @@
     <Compile Include="Writers\AutomaticEventWriter.cs" />
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\DecoratingClassWriter.cs" />
+    <Compile Include="Writers\DecoratingMethodWriter.cs" />
     <Compile Include="Writers\MemberWriterBase.cs" />
+    <Compile Include="Decorators\MethodDecorationBuilder.cs" />
     <Compile Include="Writers\MethodWriterModes.cs" />
     <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />

@@ -1,56 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using Happil.Members;
 
-namespace Happil.Members
+namespace Happil.Decorators
 {
-	public abstract class MemberBase
+	public abstract class ClassDecoratorBase
 	{
-		private readonly ClassType m_OwnerClass;
-		private readonly string m_Name;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected MemberBase(ClassType ownerClass, string name)
+		public virtual void OnClassType(ClassType classType)
 		{
-			m_OwnerClass = ownerClass;
-			m_Name = name;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public virtual string Name
+		public virtual void OnStaticField(FieldMember member, Func<FieldDecorationBuilder> decorate)
 		{
-			get { return m_Name; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public abstract MemberKind Kind { get; }
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public abstract MemberInfo MemberDeclaration { get; }
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public ClassType OwnerClass
+		public virtual void OnStaticConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
 		{
-			get { return m_OwnerClass; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal abstract void Write();
-		internal abstract void Compile();
-	
+		public virtual void OnField(FieldMember member, Func<FieldDecorationBuilder> decorate)
+		{
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal virtual IDisposable CreateTypeTemplateScope()
+		public virtual void OnConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
 		{
-			return null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual void OnProperty(PropertyMember member, Func<PropertyDecorationBuilder> decorate)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
+		{
 		}
 	}
 }

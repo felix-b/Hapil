@@ -617,7 +617,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void AddReturnStatement()
+		protected internal void AddReturnStatement()
 		{
 			if ( IsDecorated )
 			{
@@ -631,7 +631,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void AddReturnStatement<TReturn>(IOperand<TReturn> returnValue)
+		protected internal void AddReturnStatement<TReturn>(IOperand<TReturn> returnValue)
 		{
 			if ( IsDecorated )
 			{

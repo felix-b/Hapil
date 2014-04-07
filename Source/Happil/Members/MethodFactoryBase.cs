@@ -18,5 +18,6 @@ namespace Happil.Members
 		public abstract ParameterBuilder[] Parameters { get; }
 		public abstract ParameterBuilder ReturnParameter { get; }
 		public abstract string MemberName { get; }
+		public abstract MemberKind MemberKind { get; }
 	}
 }

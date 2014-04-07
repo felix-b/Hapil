@@ -61,6 +61,26 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override MemberKind Kind
+		{
+			get
+			{
+				return (m_FieldBuilder.IsStatic ? MemberKind.StaticField : MemberKind.InstanceField);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool IsStatic
+		{
+			get
+			{
+				return m_FieldBuilder.IsStatic;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal void AddWriter(FieldWriter writer)
 		{
 			m_Writers.Add(writer);

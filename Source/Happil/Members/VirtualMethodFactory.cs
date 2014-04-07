@@ -120,6 +120,16 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override MemberKind MemberKind
+		{
+			get
+			{
+				return MemberKind.VirtualMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration)
 		{
 			const MethodAttributes attributes = 

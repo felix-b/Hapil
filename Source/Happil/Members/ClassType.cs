@@ -141,6 +141,13 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal IEnumerable<MemberBase> GetAllMembers()
+		{
+			return m_Members;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal void AddInterface(Type interfaceType)
 		{
 			if ( !m_TypeBuilder.GetInterfaces().Contains(interfaceType) )

@@ -114,6 +114,16 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override MemberKind MemberKind
+		{
+			get
+			{
+				return (m_ConstructorBuilder.IsStatic ? MemberKind.StaticConstructor : MemberKind.InstanceConstructor);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static ConstructorMethodFactory DefaultConstructor(ClassType type)
 		{
 			return InstanceConstructor(type, argumentTypes: Type.EmptyTypes);
