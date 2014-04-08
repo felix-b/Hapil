@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Happil.Decorators;
 using Happil.Members;
 
 namespace Happil.Writers
@@ -56,6 +57,23 @@ namespace Happil.Writers
 		public ImplementationClassWriter<object> ImplementInterface(Type interfaceType)
 		{
 			return new ImplementationClassWriter<object>(OwnerClass, interfaceType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClassWriterBase DecorateWith<TDecorator>() where TDecorator : ClassDecoratorBase, new()
+		{
+			var decorator = new TDecorator();
+			var decoratingWriter = new DecoratingClassWriter(m_OwnerClass, decorator);
+			return this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClassWriterBase DecorateWith(ClassDecoratorBase decorator)
+		{
+			var decoratingWriter = new DecoratingClassWriter(m_OwnerClass, decorator);
+			return this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

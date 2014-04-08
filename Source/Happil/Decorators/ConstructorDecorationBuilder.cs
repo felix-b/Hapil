@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Writers;
 
 namespace Happil.Decorators
 {
-	public class ConstructorDecorationBuilder
+	public class ConstructorDecorationBuilder : MethodDecorationBuilder
 	{
+		internal ConstructorDecorationBuilder(DecoratingMethodWriter ownerWriter)
+			: base(ownerWriter)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 	}
 }

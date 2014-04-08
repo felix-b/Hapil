@@ -67,6 +67,36 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public IEnumerable<MemberBase> GetAllMembers()
+		{
+			return m_Members;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Enumerates all members of specified type. Allows adding new members during enumeration. The newly added members are included in the enumeration.
+		/// </summary>
+		/// <typeparam name="TMember"></typeparam>
+		/// <param name="action"></param>
+		public void ForEachMember<TMember>(Action<TMember> action) where TMember : MemberBase
+		{
+			for ( int i = 0 ; i < m_Members.Count ; i++ )
+			{
+				var member = (m_Members[i] as TMember);
+
+				if ( member != null )
+				{
+					using ( member.CreateTypeTemplateScope() )
+					{
+						action(member);
+					}
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public TypeKey Key
 		{
 			get { return m_Key; }
@@ -141,13 +171,6 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal IEnumerable<MemberBase> GetAllMembers()
-		{
-			return m_Members;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		internal void AddInterface(Type interfaceType)
 		{
 			if ( !m_TypeBuilder.GetInterfaces().Contains(interfaceType) )
@@ -166,23 +189,8 @@ namespace Happil.Members
 				writer.Flush();
 			}
 
-			for ( int i = 0 ; i < m_Members.Count ; i++ )
-			{
-				var member = m_Members[i];
-
-				using ( member.CreateTypeTemplateScope() )
-				{
-					member.Write();
-				}
-			}
-
-			foreach ( var member in m_Members )
-			{
-				using ( member.CreateTypeTemplateScope() )
-				{
-					member.Compile();
-				}
-			}
+			ForEachMember<MemberBase>(m => m.Write());
+			ForEachMember<MemberBase>(m => m.Compile());
 
 			m_CompiledType = m_TypeBuilder.CreateType();
 			FixupFactoryMethods();

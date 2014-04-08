@@ -58,6 +58,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CollectionShortcutsTests.cs" />
+    <Compile Include="DecorationTests.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
     <Compile Include="EnumerableShortcutsTests.cs" />
     <Compile Include="ExceptionRepository.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="TargetRepository.cs" />
     <Compile Include="TypeKeyTests.cs" />
     <Compile Include="TypeTemplateTests.cs" />
-    <Compile Include="Writers\DecorationClassWriterTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -102,9 +102,7 @@
       <Name>Happil</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fluent\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

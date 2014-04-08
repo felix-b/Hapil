@@ -24,22 +24,67 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			//m_Decorator.OnClassType(OwnerClass);
+			m_Decorator.OnClassType(OwnerClass, this);
+			OwnerClass.ForEachMember<MemberBase>(VisitMember);
+		}
 
-			//var allMembersOrderedByKind = OwnerClass.GetAllMembers().OrderBy(m => m.Kind).ToArray();
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			//foreach ( var member in allMembersOrderedByKind )
-			//{
-			//	var currentMethodMember = member;
+		private void VisitMember(MemberBase member)
+		{
+			var methodMember = member as MethodMember;
+			var propertyMember = member as PropertyMember;
+			var eventMember = member as EventMember;
+			var fieldMember = member as FieldMember;
 
-			//	switch ( member.Kind )
-			//	{
-			//		case MemberKind.StaticConstructor:
-			//			m_Decorator.OnStaticConstructor((MethodMember)member, );
-			//	}
+			if ( methodMember != null )
+			{
+				VisitMethod(methodMember);
+			}
+			else if ( propertyMember != null )
+			{
+				VisitProperty(propertyMember);
+			}
+			else if ( eventMember != null )
+			{
+				VisitEvent(eventMember);
+			}
+			else if ( fieldMember != null )
+			{
+				VisitField(fieldMember);
+			}
+		}
 
-			//	//OnMethod(currentMethodMember, () => new DecoratingMethodWriter(currentMethodMember).DecorationBuilder);
-			//}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void VisitField(FieldMember fieldMember)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void VisitEvent(EventMember eventMember)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void VisitProperty(PropertyMember propertyMember)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void VisitMethod(MethodMember methodMember)
+		{
+			switch ( methodMember.Kind )
+			{
+				case MemberKind.VirtualMethod:
+				case MemberKind.InstanceAnonymousMethod:
+				case MemberKind.StaticAnonymousMethod:
+					m_Decorator.OnMethod(methodMember, () => new DecoratingMethodWriter(methodMember).DecorationBuilder);
+					break;
+			}
 		}
 	}
 }
