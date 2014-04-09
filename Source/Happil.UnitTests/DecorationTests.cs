@@ -196,7 +196,7 @@ namespace Happil.UnitTests
 				.Method<string, int>(x => x.Four).Implement((m, s) => m.Return(456))
 				.Method<int, string>(x => x.Five).Throw<ExceptionRepository.TestExceptionOne>("EOne");
 			
-			implementor.DecorateWith(new MethodLogDecorator(logPrefix: ""));
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
 
 			//-- Act
 
@@ -237,8 +237,8 @@ namespace Happil.UnitTests
 				.Method<string, int>(x => x.Four).Implement((m, s) => m.Return(456))
 				.Method<int, string>(x => x.Five).Throw<ExceptionRepository.TestExceptionOne>("EOne");
 
-			implementor.DecorateWith(new MethodLogDecorator(logPrefix: "INNER-"));
-			implementor.DecorateWith(new MethodLogDecorator(logPrefix: "OUTER-"));
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: "INNER-"));
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: "OUTER-"));
 
 			//-- Act
 
@@ -271,6 +271,49 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void DecoratorBuilder_Properties()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<List<string>> logField;
+
+			var implementor = DeriveClassFrom<object>()
+				.Field<List<string>>("m_Log", out logField)
+				.Constructor<List<string>>((w, log) => logField.Assign(log))
+				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
+				.AllProperties().ImplementAutomatic();
+
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+			//-- Act
+
+			var actionLog = new List<string>();
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingConstructor(actionLog);
+
+			obj.AnInt = 123;
+			var intResult = obj.AnInt;
+
+			obj.AString = "ABC";
+			var stringResult = obj.AString;
+
+			//-- Assert
+
+			Assert.That(intResult, Is.EqualTo(123));
+			Assert.That(stringResult, Is.EqualTo("ABC"));
+
+			Assert.That(
+				actionLog,
+				Is.EqualTo(new[] {
+					"BEFORE-SET:AnInt=123", "AFTER-SET:AnInt", 
+					"BEFORE-GET:AnInt", "AFTER-GET:AnInt=123", 
+					"BEFORE-SET:AString=ABC", "AFTER-SET:AString", 
+					"BEFORE-GET:AString", "AFTER-GET:AString=ABC", 
+				}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
 			FieldAccessOperand<List<string>> logField,
@@ -297,14 +340,14 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class MethodLogDecorator : ClassDecoratorBase
+		private class LoggingDecorator : ClassDecoratorBase
 		{
 			private readonly string m_LogPrefix;
 			private FieldAccessOperand<List<string>> m_Log;
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public MethodLogDecorator(string logPrefix)
+			public LoggingDecorator(string logPrefix)
 			{
 				m_LogPrefix = logPrefix;
 			}
@@ -343,6 +386,46 @@ namespace Happil.UnitTests
 					)
 					.OnAfter(w =>
 						m_Log.Add(w.Const(m_LogPrefix + "AFTER:" + member.Name))
+					);
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnProperty(PropertyMember member, Func<PropertyDecorationBuilder> decorate)
+			{
+				if ( member.HasGetter )
+				{
+					decorate().Getter()
+						.OnBefore(w => 
+							m_Log.Add(w.Const(m_LogPrefix + "BEFORE-GET:" + member.Name))
+						)
+						.OnReturnValue((w, retVal) => 
+							m_Log.Add(w.Const(m_LogPrefix + "AFTER-GET:" + member.Name + "=") + retVal.Func<string>(x => x.ToString))
+						);
+				}
+				
+				if ( member.HasSetter )
+				{
+					decorate().Setter()
+						.OnBefore(w =>
+							m_Log.Add(w.Const(m_LogPrefix + "BEFORE-SET:" + member.Name + "=") + w.Arg1<TypeTemplate.TProperty>().Func<string>(x => x.ToString))
+						)
+						.OnAfter(w =>
+							m_Log.Add(w.Const(m_LogPrefix + "AFTER-SET:" + member.Name))
+						);
+				}
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
+			{
+				decorate().AddOn()
+					.OnBefore(w =>  
+						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-ADD:" + member.Name))
+					)
+					.OnAfter(w =>  
+						m_Log.Add(w.Const(m_LogPrefix + "AFTER-REMOVE:" + member.Name))
 					);
 			}
 		}

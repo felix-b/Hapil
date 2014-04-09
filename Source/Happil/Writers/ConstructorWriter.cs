@@ -15,7 +15,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ConstructorWriter(MethodMember ownerMethod, Action<ConstructorWriter> script)
+		public ConstructorWriter(ConstructorMember ownerMethod, Action<ConstructorWriter> script)
 			: base(ownerMethod)
 		{
 			m_Script = script;

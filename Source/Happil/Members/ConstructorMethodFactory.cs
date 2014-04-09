@@ -131,7 +131,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static ConstructorMethodFactory InstanceConstructor(ClassType type, Type[] argumentTypes)
+		public static ConstructorMethodFactory InstanceConstructor(ClassType type, Type[] argumentTypes, string[] argumentNames = null)
 		{
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var builder = type.TypeBuilder.DefineConstructor(
@@ -140,7 +140,7 @@ namespace Happil.Members
 				MethodAttributes.RTSpecialName,
 				CallingConventions.HasThis,
 				resolvedArgumentTypes);
-			var signature = new MethodSignature(isStatic: false, argumentTypes: resolvedArgumentTypes);
+			var signature = new MethodSignature(isStatic: false, argumentTypes: resolvedArgumentTypes, argumentNames: argumentNames);
 
 			return new ConstructorMethodFactory(type, builder, signature);
 		}

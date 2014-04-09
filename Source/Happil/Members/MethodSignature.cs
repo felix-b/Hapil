@@ -39,11 +39,11 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodSignature(bool isStatic, Type[] argumentTypes = null, Type returnType = null)
+		public MethodSignature(bool isStatic, Type[] argumentTypes = null, string[] argumentNames = null, Type returnType = null)
 		{
 			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes);
 
-			ArgumentName = safeArgumentTypes.Select((type, index) => "arg" + index).ToArray();
+			ArgumentName = (argumentNames ?? safeArgumentTypes.Select((type, index) => "arg" + index).ToArray());
 			ArgumentType = new Type[safeArgumentTypes.Length];
 			ArgumentUnderlyingType = new Type[safeArgumentTypes.Length];
 			ArgumentIsByRef = new bool[safeArgumentTypes.Length];

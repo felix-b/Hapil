@@ -51,6 +51,25 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		//TODO: refactor to remove code duplication with same method in writer class
+		internal void AddAttributes(Func<EventMember, AttributeWriter> attributeWriterFactory)
+		{
+			if ( attributeWriterFactory != null )
+			{
+				var attributeWriter = attributeWriterFactory(this);
+
+				if ( attributeWriter != null )
+				{
+					foreach ( var attribute in attributeWriter.GetAttributes() )
+					{
+						m_EventBuilder.SetCustomAttribute(attribute);
+					}
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override MemberInfo MemberDeclaration
 		{
 			get

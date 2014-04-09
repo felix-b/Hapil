@@ -31,7 +31,7 @@ namespace Happil.Members
 				resolvedReturnType,
 				resolvedArgumentTypes);
 
-			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, resolvedReturnType);
+			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, returnType: resolvedReturnType);
 
 			m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
 				argIndex + 1,

@@ -499,6 +499,7 @@ namespace Happil.Writers
 
 		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>> action)
 		{
+			//TODO: refactor to reuse the overloaded method
 			//TODO:redesign - does this method work correctly?
 			var argumentTypes = OwnerMethod.Signature.ArgumentType;
 			var indexBase = (OwnerMethod.Signature.IsStatic ? 0 : 1);
@@ -509,6 +510,23 @@ namespace Happil.Writers
 				{
 					var argument = this.Argument<TypeTemplate.TArgument>((byte)(i + indexBase));
 					action(argument);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//TODO: refactor to reuse the overloaded method
+		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>, int> action)
+		{
+			var argumentTypes = OwnerMethod.Signature.ArgumentType;
+
+			for ( int index = 0 ; index < argumentTypes.Length ; index++ )
+			{
+				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(argumentTypes[index]) )
+				{
+					var argument = this.Argument<TypeTemplate.TArgument>(position: index + 1);
+					action(argument, index);
 				}
 			}
 		}

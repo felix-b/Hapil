@@ -51,7 +51,7 @@ namespace Happil.Statements
 				catchBlock.Emit(il);
 			}
 
-			if ( m_FinallyBlock.Count > 0 )
+			if ( m_FinallyBlock.Count > 0 || m_CatchBlocks.Count == 0 )
 			{
 				il.BeginFinallyBlock();
 

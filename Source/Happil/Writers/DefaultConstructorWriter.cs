@@ -8,8 +8,8 @@ namespace Happil.Writers
 {
 	public class DefaultConstructorWriter : ConstructorWriter 
 	{
-		public DefaultConstructorWriter(MethodMember ownerMethod)
-			: base(ownerMethod, script: null)
+		public DefaultConstructorWriter(ConstructorMember ownerConstructor)
+			: base(ownerConstructor, script: null)
 		{
 		}
 

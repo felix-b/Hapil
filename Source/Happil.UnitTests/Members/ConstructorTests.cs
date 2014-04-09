@@ -48,6 +48,36 @@ namespace Happil.UnitTests.Members
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void CanCreateObjectUsingPrimaryConstructor()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<int> intField;
+			FieldAccessOperand<string> stringField;
+
+			DeriveClassFrom<AncestorRepository.BaseOne>()
+				.PrimaryConstructor("IntField", out intField, "StringField", out stringField)
+				.ImplementInterface<IMyFieldValues>()
+				.Method<int>(intf => intf.GetIntFieldValue).Implement(f => {
+					f.Return(intField);
+				})
+				.Method<string>(intf => intf.GetStringFieldValue).Implement(f => {
+					f.Return(stringField);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<IMyFieldValues>().UsingConstructor<int, string>(123, "ABC");
+
+			//-- Assert
+
+			Assert.That(obj.GetIntFieldValue(), Is.EqualTo(123));
+			Assert.That(obj.GetStringFieldValue(), Is.EqualTo("ABC"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void CanCreateStaticConstructor()
 		{
 			//-- Arrange

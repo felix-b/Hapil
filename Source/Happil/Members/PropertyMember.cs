@@ -49,6 +49,25 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		//TODO: refactor to remove code duplication with same method in writer class
+		internal void AddAttributes(Func<PropertyMember, AttributeWriter> attributeWriterFactory)
+		{
+			if ( attributeWriterFactory != null )
+			{
+				var attributeWriter = attributeWriterFactory(this);
+
+				if ( attributeWriter != null )
+				{
+					foreach ( var attribute in attributeWriter.GetAttributes() )
+					{
+						m_PropertyBuilder.SetCustomAttribute(attribute);
+					}
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override MemberInfo MemberDeclaration
 		{
 			get
@@ -120,6 +139,26 @@ namespace Happil.Members
 			get
 			{
 				return m_SetterMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool HasGetter
+		{
+			get
+			{
+				return (m_GetterMethod != null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool HasSetter
+		{
+			get
+			{
+				return (m_SetterMethod != null);
 			}
 		}
 

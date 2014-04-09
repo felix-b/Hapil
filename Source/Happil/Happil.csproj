@@ -85,6 +85,7 @@
     <Compile Include="MemberInfoExtensions.cs" />
     <Compile Include="Members\AnonymousMethodFactory.cs" />
     <Compile Include="Members\ClassType.cs" />
+    <Compile Include="Members\ConstructorMember.cs" />
     <Compile Include="Members\ConstructorMethodFactory.cs" />
     <Compile Include="Members\EventMember.cs" />
     <Compile Include="Members\FieldMember.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Writers\MemberWriterBase.cs" />
     <Compile Include="Decorators\MethodDecorationBuilder.cs" />
     <Compile Include="Writers\MethodWriterModes.cs" />
+    <Compile Include="Writers\PrimaryConstructorWriter.cs" />
     <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />

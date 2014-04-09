@@ -13,59 +13,30 @@ namespace Happil.Writers
 		public AutomaticEventWriter(EventMember ownerEvent)
 			: base(ownerEvent)
 		{
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected internal override void Flush()
-		{
 			var addOn = new VoidMethodWriter(
 				OwnerEvent.AddMethod,
-				w => WriteAddOnMethod(w, w.Arg1<TypeTemplate.TEventHandler>()));
+				w => WriteAddRemoveMethod(w, w.Arg1<TypeTemplate.TEventHandler>(), manipulation: Delegate.Combine));
 
 			var setter = new VoidMethodWriter(
 				OwnerEvent.RemoveMethod,
-				w => WriteRemoveOnMethod(w, w.Arg1<TypeTemplate.TEventHandler>()));
-
-			base.Flush();
+				w => WriteAddRemoveMethod(w, w.Arg1<TypeTemplate.TEventHandler>(), manipulation: Delegate.Remove));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO: refactor into template method
-		private void WriteAddOnMethod(VoidMethodWriter m, Argument<TypeTemplate.TEventHandler> value)
+		private void WriteAddRemoveMethod(
+			VoidMethodWriter w, 
+			Argument<TypeTemplate.TEventHandler> value, 
+			Func<Delegate, Delegate, Delegate> manipulation)
 		{
-			var oldHandler = m.Local<TypeTemplate.TEventHandler>();
-			var newHandler = m.Local<TypeTemplate.TEventHandler>();
-			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: OwnerEvent.BackingField.AsOperand<TypeTemplate.TEventHandler>());
+			var oldHandler = w.Local<TypeTemplate.TEventHandler>();
+			var newHandler = w.Local<TypeTemplate.TEventHandler>();
+			var lastHandler = w.Local<TypeTemplate.TEventHandler>(initialValue: OwnerEvent.BackingField.AsOperand<TypeTemplate.TEventHandler>());
 
-			m.Do(loop => {
+			w.Do(loop => {
 				oldHandler.Assign(lastHandler);
 
-				newHandler.Assign(Static.Func(Delegate.Combine,
-					oldHandler.CastTo<Delegate>(),
-					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
-
-				lastHandler.Assign(Static.GenericFunc((x, y, z) => Interlocked.CompareExchange(ref x, y, z),
-					OwnerEvent.BackingField.AsOperand<TypeTemplate.TEventHandler>(),
-					newHandler,
-					oldHandler));
-			}).While(lastHandler != oldHandler);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//TODO: refactor into template method
-		private void WriteRemoveOnMethod(VoidMethodWriter m, Argument<TypeTemplate.TEventHandler> value)
-		{
-			var oldHandler = m.Local<TypeTemplate.TEventHandler>();
-			var newHandler = m.Local<TypeTemplate.TEventHandler>();
-			var lastHandler = m.Local<TypeTemplate.TEventHandler>(initialValue: OwnerEvent.BackingField.AsOperand<TypeTemplate.TEventHandler>());
-
-			m.Do(loop => {
-				oldHandler.Assign(lastHandler);
-
-				newHandler.Assign(Static.Func(Delegate.Remove,
+				newHandler.Assign(Static.Func(manipulation,
 					oldHandler.CastTo<Delegate>(),
 					value.CastTo<Delegate>()).CastTo<TypeTemplate.TEventHandler>());
 
