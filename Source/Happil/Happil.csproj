@@ -120,6 +120,7 @@
     <Compile Include="Statements\LockStatement.cs" />
     <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Statements\ProceedStatement.cs" />
+    <Compile Include="Statements\PropagateCallStatement.cs" />
     <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Decorators\MethodDecorationBuilder.cs" />
     <Compile Include="Writers\MethodWriterModes.cs" />
     <Compile Include="Writers\PrimaryConstructorWriter.cs" />
+    <Compile Include="Writers\PropagatingMethodWriter.cs" />
     <Compile Include="Writers\TemplateEventWriter.cs" />
     <Compile Include="Writers\EventWriterBase.cs" />
     <Compile Include="Writers\TemplatePropertyWriter.cs" />

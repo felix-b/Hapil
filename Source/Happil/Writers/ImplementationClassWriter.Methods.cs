@@ -257,6 +257,8 @@ namespace Happil.Writers
 		{
 			ImplementationClassWriter<TBase> ImplementEmpty();
 			ImplementationClassWriter<TBase> ImplementEmpty(Func<MethodMember, AttributeWriter> attributes);
+			ImplementationClassWriter<TBase> ImplementPropagate(IOperand<TBase> target);
+			ImplementationClassWriter<TBase> ImplementPropagate(Func<MethodMember, AttributeWriter> attributes, IOperand<TBase> target);
 			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
 			ImplementationClassWriter<TBase> ForEachDeclaration(Action<MethodInfo> action);
 			ImplementationClassWriter<TBase> ForEachMember(Action<MethodMember> action);
@@ -438,7 +440,15 @@ namespace Happil.Writers
 			}
 			ImplementationClassWriter<TBase> IMethodSelectorBase.ImplementEmpty(Func<MethodMember, AttributeWriter> attributes)
 			{
-				return DefineMethodImplementations(method => new EmptyMethodWriter(method));
+				return DefineMethodImplementations(attributes, method => new EmptyMethodWriter(method));
+			}
+			ImplementationClassWriter<TBase> IMethodSelectorBase.ImplementPropagate(IOperand<TBase> target)
+			{
+				return DefineMethodImplementations(method => new PropagatingMethodWriter(method, target));
+			}
+			ImplementationClassWriter<TBase> IMethodSelectorBase.ImplementPropagate(Func<MethodMember, AttributeWriter> attributes, IOperand<TBase> target)
+			{
+				return DefineMethodImplementations(attributes, method => new PropagatingMethodWriter(method, target));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

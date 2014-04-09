@@ -385,6 +385,48 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void DecoratorBuilder_PropagateCallsToInnerTarget()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<AncestorRepository.IFewMethods> targetField;
+			FieldAccessOperand<List<string>> logField;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Target", out targetField, "Log", out logField)
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.AllMethods().ImplementPropagate(targetField);
+				
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: "OUTER-"));
+
+			//-- Act
+
+			var log = new List<string>();
+			var target = new TestTarget(log);
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor(target, log);
+
+			obj.One();
+			var result4 = obj.Four("ZZZ");
+			ExpectException<ExceptionRepository.TestExceptionOne>(() => obj.Five(999), "EOne");
+
+			//-- Assert
+
+			Assert.That(log, Is.EqualTo(new[] {
+				"OUTER-BEFORE:One", 
+					"TEST-One",
+				"OUTER-RETVOID:One", "OUTER-SUCCESS:One", "OUTER-AFTER:One", 
+				"OUTER-BEFORE:Four", 
+					"TEST-Four=ZZZ", 
+				"OUTER-RETVAL:Four=123", "OUTER-SUCCESS:Four", "OUTER-AFTER:Four",
+				"OUTER-BEFORE:Five", 
+					"TEST-Five=999", 
+				"OUTER-EXCEPTION-ONE:Five=EOne", "OUTER-FAILURE:Five", "OUTER-AFTER:Five"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
 			FieldAccessOperand<List<string>> logField,
@@ -514,6 +556,62 @@ namespace Happil.UnitTests
 			{
 				decorate().Attribute<AttributeTests.TestAttributeOne>(a => a.Named(x => x.StringValue, member.Name.TrimPrefix("m_")));
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class TestTarget : AncestorRepository.IFewMethods
+		{
+			private readonly List<string> m_Log;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TestTarget(List<string> log)
+			{
+				m_Log = log;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IFewMethods Members
+
+			public void One()
+			{
+				m_Log.Add("TEST-One");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void Two(int n)
+			{
+				m_Log.Add("TEST-Two");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int Three()
+			{
+				m_Log.Add("TEST-Three");
+				return 0;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public int Four(string s)
+			{
+				m_Log.Add("TEST-Four=" + s);
+				return 123;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string Five(int n)
+			{
+				m_Log.Add("TEST-Five=" + n);
+				throw new ExceptionRepository.TestExceptionOne("EOne");
+			}
+
+			#endregion
 		}
 	}
 }
