@@ -125,7 +125,7 @@ namespace Happil
 
 				return new FieldAccessOperand<TProp>(
 					target: null,
-					field: field);
+					fieldInfo: field);
 			}
 			else
 			{

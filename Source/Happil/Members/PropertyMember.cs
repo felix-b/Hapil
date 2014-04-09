@@ -19,7 +19,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyMember(ClassType ownerClass, PropertyInfo declaration)
+		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField = null)
 			: base(ownerClass, declaration.Name)
 		{
 			m_Writers = new List<PropertyWriterBase>();
@@ -45,6 +45,8 @@ namespace Happil.Members
 				m_SetterMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, setterDeclaration));
 				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
 			}
+
+			m_BackingField = backingField;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

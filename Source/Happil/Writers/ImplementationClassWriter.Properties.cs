@@ -75,6 +75,8 @@ namespace Happil.Writers
 		}
 		public interface IPropertySelector<T> : IPropertySelectorBase
 		{
+			ImplementationClassWriter<TBase> ImplementAutomatic(FieldAccessOperand<T> backingField);
+			ImplementationClassWriter<TBase> ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes, FieldAccessOperand<T> backingField);
 			ImplementationClassWriter<TBase> Implement(
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
@@ -209,6 +211,17 @@ namespace Happil.Writers
 
 			#region IPropertySelector<TProperty> Members
 
+			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.ImplementAutomatic(
+				FieldAccessOperand<TProperty> backingField)
+			{
+				return DefinePropertyImplementations(p => new AutomaticPropertyWriter(p), backingField);
+			}
+			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.ImplementAutomatic(
+				Func<PropertyMember, AttributeWriter> attributes,
+				FieldAccessOperand<TProperty> backingField)
+			{
+				return DefinePropertyImplementations(attributes, p => new AutomaticPropertyWriter(p), backingField);
+			}
 			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.Implement(
 				Func<PropertyWriter<TProperty>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<TProperty>, PropertyWriterBase.IPropertyWriterSetter> setter)
@@ -267,24 +280,27 @@ namespace Happil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(Func<PropertyMember, TWriter> writerFactory)
+			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
+				Func<PropertyMember, TWriter> writerFactory, 
+				FieldMember backingField = null)
 				where TWriter : PropertyWriterBase
 			{
-				return DefinePropertyImplementations<TWriter>(attributes: null, writerFactory: writerFactory);
+				return DefinePropertyImplementations<TWriter>(attributes: null, writerFactory: writerFactory, backingField: backingField);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
 				Func<PropertyMember, AttributeWriter> attributes,
-				Func<PropertyMember, TWriter> writerFactory)
+				Func<PropertyMember, TWriter> writerFactory,
+				FieldMember backingField = null)
 				where TWriter : PropertyWriterBase
 			{
 				var propertiesToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedProperties);
 
 				foreach ( var property in propertiesToImplement )
 				{
-					var propertyMember = new PropertyMember(m_OwnerClass, property);
+					var propertyMember = new PropertyMember(m_OwnerClass, property, backingField);
 					m_OwnerClass.AddMember(propertyMember);
 					
 					var writer = writerFactory(propertyMember);

@@ -242,7 +242,7 @@ namespace Happil.Members
 
 		private static bool IsImplementableMethod(MethodInfo method)
 		{
-			return (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual);
+			return (!method.IsSpecialName && (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

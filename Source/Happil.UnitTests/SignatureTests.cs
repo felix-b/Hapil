@@ -369,6 +369,37 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void InterfaceProperties_ImplementAutomatic_WithPrimaryConstructor()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<int> theInt;
+			FieldAccessOperand<string> theString;
+	
+			DeriveClassFrom<object>()
+				.PrimaryConstructor("TheInt", out theInt, "TheString", out theString)
+				.ImplementInterface<AncestorRepository.IReadOnlyAndReadWriteProperties>()
+				.Property(x => x.AnInt).ImplementAutomatic(theInt)
+				.Property(x => x.AnotherString).ImplementAutomatic(theString)
+				.AllProperties().ImplementAutomatic();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IReadOnlyAndReadWriteProperties>().UsingConstructor(123, "ABC");
+			obj.AnotherInt = 456;
+
+			//-- Assert
+
+			Assert.That(obj.AnInt, Is.EqualTo(123));
+			Assert.That(obj.AnotherString, Is.EqualTo("ABC"));
+
+			Assert.That(obj.AString, Is.Null);
+			Assert.That(obj.AnotherInt, Is.EqualTo(456));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void BaseProperties_ImplementOneByOne()
 		{
 			//-- Arrange
@@ -679,6 +710,27 @@ namespace Happil.UnitTests
 				"EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs",
 				"EventTwo.A:INPUT", "EventTwo.B:INPUT"
 			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InterfaceEvents_ImplementAllAutomatic_WithAllMethodsEmpty()
+		{
+			//-- Arrange
+
+			var eventLog = new List<string>();
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewEvents>()
+				.AllMethods().ImplementEmpty()
+				.AllEvents().ImplementAutomatic();
+
+			//-- Act & Assert
+
+			// this must not fail:
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingDefaultConstructor();
 		}
 	}
 }

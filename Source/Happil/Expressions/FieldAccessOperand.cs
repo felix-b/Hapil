@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Members;
 using Happil.Operands;
 
 namespace Happil.Expressions
@@ -12,16 +13,28 @@ namespace Happil.Expressions
 	public class FieldAccessOperand<T> : MutableOperand<T>
 	{
 		private readonly IOperand m_Target;
-		private readonly FieldInfo m_Field;
+		private readonly FieldInfo m_FieldInfo;
+		private readonly FieldMember m_FieldMember;
 		private readonly string m_Name;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal FieldAccessOperand(IOperand target, FieldInfo field)
+		internal FieldAccessOperand(IOperand target, FieldInfo fieldInfo)
 		{
 			m_Target = target;
-			m_Field = field;
-			m_Name = field.Name;
+			m_FieldInfo = fieldInfo;
+			m_Name = fieldInfo.Name;
+			m_FieldMember = null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal FieldAccessOperand(IOperand target, FieldMember fieldMember)
+		{
+			m_Target = target;
+			m_FieldMember = fieldMember;
+			m_FieldInfo = m_FieldMember.FieldBuilder;
+			m_Name = fieldMember.Name;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -46,21 +59,35 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(m_Field.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, m_Field);
+			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, m_FieldInfo);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			il.Emit(m_Field.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, m_Field);
+			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, m_FieldInfo);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			il.Emit(m_Field.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_Field);
+			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_FieldInfo);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static implicit operator FieldMember(FieldAccessOperand<T> fieldOperand)
+		{
+			if ( fieldOperand.m_FieldMember != null )
+			{
+				return fieldOperand.m_FieldMember;
+			}
+			else
+			{
+				throw new InvalidOperationException("Current operand is not associated with a field member of the type being built.");
+			}
 		}
 	}
 }

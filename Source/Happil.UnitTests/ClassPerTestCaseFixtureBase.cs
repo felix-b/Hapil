@@ -295,7 +295,7 @@ namespace Happil.UnitTests
 
 			public TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0)
 			{
-				throw new NotImplementedException();
+				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3>(constructorIndex, arg1, arg2, arg3);
 			}
 
 			#endregion

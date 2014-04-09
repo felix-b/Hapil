@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Decorators;
@@ -314,6 +315,76 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void DecoratorBuilder_Events()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<List<string>> logField;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Log", out logField)
+				.ImplementInterface<AncestorRepository.IFewEvents>()
+				.AllMethods().ImplementEmpty()
+				.AllEvents().ImplementAutomatic();
+
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+			//-- Act
+
+			var actionLog = new List<string>();
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingConstructor(actionLog);
+
+			obj.EventOne += (s, e) => {};
+			obj.EventTwo -= (s, e) => { };
+
+			//-- Assert
+
+			Assert.That(
+				actionLog,
+				Is.EqualTo(new[] {
+					"BEFORE-ADD:EventOne", "AFTER-ADD:EventOne", 
+					"BEFORE-REMOVE:EventTwo", "AFTER-REMOVE:EventTwo" 
+				}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void DecoratorBuilder_Fields()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<int> number;
+			FieldAccessOperand<string> text;
+			FieldAccessOperand<List<string>> log;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Number", out number, "Text", out text, "Log", out log);
+
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<object>().UsingConstructor(123, "ABC", new List<string>());
+			var fields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+			var attributes = fields.Select(f => f.GetCustomAttributes(typeof(AttributeTests.TestAttributeOne))
+				.OfType<AttributeTests.TestAttributeOne>()
+				.Single())
+				.ToArray();
+
+			//-- Assert
+
+			Assert.That(
+				fields.Select(f => f.Name).ToArray(), 
+				Is.EquivalentTo(new[] { "m_Number", "m_Text", "m_Log" }));
+			Assert.That(
+				attributes.Select(a => a.StringValue).ToArray(), 
+				Is.EquivalentTo(new[] { "Number", "Text", "Log" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
 			FieldAccessOperand<List<string>> logField,
@@ -425,8 +496,23 @@ namespace Happil.UnitTests
 						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-ADD:" + member.Name))
 					)
 					.OnAfter(w =>  
+						m_Log.Add(w.Const(m_LogPrefix + "AFTER-ADD:" + member.Name))
+					);
+
+				decorate().RemoveOn()
+					.OnBefore(w =>
+						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-REMOVE:" + member.Name))
+					)
+					.OnAfter(w =>
 						m_Log.Add(w.Const(m_LogPrefix + "AFTER-REMOVE:" + member.Name))
 					);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnField(FieldMember member, Func<FieldDecorationBuilder> decorate)
+			{
+				decorate().Attribute<AttributeTests.TestAttributeOne>(a => a.Named(x => x.StringValue, member.Name.TrimPrefix("m_")));
 			}
 		}
 	}
