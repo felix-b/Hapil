@@ -386,7 +386,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void DecoratorBuilder_PropagateCallsToInnerTarget()
+		public void DecoratorBuilder_PropagateCalls_Methods()
 		{
 			//-- Arrange
 
@@ -423,6 +423,111 @@ namespace Happil.UnitTests
 					"TEST-Five=999", 
 				"OUTER-EXCEPTION-ONE:Five=EOne", "OUTER-FAILURE:Five", "OUTER-AFTER:Five"
 			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void DecoratorBuilder_PropagateCalls_Properties()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<AncestorRepository.IFewReadWriteProperties> targetField;
+			FieldAccessOperand<List<string>> logField;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Target", out targetField, "Log", out logField)
+				.ImplementInterface<AncestorRepository.IFewReadWriteProperties>()
+				.AllProperties().ImplementPropagate(targetField);
+
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+			//-- Act
+
+			var log = new List<string>();
+			var target = new TestTarget(log);
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingConstructor(target, log);
+
+			obj.AnInt = 123;
+			obj.AString = "ABC";
+
+			var anIntResult = obj.AnInt;
+			var aStringResult = obj.AString;
+
+			//-- Assert
+
+			Assert.That(anIntResult, Is.EqualTo(123));
+			Assert.That(aStringResult, Is.EqualTo("ABC"));
+
+			Assert.That(log, Is.EqualTo(new[] {
+				"BEFORE-SET:AnInt=123", "AFTER-SET:AnInt", 
+				"BEFORE-SET:AString=ABC", "AFTER-SET:AString", 
+				"BEFORE-GET:AnInt", "AFTER-GET:AnInt=123", 
+				"BEFORE-GET:AString", "AFTER-GET:AString=ABC" 
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void DecoratorBuilder_PropagateCalls_Events()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<AncestorRepository.IFewEvents> targetField;
+			FieldAccessOperand<List<string>> logField;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Target", out targetField, "Log", out logField)
+				.ImplementInterface<AncestorRepository.IFewEvents>()
+				.AllMethods().ImplementPropagate(targetField)
+				.AllEvents().ImplementPropagate(targetField);
+
+			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+			//-- Act
+
+			var log = new List<string>();
+			var target = new TestTarget(log);
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingConstructor(target, log);
+
+			var handlerOneA = new EventHandler((sender, args) => log.Add("EventOne.A:" + args.ToString()));
+			var handlerOneB = new EventHandler((sender, args) => log.Add("EventOne.B:" + args.ToString()));
+			var handlerTwoA = new EventHandler<AncestorRepository.InOutEventArgs>((sender, args) => {
+				log.Add("EventTwo.A:" + args.InputValue);
+				args.OutputValue = "AAA";
+			});
+			var handlerTwoB = new EventHandler<AncestorRepository.InOutEventArgs>((sender, args) => {
+				log.Add("EventTwo.A:" + args.InputValue);
+				args.OutputValue = "BBB";
+			});
+
+			obj.EventOne += handlerOneA;
+			obj.EventOne += handlerOneB;
+			obj.EventTwo += handlerTwoA;
+			obj.EventTwo += handlerTwoB;
+
+			obj.RaiseOne();
+			var output1 = obj.RaiseTwo("INPUT1");
+
+			obj.EventTwo -= handlerTwoB;
+			var output2 = obj.RaiseTwo("INPUT2");
+
+			//-- Assert
+
+			Assert.That(log, Is.EqualTo(new[] {
+				"BEFORE-ADD:EventOne", "AFTER-ADD:EventOne",
+				"BEFORE-ADD:EventOne", "AFTER-ADD:EventOne",
+				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
+				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
+				"BEFORE:RaiseOne", "EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs", "RETVOID:RaiseOne", "SUCCESS:RaiseOne", "AFTER:RaiseOne",
+				"BEFORE:RaiseTwo", "EventTwo.A:INPUT1", "EventTwo.A:INPUT1", "RETVAL:RaiseTwo=BBB", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo",
+				"BEFORE-REMOVE:EventTwo", "AFTER-REMOVE:EventTwo", 
+				"BEFORE:RaiseTwo", "EventTwo.A:INPUT2", "RETVAL:RaiseTwo=AAA", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo"
+			}));
+
+			Assert.That(output1, Is.EqualTo("BBB"));
+			Assert.That(output2, Is.EqualTo("AAA"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -560,7 +665,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class TestTarget : AncestorRepository.IFewMethods
+		private class TestTarget : AncestorRepository.IFewMethods, AncestorRepository.IFewReadWriteProperties, AncestorRepository.IFewEvents
 		{
 			private readonly List<string> m_Log;
 
@@ -610,6 +715,50 @@ namespace Happil.UnitTests
 				m_Log.Add("TEST-Five=" + n);
 				throw new ExceptionRepository.TestExceptionOne("EOne");
 			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IFewReadWriteProperties Members
+
+			public int AnInt { get; set; }
+			public string AString { get; set; }
+			public object AnObject { get; set; }
+
+			#endregion
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IFewEvents Members
+
+			public void RaiseOne()
+			{
+				if ( EventOne != null )
+				{
+					EventOne(this, EventArgs.Empty);
+				}
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string RaiseTwo(string input)
+			{
+				var eventArgs = new AncestorRepository.InOutEventArgs();
+				eventArgs.InputValue = input;
+				
+				if ( EventTwo != null )
+				{
+					EventTwo(this, eventArgs);
+				}
+				
+				return eventArgs.OutputValue;
+			}
+
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public event EventHandler EventOne;
+			public event EventHandler<AncestorRepository.InOutEventArgs> EventTwo;
 
 			#endregion
 		}

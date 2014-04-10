@@ -23,6 +23,9 @@ namespace Happil.Writers
 		public interface IEventSelectorBase : IEnumerable<EventInfo>
 		{
 			ImplementationClassWriter<TBase> ImplementAutomatic();
+			ImplementationClassWriter<TBase> ImplementAutomatic(Func<EventMember, AttributeWriter> attributes);
+			ImplementationClassWriter<TBase> ImplementPropagate(IOperand<TBase> target);
+			ImplementationClassWriter<TBase> ImplementPropagate(Func<EventMember, AttributeWriter> attributes, IOperand<TBase> target);
 			ImplementationClassWriter<TBase> ForEach(Action<EventInfo> action);
 		}
 
@@ -83,8 +86,20 @@ namespace Happil.Writers
 
 			public ImplementationClassWriter<TBase> ImplementAutomatic()
 			{
-				DefineEventImplementations(ev => new AutomaticEventWriter(ev));
+				DefineEventImplementations(@event => new AutomaticEventWriter(@event));
 				return m_ClassWriter;
+			}
+			public ImplementationClassWriter<TBase> ImplementAutomatic(Func<EventMember, AttributeWriter> attributes)
+			{
+				return DefineEventImplementations(attributes, @event => new AutomaticEventWriter(@event));
+			}
+			public ImplementationClassWriter<TBase> ImplementPropagate(IOperand<TBase> target)
+			{
+				return DefineEventImplementations(@event => new PropagatingEventWriter(@event, target));
+			}
+			public ImplementationClassWriter<TBase> ImplementPropagate(Func<EventMember, AttributeWriter> attributes, IOperand<TBase> target)
+			{
+				return DefineEventImplementations(attributes, @event => new PropagatingEventWriter(@event, target));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,7 +131,17 @@ namespace Happil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefineEventImplementations<TWriter>(Func<EventMember, TWriter> writerFactory)
+			private ImplementationClassWriter<TBase> DefineEventImplementations<TWriter>(Func<EventMember, TWriter> writerFactory) 
+				where TWriter : EventWriterBase
+			{
+				return DefineEventImplementations(attributes: null, writerFactory: writerFactory);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private ImplementationClassWriter<TBase> DefineEventImplementations<TWriter>(
+				Func<EventMember, AttributeWriter> attributes,
+				Func<EventMember, TWriter> writerFactory)
 				where TWriter : EventWriterBase
 			{
 				var eventsToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedEvents);
@@ -125,7 +150,9 @@ namespace Happil.Writers
 				{
 					var eventMember = new EventMember(m_OwnerClass, singleEvent);
 					m_OwnerClass.AddMember(eventMember);
-					writerFactory(eventMember);
+					
+					var writer = writerFactory(eventMember);
+					writer.AddAttributes(attributes);
 				}
 
 				return m_ClassWriter;

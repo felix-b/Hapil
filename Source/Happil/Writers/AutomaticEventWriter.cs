@@ -17,7 +17,7 @@ namespace Happil.Writers
 				OwnerEvent.AddMethod,
 				w => WriteAddRemoveMethod(w, w.Arg1<TypeTemplate.TEventHandler>(), manipulation: Delegate.Combine));
 
-			var setter = new VoidMethodWriter(
+			var removeOn = new VoidMethodWriter(
 				OwnerEvent.RemoveMethod,
 				w => WriteAddRemoveMethod(w, w.Arg1<TypeTemplate.TEventHandler>(), manipulation: Delegate.Remove));
 		}

@@ -60,6 +60,8 @@ namespace Happil.Writers
 		{
 			ImplementationClassWriter<TBase> ImplementAutomatic();
 			ImplementationClassWriter<TBase> ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes);
+			ImplementationClassWriter<TBase> ImplementPropagate(IOperand<TBase> target);
+			ImplementationClassWriter<TBase> ImplementPropagate(Func<PropertyMember, AttributeWriter> attributes, IOperand<TBase> target);
 			ImplementationClassWriter<TBase> Throw<TException>(string message = null);
 			ImplementationClassWriter<TBase> ForEach(Action<PropertyInfo> action);
 		}
@@ -159,11 +161,19 @@ namespace Happil.Writers
 
 			ImplementationClassWriter<TBase> IPropertySelectorBase.ImplementAutomatic()
 			{
-				return DefinePropertyImplementations(p => new AutomaticPropertyWriter(p));
+				return DefinePropertyImplementations(property => new AutomaticPropertyWriter(property));
 			}
 			ImplementationClassWriter<TBase> IPropertySelectorBase.ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes)
 			{
-				return DefinePropertyImplementations(attributes, p => new AutomaticPropertyWriter(p));
+				return DefinePropertyImplementations(attributes, property => new AutomaticPropertyWriter(property));
+			}
+			ImplementationClassWriter<TBase> IPropertySelectorBase.ImplementPropagate(IOperand<TBase> target)
+			{
+				return DefinePropertyImplementations(property => new PropagatingPropertyWriter(property, target));
+			}
+			ImplementationClassWriter<TBase> IPropertySelectorBase.ImplementPropagate(Func<PropertyMember, AttributeWriter> attributes, IOperand<TBase> target)
+			{
+				return DefinePropertyImplementations(attributes, property => new PropagatingPropertyWriter(property, target));
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
