@@ -138,6 +138,27 @@ namespace Happil
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public T CreateInstance<T, TA1, TA2, TA3, TA4, TA5, TA6>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3, TA4 arg4, TA5 arg5, TA6 arg6)
+			{
+				return (T)((Func<TA1, TA2, TA3, TA4, TA5, TA6, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4, arg5, arg6);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public T CreateInstance<T, TA1, TA2, TA3, TA4, TA5, TA6, TA7>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3, TA4 arg4, TA5 arg5, TA6 arg6, TA7 arg7)
+			{
+				return (T)((Func<TA1, TA2, TA3, TA4, TA5, TA6, TA7, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public T CreateInstance<T, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(int factoryMethodIndex, TA1 arg1, TA2 arg2, TA3 arg3, TA4 arg4, TA5 arg5, TA6 arg6, TA7 arg7, TA8 arg8)
+			{
+				return (T)((Func<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, object>)FactoryMethods[factoryMethodIndex])(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public Type DynamicType { get; private set; }
 			public Delegate[] FactoryMethods { get; private set; }
 		}

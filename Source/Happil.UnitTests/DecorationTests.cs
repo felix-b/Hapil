@@ -532,6 +532,117 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void ConstructorInjection_SingleDependency()
+		{
+			//-- Arrange
+
+			var implementor = DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.AllMethods().ImplementEmpty();
+
+			implementor.DecorateWith(new PropagatingDecorator());
+
+			//-- Act
+
+			var log = new List<string>();
+			var target = new TestTarget(log);
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor(target);
+
+			obj.One();
+			var result4 = obj.Four("ZZZ");
+
+			//-- Assert
+
+			Assert.That(log, Is.EqualTo(new[] {
+				"TEST-One",
+				"TEST-Four=ZZZ",
+			}));
+			Assert.That(result4, Is.EqualTo(123));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ConstructorInjection_MultipleDependencies()
+		{
+			//-- Arrange
+
+			FieldAccessOperand<AncestorRepository.IFewMethods> targetField;
+
+			var implementor = DeriveClassFrom<object>()
+				.PrimaryConstructor("Target", out targetField)
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.AllMethods().ImplementPropagate(targetField);
+
+			implementor.DecorateWith(new DayOfWeekDecorator());
+
+			//-- Act
+
+			var log = new List<string>();
+			var target = new TestTarget(log);
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor(target, log, DayOfWeek.Friday);
+
+			obj.One();
+			var result4 = obj.Four("ZZZ");
+
+			//-- Assert
+
+			Assert.That(result4, Is.EqualTo(123));
+			Assert.That(log, Is.EqualTo(new[] {
+				"FRIDAY-BEFORE:One", "TEST-One", "FRIDAY-AFTER:One", 
+				"FRIDAY-BEFORE:Four", "TEST-Four=ZZZ", "FRIDAY-AFTER:Four"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ConstructorInjection_MultipleOverlappingDependencies()
+		{
+			//-- Arrange
+
+			var implementor = DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.AllMethods().ImplementEmpty();
+
+			implementor.DecorateWith(new PropagatingDecorator());
+			implementor.DecorateWith(new DayOfWeekDecorator());
+			implementor.DecorateWith(new NumberDecorator());
+
+			//-- Act
+
+			List<string> log = new List<string>();
+			AncestorRepository.IFewMethods target = new TestTarget(log);
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor(
+				target, log, DayOfWeek.Monday, 12345, 
+				constructorIndex: 0);
+			
+			obj.One();
+			var result4 = obj.Four("ZZZ");
+
+			//-- Assert
+
+			Assert.That(result4, Is.EqualTo(123));
+			Assert.That(log, Is.EqualTo(new[] {
+				"12345-BEFORE:One", 
+					"MONDAY-BEFORE:One", 
+						"TEST-One", 
+					"MONDAY-AFTER:One", 
+				"12345-AFTER:One",
+				"12345-BEFORE:Four", 
+					"MONDAY-BEFORE:Four", 
+						"TEST-Four=ZZZ", 
+					"MONDAY-AFTER:Four", 
+				"12345-AFTER:Four"
+			}));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
 			FieldAccessOperand<List<string>> logField,
@@ -574,8 +685,7 @@ namespace Happil.UnitTests
 
 			public override void OnClassType(ClassType classType, ClassWriterBase writer)
 			{
-				var actionLogField = classType.GetAllMembers().OfType<FieldMember>().Single(f => !f.IsStatic && f.FieldType == typeof(List<string>));
-				m_Log = actionLogField.AsOperand<List<string>>();
+				m_Log = BindToLogField(classType, writer);
 			}
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -660,6 +770,98 @@ namespace Happil.UnitTests
 			public override void OnField(FieldMember member, Func<FieldDecorationBuilder> decorate)
 			{
 				decorate().Attribute<AttributeTests.TestAttributeOne>(a => a.Named(x => x.StringValue, member.Name.TrimPrefix("m_")));
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private FieldAccessOperand<List<string>> BindToLogField(ClassType classType, ClassWriterBase writer)
+			{
+				var actionLogField = classType.GetAllMembers().OfType<FieldMember>().Single(f => !f.IsStatic && f.FieldType == typeof(List<string>));
+				return actionLogField.AsOperand<List<string>>();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class DayOfWeekDecorator : ClassDecoratorBase
+		{
+			private FieldAccessOperand<List<string>> m_Log;
+			private FieldAccessOperand<DayOfWeek> m_DayOfWeek;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			{
+				m_Log = writer.DependencyField<List<string>>("m_Log");
+				m_DayOfWeek = writer.DependencyField<DayOfWeek>("m_DayOfWeek");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			{
+				decorate()
+					.OnBefore(w => 
+						m_Log.Add(m_DayOfWeek.Func<string>(x => x.ToString).ToUpper() + w.Const("-BEFORE:" + member.Name))
+					)
+					.OnAfter(w =>
+						m_Log.Add(m_DayOfWeek.Func<string>(x => x.ToString).ToUpper() + w.Const("-AFTER:" + member.Name))
+					);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class NumberDecorator : ClassDecoratorBase
+		{
+			private FieldAccessOperand<List<string>> m_Log;
+			private FieldAccessOperand<int> m_Number;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			{
+				m_Number = writer.DependencyField<int>("m_Number");
+				m_Log = writer.DependencyField<List<string>>("m_Log");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			{
+				decorate()
+					.OnBefore(w =>
+						m_Log.Add(m_Number.Func<string>(x => x.ToString).ToUpper() + w.Const("-BEFORE:" + member.Name))
+					)
+					.OnAfter(w =>
+						m_Log.Add(m_Number.Func<string>(x => x.ToString).ToUpper() + w.Const("-AFTER:" + member.Name))
+					);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class PropagatingDecorator : ClassDecoratorBase
+		{
+			//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
+			private FieldAccessOperand<AncestorRepository.IFewMethods> m_Target;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			{
+				//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
+				m_Target = writer.DependencyField<AncestorRepository.IFewMethods>("m_Target");
+				base.OnClassType(classType, writer);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			{
+				decorate()
+					.OnReturnVoid(w => w.PropagateCall<TypeTemplate.TReturn>(m_Target))
+					.OnReturnValue((w, retVal) => retVal.Assign(w.PropagateCall<TypeTemplate.TReturn>(m_Target)));
 			}
 		}
 

@@ -12,10 +12,10 @@ namespace Happil.Members
 {
 	public class MethodMember : MemberBase
 	{
-		private readonly MethodFactoryBase m_MethodFactory;
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly List<StatementBase> m_Statements;
 		private readonly TransparentMethodWriter m_TransparentWriter;
+		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -198,11 +198,15 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal MethodFactoryBase MethodFactory
+		internal protected MethodFactoryBase MethodFactory
 		{
 			get
 			{
 				return m_MethodFactory;
+			}
+			protected set
+			{
+				m_MethodFactory = value;
 			}
 		}
 

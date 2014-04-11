@@ -792,14 +792,17 @@ namespace Happil.Operands
 					member.Name));
 			}
 
-			var allBaseTypes = typeof(T).GetTypeHierarchy();
-			var resolvedBaseTypes = allBaseTypes.Select(TypeTemplate.Resolve).ToArray();
-
-			if ( !resolvedBaseTypes.Contains(member.DeclaringType) )
+			if ( method.DeclaringType != typeof(object) )
 			{
-				throw new ArgumentException(string.Format(
-					"Member {0} cannot be invoked because it is not a method of type {1}.",
-					member.Name, typeof(T).FullName));
+				var allBaseTypes = typeof(T).GetTypeHierarchy();
+				var resolvedBaseTypes = allBaseTypes.Select(TypeTemplate.Resolve).ToArray();
+
+				if ( !resolvedBaseTypes.Contains(member.DeclaringType) )
+				{
+					throw new ArgumentException(string.Format(
+						"Member {0} cannot be invoked because it is not a method of type {1}.",
+						member.Name, typeof(T).FullName));
+				}
 			}
 
 			return method;

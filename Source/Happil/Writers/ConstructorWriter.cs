@@ -11,13 +11,15 @@ namespace Happil.Writers
 {
 	public class ConstructorWriter : MethodWriterBase
 	{
+		private readonly ConstructorMember m_OwnerConstructor;
 		private readonly Action<ConstructorWriter> m_Script;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ConstructorWriter(ConstructorMember ownerMethod, Action<ConstructorWriter> script)
-			: base(ownerMethod)
+		public ConstructorWriter(ConstructorMember ownerConstructor, Action<ConstructorWriter> script)
+			: base(ownerConstructor)
 		{
+			m_OwnerConstructor = ownerConstructor;
 			m_Script = script;
 		}
 
@@ -130,12 +132,34 @@ namespace Happil.Writers
 		
 		protected internal override void Flush()
 		{
+			if ( m_OwnerConstructor.HasDependencyInjection )
+			{
+				WriteDependencyInjection();
+			}
+
 			if ( m_Script != null )
 			{
 				m_Script(this);
 			}
 			
 			base.Flush();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void WriteDependencyInjection()
+		{
+			var dependencyFieldByArgumentIndex = m_OwnerConstructor.GetDependencyFieldArgumentIndex().ToDictionary(
+				keySelector: kvp => kvp.Value,     // argument index is the key
+				elementSelector: kvp => kvp.Key);  // field member is the value
+
+			ForEachArgument((arg, index) => {
+				FieldMember dependencyField;
+				if ( dependencyFieldByArgumentIndex.TryGetValue(index, out dependencyField) )
+				{
+					dependencyField.AsOperand<TypeTemplate.TArgument>().Assign(arg);
+				}
+			});
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

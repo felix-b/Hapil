@@ -60,6 +60,23 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override ConstructorMethodFactory FreezeSignature(MethodSignature finalSignature)
+		{
+			throw new InvalidOperationException("Current method member already has a final signature.");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override bool IsFinalSignature
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override MethodSignature Signature
 		{
 			get

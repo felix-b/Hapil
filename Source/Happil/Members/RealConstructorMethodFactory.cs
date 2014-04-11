@@ -7,69 +7,56 @@ using System.Text;
 
 namespace Happil.Members
 {
-	public class AnonymousMethodFactory : MethodFactoryBase
+	public class RealConstructorMethodFactory : ConstructorMethodFactory
 	{
-		private readonly MethodBuilder m_MethodBuilder;
+		private readonly ConstructorBuilder m_ConstructorBuilder;
 		private readonly MethodSignature m_Signature;
 		private readonly ParameterBuilder[] m_Parameters;
-		private readonly ParameterBuilder m_ReturnParameter;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic)
+		internal RealConstructorMethodFactory(ClassType ownerClass, ConstructorBuilder constructorBuilder, MethodSignature finalSignature)
 		{
-			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
-			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
-			var methodAttributes = (
-				isStatic ? 
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private | MethodAttributes.Static :
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private);
+			m_ConstructorBuilder = constructorBuilder;
+			m_Signature = finalSignature;
 
-			m_MethodBuilder = type.TypeBuilder.DefineMethod(
-				type.TakeMemberName("AnonymousMethod"),
-				methodAttributes,
-				resolvedReturnType,
-				resolvedArgumentTypes);
-
-			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, returnType: resolvedReturnType);
-
-			m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
-				argIndex + 1,
-				ParameterAttributes.None, 
-				"arg" + (argIndex + 1).ToString())).ToArray();
-
-			if ( !m_Signature.IsVoid )
+			if ( !finalSignature.IsStatic )
 			{
-				m_ReturnParameter = m_MethodBuilder.DefineParameter(0, ParameterAttributes.Retval, strParamName: null);
+				ownerClass.DefineFactoryMethod(constructorBuilder, finalSignature.ArgumentType);
 			}
+
+			m_Parameters = finalSignature.ArgumentName.Select((argName, argIndex) => m_ConstructorBuilder.DefineParameter(
+				argIndex + 1,
+				ParameterAttributes.None,
+				argName)).ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void SetAttribute(CustomAttributeBuilder attribute)
 		{
-			m_MethodBuilder.SetCustomAttribute(attribute);		
+			m_ConstructorBuilder.SetCustomAttribute(attribute);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override ILGenerator GetILGenerator()
 		{
-			return m_MethodBuilder.GetILGenerator();
+			return m_ConstructorBuilder.GetILGenerator();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void EmitCallInstruction(ILGenerator generator, OpCode instruction)
 		{
-			generator.Emit(instruction, m_MethodBuilder);
+			generator.Emit(instruction, m_ConstructorBuilder);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override ConstructorMethodFactory FreezeSignature(MethodSignature finalSignature)
 		{
-			throw new InvalidOperationException("Current method member already has a final signature.");
+			throw new InvalidOperationException("Current constructor member already has a final signature.");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -108,7 +95,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodBuilder;
+				return m_ConstructorBuilder;
 			}
 		}
 
@@ -128,7 +115,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_ReturnParameter;
+				return null;
 			}
 		}
 
@@ -138,7 +125,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodBuilder.Name;
+				return m_ConstructorBuilder.Name;
 			}
 		}
 
@@ -148,22 +135,8 @@ namespace Happil.Members
 		{
 			get
 			{
-				return (m_MethodBuilder.IsStatic ? MemberKind.StaticAnonymousMethod : MemberKind.InstanceAnonymousMethod);
+				return (m_ConstructorBuilder.IsStatic ? MemberKind.StaticConstructor : MemberKind.InstanceConstructor);
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static AnonymousMethodFactory StaticMethod(ClassType type, Type[] argumentTypes, Type returnType)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true);
 		}
 	}
 }

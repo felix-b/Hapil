@@ -32,5 +32,33 @@ namespace Happil
 				return str;
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		public static string ToPascalCase(this string str)
+		{
+			if ( !string.IsNullOrEmpty(str) )
+			{
+				return str.Substring(0, 1).ToUpper() + str.Substring(1);
+			}
+			else
+			{
+				return str;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static string ToCamelCase(this string str)
+		{
+			if ( !string.IsNullOrEmpty(str) )
+			{
+				return str.Substring(0, 1).ToLower() + str.Substring(1);
+			}
+			else
+			{
+				return str;
+			}
+		}
 	}
 }

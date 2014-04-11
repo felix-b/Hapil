@@ -25,9 +25,12 @@ namespace Happil.Writers
 		{ 
 			this.Base();
 
-			ForEachArgument((argument, index) => 
-				m_FieldsToInitialize[index].AsOperand<TypeTemplate.TArgument>().Assign(argument)
-			);
+			ForEachArgument((argument, index) => {
+				if ( index < m_FieldsToInitialize.Length )
+				{
+					m_FieldsToInitialize[index].AsOperand<TypeTemplate.TArgument>().Assign(argument);
+				}
+			});
 			
 			base.Flush();
 		}

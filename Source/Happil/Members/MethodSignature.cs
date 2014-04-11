@@ -79,6 +79,17 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodSignature Extend(Type[] newArgumentTypes, string[] newArgumentNames)
+		{
+			return new MethodSignature(
+				IsStatic,
+				argumentTypes: this.ArgumentType.Concat(newArgumentTypes).ToArray(),
+				argumentNames: this.ArgumentName.Concat(newArgumentNames).ToArray(),
+				returnType: this.ReturnType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public string[] ArgumentName { get; private set; }
 		public Type[] ArgumentType { get; private set; }
 		public Type[] ArgumentUnderlyingType { get; private set; }

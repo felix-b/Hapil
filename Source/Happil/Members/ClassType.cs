@@ -29,6 +29,7 @@ namespace Happil.Members
 		private readonly List<MethodInfo> m_FactoryMethods;
 		private readonly UniqueNameSet m_MemberNames;
 		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
+		private readonly List<FieldMember> m_DependencyFields;
 		private Type m_CompiledType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,6 +50,7 @@ namespace Happil.Members
 			m_NotImplementedMembers.UnionWith(TypeMemberCache.Of(resolvedBaseType).ImplementableMembers);
 			m_CompiledType = null;
 			m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, resolvedBaseType);
+			m_DependencyFields = new List<FieldMember>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -157,6 +159,27 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal FieldMember RegisterDependency<T>(Func<FieldMember> newFieldFactory)
+		{
+			var dependencyType = TypeTemplate.Resolve<T>();
+			var existingField = m_DependencyFields.FirstOrDefault(f => dependencyType.IsAssignableFrom(f.FieldType));
+
+			if ( existingField != null )
+			{
+				return existingField;
+			}
+			else
+			{
+				var newField = newFieldFactory();
+				// no need to AddMember(newField) because newFieldFactory() uses DefineField() which already does that.
+				m_DependencyFields.Add(newField);
+				
+				return newField;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal TMember GetMemberByName<TMember>(string memberName) where TMember : MemberBase
 		{
 			return (TMember)m_MembersByName[memberName];
@@ -189,6 +212,9 @@ namespace Happil.Members
 				writer.Flush();
 			}
 
+			var dependencyFieldsArray = m_DependencyFields.ToArray();
+			
+			ForEachMember<ConstructorMember>(m => m.FreezeSignature(dependencyFieldsArray));
 			ForEachMember<MemberBase>(m => m.Write());
 			ForEachMember<MemberBase>(m => m.Compile());
 

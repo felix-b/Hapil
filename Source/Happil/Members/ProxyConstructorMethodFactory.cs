@@ -4,72 +4,49 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Happil.Members
 {
-	public class AnonymousMethodFactory : MethodFactoryBase
+	internal class ProxyConstructorMethodFactory : ConstructorMethodFactory
 	{
-		private readonly MethodBuilder m_MethodBuilder;
+		private readonly Func<MethodSignature, RealConstructorMethodFactory> m_RealFactoryFactory;
 		private readonly MethodSignature m_Signature;
-		private readonly ParameterBuilder[] m_Parameters;
-		private readonly ParameterBuilder m_ReturnParameter;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic)
+		public ProxyConstructorMethodFactory(MethodSignature signature, Func<MethodSignature, RealConstructorMethodFactory> realFactoryFactory)
 		{
-			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
-			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
-			var methodAttributes = (
-				isStatic ? 
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private | MethodAttributes.Static :
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private);
-
-			m_MethodBuilder = type.TypeBuilder.DefineMethod(
-				type.TakeMemberName("AnonymousMethod"),
-				methodAttributes,
-				resolvedReturnType,
-				resolvedArgumentTypes);
-
-			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, returnType: resolvedReturnType);
-
-			m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
-				argIndex + 1,
-				ParameterAttributes.None, 
-				"arg" + (argIndex + 1).ToString())).ToArray();
-
-			if ( !m_Signature.IsVoid )
-			{
-				m_ReturnParameter = m_MethodBuilder.DefineParameter(0, ParameterAttributes.Retval, strParamName: null);
-			}
+			m_Signature = signature;
+			m_RealFactoryFactory = realFactoryFactory;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void SetAttribute(CustomAttributeBuilder attribute)
 		{
-			m_MethodBuilder.SetCustomAttribute(attribute);		
+			throw NotARealFactoryException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override ILGenerator GetILGenerator()
 		{
-			return m_MethodBuilder.GetILGenerator();
+			throw NotARealFactoryException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void EmitCallInstruction(ILGenerator generator, OpCode instruction)
 		{
-			generator.Emit(instruction, m_MethodBuilder);
+			throw NotARealFactoryException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override ConstructorMethodFactory FreezeSignature(MethodSignature finalSignature)
 		{
-			throw new InvalidOperationException("Current method member already has a final signature.");
+			return m_RealFactoryFactory(finalSignature);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,7 +55,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return true;
+				return false;
 			}
 		}
 
@@ -94,7 +71,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override MethodInfo Declaration
+		public override System.Reflection.MethodInfo Declaration
 		{
 			get
 			{
@@ -104,11 +81,11 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override MethodBase Builder
+		public override System.Reflection.MethodBase Builder
 		{
 			get
 			{
-				return m_MethodBuilder;
+				throw NotARealFactoryException();
 			}
 		}
 
@@ -118,7 +95,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_Parameters;
+				throw NotARealFactoryException();
 			}
 		}
 
@@ -128,7 +105,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_ReturnParameter;
+				throw NotARealFactoryException();
 			}
 		}
 
@@ -138,7 +115,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodBuilder.Name;
+				return (m_Signature.IsStatic ? ConstructorInfo.TypeConstructorName : ConstructorInfo.ConstructorName);
 			}
 		}
 
@@ -148,22 +125,15 @@ namespace Happil.Members
 		{
 			get
 			{
-				return (m_MethodBuilder.IsStatic ? MemberKind.StaticAnonymousMethod : MemberKind.InstanceAnonymousMethod);
+				return (m_Signature.IsStatic ? MemberKind.StaticConstructor : MemberKind.InstanceConstructor);
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
+		private Exception NotARealFactoryException()
 		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static AnonymousMethodFactory StaticMethod(ClassType type, Type[] argumentTypes, Type returnType)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true);
+			return new InvalidOperationException("Requested operation cannot be performed on a constructor member which has no final signature yet.");
 		}
 	}
 }

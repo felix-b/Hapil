@@ -548,6 +548,27 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Operand<TResult> PropagateCall<TResult>(IOperand target)
+		{
+			LocalOperand<TResult> returnValueLocal = null;
+
+			if ( !OwnerMethod.IsVoid )
+			{
+				returnValueLocal = Local<TResult>();
+			}
+
+			StatementScope.Current.AddStatement(new PropagateCallStatement(OwnerMethod, target, returnValueLocal));
+
+			if ( !OwnerMethod.IsVoid )
+			{
+				AddReturnStatement<TResult>(returnValueLocal);
+			}
+
+			return returnValueLocal;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodMember OwnerMethod
 		{
 			get
