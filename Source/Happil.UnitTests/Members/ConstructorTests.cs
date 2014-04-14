@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Happil.Expressions;
+using Happil.Operands;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Members
@@ -16,8 +17,8 @@ namespace Happil.UnitTests.Members
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> intField;
-			FieldAccessOperand<string> stringField;
+			Field<int> intField;
+			Field<string> stringField;
 
 			DeriveClassFrom<AncestorRepository.BaseOne>()
 				.Field<int>("m_IntField", out intField)
@@ -52,8 +53,8 @@ namespace Happil.UnitTests.Members
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> intField;
-			FieldAccessOperand<string> stringField;
+			Field<int> intField;
+			Field<string> stringField;
 
 			DeriveClassFrom<AncestorRepository.BaseOne>()
 				.PrimaryConstructor("IntField", out intField, "StringField", out stringField)
@@ -113,8 +114,8 @@ namespace Happil.UnitTests.Members
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> intField;
-			FieldAccessOperand<string> stringField;
+			Field<int> intField;
+			Field<string> stringField;
 
 			DeriveClassFrom<object>()
 				.StaticField<int>("s_IntField", out intField)

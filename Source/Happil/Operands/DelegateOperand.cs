@@ -1,56 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Expressions;
+using Happil.Operands;
 using Happil.Members;
 
 namespace Happil.Operands
 {
-	public class LocalOperand<T> : MutableOperand<T>, ICanEmitAddress
+	public class DelegateOperand<TDelegate> : Operand<TDelegate>, IDelegateOperand
 	{
-		private readonly LocalBuilder m_LocalBuilder;
+		private readonly IOperand m_Target;
+		private readonly MethodInfo m_Method;
+		private readonly ConstructorInfo m_Constructor;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal LocalOperand(MethodMember ownerMethod)
+		public DelegateOperand(IOperand target, MethodInfo method) 
 		{
-			m_LocalBuilder = ownerMethod.MethodFactory.GetILGenerator().DeclareLocal(TypeTemplate.Resolve<T>());
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public override string ToString()
-		{
-			return string.Format("Local<{0}>{{#{1}}}", m_LocalBuilder.LocalType.Name, m_LocalBuilder.LocalIndex);
+			m_Target = target;
+			m_Method = method;
+			m_Constructor = DelegateShortcuts.GetDelegateConstructor(TypeTemplate.Resolve<TDelegate>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
+			// nothing
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldloc, m_LocalBuilder);
+			m_Target.EmitTarget(il);
+			m_Target.EmitLoad(il);
+			
+			il.Emit(OpCodes.Ldftn, m_Method);
+			il.Emit(OpCodes.Newobj, m_Constructor);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			il.Emit(OpCodes.Stloc, m_LocalBuilder);
+			throw new NotSupportedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldloca, (short)m_LocalBuilder.LocalIndex);
+			throw new NotSupportedException();
 		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public interface IDelegateOperand
+	{
 	}
 }

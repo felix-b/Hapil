@@ -83,7 +83,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new ConstantOperand<int>(123);
+			var const4 = new Constant<int>(123);
 
 			//-- Act
 
@@ -107,7 +107,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new ConstantOperand<int>(123);
+			var const4 = new Constant<int>(123);
 
 			//-- Act
 
@@ -198,7 +198,7 @@ namespace Happil.UnitTests.Expressions
 			var field1 = CreateField<int>("f1");
 			var field2 = CreateField<int>("f2");
 			var field3 = CreateField<int>("f3");
-			var const4 = new ConstantOperand<int>(123);
+			var const4 = new Constant<int>(123);
 
 			//-- Act
 

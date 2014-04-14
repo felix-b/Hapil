@@ -373,8 +373,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> theInt;
-			FieldAccessOperand<string> theString;
+			Field<int> theInt;
+			Field<string> theString;
 	
 			DeriveClassFrom<object>()
 				.PrimaryConstructor("TheInt", out theInt, "TheString", out theString)
@@ -453,7 +453,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> counterField;
+			Field<int> counterField;
 
 			DeriveClassFrom<AncestorRepository.BaseThree>()
 				.DefaultConstructor()
@@ -488,7 +488,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> counterField;
+			Field<int> counterField;
 
 			DeriveClassFrom<AncestorRepository.BaseThree>()
 				.DefaultConstructor()

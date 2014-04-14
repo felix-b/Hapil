@@ -32,7 +32,7 @@ namespace Happil.Writers
 
 		public void Return(TReturn constantValue)
 		{
-			AddReturnStatement(new ConstantOperand<TReturn>(constantValue));
+			AddReturnStatement(new Constant<TReturn>(constantValue));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

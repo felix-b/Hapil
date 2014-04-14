@@ -12,7 +12,7 @@ namespace Happil.Decorators
 		private Action<MethodWriterBase> m_OnBefore;
 		private Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> m_OnInputArgument;
 		private Action<MethodWriterBase> m_OnReturnVoid;
-		private Action<MethodWriterBase, LocalOperand<TypeTemplate.TReturn>> m_OnReturnValue;
+		private Action<MethodWriterBase, Local<TypeTemplate.TReturn>> m_OnReturnValue;
 		private Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> m_OnOutputArgument;
 		private Action<MethodWriterBase> m_OnSuccess;
 		private readonly List<Action<MethodWriterBase, IHappilCatchSyntax>> m_OnCatchExceptions;
@@ -67,7 +67,7 @@ namespace Happil.Decorators
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodDecorationBuilder OnReturnValue(Action<MethodWriterBase, LocalOperand<TypeTemplate.TReturn>> decoration)
+		public MethodDecorationBuilder OnReturnValue(Action<MethodWriterBase, Local<TypeTemplate.TReturn>> decoration)
 		{
 			m_OnReturnValue = decoration;
 			m_IsEmpty = false;

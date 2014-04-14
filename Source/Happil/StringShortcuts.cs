@@ -16,7 +16,7 @@ namespace Happil
 	{
 		public static IOperand<char> CharAt(this IOperand<string> s, IOperand<int> index)
 		{
-			return new PropertyAccessOperand<char>(s, s_Item, index);
+			return new Property<char>(s, s_Item, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ namespace Happil
 		public static IOperand<int> Compare(this IOperand<string> strA, IOperand<string> strB, bool ignoreCase = false)
 		{
 			var comparisonValue = (ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.CurrentCulture);
-			var comparisonOperand = new ConstantOperand<StringComparison>(comparisonValue);
+			var comparisonOperand = new Constant<StringComparison>(comparisonValue);
 			var @operator = new UnaryOperators.OperatorCall<string>(s_Compare, strA, strB, comparisonOperand);
 			return new UnaryExpressionOperand<string, int>(@operator, null);
 		}
@@ -42,7 +42,7 @@ namespace Happil
 		public static IOperand<string> Concat(this IOperand<string> str, params IOperand<string>[] values)
 		{
 			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
-			var newArray = method.Local(method.NewArray<string>(new ConstantOperand<int>(values.Length + 1)));
+			var newArray = method.Local(method.NewArray<string>(new Constant<int>(values.Length + 1)));
 			newArray.ElementAt(0).Assign(str);
 
 			for ( int i = 0 ; i < values.Length ; i++ )
@@ -79,7 +79,7 @@ namespace Happil
 		public static IOperand<bool> EndsWith(this IOperand<string> str, IOperand<string> value, bool ignoreCase = false)
 		{
 			var comparisonValue = (ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.CurrentCulture);
-			var comparisonOperand = new ConstantOperand<StringComparison>(comparisonValue);
+			var comparisonOperand = new Constant<StringComparison>(comparisonValue);
 			var @operator = new UnaryOperators.OperatorCall<string>(s_EndsWith, value, comparisonOperand);
 			return new UnaryExpressionOperand<string, bool>(@operator, str);
 		}
@@ -93,7 +93,7 @@ namespace Happil
 		{
 			var @operator = new UnaryOperators.OperatorCall<string>(
 				s_EqualsWithComparisonType,
-				value, new ConstantOperand<StringComparison>(comparisonType));
+				value, new Constant<StringComparison>(comparisonType));
 
 			return new UnaryExpressionOperand<string, bool>(@operator, str);
 		}
@@ -240,7 +240,7 @@ namespace Happil
 
 		public static Operand<int> Length(this IOperand<string> str)
 		{
-			return new PropertyAccessOperand<int>(str, s_Length);
+			return new Property<int>(str, s_Length);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ namespace Happil
 			var @operator = new UnaryOperators.OperatorCall<string>(
 				s_SplitWithStringArray,
 				Helpers.BuildArrayLocal(separators),
-				new ConstantOperand<StringSplitOptions>(StringSplitOptions.None));
+				new Constant<StringSplitOptions>(StringSplitOptions.None));
 
 			return new UnaryExpressionOperand<string, string[]>(@operator, str);
 		}

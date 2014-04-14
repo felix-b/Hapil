@@ -74,30 +74,30 @@ namespace Happil.Writers
 
 		public Operand<T> Const<T>(T constantValue)
 		{
-			return new ConstantOperand<T>(constantValue);
+			return new Constant<T>(constantValue);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public LocalOperand<T> Local<T>()
+		public Local<T> Local<T>()
 		{
-			return new LocalOperand<T>(m_OwnerMethod);
+			return new Local<T>(m_OwnerMethod);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public LocalOperand<T> Local<T>(IOperand<T> initialValue)
+		public Local<T> Local<T>(IOperand<T> initialValue)
 		{
-			var local = new LocalOperand<T>(m_OwnerMethod);
+			var local = new Local<T>(m_OwnerMethod);
 			local.Assign(initialValue);
 			return local;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public LocalOperand<T> Local<T>(T initialValueConst)
+		public Local<T> Local<T>(T initialValueConst)
 		{
-			return Local<T>(new ConstantOperand<T>(initialValueConst));
+			return Local<T>(new Constant<T>(initialValueConst));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -246,7 +246,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public IHappilForeachInSyntax<T> Foreach<T>(LocalOperand<T> element)
+		public IHappilForeachInSyntax<T> Foreach<T>(Local<T> element)
 		{
 			return OwnerMethod.AddStatement(new ForeachStatement<T>(element));
 		}
@@ -340,7 +340,7 @@ namespace Happil.Writers
 
 		public IOperand<TElement[]> NewArray<TElement>(params TElement[] constantValues)
 		{
-			return NewArray<TElement>(constantValues.Select(v => new ConstantOperand<TElement>(v)).ToArray());
+			return NewArray<TElement>(constantValues.Select(v => new Constant<TElement>(v)).ToArray());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -375,22 +375,22 @@ namespace Happil.Writers
 
 		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			return new HappilAnonymousDelegate<TArg1, TReturn>(OwnerMethod.OwnerClass, body);
+			return new AnonymousDelegateOperand<TArg1, TReturn>(OwnerMethod.OwnerClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(
-			ref IHappilDelegate site,
+			ref IDelegateOperand site,
 			Action<FunctionMethodWriter<TReturn>,
 			Argument<TArg1>> body)
 		{
 			if ( site == null )
 			{
-				site = (IHappilDelegate)Delegate(body);
+				site = (IDelegateOperand)Delegate(body);
 			}
 
-			return (HappilAnonymousDelegate<TArg1, TReturn>)site;
+			return (AnonymousDelegateOperand<TArg1, TReturn>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -404,12 +404,12 @@ namespace Happil.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
-			ref IHappilDelegate site,
+			ref IDelegateOperand site,
 			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
 			if ( site == null )
 			{
-				site = (IHappilDelegate)Delegate(body);
+				site = (IDelegateOperand)Delegate(body);
 			}
 
 			return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
@@ -420,7 +420,7 @@ namespace Happil.Writers
 		public Operand<TMethod> MakeDelegate<TTarget, TMethod>(IOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
 		{
 			var method = Helpers.ResolveMethodFromLambda(methodSelector);
-			return new HappilDelegate<TMethod>(target, method);
+			return new DelegateOperand<TMethod>(target, method);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -433,15 +433,15 @@ namespace Happil.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
-			ref IHappilDelegate site,
+			ref IDelegateOperand site,
 			Func<Operand<TArg1>, IOperand<TResult>> expression)
 		{
 			if ( site == null )
 			{
-				site = (IHappilDelegate)Lambda(expression);
+				site = (IDelegateOperand)Lambda(expression);
 			}
 
-			return (HappilAnonymousDelegate<TArg1, TResult>)site;
+			return (AnonymousDelegateOperand<TArg1, TResult>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -455,12 +455,12 @@ namespace Happil.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
-			ref IHappilDelegate site,
+			ref IDelegateOperand site,
 			Func<Operand<TArg1>, Operand<TArg2>, IOperand<TResult>> expression)
 		{
 			if ( site == null )
 			{
-				site = (IHappilDelegate)Lambda(expression);
+				site = (IDelegateOperand)Lambda(expression);
 			}
 
 			return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
@@ -500,7 +500,6 @@ namespace Happil.Writers
 		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>> action)
 		{
 			//TODO: refactor to reuse the overloaded method
-			//TODO:redesign - does this method work correctly?
 			var argumentTypes = OwnerMethod.Signature.ArgumentType;
 			var indexBase = (OwnerMethod.Signature.IsStatic ? 0 : 1);
 
@@ -550,7 +549,7 @@ namespace Happil.Writers
 
 		public Operand<TResult> PropagateCall<TResult>(IOperand target)
 		{
-			LocalOperand<TResult> returnValueLocal = null;
+			Local<TResult> returnValueLocal = null;
 
 			if ( !OwnerMethod.IsVoid )
 			{

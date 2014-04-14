@@ -36,7 +36,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
+		public Field<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
 		{
 			return m_OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
 		}

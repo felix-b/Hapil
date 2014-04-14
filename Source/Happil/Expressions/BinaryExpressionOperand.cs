@@ -46,31 +46,6 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign?
-		//#region Overrides of HappilOperand<TExpr>
-
-		//internal override ClassType OwnerClass
-		//{
-		//	get
-		//	{
-		//		var ownerClass = base.OwnerClass;
-
-		//		if ( ownerClass != null )
-		//		{
-		//			return ownerClass;
-		//		}
-
-		//		var leftOwnerClass = m_Left.GetOwnerClass();
-		//		var rightOwnerClass = m_Right.GetOwnerClass();
-
-		//		return (leftOwnerClass ?? rightOwnerClass);
-		//	}
-		//}
-
-		//#endregion
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		protected override void OnEmitTarget(ILGenerator il)
 		{
 		}

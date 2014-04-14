@@ -13,7 +13,7 @@ namespace Happil.Writers
 {
 	public partial class ImplementationClassWriter<TBase> : ClassWriterBase
 	{
-		public ImplementationClassWriter<TBase> Field<T>(string name, out FieldAccessOperand<T> field)
+		public ImplementationClassWriter<TBase> Field<T>(string name, out Field<T> field)
 		{
 			field = this.Field<T>(name);
 			return this;
@@ -21,7 +21,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ImplementationClassWriter<TBase> Field<T>(string name, Func<FieldMember, AttributeWriter> attributes, out FieldAccessOperand<T> field)
+		public ImplementationClassWriter<TBase> Field<T>(string name, Func<FieldMember, AttributeWriter> attributes, out Field<T> field)
 		{
 			var fieldMember = DefineField<T>(name, isStatic: false);
 			fieldMember.AddAttributes(attributes);
@@ -31,7 +31,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ImplementationClassWriter<TBase> StaticField<T>(string name, out FieldAccessOperand<T> field)
+		public ImplementationClassWriter<TBase> StaticField<T>(string name, out Field<T> field)
 		{
 			field = this.StaticField<T>(name);
 			return this;
@@ -39,7 +39,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ImplementationClassWriter<TBase> StaticField<T>(string name, Func<FieldMember, AttributeWriter> attributes, out FieldAccessOperand<T> field)
+		public ImplementationClassWriter<TBase> StaticField<T>(string name, Func<FieldMember, AttributeWriter> attributes, out Field<T> field)
 		{
 			var fieldMember = DefineField<T>(name, isStatic: true);
 			fieldMember.AddAttributes(attributes);

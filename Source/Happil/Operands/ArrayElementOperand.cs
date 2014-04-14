@@ -7,17 +7,16 @@ using System.Text;
 using Happil.Operands;
 using Happil.Statements;
 
-namespace Happil.Expressions
+namespace Happil.Operands
 {
-	//TODO:redesign:rename and move to Operands
-	internal class ArrayElementAccessOperand<T> : MutableOperand<T>
+	internal class ArrayElementOperand<T> : MutableOperand<T>
 	{
 		private readonly IOperand m_Array;
 		private readonly IOperand m_Index;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ArrayElementAccessOperand(IOperand array, IOperand index)
+		public ArrayElementOperand(IOperand array, IOperand index)
 		{
 			m_Array = array;
 			m_Index = index;

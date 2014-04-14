@@ -63,7 +63,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			FieldAccessOperand<Func<string, bool>> predicateField;
+			Field<Func<string, bool>> predicateField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field("m_Predicate", out predicateField)
@@ -91,7 +91,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			FieldAccessOperand<Func<string, bool>> predicateField;
+			Field<Func<string, bool>> predicateField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field("m_Predicate", out predicateField)
@@ -152,7 +152,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			FieldAccessOperand<MyAccumulator> accumulatorField;
+			Field<MyAccumulator> accumulatorField;
 
 			DeriveClassFrom<AncestorRepository.EnumerableTester>()
 				.Field<MyAccumulator>("m_Accumulator", out accumulatorField)

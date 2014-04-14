@@ -4,21 +4,20 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Operands;
+using Happil.Expressions;
 using Happil.Members;
 using Happil.Statements;
 using Happil.Writers;
 
-namespace Happil.Expressions
+namespace Happil.Operands
 {
-	//TODO:redesign: rename
-	internal class HappilAnonymousDelegate<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IHappilDelegate
+	internal class AnonymousDelegateOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand
 	{
 		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAnonymousDelegate(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
+		public AnonymousDelegateOperand(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
 			var methodFactory = AnonymousMethodFactory.InstanceMethod(classType, new[] { typeof(TArg1) }, typeof(TReturn));
 			m_Method = new MethodMember(classType, methodFactory);
@@ -65,7 +64,7 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		static HappilAnonymousDelegate()
+		static AnonymousDelegateOperand()
 		{
 			s_DelegateConstructor = typeof(Func<TArg1, TReturn>).GetConstructor(new[] { typeof(object), typeof(IntPtr) });
 		}
@@ -73,7 +72,7 @@ namespace Happil.Expressions
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>, IHappilDelegate
+	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>, IDelegateOperand
 	{
 		private readonly MethodMember m_Method;
 

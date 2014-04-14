@@ -80,7 +80,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<TT.TBase> remoteField, localField;
+			Field<TT.TBase> remoteField, localField;
 
 			OnDefineNewClass(key => DeriveClassFrom<Repo.BaseTwo>()
 				.Field<TT.TBase>("m_Remote", out remoteField)
@@ -139,7 +139,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<TT.TPrimary> remoteField, localField;
+			Field<TT.TPrimary> remoteField, localField;
 
 			OnDefineNewClass(key => DeriveClassFrom<object>()
 				.Field<TT.TPrimary>("m_Remote", out remoteField)

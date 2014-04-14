@@ -188,7 +188,7 @@ namespace Happil.UnitTests.Statements
 
 			//-- Act
 
-			var expression = new UnaryExpressionOperand<int, int>(new UnaryOperators.OperatorNegation<int>(), new ConstantOperand<int>(111)); 
+			var expression = new UnaryExpressionOperand<int, int>(new UnaryOperators.OperatorNegation<int>(), new Constant<int>(111)); 
 
 			//-- Assert
 

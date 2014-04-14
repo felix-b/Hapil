@@ -62,7 +62,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			FieldAccessOperand<TimeSpan> field;
+			Field<TimeSpan> field;
 
 			DeriveClassFrom<AncestorRepository.ObjectCreationTester>()
 				.DefaultConstructor()
@@ -89,7 +89,7 @@ namespace Happil.UnitTests.Expressions
 		{
 			//-- Arrange
 
-			FieldAccessOperand<TimeSpan> field;
+			Field<TimeSpan> field;
 
 			DeriveClassFrom<AncestorRepository.ObjectCreationTester>()
 				.DefaultConstructor()

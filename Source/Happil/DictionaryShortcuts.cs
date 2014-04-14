@@ -73,28 +73,28 @@ namespace Happil
 
 		public static IOperand<int> Count<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			return new PropertyAccessOperand<int>(dictionary, GetReflectionCache<TKey, TValue>().Count);
+			return new Property<int>(dictionary, GetReflectionCache<TKey, TValue>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IOperand<ICollection<TKey>> Keys<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			return new PropertyAccessOperand<ICollection<TKey>>(dictionary, GetReflectionCache<TKey, TValue>().Keys);
+			return new Property<ICollection<TKey>>(dictionary, GetReflectionCache<TKey, TValue>().Keys);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IOperand<ICollection<TValue>> Values<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
-			return new PropertyAccessOperand<ICollection<TValue>>(dictionary, GetReflectionCache<TKey, TValue>().Values);
+			return new Property<ICollection<TValue>>(dictionary, GetReflectionCache<TKey, TValue>().Values);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MutableOperand<TValue> Item<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary, IOperand<TKey> key)
 		{
-			return new PropertyAccessOperand<TValue>(
+			return new Property<TValue>(
 				dictionary, 
 				GetReflectionCache<TKey, TValue>().Item,
 				key);

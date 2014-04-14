@@ -7,13 +7,13 @@ using System.Text;
 
 namespace Happil.Operands
 {
-	public class ConstantOperand<T> : Operand<T>
+	public class Constant<T> : Operand<T>
 	{
 		private readonly T m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ConstantOperand(T value)
+		public Constant(T value)
 		{
 			m_Value = value;
 		}

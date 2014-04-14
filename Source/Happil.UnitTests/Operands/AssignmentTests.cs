@@ -52,7 +52,7 @@ namespace Happil.UnitTests.Operands
 			var classWriter = DeriveClassFrom<AncestorRepository.BaseOne>().DefaultConstructor();
 
 			var field1 = classWriter.Field<int>("f1");
-			IOperand<int> const1 = new ConstantOperand<int>(123);
+			IOperand<int> const1 = new Constant<int>(123);
 
 			//-- Act
 

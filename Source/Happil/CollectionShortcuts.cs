@@ -37,28 +37,28 @@ namespace Happil
 
 		public static MutableOperand<T> ItemAt<T>(this IOperand<IList<T>> collection, IOperand<int> index)
 		{
-			return new PropertyAccessOperand<T>(collection, GetReflectionCache<T>().Item, index);
+			return new Property<T>(collection, GetReflectionCache<T>().Item, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MutableOperand<T> ItemAt<T>(this IOperand<IList<T>> collection, int index)
 		{
-			return ItemAt(collection, new ConstantOperand<int>(index));
+			return ItemAt(collection, new Constant<int>(index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MutableOperand<T> ElementAt<T>(this IOperand<T[]> array, IOperand<int> index)
 		{
-			return new ArrayElementAccessOperand<T>(array, index);
+			return new ArrayElementOperand<T>(array, index);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MutableOperand<T> ElementAt<T>(this IOperand<T[]> array, int index)
 		{
-			return ElementAt(array, new ConstantOperand<int>(index));
+			return ElementAt(array, new Constant<int>(index));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -94,14 +94,14 @@ namespace Happil
 
 		public static IOperand<int> Count<T>(this IOperand<ICollection<T>> collection)
 		{
-			return new PropertyAccessOperand<int>(collection, GetReflectionCache<T>().Count);
+			return new Property<int>(collection, GetReflectionCache<T>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IOperand<bool> IsReadOnly<T>(this IOperand<ICollection<T>> collection)
 		{
-			return new PropertyAccessOperand<bool>(collection, GetReflectionCache<T>().IsReadOnly);
+			return new Property<bool>(collection, GetReflectionCache<T>().IsReadOnly);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ namespace Happil
 
 		public static Operand<int> Length<T>(this IOperand<T[]> array)
 		{
-			return new PropertyAccessOperand<int>(array, s_ArrayLength);
+			return new Property<int>(array, s_ArrayLength);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

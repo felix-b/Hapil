@@ -13,19 +13,6 @@ namespace Happil.Statements
 	/// </summary>
 	internal class ReturnStatement : StatementBase, ILeaveStatement
 	{
-		//TODO:redesign 
-		//private readonly TryStatement m_ExceptionStatement;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public ReturnStatement()
-		{
-			//TODO:redesign 
-			//m_ExceptionStatement = StatementScope.Current.InheritedExceptionStatement;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public override void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Ret);

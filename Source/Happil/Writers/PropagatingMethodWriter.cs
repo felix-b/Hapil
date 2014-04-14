@@ -27,7 +27,7 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			LocalOperand<TypeTemplate.TReturn> returnValueLocal = null;
+			Local<TypeTemplate.TReturn> returnValueLocal = null;
 
 			if ( !OwnerMethod.IsVoid )
 			{

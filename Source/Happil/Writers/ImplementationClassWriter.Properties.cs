@@ -77,8 +77,8 @@ namespace Happil.Writers
 		}
 		public interface IPropertySelector<T> : IPropertySelectorBase
 		{
-			ImplementationClassWriter<TBase> ImplementAutomatic(FieldAccessOperand<T> backingField);
-			ImplementationClassWriter<TBase> ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes, FieldAccessOperand<T> backingField);
+			ImplementationClassWriter<TBase> ImplementAutomatic(Field<T> backingField);
+			ImplementationClassWriter<TBase> ImplementAutomatic(Func<PropertyMember, AttributeWriter> attributes, Field<T> backingField);
 			ImplementationClassWriter<TBase> Implement(
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterGetter> getter,
 				Func<PropertyWriter<T>, PropertyWriterBase.IPropertyWriterSetter> setter = null);
@@ -222,13 +222,13 @@ namespace Happil.Writers
 			#region IPropertySelector<TProperty> Members
 
 			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.ImplementAutomatic(
-				FieldAccessOperand<TProperty> backingField)
+				Field<TProperty> backingField)
 			{
 				return DefinePropertyImplementations(p => new AutomaticPropertyWriter(p), backingField);
 			}
 			ImplementationClassWriter<TBase> IPropertySelector<TProperty>.ImplementAutomatic(
 				Func<PropertyMember, AttributeWriter> attributes,
-				FieldAccessOperand<TProperty> backingField)
+				Field<TProperty> backingField)
 			{
 				return DefinePropertyImplementations(attributes, p => new AutomaticPropertyWriter(p), backingField);
 			}

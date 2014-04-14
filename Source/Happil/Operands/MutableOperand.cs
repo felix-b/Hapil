@@ -34,7 +34,7 @@ namespace Happil.Operands
 
 		public Operand<T> Assign(T value)
 		{
-			return Assign(new ConstantOperand<T>(value));
+			return Assign(new Constant<T>(value));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,18 +54,6 @@ namespace Happil.Operands
 					right: value.OrNullConstant());
 			}
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//TODO:redesign
-		//public Operand<T> AssignConst(T constantValue)
-		//{
-		//	return new HappilBinaryExpression<T, T>(
-		//		base.OwnerMethod,
-		//		@operator: new BinaryOperators.OperatorAssign<T>(),
-		//		left: this,
-		//		right: new HappilConstant<T>(constantValue));
-		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

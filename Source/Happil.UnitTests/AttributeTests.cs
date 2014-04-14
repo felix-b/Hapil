@@ -564,8 +564,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> intField;
-			FieldAccessOperand<string> stringField;
+			Field<int> intField;
+			Field<string> stringField;
 
 			DeriveClassFrom<object>()
 				.Field<int>("m_AnInt", Attributes.Set<TestAttributeOne>(), out intField)
@@ -606,8 +606,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> intField;
-			FieldAccessOperand<string> stringField;
+			Field<int> intField;
+			Field<string> stringField;
 
 			DeriveClassFrom<object>()
 				.StaticField<int>("s_AnInt", Attributes.Set<TestAttributeOne>(), out intField)

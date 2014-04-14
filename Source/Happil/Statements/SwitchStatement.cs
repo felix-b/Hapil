@@ -166,11 +166,11 @@ namespace Happil.Statements
 			{
 				if ( m_Value.OperandType.GetIntegralTypeSize() <= sizeof(int) )
 				{
-					new ConstantOperand<int>(Math.Abs((int)adjustment)).EmitLoad(il);
+					new Constant<int>(Math.Abs((int)adjustment)).EmitLoad(il);
 				}
 				else
 				{
-					new ConstantOperand<long>(Math.Abs(adjustment)).EmitLoad(il);
+					new Constant<long>(Math.Abs(adjustment)).EmitLoad(il);
 				}
 
 				il.Emit(adjustment < 0 ? OpCodes.Sub : OpCodes.Add);
@@ -184,7 +184,7 @@ namespace Happil.Statements
 			foreach ( var block in m_CasesByValue.Values )
 			{
 				var operatorEqual = new BinaryOperators.OperatorEqual<T>();
-				operatorEqual.Emit(il, m_Value, new ConstantOperand<T>(block.Value));
+				operatorEqual.Emit(il, m_Value, new Constant<T>(block.Value));
 
 				block.Label = il.DefineLabel();
 				il.Emit(OpCodes.Brtrue, block.Label);

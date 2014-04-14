@@ -72,7 +72,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			LocalOperand<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_OwnerMethod.AddLocal<TStruct>() : null);
+			Local<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_OwnerMethod.AddLocal<TStruct>() : null);
 			var effectiveTarget = (m_Target ?? tempLocal);
 
 			if ( effectiveTarget != null )

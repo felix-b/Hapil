@@ -187,7 +187,7 @@ namespace Happil.Statements
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Do(Action<ILoopBody, LocalOperand<int>> body)
+		public void Do(Action<ILoopBody, Local<int>> body)
 		{
 			var counter = m_Method.AddLocal<int>();
 			ForStatement statement;
@@ -207,7 +207,7 @@ namespace Happil.Statements
 				throw new ArgumentException("Increment cannot be zero.");
 			}
 
-			statement.Next(() => counter.Assign(counter + new ConstantOperand<int>(m_Increment)));
+			statement.Next(() => counter.Assign(counter + new Constant<int>(m_Increment)));
 			statement.Do(loop => {
 				body(loop, counter);
 			});

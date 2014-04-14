@@ -15,14 +15,14 @@ namespace Happil.Statements
 		IHappilForeachInDoSyntax<TElement>,
 		IHappilForeachDoSyntax<TElement>
 	{
-		private readonly LocalOperand<TElement> m_Element;
+		private readonly Local<TElement> m_Element;
 		private readonly List<StatementBase> m_BodyBlock;
 		private IOperand<IEnumerable<TElement>> m_Collection;
 		private WhileStatement m_InnerWhile;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ForeachStatement(LocalOperand<TElement> element)
+		public ForeachStatement(Local<TElement> element)
 		{
 			m_Element = element;
 			m_BodyBlock = new List<StatementBase>();
@@ -69,7 +69,7 @@ namespace Happil.Statements
 
 		#region IHappilForeachDoSyntax<TItem> Members
 
-		public void Do(Action<ILoopBody, LocalOperand<TElement>> body)
+		public void Do(Action<ILoopBody, Local<TElement>> body)
 		{
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
@@ -129,6 +129,6 @@ namespace Happil.Statements
 
 	public interface IHappilForeachDoSyntax<TItem>
 	{
-		void Do(Action<ILoopBody, LocalOperand<TItem>> body);
+		void Do(Action<ILoopBody, Local<TItem>> body);
 	}
 }

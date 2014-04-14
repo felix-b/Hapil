@@ -11,7 +11,7 @@ namespace Happil.Writers
 	public class TemplateMethodWriter : MethodWriterBase
 	{
 		private readonly Action<TemplateMethodWriter> m_Script;
-		private LocalOperand<TypeTemplate.TReturn> m_ReturnValueLocal;
+		private Local<TypeTemplate.TReturn> m_ReturnValueLocal;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public LocalOperand<TypeTemplate.TReturn> ReturnValueLocal
+		public Local<TypeTemplate.TReturn> ReturnValueLocal
 		{
 			get
 			{

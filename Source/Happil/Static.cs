@@ -115,7 +115,7 @@ namespace Happil
 				var property = Helpers.ResolvePropertyFromLambda(propertyOrField);
 				ValidateStaticMethod(property.GetGetMethod() ?? property.GetSetMethod(), "propertyLambda");
 
-				return new PropertyAccessOperand<TProp>(
+				return new Property<TProp>(
 					target: null,
 					property: property);
 			}
@@ -123,7 +123,7 @@ namespace Happil
 			{
 				var field = Helpers.ResolveFieldFromLambda(propertyOrField);
 
-				return new FieldAccessOperand<TProp>(
+				return new Field<TProp>(
 					target: null,
 					fieldInfo: field);
 			}

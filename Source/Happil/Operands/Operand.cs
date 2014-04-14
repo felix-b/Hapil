@@ -50,7 +50,7 @@ namespace Happil.Operands
 			return new BinaryExpressionOperand<T, Type, TCast>(
 				@operator: new BinaryOperators.OperatorCastOrThrow<T>(),
 				left: this,
-				right: new ConstantOperand<Type>(TypeTemplate.Resolve<TCast>()));
+				right: new Constant<Type>(TypeTemplate.Resolve<TCast>()));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ namespace Happil.Operands
 			return new BinaryExpressionOperand<T, Type, TCast>(
 				@operator: new BinaryOperators.OperatorTryCast<T>(),
 				left: this,
-				right: new ConstantOperand<Type>(typeof(TCast)));
+				right: new Constant<Type>(typeof(TCast)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ namespace Happil.Operands
 
 		public MutableOperand<TProp> Prop<TProp>(Expression<Func<T, TProp>> property)
 		{
-			return new PropertyAccessOperand<TProp>(
+			return new Property<TProp>(
 				target: this,
 				property: Helpers.GetPropertyInfoArrayFromLambda(property).First());
 		}
@@ -342,7 +342,7 @@ namespace Happil.Operands
 
 		public MutableOperand<TProp> Prop<TProp>(Func<PropertyInfo, bool> propertySelector)
 		{
-			return new PropertyAccessOperand<TProp>(
+			return new Property<TProp>(
 				target: this,
 				property: this.Members.SelectProps<TProp>(propertySelector).Single());
 		}
@@ -351,7 +351,7 @@ namespace Happil.Operands
 
 		public MutableOperand<TProp> Prop<TProp>(PropertyInfo property)
 		{
-			return new PropertyAccessOperand<TProp>(this, property);
+			return new Property<TProp>(this, property);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -379,7 +379,7 @@ namespace Happil.Operands
 				throw new InvalidOperationException("Could not find indexer with specified types.");
 			}
 
-			return new PropertyAccessOperand<TItem>(
+			return new Property<TItem>(
 				target: this,
 				property: indexerProperty,
 				indexArguments: indexArg1);
@@ -396,7 +396,7 @@ namespace Happil.Operands
 				throw new InvalidOperationException("Could not find indexer with specified types.");
 			}
 
-			return new PropertyAccessOperand<TItem>(
+			return new Property<TItem>(
 				target: this,
 				property: indexerProperty,
 				indexArguments: new IOperand[] { indexArg1, indexArg2 });
@@ -444,7 +444,7 @@ namespace Happil.Operands
 			}
 			else
 			{
-				return new ConstantOperand<T>(value);
+				return new Constant<T>(value);
 			}
 		}
 
@@ -460,7 +460,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<bool> operator ==(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<bool> operator ==(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, bool>(
 				@operator: new BinaryOperators.OperatorEqual<T>(),
@@ -480,7 +480,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<bool> operator !=(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<bool> operator !=(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, bool>(
 				@operator: new BinaryOperators.OperatorNotEqual<T>(),
@@ -500,7 +500,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<bool> operator >(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<bool> operator >(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, bool>(
 				@operator: new BinaryOperators.OperatorGreaterThan<T>(),
@@ -520,7 +520,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<bool> operator <(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<bool> operator <(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, bool>(
 				@operator: new BinaryOperators.OperatorLessThan<T>(),
@@ -560,7 +560,7 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<T> operator +(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<T> operator +(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, T>(
 				@operator: new BinaryOperators.OperatorAdd<T>(),
@@ -589,7 +589,7 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<T> operator -(Operand<T> x, ConstantOperand<T> y)
+		public static Operand<T> operator -(Operand<T> x, Constant<T> y)
 		{
 			return new BinaryExpressionOperand<T, T>(
 				@operator: new BinaryOperators.OperatorSubtract<T>(),
@@ -729,7 +729,7 @@ namespace Happil.Operands
 			return new BinaryExpressionOperand<T, int, T>(
 				@operator: new BinaryOperators.OperatorLeftShift<T>(),
 				left: x.OrNullConstant<T>(),
-				right: new ConstantOperand<int>(y));
+				right: new Constant<int>(y));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -739,7 +739,7 @@ namespace Happil.Operands
 			return new BinaryExpressionOperand<T, int, T>(
 				@operator: new BinaryOperators.OperatorRightShift<T>(),
 				left: x.OrNullConstant<T>(),
-				right: new ConstantOperand<int>(y));
+				right: new Constant<int>(y));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

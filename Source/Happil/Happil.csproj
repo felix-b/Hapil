@@ -56,15 +56,15 @@
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EnumerableShortcuts.cs" />
-    <Compile Include="Expressions\ArrayElementAccessOperand.cs" />
+    <Compile Include="Operands\ArrayElementOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
-    <Compile Include="Expressions\FieldAccessOperand.cs" />
-    <Compile Include="Expressions\HappilAnonymousDelegate.cs">
+    <Compile Include="Operands\Field.cs" />
+    <Compile Include="Operands\AnonymousDelegateOperand.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Expressions\HappilDelegate.cs" />
+    <Compile Include="Operands\DelegateOperand.cs" />
     <Compile Include="Expressions\IBinaryOperator.cs" />
     <Compile Include="Expressions\ICanEmitAddress.cs" />
     <Compile Include="Expressions\IDontLeaveValueOnStack.cs" />
@@ -75,7 +75,7 @@
     <Compile Include="Expressions\IValueTypeInitializer.cs" />
     <Compile Include="Expressions\NewObjectExpression.cs" />
     <Compile Include="Expressions\NewStructExpression.cs" />
-    <Compile Include="Expressions\PropertyAccessOperand.cs" />
+    <Compile Include="Operands\Property.cs" />
     <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />
     <Compile Include="Expressions\UnaryExpressionOperand.cs" />
@@ -98,11 +98,11 @@
     <Compile Include="Members\VirtualMethodFactory.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="Operands\Argument.cs" />
-    <Compile Include="Operands\ConstantOperand.cs" />
+    <Compile Include="Operands\Constant.cs" />
     <Compile Include="Operands\IMutableOperand.cs" />
     <Compile Include="Operands\IOperand.cs" />
     <Compile Include="Operands\IOperandEmitter.cs" />
-    <Compile Include="Operands\LocalOperand.cs" />
+    <Compile Include="Operands\Local.cs" />
     <Compile Include="Operands\MutableOperand.cs" />
     <Compile Include="Operands\Operand.cs" />
     <Compile Include="Operands\ThisOperand.cs" />

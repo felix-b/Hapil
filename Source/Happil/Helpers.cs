@@ -74,7 +74,7 @@ namespace Happil
 
 		public static IOperand CreateConstant(Type type, object value)
 		{
-			var constantType = typeof(ConstantOperand<>).MakeGenericType(type);
+			var constantType = typeof(Constant<>).MakeGenericType(type);
 			return (IOperand)Activator.CreateInstance(constantType, new object[] { value });
 		}
 
@@ -251,7 +251,7 @@ namespace Happil
 				throw new NotSupportedException(string.Format("Null is not a valid value for type '{0}'.", type.FullName));
 			}
 
-			return new ConstantOperand<T>(default(T));
+			return new Constant<T>(default(T));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -331,14 +331,14 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static LocalOperand<T[]> BuildArrayLocal<T>(params T[] constantValues)
+		public static Local<T[]> BuildArrayLocal<T>(params T[] constantValues)
 		{
 			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
-			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new ConstantOperand<int>(constantValues.Length)));
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new Constant<int>(constantValues.Length)));
 
 			for ( int i = 0 ; i < constantValues.Length ; i++ )
 			{
-				arrayLocal.ElementAt(new ConstantOperand<int>(i)).Assign(new ConstantOperand<T>(constantValues[i]));
+				arrayLocal.ElementAt(new Constant<int>(i)).Assign(new Constant<T>(constantValues[i]));
 			}
 
 			return arrayLocal;
@@ -346,14 +346,14 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static LocalOperand<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
+		public static Local<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
 		{
 			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
-			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new ConstantOperand<int>(values.Length)));
+			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new Constant<int>(values.Length)));
 
 			for ( int i = 0 ; i < values.Length ; i++ )
 			{
-				arrayLocal.ElementAt(new ConstantOperand<int>(i)).Assign(values[i]);
+				arrayLocal.ElementAt(new Constant<int>(i)).Assign(values[i]);
 			}
 
 			return arrayLocal;

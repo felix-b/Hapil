@@ -4,45 +4,63 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Happil.Members;
-using Happil.Operands;
+using Happil.Expressions;
+using Happil.Statements;
 
-namespace Happil.Expressions
+namespace Happil.Operands
 {
-	//TODO:redesign: rename and move to Operands
-	public class FieldAccessOperand<T> : MutableOperand<T>
+	public class Property<T> : MutableOperand<T>, INonPostfixNotation
 	{
 		private readonly IOperand m_Target;
-		private readonly FieldInfo m_FieldInfo;
-		private readonly FieldMember m_FieldMember;
-		private readonly string m_Name;
+		private readonly PropertyInfo m_Property;
+		private readonly IOperand[] m_IndexArguments;
+		private readonly MethodInfo m_Getter;
+		private readonly MethodInfo m_Setter;
+		private IOperand m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal FieldAccessOperand(IOperand target, FieldInfo fieldInfo)
+		public Property(IOperand target, PropertyInfo property, params IOperand[] indexArguments)
 		{
 			m_Target = target;
-			m_FieldInfo = fieldInfo;
-			m_Name = fieldInfo.Name;
-			m_FieldMember = null;
+			m_Property = property;
+			m_IndexArguments = indexArguments;
+
+			m_Getter = m_Property.GetGetMethod();
+			m_Setter = m_Property.GetSetMethod();
+
+			var scope = StatementScope.Current;
+			scope.Consume(target);
+
+			foreach ( var argument in m_IndexArguments )
+			{
+				scope.Consume(argument);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal FieldAccessOperand(IOperand target, FieldMember fieldMember)
+		public override bool HasTarget
 		{
-			m_Target = target;
-			m_FieldMember = fieldMember;
-			m_FieldInfo = m_FieldMember.FieldBuilder;
-			m_Name = fieldMember.Name;
+			get
+			{
+				return (m_Target != null);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override string ToString()
+		#region INonPostfixNotation Members
+
+		IOperand INonPostfixNotation.RightSide
 		{
-			return string.Format("Field{{{0}}}", m_Name);
+			set
+			{
+				m_Value = value;
+			}
 		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,35 +77,36 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, m_FieldInfo);
+			if ( m_Getter != null )
+			{
+				Helpers.EmitCall(il, target: null, method: m_Getter, arguments: m_IndexArguments);
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Property '{0}' does not define a getter.", m_Property.Name));
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, m_FieldInfo);
+			if ( m_Setter != null )
+			{
+				var setterArguments = m_IndexArguments.ConcatIf(m_Value).ToArray();
+				Helpers.EmitCall(il, target: null, method: m_Setter, arguments: setterArguments);
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Property '{0}' is read-only.", m_Property.Name));
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			il.Emit(m_FieldInfo.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, m_FieldInfo);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static implicit operator FieldMember(FieldAccessOperand<T> fieldOperand)
-		{
-			if ( fieldOperand.m_FieldMember != null )
-			{
-				return fieldOperand.m_FieldMember;
-			}
-			else
-			{
-				throw new InvalidOperationException("Current operand is not associated with a field member of the type being built.");
-			}
+			throw new NotSupportedException("Properties cannot be passed by reference.");
 		}
 	}
 }

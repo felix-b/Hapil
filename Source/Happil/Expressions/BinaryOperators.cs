@@ -657,7 +657,7 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IOperand<T> left, IOperand<Type> right)
 			{
-				var typeConstant = (right as ConstantOperand<Type>);
+				var typeConstant = (right as Constant<Type>);
 
 				if ( object.ReferenceEquals(typeConstant, null) )
 				{
@@ -684,7 +684,7 @@ namespace Happil.Expressions
 		{
 			public void Emit(ILGenerator il, IOperand<T> left, IOperand<Type> right)
 			{
-				var typeConstant = (right as ConstantOperand<Type>);
+				var typeConstant = (right as Constant<Type>);
 
 				if ( object.ReferenceEquals(typeConstant, null) )
 				{

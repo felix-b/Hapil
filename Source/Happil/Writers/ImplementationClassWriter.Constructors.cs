@@ -69,7 +69,7 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1>(
-			string arg1Name, out FieldAccessOperand<TA1> field1, 
+			string arg1Name, out Field<TA1> field1, 
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1));
@@ -93,8 +93,8 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2));
@@ -119,9 +119,9 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3));
@@ -147,10 +147,10 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3, TA4>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
-			string arg4Name, out FieldAccessOperand<TA4> field4,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
+			string arg4Name, out Field<TA4> field4,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3), arg4Name, typeof(TA4));
@@ -177,11 +177,11 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3, TA4, TA5>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
-			string arg4Name, out FieldAccessOperand<TA4> field4,
-			string arg5Name, out FieldAccessOperand<TA5> field5,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
+			string arg4Name, out Field<TA4> field4,
+			string arg5Name, out Field<TA5> field5,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3), arg4Name, typeof(TA4), arg5Name, typeof(TA5));
@@ -209,12 +209,12 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3, TA4, TA5, TA6>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
-			string arg4Name, out FieldAccessOperand<TA4> field4,
-			string arg5Name, out FieldAccessOperand<TA5> field5,
-			string arg6Name, out FieldAccessOperand<TA6> field6,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
+			string arg4Name, out Field<TA4> field4,
+			string arg5Name, out Field<TA5> field5,
+			string arg6Name, out Field<TA6> field6,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3), arg4Name, typeof(TA4), arg5Name, typeof(TA5), arg6Name, typeof(TA6));
@@ -243,13 +243,13 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
-			string arg4Name, out FieldAccessOperand<TA4> field4,
-			string arg5Name, out FieldAccessOperand<TA5> field5,
-			string arg6Name, out FieldAccessOperand<TA6> field6,
-			string arg7Name, out FieldAccessOperand<TA7> field7,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
+			string arg4Name, out Field<TA4> field4,
+			string arg5Name, out Field<TA5> field5,
+			string arg6Name, out Field<TA6> field6,
+			string arg7Name, out Field<TA7> field7,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3), arg4Name, typeof(TA4), arg5Name, typeof(TA5), arg6Name, typeof(TA6), arg7Name, typeof(TA7));
@@ -279,14 +279,14 @@ namespace Happil.Writers
 			return this;
 		}
 		public ImplementationClassWriter<TBase> PrimaryConstructor<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(
-			string arg1Name, out FieldAccessOperand<TA1> field1,
-			string arg2Name, out FieldAccessOperand<TA2> field2,
-			string arg3Name, out FieldAccessOperand<TA3> field3,
-			string arg4Name, out FieldAccessOperand<TA4> field4,
-			string arg5Name, out FieldAccessOperand<TA5> field5,
-			string arg6Name, out FieldAccessOperand<TA6> field6,
-			string arg7Name, out FieldAccessOperand<TA7> field7,
-			string arg8Name, out FieldAccessOperand<TA8> field8,
+			string arg1Name, out Field<TA1> field1,
+			string arg2Name, out Field<TA2> field2,
+			string arg3Name, out Field<TA3> field3,
+			string arg4Name, out Field<TA4> field4,
+			string arg5Name, out Field<TA5> field5,
+			string arg6Name, out Field<TA6> field6,
+			string arg7Name, out Field<TA7> field7,
+			string arg8Name, out Field<TA8> field8,
 			Func<MethodMember, AttributeWriter> attributes = null)
 		{
 			var fields = DefinePrimaryConstructor(attributes, arg1Name, typeof(TA1), arg2Name, typeof(TA2), arg3Name, typeof(TA3), arg4Name, typeof(TA4), arg5Name, typeof(TA5), arg6Name, typeof(TA6), arg7Name, typeof(TA7), arg8Name, typeof(TA8));

@@ -49,7 +49,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<TypeTemplate.TProperty> BackingField
+		public Field<TypeTemplate.TProperty> BackingField
 		{
 			get
 			{

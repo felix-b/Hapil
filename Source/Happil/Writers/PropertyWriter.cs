@@ -43,7 +43,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> BackingField
+		public Field<T> BackingField
 		{
 			get
 			{
@@ -108,7 +108,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> BackingField
+		public Field<T> BackingField
 		{
 			get
 			{
@@ -175,7 +175,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> BackingField
+		public Field<T> BackingField
 		{
 			get
 			{

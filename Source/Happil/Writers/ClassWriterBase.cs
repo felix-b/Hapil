@@ -5,6 +5,7 @@ using System.Text;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Writers
 {
@@ -22,7 +23,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> Field<T>(string name)
+		public Field<T> Field<T>(string name)
 		{
 			var field = DefineField<T>(name, isStatic: false);
 			return field.AsOperand<T>(); //TODO: check that T is compatible with field type
@@ -30,7 +31,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> StaticField<T>(string name)
+		public Field<T> StaticField<T>(string name)
 		{
 			var fieldMember = DefineField<T>(name, isStatic: true);
 			return fieldMember.AsOperand<T>();
@@ -38,7 +39,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> DependencyField<T>(string name)
+		public Field<T> DependencyField<T>(string name)
 		{
 			var field = OwnerClass.RegisterDependency<T>(() => DefineField<T>(name, isStatic: false));
 			return field.AsOperand<T>();
@@ -46,7 +47,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign:review overloads
 		public ImplementationClassWriter<object> Implement(Type baseType)
 		{
 			return new ImplementationClassWriter<object>(m_OwnerClass, baseType);
@@ -54,7 +54,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign:review overloads
 		public ImplementationClassWriter<T> AsBase<T>()
 		{
 			return new ImplementationClassWriter<T>(OwnerClass);
@@ -62,7 +61,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign:review overloads
 		public ImplementationClassWriter<TBase> ImplementBase<TBase>()
 		{
 			return new ImplementationClassWriter<TBase>(m_OwnerClass);
@@ -70,7 +68,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign:review overloads
 		public ImplementationClassWriter<T> ImplementInterface<T>()
 		{
 			return new ImplementationClassWriter<T>(OwnerClass);
@@ -78,7 +75,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//TODO:redesign:review overloads
 		public ImplementationClassWriter<object> ImplementInterface(Type interfaceType)
 		{
 			return new ImplementationClassWriter<object>(OwnerClass, interfaceType);

@@ -193,8 +193,8 @@ namespace Happil.Applied.XTuple
 			private static void EmitPropertyComparison(
 				FunctionMethodWriter<int> m, 
 				PropertyInfo prop, 
-				LocalOperand<TypeTemplate.TPrimary> otherTuple,
-				LocalOperand<int> compareResult)
+				Local<TypeTemplate.TPrimary> otherTuple,
+				Local<int> compareResult)
 			{
 				var backingField = m.This<TypeTemplate.TPrimary>().BackingFieldOf<TypeTemplate.TProperty>(prop);
 				var otherValue = m.Local(initialValue: otherTuple.Prop<TypeTemplate.TProperty>(prop));

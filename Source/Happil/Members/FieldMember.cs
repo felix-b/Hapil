@@ -33,10 +33,10 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public FieldAccessOperand<T> AsOperand<T>()
+		public Field<T> AsOperand<T>()
 		{
 			var targetOperand = (m_IsStatic ? null : new ThisOperand<object>(OwnerClass));
-			return new FieldAccessOperand<T>(targetOperand, this);
+			return new Field<T>(targetOperand, this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

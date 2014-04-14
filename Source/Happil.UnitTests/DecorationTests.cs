@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 using Happil.Writers;
 using NUnit.Framework;
 
@@ -20,7 +21,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -59,7 +60,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -118,7 +119,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -186,7 +187,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -227,7 +228,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -277,7 +278,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.Field<List<string>>("m_Log", out logField)
@@ -320,7 +321,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<List<string>> logField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Log", out logField)
@@ -355,9 +356,9 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<int> number;
-			FieldAccessOperand<string> text;
-			FieldAccessOperand<List<string>> log;
+			Field<int> number;
+			Field<string> text;
+			Field<List<string>> log;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Number", out number, "Text", out text, "Log", out log);
@@ -390,8 +391,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<AncestorRepository.IFewMethods> targetField;
-			FieldAccessOperand<List<string>> logField;
+			Field<AncestorRepository.IFewMethods> targetField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Target", out targetField, "Log", out logField)
@@ -432,8 +433,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<AncestorRepository.IFewReadWriteProperties> targetField;
-			FieldAccessOperand<List<string>> logField;
+			Field<AncestorRepository.IFewReadWriteProperties> targetField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Target", out targetField, "Log", out logField)
@@ -474,8 +475,8 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<AncestorRepository.IFewEvents> targetField;
-			FieldAccessOperand<List<string>> logField;
+			Field<AncestorRepository.IFewEvents> targetField;
+			Field<List<string>> logField;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Target", out targetField, "Log", out logField)
@@ -569,7 +570,7 @@ namespace Happil.UnitTests
 		{
 			//-- Arrange
 
-			FieldAccessOperand<AncestorRepository.IFewMethods> targetField;
+			Field<AncestorRepository.IFewMethods> targetField;
 
 			var implementor = DeriveClassFrom<object>()
 				.PrimaryConstructor("Target", out targetField)
@@ -645,7 +646,7 @@ namespace Happil.UnitTests
 
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
-			FieldAccessOperand<List<string>> logField,
+			Field<List<string>> logField,
 			string logSuffix = "")
 		{
 			var decorator = new ImplementationClassWriter<AncestorRepository.IFewMethods>(implementor.OwnerClass);
@@ -672,7 +673,7 @@ namespace Happil.UnitTests
 		private class LoggingDecorator : ClassDecoratorBase
 		{
 			private readonly string m_LogPrefix;
-			private FieldAccessOperand<List<string>> m_Log;
+			private Field<List<string>> m_Log;
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -774,7 +775,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private FieldAccessOperand<List<string>> BindToLogField(ClassType classType, ClassWriterBase writer)
+			private Field<List<string>> BindToLogField(ClassType classType, ClassWriterBase writer)
 			{
 				var actionLogField = classType.GetAllMembers().OfType<FieldMember>().Single(f => !f.IsStatic && f.FieldType == typeof(List<string>));
 				return actionLogField.AsOperand<List<string>>();
@@ -785,8 +786,8 @@ namespace Happil.UnitTests
 
 		private class DayOfWeekDecorator : ClassDecoratorBase
 		{
-			private FieldAccessOperand<List<string>> m_Log;
-			private FieldAccessOperand<DayOfWeek> m_DayOfWeek;
+			private Field<List<string>> m_Log;
+			private Field<DayOfWeek> m_DayOfWeek;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -814,8 +815,8 @@ namespace Happil.UnitTests
 
 		private class NumberDecorator : ClassDecoratorBase
 		{
-			private FieldAccessOperand<List<string>> m_Log;
-			private FieldAccessOperand<int> m_Number;
+			private Field<List<string>> m_Log;
+			private Field<int> m_Number;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -844,7 +845,7 @@ namespace Happil.UnitTests
 		private class PropagatingDecorator : ClassDecoratorBase
 		{
 			//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
-			private FieldAccessOperand<AncestorRepository.IFewMethods> m_Target;
+			private Field<AncestorRepository.IFewMethods> m_Target;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 

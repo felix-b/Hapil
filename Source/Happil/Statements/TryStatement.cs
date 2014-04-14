@@ -149,7 +149,7 @@ namespace Happil.Statements
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public List<StatementBase> Statements { get; private set; }
-			public LocalOperand<TException> ExceptionObject { get; private set; }
+			public Local<TException> ExceptionObject { get; private set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
