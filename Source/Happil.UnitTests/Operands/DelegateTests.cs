@@ -7,10 +7,10 @@ using Happil;
 using Happil.Operands;
 using NUnit.Framework;
 
-namespace Happil.UnitTests.Expressions
+namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class LambdaDelegateTests : ClassPerTestCaseFixtureBase
+	public class DelegateTests : ClassPerTestCaseFixtureBase
 	{
 		[Test]
 		public void TestLambdaExpression()
@@ -54,6 +54,42 @@ namespace Happil.UnitTests.Expressions
 			//-- Assert
 
 			Assert.That(result, Is.EqualTo(new[] { "55555", "4444", "333" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestAnonymousDelegateFromStaticConstructor()
+		{
+			//-- Arrange
+
+			Field<int[]> orderedArrayField;
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.StaticField<int[]>("s_OrderedArray", out orderedArrayField)
+				.StaticConstructor(w => {
+					var array = w.Local<int[]>();
+					array.Assign(w.NewArray<int>(length: w.Const(5)));
+					array.ElementAt(0).Assign(3);
+					array.ElementAt(1).Assign(1);
+					array.ElementAt(2).Assign(9);
+					array.ElementAt(3).Assign(7);
+					array.ElementAt(4).Assign(4);
+					orderedArrayField.Assign(array.OrderBy(w.Delegate<int, int>((del, item) => del.Return(item))).ToArray());
+				})
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					w.Return(orderedArrayField.Select(w.Delegate<int, string>((del, item) => del.Return(item.Func<string>(x => x.ToString)))));
+				});
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoTest(null).ToArray();
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "1", "3", "4", "7", "9" }));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

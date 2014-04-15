@@ -11,18 +11,22 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	internal class AnonymousDelegateOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand
+	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand
 	{
 		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public AnonymousDelegateOperand(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
+		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.InstanceMethod(classType, new[] { typeof(TArg1) }, typeof(TReturn));
-			m_Method = new MethodMember(classType, methodFactory);
+			var methodFactory = (
+				ownerMethod.IsStatic
+				? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn))
+				: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn)));
 
-			classType.AddMember(m_Method);
+			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
+
+			ownerMethod.OwnerClass.AddMember(m_Method);
 			var writer = new FunctionMethodWriter<TReturn>(
 				m_Method, 
 				w => body(w, w.Arg1<TArg1>()));
@@ -39,7 +43,7 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldarg_0);
+			il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
@@ -64,7 +68,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		static AnonymousDelegateOperand()
+		static AnonymousFuncOperand()
 		{
 			s_DelegateConstructor = typeof(Func<TArg1, TReturn>).GetConstructor(new[] { typeof(object), typeof(IntPtr) });
 		}
@@ -72,18 +76,22 @@ namespace Happil.Operands
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	internal class HappilAnonymousDelegate<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>, IDelegateOperand
+	internal class AnonymousFuncOperand<TArg1, TArg2, TReturn> : Operand<Func<TArg1, TArg2, TReturn>>, IDelegateOperand
 	{
 		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public HappilAnonymousDelegate(ClassType classType, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
+		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.InstanceMethod(classType, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
-			m_Method = new MethodMember(classType, methodFactory);
+			var methodFactory = (
+				ownerMethod.IsStatic
+				? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn))
+				: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn)));
 
-			classType.AddMember(m_Method);
+			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
+
+			ownerMethod.OwnerClass.AddMember(m_Method);
 			var writer = new FunctionMethodWriter<TReturn>(
 				m_Method, 
 				w => body(w, w.Arg1<TArg1>(), w.Arg2<TArg2>()));
@@ -100,7 +108,7 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldarg_0);
+			il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
@@ -125,7 +133,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		static HappilAnonymousDelegate()
+		static AnonymousFuncOperand()
 		{
 			s_DelegateConstructor = typeof(Func<TArg1, TArg2, TReturn>).GetConstructor(new[] { typeof(object), typeof(IntPtr) });
 		}

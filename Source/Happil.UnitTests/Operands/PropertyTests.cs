@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace Happil.UnitTests.Expressions
+namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class PropertyAccessOperandTests : ClassPerTestCaseFixtureBase
+	public class PropertyTests : ClassPerTestCaseFixtureBase
 	{
 		[Test]
 		public void CanReadImplementedProperties()

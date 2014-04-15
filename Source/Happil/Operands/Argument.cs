@@ -22,21 +22,19 @@ namespace Happil.Operands
 
 		internal Argument(MethodMember ownerMethod, byte index)
 		{
-			m_OwnerMethod = ownerMethod;
-
-			var signature = ownerMethod.Signature;
-			var indexBase = (ownerMethod.Signature.IsStatic ? 0 : 1);
-
-			if ( index < indexBase )
+			if ( index < 1 )
 			{
-				throw new ArgumentOutOfRangeException("index", string.Format("Argument index must be {0}-based.", indexBase));
+				throw new ArgumentOutOfRangeException("index", "Argument index must be 1-based.");
 			}
 
-			m_Index = index;
-			m_Name = signature.ArgumentName[index - indexBase];
-			m_IsByRef = signature.ArgumentIsByRef[index - indexBase];
-			m_IsOut = signature.ArgumentIsOut[index - indexBase];
-			m_ParameterBuilder = ownerMethod.MethodFactory.Parameters[index - indexBase];
+			m_OwnerMethod = ownerMethod;
+			var signature = ownerMethod.Signature;
+
+			m_Index = (ownerMethod.IsStatic ? (byte)(index - 1) : index);
+			m_Name = signature.ArgumentName[index - 1];
+			m_IsByRef = signature.ArgumentIsByRef[index - 1];
+			m_IsOut = signature.ArgumentIsOut[index - 1];
+			m_ParameterBuilder = ownerMethod.MethodFactory.Parameters[index - 1];
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -172,6 +170,9 @@ namespace Happil.Operands
 		{
 			switch ( m_Index )
 			{
+				case 0:
+					il.Emit(OpCodes.Ldarg_0);
+					break;
 				case 1:
 					il.Emit(OpCodes.Ldarg_1);
 					break;

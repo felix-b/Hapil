@@ -375,7 +375,7 @@ namespace Happil.Writers
 
 		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			return new AnonymousDelegateOperand<TArg1, TReturn>(OwnerMethod.OwnerClass, body);
+			return new AnonymousFuncOperand<TArg1, TReturn>(OwnerMethod, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -390,7 +390,7 @@ namespace Happil.Writers
 				site = (IDelegateOperand)Delegate(body);
 			}
 
-			return (AnonymousDelegateOperand<TArg1, TReturn>)site;
+			return (AnonymousFuncOperand<TArg1, TReturn>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -398,7 +398,7 @@ namespace Happil.Writers
 		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
 			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			return new HappilAnonymousDelegate<TArg1, TArg2, TReturn>(m_OwnerMethod.OwnerClass, body);
+			return new AnonymousFuncOperand<TArg1, TArg2, TReturn>(m_OwnerMethod, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -412,7 +412,7 @@ namespace Happil.Writers
 				site = (IDelegateOperand)Delegate(body);
 			}
 
-			return (HappilAnonymousDelegate<TArg1, TArg2, TReturn>)site;
+			return (AnonymousFuncOperand<TArg1, TArg2, TReturn>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -441,7 +441,7 @@ namespace Happil.Writers
 				site = (IDelegateOperand)Lambda(expression);
 			}
 
-			return (AnonymousDelegateOperand<TArg1, TResult>)site;
+			return (AnonymousFuncOperand<TArg1, TResult>)site;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ namespace Happil.Writers
 				site = (IDelegateOperand)Lambda(expression);
 			}
 
-			return (HappilAnonymousDelegate<TArg1, TArg2, TResult>)site;
+			return (AnonymousFuncOperand<TArg1, TArg2, TResult>)site;
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------

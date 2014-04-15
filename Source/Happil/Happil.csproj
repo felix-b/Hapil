@@ -61,7 +61,7 @@
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
     <Compile Include="Operands\Field.cs" />
-    <Compile Include="Operands\AnonymousDelegateOperand.cs">
+    <Compile Include="Operands\AnonymousFuncOperand.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operands\DelegateOperand.cs" />
