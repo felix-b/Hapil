@@ -182,6 +182,13 @@ namespace Happil.UnitTests
 
 		public class InOutEventArgs : EventArgs
 		{
+			public override string ToString()
+			{
+				return "IN{" + (InputValue ?? "") + "}/OUT{" + (OutputValue ?? "") + "}";
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public string InputValue { get; set; }
 			public string OutputValue { get; set; }
 		}

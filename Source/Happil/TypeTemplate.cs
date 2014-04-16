@@ -22,8 +22,9 @@ namespace Happil
 				typeof(TReturn), typeof(TProperty),
 				typeof(TArgument), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
 				typeof(TIndex1), typeof(TIndex2),
-				typeof(TEventHandler),
-				typeof(TField)
+				typeof(TEventHandler), typeof(TEventArgs),
+				typeof(TField),
+				typeof(TClosure)
 			});
 
 			s_ArgumentTemplateTypes = new[] {
@@ -189,7 +190,9 @@ namespace Happil
 		public class TIndex1 : TemplateTypeBase<TIndex1> { }
 		public class TIndex2 : TemplateTypeBase<TIndex2> { }
 		public class TEventHandler : TemplateTypeBase<TEventHandler> { }
+		public class TEventArgs : TemplateTypeBase<TEventArgs> { }
 		public class TField : TemplateTypeBase<TField> { }
+		public class TClosure : TemplateTypeBase<TClosure> { }
 
 		// ReSharper restore InconsistentNaming
 

@@ -13,6 +13,11 @@ namespace Happil
 {
 	public static class DelegateShortcuts
 	{
+		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByDelegateType =
+			new ConcurrentDictionary<Type, ReflectionCache>();
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static void Invoke(this IOperand<TypeTemplate.TEventHandler> eventDelegate, IOperand sender, IOperand eventArgs)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(
@@ -112,26 +117,21 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static readonly ConcurrentDictionary<Type, ReflectionCache> s_ReflectionCacheByDelegateType =
-			new ConcurrentDictionary<Type, ReflectionCache>();
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private static ReflectionCache GetReflectionCache<TDelegate>()
+		internal static ReflectionCache GetReflectionCache<TDelegate>()
 		{
 			return GetReflectionCache(typeof(TDelegate));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static ReflectionCache GetReflectionCache(Type delegateType)
+		internal static ReflectionCache GetReflectionCache(Type delegateType)
 		{
 			return s_ReflectionCacheByDelegateType.GetOrAdd(delegateType, new ReflectionCache(delegateType));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ReflectionCache
+		internal class ReflectionCache
 		{
 			public ReflectionCache(Type delegateType)
 			{

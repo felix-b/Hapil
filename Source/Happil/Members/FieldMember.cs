@@ -18,13 +18,13 @@ namespace Happil.Members
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal FieldMember(ClassType ownerClass, string name, Type fieldType, bool isStatic = false)
+		internal FieldMember(ClassType ownerClass, string name, Type fieldType, bool isStatic = false, bool isPublic = false)
 			: base(ownerClass, name)
 		{
 			m_IsStatic = isStatic;
 
 			var actualType = TypeTemplate.Resolve(fieldType);
-			var attributes = (isStatic ? FieldAttributes.Private | FieldAttributes.Static : FieldAttributes.Private);
+			var attributes = GetFieldAttributes(isStatic, isPublic);
 			var uniqueName = ownerClass.TakeMemberName(name);
 
 			m_FieldBuilder = ownerClass.TypeBuilder.DefineField(uniqueName, actualType, attributes);
@@ -139,6 +139,15 @@ namespace Happil.Members
 			{
 				return m_FieldBuilder;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static FieldAttributes GetFieldAttributes(bool isStatic, bool isPublic)
+		{
+			return (
+				(isStatic ? FieldAttributes.Static : 0) |
+				(isPublic ? FieldAttributes.Public : FieldAttributes.Private));
 		}
 	}
 }

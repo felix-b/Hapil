@@ -568,6 +568,13 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void RawIL(Action<ILGenerator> script)
+		{
+			StatementScope.Current.AddStatement(new RawILStatement(script));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodMember OwnerMethod
 		{
 			get

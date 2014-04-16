@@ -16,14 +16,11 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic)
+		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
 		{
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
-			var methodAttributes = (
-				isStatic ? 
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private | MethodAttributes.Static :
-				MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.Private);
+			var methodAttributes = (MethodAttributes.Final | MethodAttributes.HideBySig | GetMethodModifierAttributes(isStatic, isPublic));
 
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(
 				type.TakeMemberName("AnonymousMethod"),
@@ -156,14 +153,35 @@ namespace Happil.Members
 
 		public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
 		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false);
+			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false, isPublic: false);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static AnonymousMethodFactory StaticMethod(ClassType type, Type[] argumentTypes, Type returnType)
 		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true);
+			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true, isPublic: false);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static AnonymousMethodFactory FromMethodInfo(ClassType type, MethodInfo methodInfo)
+		{
+			return new AnonymousMethodFactory(
+				type, 
+				argumentTypes: methodInfo.GetParameters().Select(p => p.ParameterType).ToArray(),
+				returnType: methodInfo.ReturnType,
+				isStatic: methodInfo.IsStatic,
+				isPublic: methodInfo.IsPublic);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private static MethodAttributes GetMethodModifierAttributes(bool isStatic, bool isPublic)
+		{
+			return (
+				(isStatic ? MethodAttributes.Static : (MethodAttributes)0) |
+				(isPublic ? MethodAttributes.Public : MethodAttributes.Private));
 		}
 	}
 }

@@ -123,6 +123,7 @@
     <Compile Include="Statements\LoopStatementBase.cs" />
     <Compile Include="Statements\ProceedStatement.cs" />
     <Compile Include="Statements\PropagateCallStatement.cs" />
+    <Compile Include="Statements\RawILStatement.cs" />
     <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />

@@ -23,17 +23,17 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Field<T> Field<T>(string name)
+		public Field<T> Field<T>(string name, bool isPublic = false)
 		{
-			var field = DefineField<T>(name, isStatic: false);
+			var field = DefineField<T>(name, isStatic: false, isPublic: isPublic);
 			return field.AsOperand<T>(); //TODO: check that T is compatible with field type
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Field<T> StaticField<T>(string name)
+		public Field<T> StaticField<T>(string name, bool isPublic = false)
 		{
-			var fieldMember = DefineField<T>(name, isStatic: true);
+			var fieldMember = DefineField<T>(name, isStatic: true, isPublic: isPublic);
 			return fieldMember.AsOperand<T>();
 		}
 
@@ -106,18 +106,18 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal protected FieldMember DefineField(string name, Type fieldType, bool isStatic)
+		internal protected FieldMember DefineField(string name, Type fieldType, bool isStatic, bool isPublic = false)
 		{
-			var field = new FieldMember(m_OwnerClass, name, fieldType, isStatic);
+			var field = new FieldMember(m_OwnerClass, name, fieldType, isStatic, isPublic);
 			m_OwnerClass.AddMember(field);
 			return field;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal protected FieldMember DefineField<T>(string name, bool isStatic)
+		internal protected FieldMember DefineField<T>(string name, bool isStatic, bool isPublic = false)
 		{
-			return DefineField(name, typeof(T), isStatic);
+			return DefineField(name, typeof(T), isStatic, isPublic);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

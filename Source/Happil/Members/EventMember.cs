@@ -158,7 +158,11 @@ namespace Happil.Members
 
 		internal override IDisposable CreateTypeTemplateScope()
 		{
-			return TypeTemplate.CreateScope<TypeTemplate.TEventHandler>(m_Declaration.EventHandlerType);
+			var reflectionCache = DelegateShortcuts.GetReflectionCache(m_Declaration.EventHandlerType);
+			
+			return TypeTemplate.CreateScope(
+				typeof(TypeTemplate.TEventHandler), m_Declaration.EventHandlerType, 
+				typeof(TypeTemplate.TEventArgs), reflectionCache.Invoke.GetParameters()[1].ParameterType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

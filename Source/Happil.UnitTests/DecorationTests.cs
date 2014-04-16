@@ -499,7 +499,7 @@ namespace Happil.UnitTests
 				args.OutputValue = "AAA";
 			});
 			var handlerTwoB = new EventHandler<AncestorRepository.InOutEventArgs>((sender, args) => {
-				log.Add("EventTwo.A:" + args.InputValue);
+				log.Add("EventTwo.B:" + args.InputValue);
 				args.OutputValue = "BBB";
 			});
 
@@ -521,10 +521,16 @@ namespace Happil.UnitTests
 				"BEFORE-ADD:EventOne", "AFTER-ADD:EventOne",
 				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
 				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
-				"BEFORE:RaiseOne", "EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs", "RETVOID:RaiseOne", "SUCCESS:RaiseOne", "AFTER:RaiseOne",
-				"BEFORE:RaiseTwo", "EventTwo.A:INPUT1", "EventTwo.A:INPUT1", "RETVAL:RaiseTwo=BBB", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo",
+				"BEFORE:RaiseOne", 
+					/*"BEFORE-RAISE:EventOne=System.EventArgs",*/ "EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs", /*"AFTER-RAISE:EventOne=System.EventArgs",*/
+				"RETVOID:RaiseOne", "SUCCESS:RaiseOne", "AFTER:RaiseOne",
+				"BEFORE:RaiseTwo", 
+					/*"BEFORE-RAISE:EventTwo=IN{INPUT1}/OUT{}",*/ "EventTwo.A:INPUT1", "EventTwo.B:INPUT1", /*"AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{BBB}",*/
+				"RETVAL:RaiseTwo=BBB", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo",
 				"BEFORE-REMOVE:EventTwo", "AFTER-REMOVE:EventTwo", 
-				"BEFORE:RaiseTwo", "EventTwo.A:INPUT2", "RETVAL:RaiseTwo=AAA", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo"
+				"BEFORE:RaiseTwo", 
+					/*"BEFORE-RAISE:EventTwo=IN{INPUT2}/OUT{}",*/ "EventTwo.A:INPUT2", /*"AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{AAA}",*/
+				"RETVAL:RaiseTwo=AAA", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo"
 			}));
 
 			Assert.That(output1, Is.EqualTo("BBB"));
@@ -749,7 +755,7 @@ namespace Happil.UnitTests
 
 			public override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
 			{
-				decorate().AddOn()
+				decorate().OnAdd()
 					.OnBefore(w =>  
 						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-ADD:" + member.Name))
 					)
@@ -757,13 +763,21 @@ namespace Happil.UnitTests
 						m_Log.Add(w.Const(m_LogPrefix + "AFTER-ADD:" + member.Name))
 					);
 
-				decorate().RemoveOn()
+				decorate().OnRemove()
 					.OnBefore(w =>
 						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-REMOVE:" + member.Name))
 					)
 					.OnAfter(w =>
 						m_Log.Add(w.Const(m_LogPrefix + "AFTER-REMOVE:" + member.Name))
 					);
+
+				/*decorate().OnRaise()
+					.OnBefore(w => 
+						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-RAISE:" + member.Name + "=") + w.Arg2<TypeTemplate.TEventArgs>().Func<string>(x => x.ToString))
+					)
+					.OnAfter(w => 
+						m_Log.Add(w.Const(m_LogPrefix + "AFTER-RAISE:" + member.Name + "=") + w.Arg2<TypeTemplate.TEventArgs>().Func<string>(x => x.ToString))
+					);*/
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

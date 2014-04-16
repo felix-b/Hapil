@@ -48,6 +48,13 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static void Void(MethodInfo method, params IOperand[] arguments)
+		{
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arguments));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Operand<TReturn> Func<TReturn>(Func<TReturn> member)
 		{
 			var method = GetValidStaticMethod(member);
@@ -87,6 +94,14 @@ namespace Happil
 			var method = GetValidStaticMethod(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
 
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TReturn>(MethodInfo method, params IOperand[] arguments)
+		{
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arguments);
 			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
