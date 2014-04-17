@@ -9,13 +9,9 @@ namespace Happil.Decorators
 {
 	public class ConstructorDecorationBuilder : MethodDecorationBuilder
 	{
-		internal ConstructorDecorationBuilder(DecoratingMethodWriter ownerWriter)
+		internal ConstructorDecorationBuilder(DecoratingConstructorWriter ownerWriter)
 			: base(ownerWriter)
 		{
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		
 	}
 }

@@ -417,10 +417,18 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TMethod> MakeDelegate<TTarget, TMethod>(IOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		public Operand<TDelegate> MakeDelegate<TTarget, TDelegate>(IOperand<TTarget> target, Expression<Func<TTarget, TDelegate>> methodSelector)
 		{
 			var method = Helpers.ResolveMethodFromLambda(methodSelector);
-			return new DelegateOperand<TMethod>(target, method);
+			return new DelegateOperand<TDelegate>(target, method);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<TMethod> MakeDelegate<TTarget, TMethod, TDelegate>(IOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		{
+			var method = Helpers.ResolveMethodFromLambda(methodSelector);
+			return new DelegateOperand<TMethod>(target, method, delegateTypeOverride: TypeTemplate.Resolve<TDelegate>());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -704,6 +712,16 @@ namespace Happil.Writers
 		{
 			m_Mode |= MethodWriterModes.Decorator;
 			m_InnerWriters = innerWriters;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected MethodWriterBase[] InnerWriters
+		{
+			get
+			{
+				return m_InnerWriters;
+			}
 		}
 	}
 }

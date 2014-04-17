@@ -17,11 +17,13 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public DelegateOperand(IOperand target, MethodInfo method) 
+		public DelegateOperand(IOperand target, MethodInfo method, Type delegateTypeOverride = null) 
 		{
 			m_Target = target;
 			m_Method = method;
-			m_Constructor = DelegateShortcuts.GetDelegateConstructor(TypeTemplate.Resolve<TDelegate>());
+
+			var effectiveDelegateType = delegateTypeOverride ?? base.OperandType;
+			m_Constructor = DelegateShortcuts.GetDelegateConstructor(effectiveDelegateType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

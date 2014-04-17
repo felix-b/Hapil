@@ -331,6 +331,15 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MutableOperand<TField> Field<TField>(Expression<Func<T, TField>> field)
+		{
+			return new Field<TField>(
+				target: this,
+				fieldInfo: Helpers.ResolveFieldFromLambda(field));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MutableOperand<TProp> Prop<TProp>(Expression<Func<T, TProp>> property)
 		{
 			return new Property<TProp>(

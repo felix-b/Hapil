@@ -25,7 +25,7 @@ namespace Happil.Writers
 			{
 				if ( m_DecorationBuilder == null )
 				{
-					m_DecorationBuilder = new MethodDecorationBuilder(this);
+					m_DecorationBuilder = CreateDecorationBuilder();
 				}
 
 				return m_DecorationBuilder;
@@ -40,8 +40,22 @@ namespace Happil.Writers
 			{
 				m_DecorationBuilder.ApplyDecoration();
 			}
+			else
+			{
+				foreach ( var writer in InnerWriters )
+				{
+					writer.Flush();
+				}
+			}
 
 			base.Flush();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected internal virtual MethodDecorationBuilder CreateDecorationBuilder()
+		{
+			return new MethodDecorationBuilder(this);
 		}
 	}
 }

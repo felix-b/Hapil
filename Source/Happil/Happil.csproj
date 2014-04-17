@@ -154,6 +154,7 @@
     <Compile Include="Writers\AutomaticEventWriter.cs" />
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
+    <Compile Include="Writers\DecoratingConstructorWriter.cs" />
     <Compile Include="Writers\PropagatingEventWriter.cs" />
     <Compile Include="Writers\PropagatingPropertyWriter.cs" />
     <Compile Include="Writers\DecoratingClassWriter.cs" />

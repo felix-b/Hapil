@@ -110,9 +110,10 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void VisitConstructor(MethodMember methodMember)
+		private void VisitConstructor(ConstructorMember methodMember)
 		{
-			var decoratorFactory = new LazyFactory<ConstructorDecorationBuilder>(() => new ConstructorDecorationBuilder(new DecoratingMethodWriter(methodMember)));
+			var decoratorFactory = new LazyFactory<ConstructorDecorationBuilder>(() => 
+				(ConstructorDecorationBuilder)new DecoratingConstructorWriter(methodMember).DecorationBuilder);
 
 			if ( methodMember.IsStatic )
 			{

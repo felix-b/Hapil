@@ -50,7 +50,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IOperand<bool> Remove<TKey, TValue>(
+		public static Operand<bool> Remove<TKey, TValue>(
 			this IOperand<IDictionary<TKey, TValue>> dictionary,
 			IOperand<TKey> key)
 		{
@@ -60,7 +60,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IOperand<bool> TryGetValue<TKey, TValue>(
+		public static Operand<bool> TryGetValue<TKey, TValue>(
 			this IOperand<IDictionary<TKey, TValue>> dictionary,
 			IOperand<TKey> key,
 			IOperand<TValue> value)
@@ -71,21 +71,21 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IOperand<int> Count<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
+		public static Operand<int> Count<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new Property<int>(dictionary, GetReflectionCache<TKey, TValue>().Count);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IOperand<ICollection<TKey>> Keys<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
+		public static Operand<ICollection<TKey>> Keys<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new Property<ICollection<TKey>>(dictionary, GetReflectionCache<TKey, TValue>().Keys);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static IOperand<ICollection<TValue>> Values<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
+		public static Operand<ICollection<TValue>> Values<TKey, TValue>(this IOperand<IDictionary<TKey, TValue>> dictionary)
 		{
 			return new Property<ICollection<TValue>>(dictionary, GetReflectionCache<TKey, TValue>().Values);
 		}
@@ -139,10 +139,10 @@ namespace Happil
 				Clear = Helpers.GetMethodInfo<Expression<Action<IDictionary<TKey, TValue>>>>(x => x.Clear());
 				ContainsKey = Helpers.GetMethodInfo<Expression<Func<IDictionary<TKey, TValue>, bool>>>(x => x.ContainsKey(default(TKey)));
 				ContainsValue = Helpers.GetMethodInfo<Expression<Func<Dictionary<TKey, TValue>, bool>>>(x => x.ContainsValue(default(TValue)));
-				Remove = Helpers.GetMethodInfo<Expression<Func<Dictionary<TKey, TValue>, bool>>>(x => x.Remove(default(TKey)));
-				TryGetValue = Helpers.GetMethodInfo<Expression<Func<Dictionary<TKey, TValue>, TValue, bool>>>((x, v) => x.TryGetValue(default(TKey), out v));
+				Remove = Helpers.GetMethodInfo<Expression<Func<IDictionary<TKey, TValue>, bool>>>(x => x.Remove(default(TKey)));
+				TryGetValue = Helpers.GetMethodInfo<Expression<Func<IDictionary<TKey, TValue>, TValue, bool>>>((x, v) => x.TryGetValue(default(TKey), out v));
 
-				Count = Helpers.GetPropertyInfo<Expression<Func<Dictionary<TKey, TValue>, int>>>(x => x.Count);
+				Count = Helpers.GetPropertyInfo<Expression<Func<IDictionary<TKey, TValue>, int>>>(x => x.Count);
 				Keys = Helpers.GetPropertyInfo<Expression<Func<IDictionary<TKey, TValue>, ICollection<TKey>>>>(x => x.Keys);
 				Values = Helpers.GetPropertyInfo<Expression<Func<IDictionary<TKey, TValue>, ICollection<TValue>>>>(x => x.Values);
 				Item = typeof(IDictionary<TKey, TValue>).GetProperty("Item");

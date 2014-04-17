@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -485,6 +486,7 @@ namespace Happil.UnitTests
 				.AllEvents().ImplementPropagate(targetField);
 
 			implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+			implementor.DecorateWith<EventInterceptingDecorator>();
 
 			//-- Act
 
@@ -522,14 +524,16 @@ namespace Happil.UnitTests
 				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
 				"BEFORE-ADD:EventTwo", "AFTER-ADD:EventTwo",
 				"BEFORE:RaiseOne", 
-					/*"BEFORE-RAISE:EventOne=System.EventArgs",*/ "EventOne.A:System.EventArgs", "EventOne.B:System.EventArgs", /*"AFTER-RAISE:EventOne=System.EventArgs",*/
+					"BEFORE-RAISE:EventOne=System.EventArgs", "EventOne.A:System.EventArgs", "AFTER-RAISE:EventOne=System.EventArgs",
+					"BEFORE-RAISE:EventOne=System.EventArgs", "EventOne.B:System.EventArgs", "AFTER-RAISE:EventOne=System.EventArgs",
 				"RETVOID:RaiseOne", "SUCCESS:RaiseOne", "AFTER:RaiseOne",
 				"BEFORE:RaiseTwo", 
-					/*"BEFORE-RAISE:EventTwo=IN{INPUT1}/OUT{}",*/ "EventTwo.A:INPUT1", "EventTwo.B:INPUT1", /*"AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{BBB}",*/
+					"BEFORE-RAISE:EventTwo=IN{INPUT1}/OUT{}", "EventTwo.A:INPUT1", "AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{AAA}",
+					"BEFORE-RAISE:EventTwo=IN{INPUT1}/OUT{AAA}", "EventTwo.B:INPUT1", "AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{BBB}",
 				"RETVAL:RaiseTwo=BBB", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo",
 				"BEFORE-REMOVE:EventTwo", "AFTER-REMOVE:EventTwo", 
 				"BEFORE:RaiseTwo", 
-					/*"BEFORE-RAISE:EventTwo=IN{INPUT2}/OUT{}",*/ "EventTwo.A:INPUT2", /*"AFTER-RAISE:EventTwo=IN{INPUT1}/OUT{AAA}",*/
+					"BEFORE-RAISE:EventTwo=IN{INPUT2}/OUT{}", "EventTwo.A:INPUT2", "AFTER-RAISE:EventTwo=IN{INPUT2}/OUT{AAA}",
 				"RETVAL:RaiseTwo=AAA", "SUCCESS:RaiseTwo", "AFTER:RaiseTwo"
 			}));
 
@@ -770,14 +774,6 @@ namespace Happil.UnitTests
 					.OnAfter(w =>
 						m_Log.Add(w.Const(m_LogPrefix + "AFTER-REMOVE:" + member.Name))
 					);
-
-				/*decorate().OnRaise()
-					.OnBefore(w => 
-						m_Log.Add(w.Const(m_LogPrefix + "BEFORE-RAISE:" + member.Name + "=") + w.Arg2<TypeTemplate.TEventArgs>().Func<string>(x => x.ToString))
-					)
-					.OnAfter(w => 
-						m_Log.Add(w.Const(m_LogPrefix + "AFTER-RAISE:" + member.Name + "=") + w.Arg2<TypeTemplate.TEventArgs>().Func<string>(x => x.ToString))
-					);*/
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -852,6 +848,95 @@ namespace Happil.UnitTests
 						m_Log.Add(m_Number.Func<string>(x => x.ToString).ToUpper() + w.Const("-AFTER:" + member.Name))
 					);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class EventInterceptingDecorator : ClassDecoratorBase
+		{
+			private Field<List<string>> m_LogField;
+			private Field<IDictionary<Delegate, Delegate>> m_EventHandlerMapField;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			{
+				m_LogField = writer.DependencyField<List<string>>("m_Log");
+				m_EventHandlerMapField = writer.Field<IDictionary<Delegate, Delegate>>("m_EventHandlerMap");
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
+			{
+				decorate()
+					.OnSuccess(w =>
+						m_EventHandlerMapField.Assign(w.New<ConcurrentDictionary<Delegate, Delegate>>())
+					);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
+			{
+				Local<EventInterceptorClosure<TypeTemplate.TEventArgs>> interceptorClosure = null;
+				Argument<EventHandler<TypeTemplate.TEventArgs>> value = null;
+
+				decorate().OnAdd()
+					.OnBefore(w => {
+						value = w.Arg1<EventHandler<TypeTemplate.TEventArgs>>();
+						interceptorClosure = w.Local<EventInterceptorClosure<TypeTemplate.TEventArgs>>();
+
+						interceptorClosure.Assign(w.New<EventInterceptorClosure<TypeTemplate.TEventArgs>>());
+						interceptorClosure.Field(x => x.EventName).Assign(member.Name);
+						interceptorClosure.Field(x => x.Log).Assign(m_LogField);
+						interceptorClosure.Field(x => x.Handler).Assign(value);
+
+						value.Assign(
+							w.MakeDelegate<EventInterceptorClosure<TypeTemplate.TEventArgs>, EventHandler<TypeTemplate.TEventArgs>, TypeTemplate.TEventHandler>(
+								interceptorClosure,
+								x => x.HandleEvent
+							)
+						);
+					})
+					.OnSuccess(w =>
+						m_EventHandlerMapField.Add(interceptorClosure.Field(x => x.Handler), value)
+					);
+
+				decorate().OnRemove()
+					.OnBefore(w => {
+						value = w.Arg1<EventHandler<TypeTemplate.TEventArgs>>();
+						var interceptingHandler = w.Local<EventHandler<TypeTemplate.TEventArgs>>();
+						w.If(m_EventHandlerMapField.TryGetValue(value, interceptingHandler) == w.Const(true)).Then(() =>
+							value.Assign(interceptingHandler)
+						);
+					});
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class EventInterceptorClosure<TEventArgs>
+		{
+			public void HandleEvent(object sender, TEventArgs args)
+			{
+				Log.Add("BEFORE-RAISE:" + EventName + "=" + args.ToString());
+
+				try
+				{
+					Handler(sender, args);
+				}
+				finally
+				{
+					Log.Add("AFTER-RAISE:" + EventName + "=" + args.ToString());
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public string EventName;
+			public EventHandler<TEventArgs> Handler;
+			public List<string> Log;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
