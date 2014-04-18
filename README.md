@@ -3,26 +3,27 @@ Happil
 
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming techniques for **.NET developers**:
 
-* **CoI - Convention over Implementation**: let developers only author interfaces of application components, then  let the framework dynamically generate corresponding implementations, based on conventions associated with every specific kind of the component (e.g., data transfer objects, data access layer, configuration, logging, etc etc).
+* **CoI - Convention over Implementation**: let developers only author interfaces of application components, then  let the framework dynamically generate corresponding implementations, based on conventions associated with every specific kind of the component (e.g., data transfer objects, data access layer, configuration, logging, etc etc). The conventions are authored by the users of the library. **Happil.Applied** is an additional library, which supplies a set of reusable out-of-the-box conventions.
 * **Aspect-Oriented Programming**: transparently support black-box aspects, implemented as dynamically generated CoI decorators, which intercept the calls to the components. The aspects can be connected to both hard-coded and CoI components. 
 * **Subject-Oriented Programming**: extend single inheritance in CLR with a horizontal behavior composition technique similar to traits/mixins/modules in such languages as Scala, PHP, and Ruby.
 * **Duck Typing**: provide the Duck Typing mechanism in order to bring some of dynamic languages advantages to static programming. 
 
 #### Highlights
 
-* The library is a **wrapper** around the .NET **Reflection.Emit** API. The library provides a convenient, intuitive, **high-level code model**, which it **translates into MSIL**.
-* The code model is exposed through **fluent API**, which covers **most of C#** language constructs. Both **imperative and functional** programming constructs are **first-class citizens** in the code model.
+* The library is a **wrapper** around the .NET **Reflection.Emit** API. The library aims to provide a convenient, intuitive, **high-level code model**, which it **translates into MSIL** bytecode.
+* The code model is exposed through **type-safe and refactor-safe fluent API**, which covers **most of C#** language constructs. Both **imperative and functional** programming constructs are **first-class citizens** in the code model.
 * Implementation and decoration conventions are **arranged in pipelines**, so that the **code generation** is by itself **inherently aspect-oriented**.
 * **Second-level generics** allows implementation and decoration conventions be authored as **templates**, yet providing the authors with **type safety**.
-* The generated code is **statically bound**, **reflection-free**, and is **completely decoupled** from **runtime state** accumulated by code generators (fine print: unless explicitly coded the other way by the authors).
-* Decoupling from code generators state allows **pre-compilation**, which is useful with massive amounts of dynamic types. Instead of being generated during application initialization (or lazily later on), dynamic types can be **pre-compiled** and **saved to an assembly**, which is then **loaded** during application **start-up**, thus **speeding up** application initialization.
+* The generated MSIL bytecode is **statically bound**, **reflection-free**, and is **completely decoupled** from **runtime state** accumulated by code generators (fine print: unless explicitly coded the other way by the authors).
+* Such decoupling allows **pre-compilation**. This is useful when there are massive amounts of dynamic types. Instead of being generated during application initialization (or lazily later on), dynamic types can be **pre-compiled** and **saved to an assembly**, which is then **loaded** during application **start-up**, thus **speeding up** application initialization.
+* **Performance overhead** introduced by aspect decorators is **kept at minimum** by **avoiding** the "**Invocation Object**" pattern. All aspects that apply to a component are combined together in the members of the decorator class. Moreover, when a CoI component is being decorated, the aspects are implemented inside the members of the component, with no separate decorator class.
 
 #### The library also aims to:
 
-* Provide a very **short and easy happy path** for the above use cases.
-* Allow writing **clean, maintainable**, code generators, which are also **type-safe** and **refactor-safe**.
+* Provide a **short and easy happy path** for the discussed use cases.
+* Allow writing **clean and maintainable** code generators, which are also **type-safe** and **refactor-safe**.
 * Be **lightweight**, even in **large applications** with **thousands** of dynamic types.
-* Make it **easy** to create a **valid program**, and makes it **hard** to create an **invalid** one.
+* Make it **easy** to create a **valid program**, and make it **hard** to create an **invalid** one.
 * **Just work**, and keep the **users happy**.
 
 ### Now Show Me The Money!
