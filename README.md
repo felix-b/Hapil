@@ -10,10 +10,10 @@ Hi there! I'm building a **.NET library** aimed to **support and facilitate** th
 
 More technical highlights:
 
-* ** Implementation and decoration conventions are **arranged in pipelines**, so that the **code generation** is by itself **inherently aspect-oriented**.
-* ** The code model is exposed through **fluent API**, which covers **most of C#** language constructs. Both **imperative and functional** programming constructs as **first-class citizens** in the code model.
-* ** **Pre-generation** is supported for massive amounts of dynamic types. With pre-generation, dynamic types can be **generated in advance**, saved to an assembly, then loaded during application start-up, speeding it up.
-* ** **Second-level generics** allows implementation and decoration conventions be authored as **templates**, while providing the authors with **type safety** mechanism.
+* Implementation and decoration conventions are **arranged in pipelines**, so that the **code generation** is by itself **inherently aspect-oriented**.
+* The code model is exposed through **fluent API**, which covers **most of C#** language constructs. Both **imperative and functional** programming constructs as **first-class citizens** in the code model.
+* **Pre-generation** is supported for massive amounts of dynamic types. With pre-generation, dynamic types can be **generated in advance**, saved to an assembly, then loaded during application start-up, speeding it up.
+* **Second-level generics** allows implementation and decoration conventions be authored as **templates**, while providing the authors with **type safety** mechanism.
 
 Having said that, I'm aimed to creating a library which:
 
