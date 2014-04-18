@@ -28,6 +28,69 @@ Hi there! Here a **.NET library** is being built, aimed to **support and facilit
 
 ### Now Show Me The Money!
 
+**Three** - given an interface of a data transfer object:
+```csharp
+public interface ICustomer
+{
+  int Id { get; set; }
+  string FullName { get; set; }
+  string EmailAddress { get; set; }
+}
+```
+
+**Two** - plus an implementation convention:
+```csharp
+DeriveClassFrom<object>()
+  .ImplementInterface<ICustomer>()
+  .AllProperties().ImplementAutomatic();
+```
+
+**One** - plus a decorator convention:
+```csharp
+public class DataContractDecorator : ClassDecoratorBase
+{
+  public override void OnClassType(ClassType classType, ClassWriterBase writer)
+  {
+    writer.Attribute<DataContractAttribute>(values => values.Named(a => a.Namespace, "http://mydto/customer"));
+  }
+  public override void OnProperty(PropertyMember member, Func<PropertyDecorationBuilder> decorate)
+  {
+    decorate().Attribute<DataMemberAttribute>();
+  }
+}
+```
+
+**GO!**
+```csharp
+[DataContract(Namespace = "http://mydto/customer")]
+public sealed class CustomerDto : ICustomer
+{
+	private int m_Id;
+	private string m_FullName;
+	private string m_EmailAddress;
+
+	[DataMember]
+	public int Id
+	{
+		get { return this.m_Id; }
+		set { this.m_Id = value; }
+	}
+
+	[DataMember]
+	public string FullName
+	{
+		get { return this.m_FullName; }
+		set { this.m_FullName = value; }
+	}
+
+	[DataMember]
+	public string EmailAddress
+	{
+		get { return this.m_EmailAddress; }
+		set { this.m_EmailAddress = value; }
+	}
+}
+```
 
 ### More Information
 
