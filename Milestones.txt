@@ -3,8 +3,8 @@ http://www.lenntech.com/periodic/name/alphabetic.htm
 Arsenic [closed]
 Bismuth [closed]
 Cesium [closed]
-Dubnium [CURRENT]
-Europium
+Dubnium [closed]
+Europium [CURRENT]
 Fermium
 Gold
 Helium
