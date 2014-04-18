@@ -3,8 +3,8 @@ Happil
 
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming methodologies for **.NET developers**:
 
-* **Contract-Only Programming**: allow developers author interfaces of application components, while automatically generating the implementations, based on conventions appropriate for every specific kind of components (e.g., services, data transfer objects, configuration, etc etc).
-* **Aspect-Oriented Programming**: allow dynamic implementation of aspect decorators for compiled application components. 
+* **Convention over Implementation**: allow developers author interfaces of application components, and automatically generate the implementations, based on conventions appropriate for every specific kind of components (e.g., services, data transfer objects, configuration, etc etc).
+* **Aspect-Oriented Programming**: allow dynamic implementation of aspects by creating decorators for both compiled application components and dynamically implemented components. 
 * **Subject-Oriented Programming**: provide .NET developers with a mechanism similar to **Scala's traits** or **Ruby's modules**. 
 * **Dynamic Programming**: bring some **advantages** of the **dynamic languages**, by providing .NET developers with the **Duck Typing** mechanism.
 
