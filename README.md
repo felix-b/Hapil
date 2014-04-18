@@ -1,7 +1,7 @@
 Happil
 ======
 
-Hi there! I'm building a **.NET library** aimed to **support and facilitate** the following programming methodologies for **.NET developers**:
+Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming methodologies for **.NET developers**:
 
 * **Contract-Only Programming**: allow developers author interfaces of application components, while automatically generating the implementations, based on conventions appropriate for every specific kind of components (e.g., services, data transfer objects, configuration, etc etc).
 * **Aspect-Oriented Programming**: allow dynamic implementation of aspect decorators for compiled application components. 
@@ -15,13 +15,13 @@ More technical highlights:
 * **Pre-generation** is supported for massive amounts of dynamic types. With pre-generation, dynamic types can be **generated in advance**, saved to an assembly, then loaded during application start-up, speeding it up.
 * **Second-level generics** allows implementation and decoration conventions be authored as **templates**, while providing the authors with **type safety** mechanism.
 
-Having said that, I'm aimed to creating a library which:
+The library also aims to:
 
-* Provides very **short and easy happy path** for the above use cases.
-* Allows writing **clean, maintainable**, code generators, which are also **type-safe** and **refactor-safe**.
-* Is **lightweight**, even in **large applications** with **thousands** of dynamic types.
-* Makes it **easy** to create a **valid program**, and makes it **hard** to create an **invalid** one.
-* **Just works**, and keeps its **users happy**.
+* Provide very **short and easy happy path** for the above use cases.
+* Allow writing **clean, maintainable**, code generators, which are also **type-safe** and **refactor-safe**.
+* Be **lightweight**, even in **large applications** with **thousands** of dynamic types.
+* Make it **easy** to create a **valid program**, and makes it **hard** to create an **invalid** one.
+* **Just work**, and keep its **users happy**.
 
 ### More Information
 
