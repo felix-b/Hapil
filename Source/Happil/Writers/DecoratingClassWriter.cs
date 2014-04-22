@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Conventions;
 using Happil.Decorators;
 using Happil.Members;
 
@@ -10,11 +11,11 @@ namespace Happil.Writers
 {
 	public class DecoratingClassWriter : ClassWriterBase
 	{
-		private readonly ClassDecoratorBase m_Decorator;
+		private readonly DecorationConventionBase m_Decorator;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public DecoratingClassWriter(ClassType ownerClass, ClassDecoratorBase decorator)
+		public DecoratingClassWriter(ClassType ownerClass, DecorationConventionBase decorator)
 			: base(ownerClass)
 		{
 			m_Decorator = decorator;
@@ -24,7 +25,7 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			m_Decorator.OnClassType(OwnerClass, this);
+			m_Decorator.OnClass(OwnerClass, this);
 			OwnerClass.ForEachMember<MemberBase>(VisitMember);
 		}
 

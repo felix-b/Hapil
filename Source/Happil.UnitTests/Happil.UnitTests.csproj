@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CollectionShortcutsTests.cs" />
+    <Compile Include="Conventions\ConventionPipeObjectFactoryTests.cs" />
     <Compile Include="DecorationTests.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
     <Compile Include="EnumerableShortcutsTests.cs" />

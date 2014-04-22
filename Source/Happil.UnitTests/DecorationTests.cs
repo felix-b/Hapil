@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Conventions;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
@@ -680,7 +681,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class LoggingDecorator : ClassDecoratorBase
+		private class LoggingDecorator : DecorationConventionBase
 		{
 			private readonly string m_LogPrefix;
 			private Field<List<string>> m_Log;
@@ -694,7 +695,7 @@ namespace Happil.UnitTests
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			public override void OnClass(ClassType classType, ClassWriterBase writer)
 			{
 				m_Log = BindToLogField(classType, writer);
 			}
@@ -794,14 +795,14 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class DayOfWeekDecorator : ClassDecoratorBase
+		private class DayOfWeekDecorator : DecorationConventionBase
 		{
 			private Field<List<string>> m_Log;
 			private Field<DayOfWeek> m_DayOfWeek;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			public override void OnClass(ClassType classType, ClassWriterBase writer)
 			{
 				m_Log = writer.DependencyField<List<string>>("m_Log");
 				m_DayOfWeek = writer.DependencyField<DayOfWeek>("m_DayOfWeek");
@@ -823,14 +824,14 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class NumberDecorator : ClassDecoratorBase
+		private class NumberDecorator : DecorationConventionBase
 		{
 			private Field<List<string>> m_Log;
 			private Field<int> m_Number;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			public override void OnClass(ClassType classType, ClassWriterBase writer)
 			{
 				m_Number = writer.DependencyField<int>("m_Number");
 				m_Log = writer.DependencyField<List<string>>("m_Log");
@@ -852,14 +853,14 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class EventInterceptingDecorator : ClassDecoratorBase
+		private class EventInterceptingDecorator : DecorationConventionBase
 		{
 			private Field<List<string>> m_LogField;
 			private Field<IDictionary<Delegate, Delegate>> m_EventHandlerMapField;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			public override void OnClass(ClassType classType, ClassWriterBase writer)
 			{
 				m_LogField = writer.DependencyField<List<string>>("m_Log");
 				m_EventHandlerMapField = writer.Field<IDictionary<Delegate, Delegate>>("m_EventHandlerMap");
@@ -941,18 +942,18 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class PropagatingDecorator : ClassDecoratorBase
+		private class PropagatingDecorator : DecorationConventionBase
 		{
 			//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
 			private Field<AncestorRepository.IFewMethods> m_Target;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClassType(ClassType classType, ClassWriterBase writer)
+			public override void OnClass(ClassType classType, ClassWriterBase writer)
 			{
 				//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
 				m_Target = writer.DependencyField<AncestorRepository.IFewMethods>("m_Target");
-				base.OnClassType(classType, writer);
+				base.OnClass(classType, writer);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

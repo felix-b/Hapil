@@ -46,7 +46,9 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="CollectionShortcuts.cs" />
-    <Compile Include="Decorators\ClassDecoratorBase.cs" />
+    <Compile Include="Conventions\ImplementationConventionBase.cs" />
+    <Compile Include="Conventions\IObjectFactoryConvention.cs" />
+    <Compile Include="Conventions\DecorationConventionBase.cs" />
     <Compile Include="Decorators\ConstructorDecorationBuilder.cs" />
     <Compile Include="Decorators\EventDecorationBuilder.cs" />
     <Compile Include="Decorators\FieldDecorationBuilder.cs" />

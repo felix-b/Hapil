@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
 using Happil.Writers;
 
-namespace Happil.Decorators
+namespace Happil.Conventions
 {
-	public abstract class ClassDecoratorBase
+	public abstract class DecorationConventionBase
 	{
-		public virtual void OnClassType(ClassType classType, ClassWriterBase writer)
+		public virtual void OnClass(ClassType classType, ClassWriterBase writer)
 		{
 		}
 

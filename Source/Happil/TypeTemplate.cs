@@ -18,7 +18,7 @@ namespace Happil
 		static TypeTemplate()
 		{
 			s_AllTemplateTypes = new HashSet<Type>(new[] {
-				typeof(TBase), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
+				typeof(TBase), typeof(TInterface), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
 				typeof(TReturn), typeof(TProperty),
 				typeof(TArgument), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
 				typeof(TIndex1), typeof(TIndex2),
@@ -173,6 +173,7 @@ namespace Happil
 		// ReSharper disable InconsistentNaming
 
 		public class TBase : TemplateTypeBase<TBase> { }
+		public class TInterface : TemplateTypeBase<TInterface> { }
 		public class TPrimary : TemplateTypeBase<TPrimary> { }
 		public class TSecondary1 : TemplateTypeBase<TSecondary1> { }
 		public class TSecondary2 : TemplateTypeBase<TSecondary2> { }
