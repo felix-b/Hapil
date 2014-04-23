@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Happil.Conventions;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
@@ -83,7 +82,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClassWriterBase DecorateWith<TDecorator>() where TDecorator : DecorationConventionBase, new()
+		public ClassWriterBase DecorateWith<TDecorator>() where TDecorator : DecorationConvention, new()
 		{
 			var decorator = new TDecorator();
 			var decoratingWriter = new DecoratingClassWriter(m_OwnerClass, decorator);
@@ -92,7 +91,7 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClassWriterBase DecorateWith(DecorationConventionBase decorator)
+		public ClassWriterBase DecorateWith(DecorationConvention decorator)
 		{
 			var decoratingWriter = new DecoratingClassWriter(m_OwnerClass, decorator);
 			return this;

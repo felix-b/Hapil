@@ -114,6 +114,27 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Type[] GetAllInterfaces()
+		{
+			if ( m_PrimaryInterface != null )
+			{
+				return new[] { m_PrimaryInterface }.Concat(m_SecondaryInterfaces).ToArray();
+			}
+			else
+			{
+				return m_SecondaryInterfaces.ToArray();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Type[] GetAllAncestorTypes()
+		{
+			return new[] { m_BaseType }.ConcatIf(m_PrimaryInterface).Concat(m_SecondaryInterfaces).ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public string SuggestClassName(ObjectFactoryBase factory)
 		{
 			var suggestedName = new StringBuilder();

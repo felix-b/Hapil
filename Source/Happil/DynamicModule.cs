@@ -54,6 +54,14 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public ClassType DefineClass(TypeKey key, string classFullName)
+		{
+			var uniqueClassName = m_ClassNames.TakeUniqueName(classFullName);
+			return new ClassType(this, key, uniqueClassName, key.BaseType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public ClassType DefineClass(Type baseType, TypeKey key, string classFullName)
 		{
 			var uniqueClassName = m_ClassNames.TakeUniqueName(classFullName);

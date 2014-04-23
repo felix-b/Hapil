@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Happil.Conventions;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
@@ -681,28 +680,29 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class LoggingDecorator : DecorationConventionBase
+		private class LoggingDecorator : DecorationConvention
 		{
 			private readonly string m_LogPrefix;
 			private Field<List<string>> m_Log;
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public LoggingDecorator(string logPrefix)
+			public LoggingDecorator(string logPrefix) 
+				: base(Will.DecorateMethods | Will.DecorateProperties | Will.DecorateEvents | Will.DecorateFields)
 			{
 				m_LogPrefix = logPrefix;
 			}
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClass(ClassType classType, ClassWriterBase writer)
+			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
 				m_Log = BindToLogField(classType, writer);
 			}
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
 			{
 				decorate()
 					.OnBefore(w => 
@@ -731,7 +731,7 @@ namespace Happil.UnitTests
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnProperty(PropertyMember member, Func<PropertyDecorationBuilder> decorate)
+			protected override void OnProperty(PropertyMember member, Func<PropertyDecorationBuilder> decorate)
 			{
 				if ( member.HasGetter )
 				{
@@ -758,7 +758,7 @@ namespace Happil.UnitTests
 
 			//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
+			protected override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
 			{
 				decorate().OnAdd()
 					.OnBefore(w =>  
@@ -779,7 +779,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnField(FieldMember member, Func<FieldDecorationBuilder> decorate)
+			protected override void OnField(FieldMember member, Func<FieldDecorationBuilder> decorate)
 			{
 				decorate().Attribute<AttributeTests.TestAttributeOne>(a => a.Named(x => x.StringValue, member.Name.TrimPrefix("m_")));
 			}
@@ -795,14 +795,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class DayOfWeekDecorator : DecorationConventionBase
+		private class DayOfWeekDecorator : DecorationConvention
 		{
 			private Field<List<string>> m_Log;
 			private Field<DayOfWeek> m_DayOfWeek;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClass(ClassType classType, ClassWriterBase writer)
+			public DayOfWeekDecorator()
+				: base(Will.DecorateMethods)
+			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
 				m_Log = writer.DependencyField<List<string>>("m_Log");
 				m_DayOfWeek = writer.DependencyField<DayOfWeek>("m_DayOfWeek");
@@ -810,7 +817,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
 			{
 				decorate()
 					.OnBefore(w => 
@@ -824,14 +831,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class NumberDecorator : DecorationConventionBase
+		private class NumberDecorator : DecorationConvention
 		{
 			private Field<List<string>> m_Log;
 			private Field<int> m_Number;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClass(ClassType classType, ClassWriterBase writer)
+			public NumberDecorator()
+				: base(Will.DecorateMethods)
+			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
 				m_Number = writer.DependencyField<int>("m_Number");
 				m_Log = writer.DependencyField<List<string>>("m_Log");
@@ -839,7 +853,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
 			{
 				decorate()
 					.OnBefore(w =>
@@ -853,14 +867,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class EventInterceptingDecorator : DecorationConventionBase
+		private class EventInterceptingDecorator : DecorationConvention
 		{
 			private Field<List<string>> m_LogField;
 			private Field<IDictionary<Delegate, Delegate>> m_EventHandlerMapField;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClass(ClassType classType, ClassWriterBase writer)
+			public EventInterceptingDecorator()
+				: base(Will.DecorateConstructors | Will.DecorateEvents)
+			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
 				m_LogField = writer.DependencyField<List<string>>("m_Log");
 				m_EventHandlerMapField = writer.Field<IDictionary<Delegate, Delegate>>("m_EventHandlerMap");
@@ -868,7 +889,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
+			protected override void OnConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
 			{
 				decorate()
 					.OnSuccess(w =>
@@ -878,7 +899,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
+			protected override void OnEvent(EventMember member, Func<EventDecorationBuilder> decorate)
 			{
 				Local<EventInterceptorClosure<TypeTemplate.TEventArgs>> interceptorClosure = null;
 				Argument<EventHandler<TypeTemplate.TEventArgs>> value = null;
@@ -942,14 +963,21 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class PropagatingDecorator : DecorationConventionBase
+		private class PropagatingDecorator : DecorationConvention
 		{
 			//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
 			private Field<AncestorRepository.IFewMethods> m_Target;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnClass(ClassType classType, ClassWriterBase writer)
+			public PropagatingDecorator()
+				: base(Will.DecorateMethods)
+			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
 				//TODO: replace AncestorRepository.IFewMethods with TypeTemplate.TPrimary
 				m_Target = writer.DependencyField<AncestorRepository.IFewMethods>("m_Target");
@@ -958,7 +986,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+			protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
 			{
 				decorate()
 					.OnReturnVoid(w => w.PropagateCall<TypeTemplate.TReturn>(m_Target))

@@ -45,10 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes.cs" />
+    <Compile Include="CodeGenerationException.cs" />
     <Compile Include="CollectionShortcuts.cs" />
-    <Compile Include="Conventions\ImplementationConventionBase.cs" />
-    <Compile Include="Conventions\IObjectFactoryConvention.cs" />
-    <Compile Include="Conventions\DecorationConventionBase.cs" />
+    <Compile Include="ConventionObjectFactory.cs" />
+    <Compile Include="ObjectFactoryContext.cs" />
+    <Compile Include="ImplementationConvention.cs" />
+    <Compile Include="IObjectFactoryConvention.cs" />
+    <Compile Include="DecorationConvention.cs" />
     <Compile Include="Decorators\ConstructorDecorationBuilder.cs" />
     <Compile Include="Decorators\EventDecorationBuilder.cs" />
     <Compile Include="Decorators\FieldDecorationBuilder.cs" />

@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
 
-namespace Happil.Conventions
+namespace Happil
 {
 	public interface IObjectFactoryConvention
 	{
-		void Apply(DynamicModule module, ref TypeKey typeKey, ref ClassType classType);
+		bool ShouldApply(ObjectFactoryContext context);
+		void Apply(ObjectFactoryContext context);
 	}
 }
