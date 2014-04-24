@@ -58,6 +58,7 @@
     <Compile Include="ClassPerTestCaseFixtureBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClosureTests.cs" />
     <Compile Include="CollectionShortcutsTests.cs" />
     <Compile Include="ConventionObjectFactoryTests.cs" />
     <Compile Include="DecorationTests.cs" />
