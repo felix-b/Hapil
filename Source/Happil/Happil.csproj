@@ -48,6 +48,7 @@
     <Compile Include="CodeGenerationException.cs" />
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="ConventionObjectFactory.cs" />
+    <Compile Include="Members\NestedClassType.cs" />
     <Compile Include="ObjectFactoryContext.cs" />
     <Compile Include="ImplementationConvention.cs" />
     <Compile Include="IObjectFactoryConvention.cs" />

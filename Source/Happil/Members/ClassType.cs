@@ -49,8 +49,19 @@ namespace Happil.Members
 			m_NotImplementedMembers = new HashSet<MemberInfo>();
 			m_NotImplementedMembers.UnionWith(TypeMemberCache.Of(resolvedBaseType).ImplementableMembers);
 			m_CompiledType = null;
-			m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, resolvedBaseType);
 			m_DependencyFields = new List<FieldMember>();
+
+			//m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, resolvedBaseType);
+
+			// ReSharper disable once DoNotCallOverridableMethodsInConstructor
+			m_TypeBuilder = CreateTypeBuilder(module, classFullName, resolvedBaseType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType)
+		{
+			return module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, baseType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

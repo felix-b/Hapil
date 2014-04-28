@@ -718,6 +718,8 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedField()
 			{
+				m_X = 100;
+
 				m_X++;
 				Action d = () => { Output.Add(m_X.ToString()); };
 				m_X--;
@@ -729,6 +731,8 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedLocal()
 			{
+				m_X = 100;
+
 				int y = 123;
 				y++;
 				Action d = () => { Output.Add(y.ToString()); };
@@ -741,6 +745,8 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedArgument(int y)
 			{
+				m_X = 100;
+
 				for ( int i = 0 ; i < 10 ; i++ )
 				{
 					y++;
@@ -755,10 +761,12 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedFieldAndLocal()
 			{
+				m_X = 100;
+
 				for ( int i = 0 ; i < 10 ; i++ )
 				{
 					int z = i * 2;
-					Action d = () => { Console.WriteLine(m_X + z); };
+					Action d = () => { Output.Add((m_X + z).ToString()); };
 					z++;
 					m_X--;
 					d();
@@ -769,12 +777,14 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedFieldAndLocalFromOuterScope()
 			{
+				m_X = 100;
+
 				int y = 123;
 				for ( int i = 0 ; i < 10 ; i++ )
 				{
 					m_X++;
 					y++;
-					Action d = () => { Console.WriteLine(m_X + y); };
+					Action d = () => { Output.Add((m_X + y).ToString()); };
 					m_X--;
 					m_X--;
 					y--;
@@ -787,13 +797,15 @@ namespace Happil.UnitTests.Assumptions
 
 			public void CapturedFieldAndTwoLocalsFromDifferentScopes()
 			{
+				m_X = 100;
+
 				int y = 123;
 				for ( int i = 0 ; i < 10 ; i++ )
 				{
 					int z = i * 2;
 					y--;
 					z--;
-					Action d = () => { Console.WriteLine(m_X + y + z); };
+					Action d = () => { Output.Add((m_X + y + z).ToString()); };
 					y++;
 					y++;
 					z++;
