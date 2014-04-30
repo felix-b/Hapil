@@ -640,6 +640,11 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
+			if ( m_OwnerMethod.IsClosureRequired() )
+			{
+				m_OwnerMethod.OwnerClass.CreateAnonymousMethodClosure(m_OwnerMethod);
+			}
+
 			if ( m_OwnerMethod.MethodFactory.ReturnParameter != null && m_ReturnAttributeWriter != null )
 			{
 				foreach ( var attribute in m_ReturnAttributeWriter.GetAttributes() )

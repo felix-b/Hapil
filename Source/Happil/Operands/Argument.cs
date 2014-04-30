@@ -13,10 +13,11 @@ namespace Happil.Operands
 	{
 		private readonly MethodMember m_OwnerMethod;
 		private readonly byte m_Index;
+		private readonly int m_ParameterIndex;
 		private readonly string m_Name;
 		private readonly bool m_IsByRef;
 		private readonly bool m_IsOut;
-		private readonly ParameterBuilder m_ParameterBuilder;
+		//private readonly ParameterBuilder m_ParameterBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ namespace Happil.Operands
 			m_Name = signature.ArgumentName[index - 1];
 			m_IsByRef = signature.ArgumentIsByRef[index - 1];
 			m_IsOut = signature.ArgumentIsOut[index - 1];
-			m_ParameterBuilder = ownerMethod.MethodFactory.Parameters[index - 1];
+			m_ParameterIndex = index - 1;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -50,7 +51,10 @@ namespace Happil.Operands
 			where TAttribute : Attribute
 		{
 			var writer = new AttributeArgumentWriter<TAttribute>(values);
-			m_ParameterBuilder.SetCustomAttribute(writer.GetAttributeBuilder());
+			var parameter = m_OwnerMethod.MethodFactory.Parameters[m_ParameterIndex];
+
+			parameter.SetCustomAttribute(writer.GetAttributeBuilder());
+
 			return this;
 		}
 
@@ -126,7 +130,7 @@ namespace Happil.Operands
 			{
 				il.Emit(OpCodes.Ldind_Ref);
 			}
-			else 
+			else
 			{
 				il.Emit(OpCodes.Ldobj, OperandType);
 			}
@@ -165,7 +169,7 @@ namespace Happil.Operands
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
+
 		private void EmitLdarg(ILGenerator il)
 		{
 			switch ( m_Index )

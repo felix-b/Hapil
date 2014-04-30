@@ -9,42 +9,33 @@ namespace Happil.Members
 {
 	public class AnonymousMethodFactory : MethodFactoryBase
 	{
-		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
-		private readonly ParameterBuilder[] m_Parameters;
-		private readonly ParameterBuilder m_ReturnParameter;
+		private readonly string m_MethodName;
+		private MethodAttributes m_MethodAttributes;
+		private MethodBuilder m_MethodBuilder;
+		private ParameterBuilder[] m_Parameters;
+		private ParameterBuilder m_ReturnParameter;
+		private ClassType m_ClassType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
+		private AnonymousMethodFactory(ClassType classType, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
 		{
+			m_ClassType = classType;
+			m_MethodAttributes = (MethodAttributes.Final | MethodAttributes.HideBySig | GetMethodModifierAttributes(isStatic, isPublic));
+			m_MethodName = m_ClassType.TakeMemberName("AnonymousMethod");
+
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
-			var methodAttributes = (MethodAttributes.Final | MethodAttributes.HideBySig | GetMethodModifierAttributes(isStatic, isPublic));
-
-			m_MethodBuilder = type.TypeBuilder.DefineMethod(
-				type.TakeMemberName("AnonymousMethod"),
-				methodAttributes,
-				resolvedReturnType,
-				resolvedArgumentTypes);
-
-			m_Signature = new MethodSignature(isStatic, resolvedArgumentTypes, returnType: resolvedReturnType);
-
-			m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_MethodBuilder.DefineParameter(
-				argIndex + 1,
-				ParameterAttributes.None, 
-				"arg" + (argIndex + 1).ToString())).ToArray();
-
-			if ( !m_Signature.IsVoid )
-			{
-				m_ReturnParameter = m_MethodBuilder.DefineParameter(0, ParameterAttributes.Retval, strParamName: null);
-			}
+			
+			m_Signature = new MethodSignature(isStatic, isPublic, resolvedArgumentTypes, returnType: resolvedReturnType);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public override void SetAttribute(CustomAttributeBuilder attribute)
 		{
+			EnsureMethodBuilderCreated();
 			m_MethodBuilder.SetCustomAttribute(attribute);		
 		}
 
@@ -52,6 +43,7 @@ namespace Happil.Members
 
 		public override ILGenerator GetILGenerator()
 		{
+			EnsureMethodBuilderCreated();
 			return m_MethodBuilder.GetILGenerator();
 		}
 
@@ -59,6 +51,7 @@ namespace Happil.Members
 
 		public override void EmitCallInstruction(ILGenerator generator, OpCode instruction)
 		{
+			EnsureMethodBuilderCreated();
 			generator.Emit(instruction, m_MethodBuilder);
 		}
 
@@ -105,6 +98,7 @@ namespace Happil.Members
 		{
 			get
 			{
+				EnsureMethodBuilderCreated();
 				return m_MethodBuilder;
 			}
 		}
@@ -125,6 +119,7 @@ namespace Happil.Members
 		{
 			get
 			{
+				EnsureMethodBuilderCreated();
 				return m_ReturnParameter;
 			}
 		}
@@ -135,7 +130,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return m_MethodBuilder.Name;
+				return m_MethodName;
 			}
 		}
 
@@ -145,8 +140,21 @@ namespace Happil.Members
 		{
 			get
 			{
-				return (m_MethodBuilder.IsStatic ? MemberKind.StaticAnonymousMethod : MemberKind.InstanceAnonymousMethod);
+				return (m_MethodAttributes.HasFlag(MethodAttributes.Static) ? MemberKind.StaticAnonymousMethod : MemberKind.InstanceAnonymousMethod);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void MethodMovedToClosure(ClassType closureClass)
+		{
+			if ( m_MethodBuilder != null )
+			{
+				throw new InvalidOperationException("Cannot change class type because MethodBuilder is already created.");
+			}
+
+			m_ClassType = closureClass;
+			m_MethodAttributes = (m_MethodAttributes & ~(MethodAttributes.Private)) | MethodAttributes.Public;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,6 +181,36 @@ namespace Happil.Members
 				returnType: methodInfo.ReturnType,
 				isStatic: methodInfo.IsStatic,
 				isPublic: methodInfo.IsPublic);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void EnsureMethodBuilderCreated()
+		{
+			if ( m_MethodBuilder == null )
+			{
+				CreateMethodBuilder();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private void CreateMethodBuilder()
+		{
+			m_MethodBuilder = m_ClassType.TypeBuilder.DefineMethod(
+				m_MethodName,
+				m_MethodAttributes,
+				m_Signature.ReturnType,
+				m_Signature.ArgumentType);
+
+			m_Parameters = m_Signature.ArgumentType.Select((argType, argIndex) =>
+				m_MethodBuilder.DefineParameter(argIndex + 1, ParameterAttributes.None, "arg" + (argIndex + 1).ToString())
+			).ToArray();
+
+			if ( !m_Signature.IsVoid )
+			{
+				m_ReturnParameter = m_MethodBuilder.DefineParameter(0, ParameterAttributes.Retval, strParamName: null);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

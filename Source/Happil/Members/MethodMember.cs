@@ -17,6 +17,7 @@ namespace Happil.Members
 		private readonly TransparentMethodWriter m_TransparentWriter;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
+		private bool m_HasClosure = false;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -156,6 +157,31 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal bool IsClosureRequired()
+		{
+			//TODO: this is temporary; provide real logic here
+			return (this.Kind == MemberKind.StaticAnonymousMethod && !m_HasClosure); 
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void MoveAnonymousMethodToClosure(ClassType closureClass)
+		{
+			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+
+			if ( anonymousMethodFactory == null )
+			{
+				throw new InvalidOperationException("Only anonymous method can be moved to a closure class.");
+			}
+
+			base.OwnerClass = closureClass;
+			anonymousMethodFactory.MethodMovedToClosure(closureClass);
+
+			m_HasClosure = true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal override IDisposable CreateTypeTemplateScope()
 		{
 			if ( m_CachedTemplateTypePairs == null )
@@ -217,6 +243,26 @@ namespace Happil.Members
 			get
 			{
 				return m_TransparentWriter;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal bool HasClosure
+		{
+			get
+			{
+				return m_HasClosure;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal ClassType ClosureClass
+		{
+			get
+			{
+				return (m_HasClosure ? OwnerClass : null);
 			}
 		}
 	}

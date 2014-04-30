@@ -19,7 +19,7 @@ namespace Happil.Members
 		public static ConstructorMethodFactory InstanceConstructor(ClassType type, Type[] argumentTypes, string[] argumentNames = null)
 		{
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
-			var initialSignature = new MethodSignature(isStatic: false, argumentTypes: resolvedArgumentTypes, argumentNames: argumentNames);
+			var initialSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: resolvedArgumentTypes, argumentNames: argumentNames);
 
 
 			return new ProxyConstructorMethodFactory(
@@ -47,7 +47,7 @@ namespace Happil.Members
 				MethodAttributes.Static,
 				CallingConventions.Standard,
 				Type.EmptyTypes);
-			var signature = new MethodSignature(isStatic: true);
+			var signature = new MethodSignature(isStatic: true, isPublic: true);
 
 			return new RealConstructorMethodFactory(type, builder, signature);
 		}

@@ -79,7 +79,10 @@ namespace Happil.UnitTests.Operands
 				})
 				.DefaultConstructor()
 				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
-					w.Return(orderedArrayField.Select(w.Delegate<int, string>((del, item) => del.Return(item.Func<string>(x => x.ToString)))));
+					w.Return(
+						/*w.NewArray<string>(length: w.Const(0)));*/
+						orderedArrayField.Select(w.Delegate<int, string>((del, item) => del.Return(item.Func<string>(x => x.ToString))))
+					);
 				});
 
 			//-- Act

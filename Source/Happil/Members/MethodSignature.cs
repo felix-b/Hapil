@@ -35,11 +35,12 @@ namespace Happil.Members
 			ReturnType = declaration.ReturnType;
 			IsVoid = (declaration.ReturnType == null || declaration.ReturnType == typeof(void));
 			IsStatic = declaration.IsStatic;
+			IsPublic = declaration.IsPublic;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodSignature(bool isStatic, Type[] argumentTypes = null, string[] argumentNames = null, Type returnType = null)
+		public MethodSignature(bool isStatic, bool isPublic, Type[] argumentTypes = null, string[] argumentNames = null, Type returnType = null)
 		{
 			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes);
 
@@ -61,6 +62,7 @@ namespace Happil.Members
 			ReturnType = returnType;
 			IsVoid = (returnType == null || returnType == typeof(void));
 			IsStatic = isStatic;
+			IsPublic = isPublic;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,6 +85,7 @@ namespace Happil.Members
 		{
 			return new MethodSignature(
 				IsStatic,
+				IsPublic,
 				argumentTypes: this.ArgumentType.Concat(newArgumentTypes).ToArray(),
 				argumentNames: this.ArgumentName.Concat(newArgumentNames).ToArray(),
 				returnType: this.ReturnType);
@@ -96,6 +99,7 @@ namespace Happil.Members
 		public bool[] ArgumentIsByRef { get; private set; }
 		public bool[] ArgumentIsOut { get; private set; }
 		public int ArgumentCount { get; private set; }
+		public bool IsPublic { get; private set; }
 		public bool IsStatic { get; private set; }
 		public bool IsVoid { get; private set; }
 		public Type ReturnType { get; private set; }

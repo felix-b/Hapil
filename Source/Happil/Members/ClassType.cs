@@ -21,7 +21,6 @@ namespace Happil.Members
 
 		private readonly TypeKey m_Key;
 		private readonly DynamicModule m_Module;
-		private readonly TypeBuilder m_TypeBuilder;
 		private readonly List<ClassWriterBase> m_Writers;
 		private readonly List<MemberBase> m_Members;
 		private readonly Dictionary<MemberInfo, MemberBase> m_MembersByDeclarations;
@@ -30,11 +29,20 @@ namespace Happil.Members
 		private readonly UniqueNameSet m_MemberNames;
 		private readonly HashSet<MemberInfo> m_NotImplementedMembers;
 		private readonly List<FieldMember> m_DependencyFields;
+		private readonly List<NestedClassType> m_NestedClasses;
+		private TypeBuilder m_TypeBuilder;
 		private Type m_CompiledType;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal ClassType(DynamicModule module, TypeKey key, string classFullName, Type baseType)
+			: this(module, key, classFullName, baseType, containingClass: null)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected ClassType(DynamicModule module, TypeKey key, string classFullName, Type baseType, ClassType containingClass)
 		{
 			var resolvedBaseType = TypeTemplate.Resolve(baseType);
 
@@ -50,16 +58,17 @@ namespace Happil.Members
 			m_NotImplementedMembers.UnionWith(TypeMemberCache.Of(resolvedBaseType).ImplementableMembers);
 			m_CompiledType = null;
 			m_DependencyFields = new List<FieldMember>();
+			m_NestedClasses = new List<NestedClassType>();
 
 			//m_TypeBuilder = module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, resolvedBaseType);
 
 			// ReSharper disable once DoNotCallOverridableMethodsInConstructor
-			m_TypeBuilder = CreateTypeBuilder(module, classFullName, resolvedBaseType);
+			m_TypeBuilder = CreateTypeBuilder(module, classFullName, resolvedBaseType, containingClass);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected virtual TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType)
+		protected virtual TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType, ClassType containingClass)
 		{
 			return module.ModuleBuilder.DefineType(classFullName, DefaultTypeAtributes, baseType);
 		}
@@ -94,9 +103,11 @@ namespace Happil.Members
 		/// <param name="action"></param>
 		public void ForEachMember<TMember>(Action<TMember> action) where TMember : MemberBase
 		{
-			for ( int i = 0 ; i < m_Members.Count ; i++ )
+			int index = 0;
+
+			while ( index < m_Members.Count )
 			{
-				var member = (m_Members[i] as TMember);
+				var member = (m_Members[index] as TMember);
 
 				if ( member != null )
 				{
@@ -104,7 +115,14 @@ namespace Happil.Members
 					{
 						action(member);
 					}
+					
+					if ( !object.ReferenceEquals(member, m_Members[index]) )
+					{
+						continue; // member was deleted (moved to nested class, e.g. closure)
+					}
 				}
+
+				index++;
 			}
 		}
 
@@ -170,6 +188,30 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal void CreateAnonymousMethodClosure(MethodMember method)
+		{
+			var closureClass = new NestedClassType(
+				containingClass: this, 
+				classFullName: method.Name + "Closure", 
+				baseType: typeof(object));
+
+			m_Members.Remove(method);
+
+			MemberBase methodByName;
+
+			if ( m_MembersByName.TryGetValue(method.Name, out methodByName) && methodByName == method )
+			{
+				m_MembersByName.Remove(method.Name);
+			}
+
+			method.MoveAnonymousMethodToClosure(closureClass);
+			closureClass.AddMember(method);
+
+			m_NestedClasses.Add(closureClass);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal FieldMember RegisterDependency<T>(Func<FieldMember> newFieldFactory)
 		{
 			var dependencyType = TypeTemplate.Resolve<T>();
@@ -229,6 +271,11 @@ namespace Happil.Members
 			ForEachMember<MemberBase>(m => m.Write());
 			ForEachMember<MemberBase>(m => m.Compile());
 
+			foreach ( var nestedClass in m_NestedClasses )
+			{
+				nestedClass.Compile();
+			}
+			
 			m_CompiledType = m_TypeBuilder.CreateType();
 			FixupFactoryMethods();
 		}

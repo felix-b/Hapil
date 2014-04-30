@@ -8,8 +8,8 @@ namespace Happil.Members
 {
 	public abstract class MemberBase
 	{
-		private readonly ClassType m_OwnerClass;
 		private readonly string m_Name;
+		private ClassType m_OwnerClass;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,7 +38,14 @@ namespace Happil.Members
 
 		public ClassType OwnerClass
 		{
-			get { return m_OwnerClass; }
+			get
+			{
+				return m_OwnerClass;
+			}
+			protected set
+			{
+				m_OwnerClass = value;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

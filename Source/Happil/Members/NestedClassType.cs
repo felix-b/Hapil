@@ -10,21 +10,21 @@ namespace Happil.Members
 {
 	public class NestedClassType : ClassType
 	{
-		private readonly ClassType m_ContainingType;
+		private readonly ClassType m_ContainingClass;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal NestedClassType(ClassType containingType, string classFullName, Type baseType)
-			: base(containingType.Module, null, classFullName, baseType)
+		internal NestedClassType(ClassType containingClass, string classFullName, Type baseType)
+			: base(containingClass.Module, null, classFullName, baseType, containingClass)
 		{
-			m_ContainingType = containingType;
+			m_ContainingClass = containingClass;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType)
+		protected override TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType, ClassType containingClass)
 		{
-			return m_ContainingType.TypeBuilder.DefineNestedType(
+			return containingClass.TypeBuilder.DefineNestedType(
 				TakeMemberName(classFullName, mustUseThisName: false), 
 				TypeAttributes.NestedPrivate, 
 				baseType);
