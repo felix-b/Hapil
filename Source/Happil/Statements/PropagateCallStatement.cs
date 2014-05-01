@@ -12,8 +12,8 @@ namespace Happil.Statements
 	internal class PropagateCallStatement : StatementBase
 	{
 		private readonly MethodMember m_OwnerMethod;
-		private readonly IOperand m_Target;
-		private readonly IOperand m_ReturnValueLocal;
+		private IOperand m_Target;
+		private IOperand m_ReturnValueLocal;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +37,14 @@ namespace Happil.Statements
 			{
 				m_ReturnValueLocal.EmitStore(il);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Target);
+			visitor.VisitOperand(ref m_ReturnValueLocal);
 		}
 	}
 }

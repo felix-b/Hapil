@@ -66,6 +66,7 @@
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
+    <Compile Include="Operands\OutOfScopeOperandVisitor.cs" />
     <Compile Include="Operands\Field.cs" />
     <Compile Include="Operands\AnonymousFuncOperand.cs">
       <SubType>Code</SubType>
@@ -81,6 +82,9 @@
     <Compile Include="Expressions\IValueTypeInitializer.cs" />
     <Compile Include="Expressions\NewObjectExpression.cs" />
     <Compile Include="Expressions\NewStructExpression.cs" />
+    <Compile Include="Operands\IAcceptOperandVisitor.cs" />
+    <Compile Include="Operands\OperandKind.cs" />
+    <Compile Include="Operands\OperandVisitorBase.cs" />
     <Compile Include="Operands\Property.cs" />
     <Compile Include="Expressions\TernaryConditionalOperator.cs" />
     <Compile Include="Expressions\TypeOperators.cs" />

@@ -9,10 +9,10 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal class ArrayElementOperand<T> : MutableOperand<T>
+	internal class ArrayElementOperand<T> : MutableOperand<T>, IAcceptOperandVisitor
 	{
-		private readonly IOperand m_Array;
-		private readonly IOperand m_Index;
+		private IOperand m_Array;
+		private IOperand m_Index;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,11 +26,44 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Array);
+			visitor.VisitOperand(ref m_Index);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("{0}[{1}]", m_Array, m_Index);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override bool HasTarget
 		{
 			get
 			{
 				return true;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.ArrayElement;
 			}
 		}
 

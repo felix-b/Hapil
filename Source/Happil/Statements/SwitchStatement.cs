@@ -10,8 +10,8 @@ namespace Happil.Statements
 {
 	internal class SwitchStatement<T> : StatementBase, IHappilSwitchSyntax<T>
 	{
-		private readonly IOperand<T> m_Value;
 		private readonly SortedDictionary<T, CaseBlock> m_CasesByValue;
+		private IOperand<T> m_Value;
 		private CaseBlock m_Default;
 		private Label m_DefaultLabel;
 		private Label m_EndLabel;
@@ -46,6 +46,23 @@ namespace Happil.Statements
 
 			il.MarkLabel(m_EndLabel);
 			il.Emit(OpCodes.Nop);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Value);
+
+			foreach ( var caseBlock in m_CasesByValue.Values )
+			{
+				caseBlock.AcceptVisitor(visitor);
+			}
+
+			if ( m_Default != null )
+			{
+				m_Default.AcceptVisitor(visitor);
+			}
 		}
 
 		#endregion
@@ -247,7 +264,7 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public virtual void Emit(ILGenerator il, Label endLabel)
+			public void Emit(ILGenerator il, Label endLabel)
 			{
 				foreach ( var statement in m_Body )
 				{
@@ -255,6 +272,13 @@ namespace Happil.Statements
 				}
 
 				il.Emit(OpCodes.Br, endLabel);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				visitor.VisitStatementBlock(m_Body);				
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

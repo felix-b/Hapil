@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -28,6 +29,13 @@ namespace Happil.Statements
 		public override void Emit(ILGenerator il)
 		{
 			il.MarkLabel(m_Label);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			// nothing
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

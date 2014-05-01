@@ -8,11 +8,11 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class TernaryConditionalOperator<T> : Operand<T>
+	internal class TernaryConditionalOperator<T> : Operand<T>, IAcceptOperandVisitor
 	{
-		private readonly IOperand<bool> m_Condition;
-		private readonly IOperand<T> m_OnTrue;
-		private readonly IOperand<T> m_OnFalse;
+		private IOperand<bool> m_Condition;
+		private IOperand<T> m_OnTrue;
+		private IOperand<T> m_OnFalse;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,6 +27,40 @@ namespace Happil.Expressions
 			statements.Consume(onFalse);
 			statements.Consume(onTrue);
 			statements.Consume(condition);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Condition);
+			visitor.VisitOperand(ref m_OnTrue);
+			visitor.VisitOperand(ref m_OnFalse);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("[[{0}] ? [{1}] : [{2}]]", m_Condition, m_OnTrue, m_OnFalse);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.TernaryCondition;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

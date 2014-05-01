@@ -20,6 +20,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			// nothing
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public StatementScope HomeScope
 		{
 			get
@@ -39,7 +46,7 @@ namespace Happil.Statements
 	/// </typeparam>
 	internal class ReturnStatement<T> : StatementBase, ILeaveStatement
 	{
-		private readonly IOperand<T> m_Operand;
+		private IOperand<T> m_Operand;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,6 +64,13 @@ namespace Happil.Statements
 			m_Operand.EmitLoad(il);
 
 			il.Emit(OpCodes.Ret);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

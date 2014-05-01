@@ -10,7 +10,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class NewStructExpression<TStruct> : ExpressionOperand<TStruct>, IValueTypeInitializer
+	internal class NewStructExpression<TStruct> : ExpressionOperand<TStruct>, IValueTypeInitializer, IAcceptOperandVisitor
 	{
 		private readonly Type m_StructType;
 		private readonly ConstructorInfo m_Constructor;
@@ -60,6 +60,42 @@ namespace Happil.Expressions
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperandArray(m_ConstructorArguments);
+			visitor.VisitOperand(ref m_Target);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format(
+				"NewStruct[{0}]({1})",
+				m_StructType.Name,
+				string.Join(",", m_ConstructorArguments.Select(a => a.ToString())));
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.NewStruct;
+			}
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

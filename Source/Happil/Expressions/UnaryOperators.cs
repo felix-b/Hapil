@@ -247,7 +247,7 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public class OperatorCall<T> : IUnaryOperator<T>, IDontLeaveValueOnStack
+		public class OperatorCall<T> : IUnaryOperator<T>, IDontLeaveValueOnStack, IAcceptOperandVisitor
 		{
 			private readonly MethodBase m_Method;
 			private readonly IOperand[] m_Arguments;
@@ -285,6 +285,17 @@ namespace Happil.Expressions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			#region IAcceptOperandVisitor Members
+
+			void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+			{
+				visitor.VisitOperandArray(m_Arguments);
+			}
+
+			#endregion
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
 				Helpers.EmitCall(il, operand, m_Method, m_Arguments);
@@ -299,7 +310,8 @@ namespace Happil.Expressions
 
 			public override string ToString()
 			{
-				return "->";
+				var argumentString = string.Join(",", m_Arguments.Select(a => a.ToString()));
+				return string.Format("->{0}({1})", m_Method.Name, argumentString);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

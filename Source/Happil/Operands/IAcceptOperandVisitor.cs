@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Happil.Operands
 {
-	internal interface IMutableOperand : IOperand
+	internal interface IAcceptOperandVisitor
 	{
-		IOperand Assign(IOperand value);
+		void AcceptVisitor(OperandVisitorBase visitor);
 	}
 }

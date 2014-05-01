@@ -10,9 +10,9 @@ namespace Happil.Statements
 	internal class IfStatement : StatementBase, IHappilIfBody, IHappilIfBodyThen
 	{
 		private readonly bool m_ConditionIsAlwaysTrue;
-		private readonly IOperand<bool> m_Condition;
 		private readonly List<StatementBase> m_ThenBlock;
 		private readonly List<StatementBase> m_ElseBlock;
+		private IOperand<bool> m_Condition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -47,6 +47,15 @@ namespace Happil.Statements
 			{
 				EmitFullStatement(il);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Condition);
+			visitor.VisitStatementBlock(m_ThenBlock);
+			visitor.VisitStatementBlock(m_ElseBlock);
 		}
 
 		#endregion

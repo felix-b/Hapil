@@ -41,6 +41,25 @@ namespace Happil.Operands
 			return m_OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
 		}
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return "this";
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.This;
+			}
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(System.Reflection.Emit.ILGenerator il)

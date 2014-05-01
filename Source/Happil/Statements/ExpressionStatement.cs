@@ -5,12 +5,13 @@ using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
 	internal class ExpressionStatement : StatementBase
 	{
-		private readonly IExpressionOperand m_Expression;
+		private IExpressionOperand m_Expression;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +27,13 @@ namespace Happil.Statements
 			m_Expression.ShouldLeaveValueOnStack = false;
 			m_Expression.EmitTarget(il);
 			m_Expression.EmitLoad(il);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Expression);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -9,11 +9,11 @@ using Happil.Members;
 
 namespace Happil.Operands
 {
-	public class DelegateOperand<TDelegate> : Operand<TDelegate>, IDelegateOperand
+	public class DelegateOperand<TDelegate> : Operand<TDelegate>, IDelegateOperand, IAcceptOperandVisitor
 	{
-		private readonly IOperand m_Target;
 		private readonly MethodInfo m_Method;
 		private readonly ConstructorInfo m_Constructor;
+		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -25,6 +25,37 @@ namespace Happil.Operands
 			var effectiveDelegateType = delegateTypeOverride ?? base.OperandType;
 			m_Constructor = DelegateShortcuts.GetDelegateConstructor(effectiveDelegateType);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Delegate;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Target);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format(
+				"Delegate[{0}{1}]", 
+				m_Method.IsStatic ? m_Method.DeclaringType.Name + "::" : m_Target.ToString() + ".",
+				m_Method.Name);
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

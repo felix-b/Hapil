@@ -9,13 +9,13 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class Property<T> : MutableOperand<T>, INonPostfixNotation
+	public class Property<T> : MutableOperand<T>, INonPostfixNotation, IAcceptOperandVisitor
 	{
-		private readonly IOperand m_Target;
 		private readonly PropertyInfo m_Property;
 		private readonly IOperand[] m_IndexArguments;
 		private readonly MethodInfo m_Getter;
 		private readonly MethodInfo m_Setter;
+		private IOperand m_Target;
 		private IOperand m_Value;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,13 +40,16 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override bool HasTarget
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
 		{
-			get
-			{
-				return (m_Target != null);
-			}
+			visitor.VisitOperand(ref m_Target);
+			visitor.VisitOperandArray(m_IndexArguments);
+			visitor.VisitOperand(ref m_Value);
 		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -61,6 +64,42 @@ namespace Happil.Operands
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			var isStatic = object.ReferenceEquals(m_Target, null);
+
+			return string.Format(
+				"{0}Field[{1}]",
+				isStatic ? m_Property.DeclaringType.Name + "::" : m_Target.ToString() + ".",
+				m_Property.Name);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override bool HasTarget
+		{
+			get
+			{
+				return (m_Target != null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Property;
+			}
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -23,7 +23,17 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return string.Format("Local<{0}>{{#{1}}}", m_LocalBuilder.LocalType.Name, m_LocalBuilder.LocalIndex);
+			return string.Format("Local{0}[{1}]", m_LocalBuilder.LocalIndex, m_LocalBuilder.LocalType.Name);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Local;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

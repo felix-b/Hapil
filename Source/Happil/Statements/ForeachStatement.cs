@@ -15,8 +15,8 @@ namespace Happil.Statements
 		IHappilForeachInDoSyntax<TElement>,
 		IHappilForeachDoSyntax<TElement>
 	{
-		private readonly Local<TElement> m_Element;
 		private readonly List<StatementBase> m_BodyBlock;
+		private Local<TElement> m_Element;
 		private IOperand<IEnumerable<TElement>> m_Collection;
 		private WhileStatement m_InnerWhile;
 
@@ -38,6 +38,16 @@ namespace Happil.Statements
 			{
 				statement.Emit(il);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Element);
+			visitor.VisitOperand(ref m_Collection);
+			visitor.VisitStatementBlock(m_BodyBlock);
+			m_InnerWhile.AcceptVisitor(visitor);
 		}
 
 		#endregion

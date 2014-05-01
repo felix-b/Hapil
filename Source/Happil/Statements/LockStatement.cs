@@ -14,9 +14,9 @@ namespace Happil.Statements
 {
 	internal class LockStatement : StatementBase, IHappilLockSyntax
 	{
-		private readonly IOperand<object> m_SyncRoot;
 		private readonly int m_MillisecondsTimeout;
 		private readonly List<StatementBase> m_BodyBlock;
+		private IOperand<object> m_SyncRoot;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +37,14 @@ namespace Happil.Statements
 			{
 				statement.Emit(il);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_SyncRoot);
+			visitor.VisitStatementBlock(m_BodyBlock);
 		}
 
 		#endregion

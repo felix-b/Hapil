@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -23,6 +24,13 @@ namespace Happil.Statements
 		public override void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Br, m_LabelStatement.Label);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			// nothing
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

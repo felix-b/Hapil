@@ -9,8 +9,8 @@ namespace Happil.Statements
 {
 	internal class UsingStatement : StatementBase, IHappilUsingSyntax
 	{
-		private readonly IOperand<IDisposable> m_Disposable;
 		private readonly List<StatementBase> m_BodyBlock;
+		private IOperand<IDisposable> m_Disposable;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -30,6 +30,14 @@ namespace Happil.Statements
 			{
 				statement.Emit(il);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Disposable);
+			visitor.VisitStatementBlock(m_BodyBlock);
 		}
 
 		#endregion

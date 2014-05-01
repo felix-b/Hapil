@@ -9,11 +9,11 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class BinaryExpressionOperand<TLeft, TRight, TExpr> : ExpressionOperand<TExpr>
+	internal class BinaryExpressionOperand<TLeft, TRight, TExpr> : ExpressionOperand<TExpr>, IAcceptOperandVisitor
 	{
 		private readonly IBinaryOperator<TLeft, TRight> m_Operator;
-		private readonly IOperand<TLeft> m_Left;
-		private readonly IOperand<TRight> m_Right;
+		private IOperand<TLeft> m_Left;
+		private IOperand<TRight> m_Right;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,9 +39,32 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Left);
+			visitor.VisitOperand(ref m_Right);
+			visitor.VisitAcceptor(m_Operator as IAcceptOperandVisitor); // some binary operators may contain other operands
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override string ToString()
 		{
-			return string.Format("Expr<{0}>{{{1} {2} {3}}}", typeof(TExpr).Name, m_Left.ToString(), m_Operator.ToString(), m_Right.ToString());
+			return string.Format("[{0} {1} {2}]", m_Left, m_Operator, m_Right);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.BinaryExpression;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -63,11 +63,18 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			#region IHappilStatement Members
+			#region StatementBase Members
 
 			public override void Emit(ILGenerator il)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopStartLabel);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				// nothing
 			}
 
 			#endregion
@@ -102,11 +109,18 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			#region IHappilStatement Members
+			#region StatementBase Members
 
 			public override void Emit(ILGenerator il)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopEndLabel);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				// nothing
 			}
 
 			#endregion

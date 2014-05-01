@@ -93,6 +93,17 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("({0}):{1}", string.Join(",", ArgumentType.Select(t => t.Name)), IsVoid ? "void" : ReturnType.Name);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public string[] ArgumentName { get; private set; }
 		public Type[] ArgumentType { get; private set; }
 		public Type[] ArgumentUnderlyingType { get; private set; }

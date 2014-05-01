@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -13,6 +14,13 @@ namespace Happil.Statements
 		public override void Emit(ILGenerator il)
 		{
 			il.Emit(OpCodes.Rethrow);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			// nothing
 		}
 
 		#endregion

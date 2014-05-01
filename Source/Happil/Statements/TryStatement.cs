@@ -78,6 +78,25 @@ namespace Happil.Statements
 			il.Emit(OpCodes.Nop);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitStatementBlock(m_TryBlock);
+
+			foreach ( var catchBlock in m_CatchBlocks )
+			{
+				catchBlock.AcceptVisitor(visitor);
+			}
+			
+			visitor.VisitStatementBlock(m_FinallyBlock);
+
+			foreach ( var leaveBlock in m_LeaveBlocks )
+			{
+				leaveBlock.AcceptVisitor(visitor);
+			}
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,19 +135,24 @@ namespace Happil.Statements
 		private abstract class CatchBlock
 		{
 			public abstract void Emit(ILGenerator il);
+			public abstract void AcceptVisitor(OperandVisitorBase visitor);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class CatchBlock<TException> : CatchBlock where TException : Exception
 		{
+			private Local<TException> m_ExceptionObject;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public CatchBlock(TryStatement ownerStatement, Action<Operand<TException>> body)
 			{
 				Statements = new List<StatementBase>();
 
 				using ( var scope = new StatementScope(Statements, ownerStatement, ExceptionBlockType.Catch) )
 				{
-					ExceptionObject = scope.OwnerMethod.AddLocal<TException>();
+					m_ExceptionObject = scope.OwnerMethod.AddLocal<TException>();
 					body(ExceptionObject);
 				}
 			}
@@ -138,7 +162,7 @@ namespace Happil.Statements
 			public override void Emit(ILGenerator il)
 			{
 				il.BeginCatchBlock(typeof(TException));
-				ExceptionObject.EmitStore(il);
+				m_ExceptionObject.EmitStore(il);
 
 				foreach ( var statement in Statements )
 				{
@@ -148,8 +172,25 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public override void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				visitor.VisitOperand(ref m_ExceptionObject);
+				visitor.VisitStatementBlock(Statements);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public List<StatementBase> Statements { get; private set; }
-			public Local<TException> ExceptionObject { get; private set; }
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public Local<TException> ExceptionObject
+			{
+				get
+				{
+					return m_ExceptionObject;
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -171,6 +212,13 @@ namespace Happil.Statements
 			{
 				il.MarkLabel(LeaveLabel);
 				m_LeaveStatement.Emit(il);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				((StatementBase)m_LeaveStatement).AcceptVisitor(visitor);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -199,6 +247,13 @@ namespace Happil.Statements
 			{
 				m_Destination.LeaveLabel = il.DefineLabel();
 				il.Emit(OpCodes.Leave, m_Destination.LeaveLabel);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override void AcceptVisitor(OperandVisitorBase visitor)
+			{
+				// nothing
 			}
 
 			#endregion

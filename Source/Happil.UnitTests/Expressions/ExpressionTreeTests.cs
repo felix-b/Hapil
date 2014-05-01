@@ -50,7 +50,7 @@ namespace Happil.UnitTests.Expressions
 			//-- Assert
 
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, int>>());
-			Assert.That(expression.ToString(), Is.EqualTo("Expr<Int32>{Field{f1} + Field{f2}}"));
+			Assert.That(expression.ToString(), Is.EqualTo("[Field[f1] + Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ namespace Happil.UnitTests.Expressions
 			//-- Assert
 
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, bool>>());
-			Assert.That(expression.ToString(), Is.EqualTo("Expr<Boolean>{Field{f1} < Field{f2}}"));
+			Assert.That(expression.ToString(), Is.EqualTo("[Field[f1] < Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(), 
-				Is.EqualTo("Expr<Boolean>{Expr<Boolean>{Field{f1} < Field{f2}} && Expr<Boolean>{Field{f3} > Const<Int32>{123}}}"));
+				Is.EqualTo("[[Field[f1] < Field[f2]] && [Field[f3] > Const[123]]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Boolean>{Expr<Boolean>{Field{f1} < Field{f2}} || Expr<Boolean>{Field{f3} > Const<Int32>{123}}}"));
+				Is.EqualTo("[[Field[f1] < Field[f2]] || [Field[f3] > Const[123]]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Boolean>{Field{f1} ^^ Field{f2}}"));
+				Is.EqualTo("[Field[f1] ^^ Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int32>{Field{f1} ^ Field{f2}}"));
+				Is.EqualTo("[Field[f1] ^ Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<bool, bool>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Boolean>{! Expr<Boolean>{Field{f1} < Field{f2}}}"));
+				Is.EqualTo("[![Field[f1] < Field[f2]]]"));
 		}
 
 
@@ -207,17 +207,17 @@ namespace Happil.UnitTests.Expressions
 			//-- Assert
 
 			const string expectedExpression = 
-				"Expr<Boolean>{! " +
-					"Expr<Boolean>{" +
-						"Expr<Boolean>{" +
-							"Expr<Boolean>{Field{f1} < Field{f2}}" +
+				"[!" +
+					"[" +
+						"[" +
+							"[Field[f1] < Field[f2]]" +
 							" && " +
-							"Expr<Boolean>{Field{f2} < Field{f3}}" +
-						"}" +
+							"[Field[f2] < Field[f3]]" +
+						"]" +
 						" || " +
-						"Expr<Boolean>{Field{f3} > Const<Int32>{123}}" +
-					"}"	+
-				"}";
+						"[Field[f3] > Const[123]]" +
+					"]"	+
+				"]";
 
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<bool, bool>>());
 			Assert.That(expression.ToString(), Is.EqualTo(expectedExpression));
@@ -242,7 +242,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<long, long>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int64>{Expr<Int64>{Field{f1} cast-to Const<Type>{System.Int64}} + Field{f2}}"));
+				Is.EqualTo("[[Field[f1] cast-to Const[System.Int64]] + Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<string, string>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<String>{Field{f1} + Expr<String>{Field{f2} as Const<Type>{System.String}}}"));
+				Is.EqualTo("[Field[f1] + [Field[f2] as Const[System.String]]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int32>{Field{f1} ++}"));
+				Is.EqualTo("[Field[f1]++]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -306,7 +306,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int32>{Field{f1} --}"));
+				Is.EqualTo("[Field[f1]--]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -327,7 +327,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int32>{++ Field{f1}}"));
+				Is.EqualTo("[++Field[f1]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -348,7 +348,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<UnaryExpressionOperand<int, int>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("Expr<Int32>{-- Field{f1}}"));
+				Is.EqualTo("[--Field[f1]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -375,7 +375,17 @@ namespace Happil.UnitTests.Expressions
 
 			public override string ToString()
 			{
-				return string.Format("Field{{{0}}}", m_Name);
+				return string.Format("Field[{0}]", m_Name);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public override OperandKind Kind
+			{
+				get
+				{
+					return OperandKind.Local;
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

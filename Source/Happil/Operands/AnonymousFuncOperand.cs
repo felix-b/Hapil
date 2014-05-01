@@ -34,6 +34,27 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("Func[{0}]", m_Method);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Delegate;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected override void OnEmitTarget(ILGenerator il)
 		{
 			// nothing
@@ -95,6 +116,27 @@ namespace Happil.Operands
 			var writer = new FunctionMethodWriter<TReturn>(
 				m_Method, 
 				w => body(w, w.Arg1<TArg1>(), w.Arg2<TArg2>()));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("Func[{0}]", m_Method);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Delegate;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

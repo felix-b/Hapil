@@ -9,11 +9,11 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class UnaryExpressionOperand<TOperand, TExpr> : ExpressionOperand<TExpr>
+	internal class UnaryExpressionOperand<TOperand, TExpr> : ExpressionOperand<TExpr>, IAcceptOperandVisitor
 	{
-		private readonly IUnaryOperator<TOperand> m_Operator;
-		private readonly IOperand m_Operand;
 		private readonly UnaryOperatorPosition m_Position;
+		private readonly IUnaryOperator<TOperand> m_Operator;
+		private IOperand m_Operand;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -34,14 +34,37 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Operand);
+			visitor.VisitAcceptor(m_Operator as IAcceptOperandVisitor);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override string ToString()
 		{
+			var isCallExpression = (m_Operator is UnaryOperators.OperatorCall<TOperand>);
 			var formatString = (
-				m_Position == UnaryOperatorPosition.Prefix ?
-				"Expr<{0}>{{{1} {2}}}" :
-				"Expr<{0}>{{{2} {1}}}");
+				(m_Position == UnaryOperatorPosition.Prefix && !isCallExpression) ?
+				"[{0}{1}]" :
+				"[{1}{0}]");
 
-			return string.Format(formatString, typeof(TExpr).Name, m_Operator.ToString(), m_Operand.ToString());
+			return string.Format(formatString, m_Operator.ToString(), m_Operand.ToString());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.UnaryExpression;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

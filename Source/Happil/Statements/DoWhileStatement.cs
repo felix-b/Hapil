@@ -55,6 +55,14 @@ namespace Happil.Statements
 			il.Emit(OpCodes.Nop);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Condition);
+			visitor.VisitStatementBlock(m_BodyBlock);
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

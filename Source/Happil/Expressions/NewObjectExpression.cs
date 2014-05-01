@@ -7,7 +7,7 @@ using Happil.Statements;
 
 namespace Happil.Expressions
 {
-	internal class NewObjectExpression<TObject> : ExpressionOperand<TObject>
+	internal class NewObjectExpression<TObject> : ExpressionOperand<TObject>, IAcceptOperandVisitor
 	{
 		private readonly Type m_ObjectType;
 		private readonly ConstructorInfo m_Constructor;
@@ -36,6 +36,41 @@ namespace Happil.Expressions
 			}
 
 			scope.RegisterExpressionStatement(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperandArray(m_ConstructorArguments);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format(
+				"NewObj[{0}]({1})", 
+				m_ObjectType.Name, 
+				string.Join(",", m_ConstructorArguments.Select(a => a.ToString())));
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.NewObject;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

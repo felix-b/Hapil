@@ -42,7 +42,7 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return string.Format("Arg<{0}>{{#{1}}}", typeof(T).Name, m_Index);
+			return string.Format("Arg{0}[{1}]", m_Index, m_Name);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -105,6 +105,16 @@ namespace Happil.Operands
 			get
 			{
 				return m_Name;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Argument;
 			}
 		}
 

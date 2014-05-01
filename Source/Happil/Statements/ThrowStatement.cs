@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -44,6 +45,13 @@ namespace Happil.Statements
 
 			il.Emit(OpCodes.Newobj, m_Constructor);
 			il.Emit(OpCodes.Throw);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			// nothing
 		}
 
 		#endregion

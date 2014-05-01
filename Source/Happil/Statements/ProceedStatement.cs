@@ -13,8 +13,8 @@ namespace Happil.Statements
 	{
 		private readonly MethodMember m_OwnerMethod;
 		private readonly List<StatementBase> m_DecoratedStatements;
-		private readonly IMutableOperand m_ReturnValueLocal;
 		private readonly LabelStatement m_LeaveLabel;
+		private IMutableOperand m_ReturnValueLocal;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -49,6 +49,14 @@ namespace Happil.Statements
 
 			//il.MarkLabel(m_LeaveLabel);
 			//il.Emit(OpCodes.Nop);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_ReturnValueLocal);
+			visitor.VisitStatementBlock(m_DecoratedStatements);
 		}
 	}
 }

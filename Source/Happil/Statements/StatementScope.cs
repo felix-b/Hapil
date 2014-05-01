@@ -191,6 +191,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitStatementBlock(m_StatementList);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public DynamicModule OwnerModule
 		{
 			get

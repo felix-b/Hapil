@@ -11,9 +11,9 @@ namespace Happil.Statements
 {
 	internal class CallStatement : StatementBase
 	{
-		private readonly IOperand m_Target;
 		private readonly MethodBase m_Method;
 		private readonly IOperand[] m_Arguments;
+		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,6 +40,14 @@ namespace Happil.Statements
 		public override void Emit(ILGenerator il)
 		{
 			Helpers.EmitCall(il, m_Target, m_Method, m_Arguments);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Target);
+			visitor.VisitOperandArray(m_Arguments);
 		}
 
 		#endregion

@@ -10,8 +10,8 @@ namespace Happil.Statements
 {
 	internal class WhileStatement : LoopStatementBase, IHappilWhileSyntax
 	{
-		private readonly IOperand<bool> m_Condition;
 		private readonly List<StatementBase> m_BodyBlock;
+		private IOperand<bool> m_Condition;
 		private Label m_LoopStartLabel;
 		private Label m_LoopEndLabel;
 
@@ -27,7 +27,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region IHappilStatement Members
+		#region StatementBase Overrides
 
 		public override void Emit(ILGenerator il)
 		{
@@ -48,6 +48,14 @@ namespace Happil.Statements
 
 			il.Emit(OpCodes.Br, m_LoopStartLabel);
 			il.MarkLabel(m_LoopEndLabel);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Condition);
+			visitor.VisitStatementBlock(m_BodyBlock);
 		}
 
 		#endregion

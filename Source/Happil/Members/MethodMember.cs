@@ -32,9 +32,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region Overrides of Object
-
-		public override string ToString()
+		public string BodyToString()
 		{
 			var text = new StringBuilder();
 			text.Append("{");
@@ -47,8 +45,6 @@ namespace Happil.Members
 			text.Append("}");
 			return text.ToString();
 		}
-
-		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -119,6 +115,16 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public bool IsAnonymous
+		{
+			get
+			{
+				return (this.Kind ==  MemberKind.InstanceAnonymousMethod || this.Kind == MemberKind.StaticAnonymousMethod);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodSignature Signature
 		{
 			get
@@ -153,6 +159,13 @@ namespace Happil.Members
 		internal Label AddLabel()
 		{
 			return m_MethodFactory.GetILGenerator().DefineLabel();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitStatementBlock(m_Statements);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -128,6 +128,17 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format("Class[{0}]", m_TypeBuilder.FullName);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public TypeKey Key
 		{
 			get { return m_Key; }

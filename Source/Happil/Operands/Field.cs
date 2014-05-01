@@ -9,12 +9,12 @@ using Happil.Operands;
 
 namespace Happil.Operands
 {
-	public class Field<T> : MutableOperand<T>
+	public class Field<T> : MutableOperand<T>, IAcceptOperandVisitor
 	{
-		private readonly IOperand m_Target;
 		private readonly FieldInfo m_FieldInfo;
 		private readonly FieldMember m_FieldMember;
 		private readonly string m_Name;
+		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,9 +38,29 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			visitor.VisitOperand(ref m_Target);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override string ToString()
 		{
-			return string.Format("Field{{{0}}}", m_Name);
+			return string.Format(
+				"{0}Field[{1}]", 
+				m_FieldInfo.IsStatic ? m_FieldInfo.DeclaringType.Name + "::" : m_Target.ToString() + ".",
+				m_Name);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override OperandKind Kind
+		{
+			get
+			{
+				return OperandKind.Field;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
