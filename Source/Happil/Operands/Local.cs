@@ -5,19 +5,36 @@ using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class Local<T> : MutableOperand<T>, ICanEmitAddress
+	public class Local<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand
 	{
+		private readonly StatementBlock m_HomeStatementBlock;
 		private readonly LocalBuilder m_LocalBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal Local(MethodMember ownerMethod)
 		{
+			m_HomeStatementBlock = (StatementScope.Exists ? StatementScope.Current.StatementBlock : ownerMethod.Body);
 			m_LocalBuilder = ownerMethod.MethodFactory.GetILGenerator().DeclareLocal(TypeTemplate.Resolve<T>());
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IScopedOperand Members
+
+		StatementBlock IScopedOperand.HomeStatementBlock
+		{
+			get
+			{
+				return m_HomeStatementBlock;
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

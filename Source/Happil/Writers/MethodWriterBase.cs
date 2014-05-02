@@ -296,7 +296,7 @@ namespace Happil.Writers
 
 		public ThisOperand<TBase> This<TBase>()
 		{
-			return new ThisOperand<TBase>(OwnerMethod.OwnerClass);
+			return new ThisOperand<TBase>(OwnerMethod);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

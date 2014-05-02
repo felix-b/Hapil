@@ -5,11 +5,12 @@ using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Statements;
 using Happil.Writers;
 
 namespace Happil.Operands
 {
-	public class Argument<T> : MutableOperand<T>, ICanEmitAddress
+	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand
 	{
 		private readonly MethodMember m_OwnerMethod;
 		private readonly byte m_Index;
@@ -44,6 +45,20 @@ namespace Happil.Operands
 		{
 			return string.Format("Arg{0}[{1}]", m_Index, m_Name);
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IScopedOperand Members
+
+		StatementBlock IScopedOperand.HomeStatementBlock
+		{
+			get
+			{
+				return m_OwnerMethod.Body;
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -6,12 +6,20 @@ using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class ThisOperand<T> : Operand<T>
+	public class ThisOperand<T> : Operand<T>, IScopedOperand
 	{
 		private readonly ClassType m_OwnerClass;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal ThisOperand(MethodMember ownerMethod)
+		{
+			m_OwnerClass = ownerMethod.OwnerClass;
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -35,11 +43,27 @@ namespace Happil.Operands
 		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		#region IScopedOperand Members
+
+		StatementBlock IScopedOperand.HomeStatementBlock
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Field<TProperty> BackingFieldOf<TProperty>(PropertyInfo declaration)
 		{
 			return m_OwnerClass.GetPropertyBackingField(declaration).AsOperand<TProperty>();
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		#region Overrides of Object
 

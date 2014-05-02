@@ -66,6 +66,7 @@
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
     <Compile Include="Expressions\BinaryOperators.cs" />
     <Compile Include="Expressions\ExpressionOperand.cs" />
+    <Compile Include="Operands\IScopedOperand.cs" />
     <Compile Include="Operands\OutOfScopeOperandVisitor.cs" />
     <Compile Include="Operands\Field.cs" />
     <Compile Include="Operands\AnonymousFuncOperand.cs">
