@@ -15,7 +15,7 @@ namespace Happil.Statements
 		private readonly StatementScope m_Root;
 		private readonly ClassType m_OwnerClass;
 		private readonly MethodMember m_OwnerMethod;
-		private readonly List<StatementBase> m_StatementList;
+		private readonly StatementBlock m_StatementBlock;
 		private readonly int m_Depth;
 		private readonly TryStatement m_InheritedExceptionStatement;
 		private readonly ExceptionBlockType m_InheritedExceptionBlockType;
@@ -24,14 +24,14 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, List<StatementBase> statementList)
+		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, StatementBlock statementList)
 		{
 			if ( s_Current != null )
 			{
 				throw new InvalidOperationException("Root scope already exists.");
 			}
 
-			m_StatementList = statementList;
+			m_StatementBlock = statementList;
 			m_OwnerMethod = ownerMethod;
 			m_OwnerClass = ownerClass;
 			m_Depth = 0;
@@ -48,7 +48,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(List<StatementBase> statementList)
+		public StatementScope(StatementBlock statementList)
 		{
 			m_Previous = s_Current;
 			m_Root = m_Previous.Root;
@@ -58,7 +58,7 @@ namespace Happil.Statements
 				throw new InvalidOperationException("Parent scope is not present.");
 			}
 
-			m_StatementList = statementList;
+			m_StatementBlock = statementList;
 			m_OwnerMethod = m_Previous.m_OwnerMethod;
 			m_OwnerClass = m_Previous.m_OwnerClass;
 			m_Depth = m_Previous.Depth + 1;
@@ -73,7 +73,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(List<StatementBase> statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
+		public StatementScope(StatementBlock statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
 			: this(statementList)
 		{
 			m_ThisExceptionStatement = exceptionStatement;
@@ -115,7 +115,7 @@ namespace Happil.Statements
 				}
 			}
 			
-			m_StatementList.Add(effectiveStatementToAdd);
+			m_StatementBlock.Add(effectiveStatementToAdd);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ namespace Happil.Statements
 		{
 			if ( expression != null )
 			{
-				m_StatementList.Add(new ExpressionStatement(expression));
+				m_StatementBlock.Add(new ExpressionStatement(expression));
 			}
 		}
 
@@ -146,16 +146,7 @@ namespace Happil.Statements
 		{
 			if ( expression != null )
 			{
-				for ( int index = m_StatementList.Count - 1 ; index >= 0 ; index-- )
-				{
-					var statement = (m_StatementList[index] as ExpressionStatement);
-
-					if ( statement != null && ReferenceEquals(statement.Expression, expression) )
-					{
-						m_StatementList.RemoveAt(index);
-						break;
-					}
-				}
+				m_StatementBlock.RemoveExpressionStatement(expression);
 			}
 		}
 
@@ -193,7 +184,7 @@ namespace Happil.Statements
 
 		public void AcceptVisitor(OperandVisitorBase visitor)
 		{
-			visitor.VisitStatementBlock(m_StatementList);
+			visitor.VisitStatementBlock(m_StatementBlock);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

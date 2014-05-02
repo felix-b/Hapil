@@ -15,7 +15,7 @@ namespace Happil.Statements
 		IHappilForeachInDoSyntax<TElement>,
 		IHappilForeachDoSyntax<TElement>
 	{
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private Local<TElement> m_Element;
 		private IOperand<IEnumerable<TElement>> m_Collection;
 		private WhileStatement m_InnerWhile;
@@ -25,7 +25,7 @@ namespace Happil.Statements
 		public ForeachStatement(Local<TElement> element)
 		{
 			m_Element = element;
-			m_BodyBlock = new List<StatementBase>();
+			m_BodyBlock = new StatementBlock();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

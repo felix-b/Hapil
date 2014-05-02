@@ -229,7 +229,7 @@ namespace Happil.Statements
 		{
 			private readonly SwitchStatement<T> m_OwnerStatement;
 			private readonly T m_Value;
-			private readonly List<StatementBase> m_Body;
+			private readonly StatementBlock m_Body;
 			private readonly long m_Int64;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ namespace Happil.Statements
 			{
 				m_OwnerStatement = ownerStatement;
 				m_Value = value;
-				m_Body = new List<StatementBase>();
+				m_Body = new StatementBlock();
 
 				if ( typeof(T).IsPrimitive || typeof(T).IsEnum )
 				{

@@ -12,7 +12,7 @@ namespace Happil.Statements
 	internal class ProceedStatement : StatementBase
 	{
 		private readonly MethodMember m_OwnerMethod;
-		private readonly List<StatementBase> m_DecoratedStatements;
+		private readonly StatementBlock m_DecoratedStatements;
 		private readonly LabelStatement m_LeaveLabel;
 		private IMutableOperand m_ReturnValueLocal;
 
@@ -21,7 +21,7 @@ namespace Happil.Statements
 		public ProceedStatement(MethodMember ownerMethod, MethodWriterBase[] decoratedWriters, IMutableOperand returnValueLocal)
 		{
 			m_OwnerMethod = ownerMethod;
-			m_DecoratedStatements = new List<StatementBase>();
+			m_DecoratedStatements = new StatementBlock();
 			m_ReturnValueLocal = returnValueLocal;
 
 			using ( var scope = new StatementScope(m_DecoratedStatements/*, exceptionStatement: null, blockType: ExceptionBlockType.None*/) )

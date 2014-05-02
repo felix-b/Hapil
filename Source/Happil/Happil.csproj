@@ -137,6 +137,7 @@
     <Compile Include="Statements\RethrowStatement.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\StatementBase.cs" />
+    <Compile Include="Statements\StatementBlock.cs" />
     <Compile Include="Statements\StatementScope.cs" />
     <Compile Include="Statements\SwitchStatement.cs" />
     <Compile Include="Statements\ThrowStatement.cs" />

@@ -108,7 +108,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void VisitStatementBlock(IList<StatementBase> statementBlock)
+		public void VisitStatementBlock(StatementBlock statementBlock)
 		{
 			if ( statementBlock != null )
 			{

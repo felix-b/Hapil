@@ -15,7 +15,7 @@ namespace Happil.Statements
 	internal class LockStatement : StatementBase, IHappilLockSyntax
 	{
 		private readonly int m_MillisecondsTimeout;
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private IOperand<object> m_SyncRoot;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ namespace Happil.Statements
 		{
 			m_SyncRoot = syncRoot;
 			m_MillisecondsTimeout = millisecondsTimeout;
-			m_BodyBlock = new List<StatementBase>();
+			m_BodyBlock = new StatementBlock();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

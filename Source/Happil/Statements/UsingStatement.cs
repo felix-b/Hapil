@@ -9,7 +9,7 @@ namespace Happil.Statements
 {
 	internal class UsingStatement : StatementBase, IHappilUsingSyntax
 	{
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private IOperand<IDisposable> m_Disposable;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ namespace Happil.Statements
 		public UsingStatement(IOperand<IDisposable> disposable)
 		{
 			m_Disposable = disposable;
-			m_BodyBlock = new List<StatementBase>();
+			m_BodyBlock = new StatementBlock();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

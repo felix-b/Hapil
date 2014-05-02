@@ -15,9 +15,9 @@ namespace Happil.Statements
 		IHappilForNextSyntax, 
 		IHappilForDoSyntax
 	{
-		private readonly List<StatementBase> m_PreconditionBlock;
-		private readonly List<StatementBase> m_NextBlock;
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_PreconditionBlock;
+		private readonly StatementBlock m_NextBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private IOperand<bool> m_Condition;
 		private Label m_LoopNextLabel;
 		private Label m_LoopEndLabel;
@@ -26,9 +26,9 @@ namespace Happil.Statements
 
 		public ForStatement(Action precondition)
 		{
-			m_PreconditionBlock = new List<StatementBase>();
-			m_NextBlock = new List<StatementBase>();
-			m_BodyBlock = new List<StatementBase>();
+			m_PreconditionBlock = new StatementBlock();
+			m_NextBlock = new StatementBlock();
+			m_BodyBlock = new StatementBlock();
 
 			using ( new StatementScope(m_PreconditionBlock) )
 			{

@@ -10,8 +10,8 @@ namespace Happil.Statements
 	internal class IfStatement : StatementBase, IHappilIfBody, IHappilIfBodyThen
 	{
 		private readonly bool m_ConditionIsAlwaysTrue;
-		private readonly List<StatementBase> m_ThenBlock;
-		private readonly List<StatementBase> m_ElseBlock;
+		private readonly StatementBlock m_ThenBlock;
+		private readonly StatementBlock m_ElseBlock;
 		private IOperand<bool> m_Condition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ namespace Happil.Statements
 		{
 			m_Condition = condition;
 			m_ConditionIsAlwaysTrue = conditionIsAlwaysTrue;
-			m_ThenBlock = new List<StatementBase>();
-			m_ElseBlock = new List<StatementBase>();
+			m_ThenBlock = new StatementBlock();
+			m_ElseBlock = new StatementBlock();
 
 			StatementScope.Current.Consume(condition);
 		}

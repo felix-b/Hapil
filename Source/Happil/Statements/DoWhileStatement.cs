@@ -10,7 +10,7 @@ namespace Happil.Statements
 {
 	internal class DoWhileStatement : LoopStatementBase, IHappilDoWhileSyntax
 	{
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private IOperand<bool> m_Condition = null;
 		private Label m_LoopStartLabel;
 		private Label m_LoopEndLabel;
@@ -19,7 +19,7 @@ namespace Happil.Statements
 
 		public DoWhileStatement(Action<ILoopBody> body)
 		{
-			m_BodyBlock = new List<StatementBase>();
+			m_BodyBlock = new StatementBlock();
 
 			using ( new StatementScope(m_BodyBlock) )
 			{

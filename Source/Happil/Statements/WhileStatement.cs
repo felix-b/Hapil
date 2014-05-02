@@ -10,7 +10,7 @@ namespace Happil.Statements
 {
 	internal class WhileStatement : LoopStatementBase, IHappilWhileSyntax
 	{
-		private readonly List<StatementBase> m_BodyBlock;
+		private readonly StatementBlock m_BodyBlock;
 		private IOperand<bool> m_Condition;
 		private Label m_LoopStartLabel;
 		private Label m_LoopEndLabel;
@@ -20,7 +20,7 @@ namespace Happil.Statements
 		public WhileStatement(IOperand<bool> condition)
 		{
 			m_Condition = condition;
-			m_BodyBlock = new List<StatementBase>();
+			m_BodyBlock = new StatementBlock();
 
 			StatementScope.Current.Consume(condition);
 		}

@@ -13,7 +13,7 @@ namespace Happil.Members
 	public class MethodMember : MemberBase
 	{
 		private readonly List<MethodWriterBase> m_Writers;
-		private readonly List<StatementBase> m_Statements;
+		private readonly StatementBlock m_Statements;
 		private readonly TransparentMethodWriter m_TransparentWriter;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
@@ -26,7 +26,7 @@ namespace Happil.Members
 		{
 			m_MethodFactory = methodFactory;
 			m_Writers = new List<MethodWriterBase>();
-			m_Statements = new List<StatementBase>();
+			m_Statements = new StatementBlock();
 			m_TransparentWriter = new TransparentMethodWriter(this);
 		}
 

@@ -10,9 +10,9 @@ namespace Happil.Statements
 {
 	internal class TryStatement : StatementBase, IHappilCatchSyntax
 	{
-		private readonly List<StatementBase> m_TryBlock;
+		private readonly StatementBlock m_TryBlock;
 		private readonly List<CatchBlock> m_CatchBlocks;
-		private readonly List<StatementBase> m_FinallyBlock;
+		private readonly StatementBlock m_FinallyBlock;
 		private readonly List<LeaveBlock> m_LeaveBlocks;
 		private Label m_EndExceptionBlockLabel;
 		private Label m_EndLeaveBlocksLabel;
@@ -21,9 +21,9 @@ namespace Happil.Statements
 
 		public TryStatement(Action body)
 		{
-			m_TryBlock = new List<StatementBase>();
+			m_TryBlock = new StatementBlock();
 			m_CatchBlocks = new List<CatchBlock>();
-			m_FinallyBlock = new List<StatementBase>();
+			m_FinallyBlock = new StatementBlock();
 			m_LeaveBlocks = new List<LeaveBlock>();
 
 			using ( new StatementScope(m_TryBlock, this, ExceptionBlockType.Try) )
@@ -148,7 +148,7 @@ namespace Happil.Statements
 
 			public CatchBlock(TryStatement ownerStatement, Action<Operand<TException>> body)
 			{
-				Statements = new List<StatementBase>();
+				Statements = new StatementBlock();
 
 				using ( var scope = new StatementScope(Statements, ownerStatement, ExceptionBlockType.Catch) )
 				{
@@ -180,7 +180,7 @@ namespace Happil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public List<StatementBase> Statements { get; private set; }
+			public StatementBlock Statements { get; private set; }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
