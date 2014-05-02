@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Expressions;
+using Happil.Members;
 
 namespace Happil.Statements
 {
 	internal class StatementBlock : IEnumerable<StatementBase>
 	{
 		private readonly List<StatementBase> m_StatementList;
+		private MethodMember m_OwnerMethod;
+		private StatementBlock m_ParentBlock;
+		private StatementBlock m_RootBlock;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -60,6 +64,45 @@ namespace Happil.Statements
 					m_StatementList.RemoveAt(index);
 					break;
 				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Attach(StatementScope scope)
+		{
+			m_OwnerMethod = scope.OwnerMethod; 
+			m_ParentBlock = (scope.Previous != null ? scope.Previous.StatementBlock : null);
+			m_RootBlock = scope.Root.StatementBlock;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodMember OwnerMethod
+		{
+			get
+			{
+				return m_OwnerMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementBlock ParentBlock
+		{
+			get
+			{
+				return m_ParentBlock;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementBlock RootBlock
+		{
+			get
+			{
+				return m_RootBlock;
 			}
 		}
 

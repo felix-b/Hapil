@@ -24,14 +24,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, StatementBlock statementList)
+		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, StatementBlock statementBlock)
 		{
 			if ( s_Current != null )
 			{
 				throw new InvalidOperationException("Root scope already exists.");
 			}
 
-			m_StatementBlock = statementList;
 			m_OwnerMethod = ownerMethod;
 			m_OwnerClass = ownerClass;
 			m_Depth = 0;
@@ -44,11 +43,13 @@ namespace Happil.Statements
 			m_Previous = null;
 			m_Root = this;
 			s_Current = this;
+			
+			m_StatementBlock = AttachStatementBlock(statementBlock);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(StatementBlock statementList)
+		public StatementScope(StatementBlock statementBlock)
 		{
 			m_Previous = s_Current;
 			m_Root = m_Previous.Root;
@@ -58,7 +59,7 @@ namespace Happil.Statements
 				throw new InvalidOperationException("Parent scope is not present.");
 			}
 
-			m_StatementBlock = statementList;
+			m_StatementBlock = statementBlock;
 			m_OwnerMethod = m_Previous.m_OwnerMethod;
 			m_OwnerClass = m_Previous.m_OwnerClass;
 			m_Depth = m_Previous.Depth + 1;
@@ -68,13 +69,14 @@ namespace Happil.Statements
 			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
 			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
 
+			m_StatementBlock = AttachStatementBlock(statementBlock);
 			s_Current = this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(StatementBlock statementList, TryStatement exceptionStatement, ExceptionBlockType blockType)
-			: this(statementList)
+		public StatementScope(StatementBlock statementBlock, TryStatement exceptionStatement, ExceptionBlockType blockType)
+			: this(statementBlock)
 		{
 			m_ThisExceptionStatement = exceptionStatement;
 			m_ThisExceptionBlockType = blockType;
@@ -178,13 +180,6 @@ namespace Happil.Statements
 			}
 
 			return result;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void AcceptVisitor(OperandVisitorBase visitor)
-		{
-			visitor.VisitStatementBlock(m_StatementBlock);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -306,9 +301,16 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private StatementBlock AttachStatementBlock(StatementBlock statementBlock)
+		{
+			statementBlock.Attach(this);
+			return statementBlock;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[ThreadStatic]
 		private static StatementScope s_Current;
-
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
