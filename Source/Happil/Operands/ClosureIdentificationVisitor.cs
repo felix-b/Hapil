@@ -14,9 +14,9 @@ namespace Happil.Operands
 		private readonly MethodMember m_Method;
 		private readonly HashSet<IOperand> m_Externals = new HashSet<IOperand>();
 		private readonly HashSet<OperandCapture> m_Captures = new HashSet<OperandCapture>();
-		private readonly Dictionary<StatementBlock, MethodClosure> m_Closures = new Dictionary<StatementBlock, MethodClosure>();
-		private MethodClosure m_OutermostMethodClosure = null;
-		private MethodClosure m_InnermostMethodClosure = null;
+		private readonly Dictionary<StatementBlock, ClosureDefinition> m_Closures = new Dictionary<StatementBlock, ClosureDefinition>();
+		private ClosureDefinition m_OutermostClosure = null;
+		private ClosureDefinition m_InnermostClosure = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -29,35 +29,12 @@ namespace Happil.Operands
 
 		public void DefineClosures()
 		{
-			if ( !IsClosureRequired )
+			if ( ClosuresRequired )
 			{
-				return;
-			}
-
-			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome != null) )
-			{
-				MethodClosure closure;
-				
-				if ( !m_Closures.TryGetValue(capture.SourceOperandHome, out closure) )
-				{
-					closure = new MethodClosure(capture.SourceOperandHome);
-					m_Closures.Add(closure.ScopeBlock, closure);
-				}
-
-				closure.AddCapture(capture);
-			}
-
-			foreach ( var closure in m_Closures.Values )
-			{
-				FindClosureParent(closure);
-			}
-
-			Debug.Assert(m_OutermostMethodClosure != null, "Closure is required, but no closures were defined.");
-			m_InnermostMethodClosure = m_Closures.Values.Single(closure => closure.ChildCount == 0);
-
-			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == null) )
-			{
-				m_OutermostMethodClosure.AddCapture(capture);
+				MapScopedCapturesToClosures();
+				LinkParentChildClosures();
+				FindInnermostClosure();
+				MapUnscopedCapturesToOutermostClosure();
 			}
 		}
 
@@ -83,7 +60,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public bool IsClosureRequired
+		public bool ClosuresRequired
 		{
 			get
 			{
@@ -93,21 +70,21 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodClosure OutermostMethodClosure
+		public ClosureDefinition OutermostClosure
 		{
 			get
 			{
-				return m_OutermostMethodClosure;
+				return m_OutermostClosure;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodClosure InnermostMethodClosure
+		public ClosureDefinition InnermostClosure
 		{
 			get
 			{
-				return m_InnermostMethodClosure;
+				return m_InnermostClosure;
 			}
 		}
 
@@ -140,25 +117,79 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void FindClosureParent(MethodClosure closure)
+		private void MapScopedCapturesToClosures()
+		{
+			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome != null) )
+			{
+				ClosureDefinition closure;
+
+				if ( !m_Closures.TryGetValue(capture.SourceOperandHome, out closure) )
+				{
+					closure = new ClosureDefinition(capture.SourceOperandHome);
+					m_Closures.Add(closure.ScopeBlock, closure);
+				}
+
+				closure.AddCapture(capture);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void LinkParentChildClosures()
+		{
+			foreach ( var closure in m_Closures.Values )
+			{
+				var parentClosure = TryFindParentClosure(closure);
+
+				if ( parentClosure != null )
+				{
+					closure.AttachToParent(parentClosure);
+				}
+				else
+				{
+					Debug.Assert(m_OutermostClosure == null, "Duplicate outermost closure identified.");
+					m_OutermostClosure = closure;
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void FindInnermostClosure()
+		{
+			Debug.Assert(m_OutermostClosure != null, "Closures are required, but no closures were defined.");
+			m_InnermostClosure = m_Closures.Values.Single(closure => closure.ChildCount == 0);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void MapUnscopedCapturesToOutermostClosure()
+		{
+			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == null) )
+			{
+				m_OutermostClosure.AddCapture(capture);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private ClosureDefinition TryFindParentClosure(ClosureDefinition closure)
 		{
 			var scopeBlock = closure.ScopeBlock.ParentBlock;
 
 			while ( scopeBlock != null )
 			{
-				MethodClosure parentClosure;
+				ClosureDefinition parentClosure;
 
 				if ( m_Closures.TryGetValue(scopeBlock, out parentClosure) )
 				{
-					closure.AttachToParent(parentClosure);
-					return;
+					return parentClosure;
 				}
 
 				scopeBlock = scopeBlock.ParentBlock;
 			}
 
-			Debug.Assert(m_OutermostMethodClosure == null, "Duplicate outermost closure identified.");
-			m_OutermostMethodClosure = closure;
+			return null;
 		}
 	}
 }

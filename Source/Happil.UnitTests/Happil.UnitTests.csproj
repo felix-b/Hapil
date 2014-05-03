@@ -68,6 +68,8 @@
     <Compile Include="Expressions\BinaryOperatorTests.cs" />
     <Compile Include="Expressions\ExpressionTreeTests.cs" />
     <Compile Include="OperandExtensions.cs" />
+    <Compile Include="Operands\ClosureDefinitionTests.cs" />
+    <Compile Include="Operands\ClosureTestFixtureBase.cs" />
     <Compile Include="Operands\DelegateTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />

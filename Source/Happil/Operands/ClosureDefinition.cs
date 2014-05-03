@@ -3,30 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Members;
 using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal class MethodClosure
+	internal class ClosureDefinition
 	{
 		private readonly StatementBlock m_ScopeBlock;
+		private readonly ClassType m_OwnerClass;
 		private readonly List<OperandCapture> m_Captures;
-		private readonly List<MethodClosure> m_Children;
-		private MethodClosure m_Parent;
+		private readonly List<ClosureDefinition> m_Children;
+		private ClosureDefinition m_Parent;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodClosure(StatementBlock scopeBlock)
+		public ClosureDefinition(StatementBlock scopeBlock)
 		{
 			m_ScopeBlock = scopeBlock;
+			m_OwnerClass = scopeBlock.OwnerMethod.OwnerClass;
 			m_Captures = new List<OperandCapture>();
 			m_Parent = null;
-			m_Children = new List<MethodClosure>();
+			m_Children = new List<ClosureDefinition>();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AttachToParent(MethodClosure parent)
+		public void AttachToParent(ClosureDefinition parent)
 		{
 			if ( m_Parent != null )
 			{
@@ -50,7 +53,14 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodClosure Parent
+		public void ImplementClosure()
+		{
+			
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClosureDefinition Parent
 		{
 			get
 			{
@@ -60,7 +70,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodClosure[] Children
+		public ClosureDefinition[] Children
 		{
 			get
 			{

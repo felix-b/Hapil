@@ -34,16 +34,7 @@ namespace Happil.Members
 
 		public string BodyToString()
 		{
-			var text = new StringBuilder();
-			text.Append("{");
-
-			foreach ( var statement in m_Statements )
-			{
-				text.Append(statement.ToString() + ";");
-			}
-
-			text.Append("}");
-			return text.ToString();
+			return m_Statements.ToString();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -170,10 +161,18 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal bool IsClosureRequired()
+		internal bool NeedsClosures(out ClosureIdentificationVisitor identification)
 		{
-			//TODO: this is temporary; provide real logic here
-			return (this.Kind == MemberKind.StaticAnonymousMethod && !m_HasClosure); 
+			if ( m_HasClosure )
+			{
+				identification = null;
+				return false;
+			}
+
+			identification = new ClosureIdentificationVisitor(this);
+			AcceptVisitor(identification);
+
+			return identification.ClosuresRequired;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

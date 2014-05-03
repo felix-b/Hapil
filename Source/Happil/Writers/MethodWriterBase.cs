@@ -647,7 +647,9 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			if ( m_OwnerMethod.IsClosureRequired() )
+			ClosureIdentificationVisitor closureIdentification;
+
+			if ( m_OwnerMethod.NeedsClosures(out closureIdentification) )
 			{
 				m_OwnerMethod.OwnerClass.CreateAnonymousMethodClosure(m_OwnerMethod);
 			}

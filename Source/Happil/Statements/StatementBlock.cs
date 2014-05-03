@@ -78,6 +78,22 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public override string ToString()
+		{
+			var text = new StringBuilder();
+			text.Append("{");
+
+			foreach ( var statement in m_StatementList )
+			{
+				text.Append(statement.ToString() + ";");
+			}
+
+			text.Append("}");
+			return text.ToString();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public MethodMember OwnerMethod
 		{
 			get
