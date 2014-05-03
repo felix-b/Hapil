@@ -816,6 +816,26 @@ namespace Happil.UnitTests.Assumptions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void CapturedLoopCounter()
+			{
+				var actionList = new List<Action>();
+
+				m_X = 100;
+				int y = 123;
+
+				for ( int i = 0 ; i < 10 ; i++ )
+				{
+					actionList.Add(() => { Output.Add((m_X + y + i).ToString()); });
+				}
+
+				foreach ( var action in actionList )
+				{
+					action();
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			static ClosureExamples()
 			{
 				Output = new List<string>();

@@ -174,6 +174,13 @@ namespace Happil.UnitTests
 			CompiledExamples.ClosureExamples.Output.Clear();
 			Console.WriteLine();
 			Console.WriteLine("--------------------------");
+
+			examples.CapturedLoopCounter();
+			Console.WriteLine("CapturedLoopCounter: {0}", string.Join(";", CompiledExamples.ClosureExamples.Output));
+
+			CompiledExamples.ClosureExamples.Output.Clear();
+			Console.WriteLine();
+			Console.WriteLine("--------------------------");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

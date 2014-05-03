@@ -14,7 +14,7 @@ namespace Happil.UnitTests.Operands
 	public class ClosureIdentificationVisitorTests : ClassPerTestCaseFixtureBase
 	{
 		[Test]
-		public void NoExternalOperands_NoClosure()
+		public void NoExternalOperands_NoClosures()
 		{
 			//-- Arrange
 
@@ -28,10 +28,43 @@ namespace Happil.UnitTests.Operands
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
+			MethodMember lambdaAnonymousMethod;
+			WriteMethods("One", out lambdaAnonymousMethod);
+
 			//-- Act
+
+			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
+			lambdaAnonymousMethod.AcceptVisitor(visitor);
+
+			//-- Assert
+
+			Assert.That(visitor.IsClosureRequired, Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void InternalLocalsAndArguments_NoClosures()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method(intf => intf.One).Implement(w => {
+					var input = w.Local(w.NewArray<int>(1, 2, 3));
+					var output = w.Local(input.Where(w.Delegate<int, bool>((del, x) => {
+						var remainder = del.Local(initialValue: x % 2);
+						del.Return(remainder == 0);
+					})));
+				})
+				.AllMethods().Throw<NotImplementedException>()
+				.Flush();
 
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("One", out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -59,10 +92,10 @@ namespace Happil.UnitTests.Operands
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
-			//-- Act
-
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("Two", out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -83,7 +116,7 @@ namespace Happil.UnitTests.Operands
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void ThisReference_NoClosure_ThisCaptured()
+		public void ThisReference_NoClosures_ThisCaptured()
 		{
 			//-- Arrange
 
@@ -99,10 +132,10 @@ namespace Happil.UnitTests.Operands
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
-			//-- Act
-
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("One", out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -134,10 +167,10 @@ namespace Happil.UnitTests.Operands
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
-			//-- Act
-
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("Two", out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -177,10 +210,10 @@ namespace Happil.UnitTests.Operands
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
-			//-- Act
-
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("Two", out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -200,7 +233,7 @@ namespace Happil.UnitTests.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void ThisAndExternalsFromMultipleScopes_ScopesIdentifiedAndLinked()
 		{
 			//-- Arrange
@@ -208,23 +241,24 @@ namespace Happil.UnitTests.Operands
 			Field<int> remainder;
 
 			DeriveClassFrom<object>()
-				.PrimaryConstructor("remainder", out remainder)
+				.PrimaryConstructor("Remainder", out remainder)
 				.ImplementInterface<AncestorRepository.IFewMethods>()
-				.Method<int>(intf => intf.Two).Implement((w, n) => {
-					var input = w.Local(w.NewArray<int>(1, 2, 3));
-					var r = w.Local<int>(initialValueConst: 1);
-					w.For(from: 1, to: 10, increment: 1).Do((loop, i) => {
-						var output = w.Local(input.Where(w.Lambda<int, bool>(x => (x % n) == r + i + remainder)));
+				.Method<int>(intf => intf.Two).Implement((w, n) => {		// arg1[n]
+					var input = w.Local(w.NewArray<int>(1, 2, 3));			// local0[new-arr], local1[input]
+					var r = w.Local<int>(initialValueConst: 1);				// local2[r]
+					w.For(from: 1, to: 10, increment: 1).Do((loop, i) => {  // local3[i]
+						var indexMultiply = w.Local(initialValue: i * 2);	// local4[indexMultiply]
+						var output = w.Local(input.Where(w.Lambda<int, bool>(x => (x % n) == (r + i + indexMultiply + remainder))));
 					});
 				})
 				.AllMethods().Throw<NotImplementedException>()
 				.Flush();
 
-			//-- Act
-
 			MethodMember methodTwo;
 			MethodMember lambdaAnonymousMethod;
 			WriteMethods("Two", out methodTwo, out lambdaAnonymousMethod);
+
+			//-- Act
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
@@ -232,16 +266,17 @@ namespace Happil.UnitTests.Operands
 			//-- Assert
 
 			CollectionAssert.AreEquivalent(
-				new[] { "Local2[Int32]", "Local3[Int32]", "Arg1[n]", "this" },
+				new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "Local4[Int32]", "this" },
 				visitor.Captures.ToStringArray());
 			
-			Assert.That(visitor.Captures.Find("this").SourceOperandHome, Is.Null);
-			Assert.That(visitor.Captures.Find("Arg1[n]").SourceOperandHome, Is.SameAs(methodTwo.Body));
-			Assert.That(visitor.Captures.Find("Local2[Int32]").SourceOperandHome, Is.SameAs(methodTwo.Body));
-			Assert.That(visitor.Captures.Find("Local3[Int32]").SourceOperandHome, Is.Not.SameAs(methodTwo.Body));
+			Assert.That(visitor.Captures.Find("this").SourceOperandHome, Is.Null, "'this' reference");
+			Assert.That(visitor.Captures.Find("Arg1[n]").SourceOperandHome, Is.SameAs(methodTwo.Body), "'n' argument");
+			Assert.That(visitor.Captures.Find("Local2[Int32]").SourceOperandHome, Is.SameAs(methodTwo.Body), "'r' variable");
+			Assert.That(visitor.Captures.Find("Local3[Int32]").SourceOperandHome, Is.SameAs(methodTwo.Body), "'i' loop counter variable");
+			Assert.That(visitor.Captures.Find("Local4[Int32]").SourceOperandHome, Is.Not.SameAs(methodTwo.Body), "'indexMultiply' variable");
 
 			Assert.That(methodTwo.Body.ParentBlock, Is.Null);
-			Assert.That(visitor.Captures.Find("Local3[Int32]").SourceOperandHome.ParentBlock, Is.SameAs(methodTwo.Body));
+			Assert.That(visitor.Captures.Find("Local4[Int32]").SourceOperandHome.ParentBlock, Is.SameAs(methodTwo.Body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -453,7 +453,14 @@ namespace Happil.Operands
 		{
 			if ( value is IOperand )
 			{
-				return (Operand<T>)value;
+				var conversionResult = (value as Operand<T>);
+
+				if ( object.ReferenceEquals(conversionResult, null) )
+				{
+					throw new InvalidCastException(string.Format("Cannot convert Operand<{0}> to Operand<{1}>.", ((IOperand)value).OperandType, typeof(T)));
+				}
+
+				return conversionResult;
 			}
 			else
 			{
