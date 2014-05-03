@@ -67,10 +67,11 @@
     <Compile Include="ExceptionRepository.cs" />
     <Compile Include="Expressions\BinaryOperatorTests.cs" />
     <Compile Include="Expressions\ExpressionTreeTests.cs" />
+    <Compile Include="OperandExtensions.cs" />
     <Compile Include="Operands\DelegateTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />
-    <Compile Include="Operands\ExternalOperandVisitorTests.cs" />
+    <Compile Include="Operands\ClosureIdentificationVisitorTests.cs" />
     <Compile Include="Operands\OperandVisitorBaseTests.cs" />
     <Compile Include="Operands\PropertyTests.cs" />
     <Compile Include="Expressions\TernaryConditionalOperatorTests.cs" />

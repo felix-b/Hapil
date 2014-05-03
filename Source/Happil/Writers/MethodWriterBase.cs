@@ -239,6 +239,13 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public HappilForShortSyntax For(Operand<int> from, Operand<int> to, int increment = 1)
+		{
+			return new HappilForShortSyntax(OwnerMethod, from, to, increment);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IHappilForWhileSyntax For(Action precondition)
 		{
 			return OwnerMethod.AddStatement(new ForStatement(precondition));

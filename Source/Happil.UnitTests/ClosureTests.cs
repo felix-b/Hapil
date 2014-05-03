@@ -100,11 +100,11 @@ namespace Happil.UnitTests
 				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.Method<int>(intf => intf.Three).Implement(w => {
 					var numerator = w.Local(123);
-					var isOdd = w.Local(initialValue: w.Delegate<int, int>((ww, x) => {
+					var remainder = w.Local(initialValue: w.Delegate<int, int>((ww, x) => {
 						Static.Prop(() => AnonymousMethodInfo).Assign(Static.Func(MethodBase.GetCurrentMethod));
 						ww.Return(numerator % x);
 					}));
-					w.Return(isOdd.Invoke(w.Const(100)));
+					w.Return(remainder.Invoke(w.Const(100)));
 				})
 				.AllMethods().Throw<NotImplementedException>();
 
