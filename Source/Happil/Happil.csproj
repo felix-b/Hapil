@@ -84,6 +84,7 @@
     <Compile Include="Expressions\NewObjectExpression.cs" />
     <Compile Include="Expressions\NewStructExpression.cs" />
     <Compile Include="Operands\IAcceptOperandVisitor.cs" />
+    <Compile Include="Operands\MethodClosure.cs" />
     <Compile Include="Operands\OperandCapture.cs" />
     <Compile Include="Operands\OperandKind.cs" />
     <Compile Include="Operands\OperandVisitorBase.cs" />
