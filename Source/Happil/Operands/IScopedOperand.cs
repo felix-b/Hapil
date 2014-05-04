@@ -10,5 +10,6 @@ namespace Happil.Operands
 	internal interface IScopedOperand
 	{
 		StatementBlock HomeStatementBlock { get; }
+		string CaptureName { get; }
 	}
 }

@@ -25,7 +25,7 @@ namespace Happil.Members
 		protected override TypeBuilder CreateTypeBuilder(DynamicModule module, string classFullName, Type baseType, ClassType containingClass)
 		{
 			return containingClass.TypeBuilder.DefineNestedType(
-				TakeMemberName(classFullName, mustUseThisName: false), 
+				containingClass.TakeMemberName(classFullName, mustUseThisName: false), 
 				TypeAttributes.NestedPrivate, 
 				baseType);
 		}

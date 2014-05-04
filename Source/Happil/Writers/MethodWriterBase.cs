@@ -647,21 +647,12 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			ClosureIdentificationVisitor closureIdentification;
-
-			if ( m_OwnerMethod.NeedsClosures(out closureIdentification) )
+			if ( m_OwnerMethod.IsAnonymous )
 			{
-				m_OwnerMethod.OwnerClass.CreateAnonymousMethodClosure(m_OwnerMethod);
+				WriteMethodClosureIfNeeded();
 			}
 
-			if ( m_OwnerMethod.MethodFactory.ReturnParameter != null && m_ReturnAttributeWriter != null )
-			{
-				foreach ( var attribute in m_ReturnAttributeWriter.GetAttributes() )
-				{
-					m_OwnerMethod.MethodFactory.ReturnParameter.SetCustomAttribute(attribute);
-				}
-			}
-
+			WriteReturnAttributesIfAny();
 			base.Flush();
 		}
 
@@ -735,6 +726,37 @@ namespace Happil.Writers
 			get
 			{
 				return m_InnerWriters;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void WriteReturnAttributesIfAny()
+		{
+			if ( m_OwnerMethod.MethodFactory.ReturnParameter != null && m_ReturnAttributeWriter != null )
+			{
+				foreach ( var attribute in m_ReturnAttributeWriter.GetAttributes() )
+				{
+					m_OwnerMethod.MethodFactory.ReturnParameter.SetCustomAttribute(attribute);
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void WriteMethodClosureIfNeeded()
+		{
+			if ( !m_OwnerMethod.HasClosure )
+			{
+				IClosureIdentification closureIdentification;
+
+				if ( m_OwnerMethod.NeedsClosures(out closureIdentification) )
+				{
+					foreach ( var closure in closureIdentification.ClosuresOuterToInner )
+					{
+						closure.ImplementClosure();
+					}
+				}
 			}
 		}
 	}

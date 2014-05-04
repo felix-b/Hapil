@@ -9,7 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal class ClosureIdentificationVisitor : OperandVisitorBase
+	internal class ClosureIdentificationVisitor : OperandVisitorBase, IClosureIdentification
 	{
 		private readonly MethodMember m_Method;
 		private readonly HashSet<IOperand> m_Externals = new HashSet<IOperand>();
@@ -17,6 +17,7 @@ namespace Happil.Operands
 		private readonly Dictionary<StatementBlock, ClosureDefinition> m_Closures = new Dictionary<StatementBlock, ClosureDefinition>();
 		private ClosureDefinition m_OutermostClosure = null;
 		private ClosureDefinition m_InnermostClosure = null;
+		private ClosureDefinition[] m_ClosuresFromOuterToInner = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -35,6 +36,7 @@ namespace Happil.Operands
 				LinkParentChildClosures();
 				FindInnermostClosure();
 				MapUnscopedCapturesToOutermostClosure();
+				ListClosuresInOuterToInnerOrder();
 			}
 		}
 
@@ -85,6 +87,16 @@ namespace Happil.Operands
 			get
 			{
 				return m_InnermostClosure;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClosureDefinition[] ClosuresOuterToInner
+		{
+			get
+			{
+				return m_ClosuresFromOuterToInner;
 			}
 		}
 
@@ -169,6 +181,21 @@ namespace Happil.Operands
 			{
 				m_OutermostClosure.AddCapture(capture);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void ListClosuresInOuterToInnerOrder()
+		{
+			var orderedClosureList = new List<ClosureDefinition>();
+
+			for ( var closure = m_InnermostClosure ; closure != null ; closure = closure.Parent )
+			{
+				orderedClosureList.Add(closure);
+			}
+
+			orderedClosureList.Reverse();
+			m_ClosuresFromOuterToInner = orderedClosureList.ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -161,7 +161,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal bool NeedsClosures(out ClosureIdentificationVisitor identification)
+		internal bool NeedsClosures(out IClosureIdentification identification)
 		{
 			if ( m_HasClosure )
 			{
@@ -169,8 +169,10 @@ namespace Happil.Members
 				return false;
 			}
 
-			identification = new ClosureIdentificationVisitor(this);
-			AcceptVisitor(identification);
+			var visitor = new ClosureIdentificationVisitor(this);
+			AcceptVisitor(visitor);
+			visitor.DefineClosures();
+			identification = visitor;
 
 			return identification.ClosuresRequired;
 		}
