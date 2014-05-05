@@ -53,6 +53,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void Insert(int index, params StatementBase[] statements)
+		{
+			m_StatementList.InsertRange(index, statements);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void RemoveExpressionStatement(IExpressionOperand expression)
 		{
 			for ( int index = m_StatementList.Count - 1 ; index >= 0 ; index-- )

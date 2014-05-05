@@ -1,10 +1,12 @@
+using System;
+using Happil.Members;
 using Happil.Statements;
 
 namespace Happil.Operands
 {
 	internal class OperandCapture
 	{
-		public OperandCapture(IOperand sourceOperand, StatementBlock sourceOperandHome)
+		public OperandCapture(IScopedOperand sourceOperand, StatementBlock sourceOperandHome)
 		{
 			this.SourceOperand = sourceOperand;
 			this.SourceOperandHome = sourceOperandHome;
@@ -14,13 +16,33 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return (RewrittenOperand != null ? RewrittenOperand.ToString() : SourceOperand.ToString());
+			return (HoistedField != null ? HoistedField.ToString() : SourceOperand.ToString());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public StatementBlock SourceOperandHome { get; private set; }
-		public IOperand SourceOperand { get; private set; }
-		public IOperand RewrittenOperand { get; private set; }
+		public IScopedOperand SourceOperand { get; private set; }
+		public FieldMember HoistedField { get; set; }
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public string Name
+		{
+			get
+			{
+				return SourceOperand.CaptureName;
+			}
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Type OperandType
+		{
+			get
+			{
+				return SourceOperand.OperandType;
+			}
+		}
 	}
 }

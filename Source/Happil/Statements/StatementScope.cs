@@ -21,6 +21,8 @@ namespace Happil.Statements
 		private readonly ExceptionBlockType m_InheritedExceptionBlockType;
 		private readonly TryStatement m_ThisExceptionStatement;
 		private readonly ExceptionBlockType m_ThisExceptionBlockType;
+		private readonly bool m_IsRewriteMode;
+		private int m_RewriteInsertionIndex;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -75,6 +77,30 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public StatementScope(StatementBlock statementBlock, RewriteMode rewriteMode)
+		{
+			m_Previous = s_Current;
+			m_Root = m_Previous.Root;
+
+			m_StatementBlock = statementBlock;
+			m_OwnerMethod = statementBlock.OwnerMethod;
+			m_OwnerClass = statementBlock.OwnerMethod.OwnerClass;
+			m_Depth = 1;
+
+			m_ThisExceptionBlockType = ExceptionBlockType.None;
+			m_ThisExceptionStatement = null;
+			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
+			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
+
+			m_StatementBlock = statementBlock;
+			m_IsRewriteMode = true;
+			m_RewriteInsertionIndex = 0;
+
+			s_Current = this;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public StatementScope(StatementBlock statementBlock, TryStatement exceptionStatement, ExceptionBlockType blockType)
 			: this(statementBlock)
 		{
@@ -116,8 +142,15 @@ namespace Happil.Statements
 					effectiveStatementToAdd = tryStatement.WrapLeaveStatement(leaveStatement);
 				}
 			}
-			
-			m_StatementBlock.Add(effectiveStatementToAdd);
+
+			if ( m_IsRewriteMode )
+			{
+				m_StatementBlock.Insert(m_RewriteInsertionIndex++, effectiveStatementToAdd);
+			}
+			else
+			{
+				m_StatementBlock.Add(effectiveStatementToAdd);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -344,6 +377,13 @@ namespace Happil.Statements
 			{
 				return (s_Current != null);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public enum RewriteMode
+		{
+			On
 		}
 	}
 }

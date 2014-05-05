@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Expressions;
 using Happil.Members;
 using Happil.Statements;
 using Happil.Writers;
@@ -16,8 +17,10 @@ namespace Happil.Operands
 		private readonly MethodMember m_OwnerMethod;
 		private readonly List<OperandCapture> m_Captures;
 		private readonly List<ClosureDefinition> m_Children;
+		private bool m_ParentCapturesPulled;
 		private ClosureDefinition m_Parent;
 		private ClassType m_ClosureClass;
+		private FieldMember m_ParentField;
 		private IOperand m_ClosureInstanceReference;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,6 +65,25 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void PullCapturesFromParent()
+		{
+			if ( m_Parent == null || m_ParentCapturesPulled )
+			{
+				return;
+			}
+
+			ValidateMutability();
+
+			foreach ( var parentCapture in m_Parent.Captures )
+			{
+				m_Captures.Add(parentCapture);
+			}
+
+			m_ParentCapturesPulled = true;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void ImplementClosure()
 		{
 			if ( m_ClosureClass != null )
@@ -76,12 +98,38 @@ namespace Happil.Operands
 
 			var writer = new ImplementationClassWriter<object>(m_ClosureClass);
 
-			foreach ( var capture in m_Captures )
+			if ( m_Parent != null )
 			{
-				//writer.DefineField(capture.)
+				m_ParentField = writer.DefineField(
+					name: "Parent", 
+					isStatic: false, 
+					isPublic: true, 
+					fieldType: m_Parent.ClosureClass.TypeBuilder);
 			}
 
-			writer.Flush();
+			foreach ( var capture in m_Captures )
+			{
+				if ( capture.SourceOperandHome == m_ScopeBlock )
+				{
+					capture.HoistedField = writer.DefineField(
+						name: "<hoisted>" + capture.Name,
+						isStatic: false,
+						isPublic: true,
+						fieldType: capture.OperandType);
+				}
+			}
+
+			m_ClosureClass.Compile();
+
+			using ( TypeTemplate.CreateScope<TypeTemplate.TClosure>(m_ClosureClass.TypeBuilder) )
+			{
+				using ( new StatementScope(m_ScopeBlock, StatementScope.RewriteMode.On) )
+				{
+					var rewriter = m_ScopeBlock.OwnerMethod.TransparentWriter;
+					var closureInstance =  rewriter.Local<TypeTemplate.TClosure>();
+					var newStatement = new ExpressionStatement(new NewObjectExpression<TypeTemplate.TClosure>(new IOperand[0]));
+				}
+			}
 			m_ClosureInstanceReference = null;
 		}
 

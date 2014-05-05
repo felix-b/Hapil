@@ -37,6 +37,7 @@ namespace Happil.Operands
 				FindInnermostClosure();
 				MapUnscopedCapturesToOutermostClosure();
 				ListClosuresInOuterToInnerOrder();
+				PushOuterCapturesDownToInnerClosures();
 			}
 		}
 
@@ -111,19 +112,20 @@ namespace Happil.Operands
 
 		protected override void OnVisitOperand(ref IOperand operand)
 		{
-			var operandHome = ((IScopedOperand)operand).HomeStatementBlock;
+			var scopedOperand = (IScopedOperand)operand;
+			var operandHome = scopedOperand.HomeStatementBlock;
 
 			if ( operandHome != null )
 			{
 				if ( operandHome.OwnerMethod != m_Method )
 				{
 					m_Externals.Add(operand);
-					m_Captures.Add(new OperandCapture(operand, operandHome));
+					m_Captures.Add(new OperandCapture(scopedOperand, operandHome));
 				}
 			}
 			else
 			{
-				m_Captures.Add(new OperandCapture(operand, sourceOperandHome: null));
+				m_Captures.Add(new OperandCapture(scopedOperand, sourceOperandHome: null));
 			}
 		}
 
@@ -196,6 +198,16 @@ namespace Happil.Operands
 
 			orderedClosureList.Reverse();
 			m_ClosuresFromOuterToInner = orderedClosureList.ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void PushOuterCapturesDownToInnerClosures()
+		{
+			foreach ( var closure in m_ClosuresFromOuterToInner )
+			{
+				closure.PullCapturesFromParent();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

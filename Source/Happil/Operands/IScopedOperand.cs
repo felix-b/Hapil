@@ -7,9 +7,10 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal interface IScopedOperand
+	internal interface IScopedOperand : IOperand
 	{
 		StatementBlock HomeStatementBlock { get; }
 		string CaptureName { get; }
+		bool ShouldInitializeHoistedField { get; }
 	}
 }
