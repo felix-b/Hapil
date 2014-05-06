@@ -17,6 +17,7 @@ namespace Happil.Operands
 		private readonly MethodMember m_OwnerMethod;
 		private readonly List<OperandCapture> m_Captures;
 		private readonly List<ClosureDefinition> m_Children;
+		private readonly Dictionary<OperandCapture, IOperand> m_RewrittenOperands;
 		private bool m_ParentCapturesPulled;
 		private ClosureDefinition m_Parent;
 		private ClassType m_ClosureClass;
@@ -33,6 +34,7 @@ namespace Happil.Operands
 			m_Captures = new List<OperandCapture>();
 			m_Parent = null;
 			m_Children = new List<ClosureDefinition>();
+			m_RewrittenOperands = new Dictionary<OperandCapture, IOperand>();
 			m_ClosureClass = null;
 		}
 
@@ -107,16 +109,9 @@ namespace Happil.Operands
 					fieldType: m_Parent.ClosureClass.TypeBuilder);
 			}
 
-			foreach ( var capture in m_Captures )
+			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == m_ScopeBlock) )
 			{
-				if ( capture.SourceOperandHome == m_ScopeBlock )
-				{
-					capture.HoistedField = writer.DefineField(
-						name: "<hoisted>" + capture.Name,
-						isStatic: false,
-						isPublic: true,
-						fieldType: capture.OperandType);
-				}
+				capture.DefineHoistedField(writer);
 			}
 
 			m_ClosureClass.Compile();
@@ -126,10 +121,34 @@ namespace Happil.Operands
 				using ( new StatementScope(m_ScopeBlock, StatementScope.RewriteMode.On) )
 				{
 					var rewriter = m_ScopeBlock.OwnerMethod.TransparentWriter;
-					var closureInstance =  rewriter.Local<TypeTemplate.TClosure>();
-					var newStatement = new ExpressionStatement(new NewObjectExpression<TypeTemplate.TClosure>(new IOperand[0]));
+					var closureInstance = rewriter.Local<TypeTemplate.TClosure>();
+					closureInstance.Assign(rewriter.New<TypeTemplate.TClosure>());
+					
+					foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == m_ScopeBlock) )
+					{
+						using ( TypeTemplate.CreateScope<TypeTemplate.TField>(capture.OperandType) )
+						{
+							if ( capture.SourceOperand.ShouldInitializeHoistedField )
+							{
+								capture.HoistedField.AsOperand<TypeTemplate.TField>().Assign(capture.SourceOperand.CastTo<TypeTemplate.TField>());
+							}
+
+							m_RewrittenOperands.Add(capture, new Field<TypeTemplate.TField>(closureInstance, capture.HoistedField));
+						}
+					}
+
+					foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome != m_ScopeBlock) )
+					{
+						//throw new NotImplementedException("Multiple closures are not yet implemented.");
+						//using ( TypeTemplate.CreateScope<TypeTemplate.TField>(capture.OperandType) )
+						//{
+						//	m_RewrittenOperands.Add(capture, new Field<TypeTemplate.TField>(closureInstance, capture.HoistedField));
+						//	capture.HoistedField.AsOperand<TypeTemplate.TField>().Assign(capture.SourceOperand.CastTo<TypeTemplate.TField>());
+						//}
+					}
 				}
 			}
+
 			m_ClosureInstanceReference = null;
 		}
 

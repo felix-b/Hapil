@@ -1,6 +1,7 @@
 using System;
 using Happil.Members;
 using Happil.Statements;
+using Happil.Writers;
 
 namespace Happil.Operands
 {
@@ -14,6 +15,17 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void DefineHoistedField(ClassWriterBase closureClassWriter)
+		{
+			this.HoistedField = closureClassWriter.DefineField(
+				name: "<hoisted>" + this.Name,
+				isStatic: false,
+				isPublic: true,
+				fieldType: this.OperandType);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override string ToString()
 		{
 			return (HoistedField != null ? HoistedField.ToString() : SourceOperand.ToString());
@@ -23,7 +35,7 @@ namespace Happil.Operands
 
 		public StatementBlock SourceOperandHome { get; private set; }
 		public IScopedOperand SourceOperand { get; private set; }
-		public FieldMember HoistedField { get; set; }
+		public FieldMember HoistedField { get; private set; }
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
