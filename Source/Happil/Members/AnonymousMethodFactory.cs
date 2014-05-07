@@ -9,8 +9,8 @@ namespace Happil.Members
 {
 	public class AnonymousMethodFactory : MethodFactoryBase
 	{
-		private readonly MethodSignature m_Signature;
 		private readonly string m_MethodName;
+		private MethodSignature m_Signature;
 		private MethodAttributes m_MethodAttributes;
 		private MethodBuilder m_MethodBuilder;
 		private ParameterBuilder[] m_Parameters;
@@ -155,6 +155,38 @@ namespace Happil.Members
 
 			m_ClassType = closureClass;
 			m_MethodAttributes = (m_MethodAttributes & ~(MethodAttributes.Private)) | MethodAttributes.Public;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void ChangeMethodAttributes(bool? isPublic = null, bool? isStatic = null)
+		{
+			if ( m_MethodBuilder != null )
+			{
+				throw new InvalidOperationException("Cannot change method attributes because MethodBuilder is already created.");
+			}
+
+			var clearFlags = (MethodAttributes)0;
+			var setFlags = (MethodAttributes)0;
+
+			if ( isPublic.HasValue )
+			{
+				clearFlags |= (MethodAttributes.Private | MethodAttributes.Public);
+				setFlags |= isPublic.Value ? MethodAttributes.Public : MethodAttributes.Private;
+			}
+
+			if ( isStatic.HasValue )
+			{
+				clearFlags |= MethodAttributes.Static;
+
+				if ( isStatic.Value )
+				{
+					setFlags |= MethodAttributes.Static;
+				}
+			}
+
+			m_MethodAttributes = (m_MethodAttributes & ~clearFlags) | setFlags;
+			m_Signature = m_Signature.ChangeModifiers(isPublic, isStatic);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

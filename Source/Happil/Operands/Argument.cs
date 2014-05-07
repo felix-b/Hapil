@@ -10,7 +10,7 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand
+	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand, ITransformType
 	{
 		private readonly MethodMember m_OwnerMethod;
 		private readonly byte m_Index;
@@ -32,7 +32,7 @@ namespace Happil.Operands
 			m_OwnerMethod = ownerMethod;
 			var signature = ownerMethod.Signature;
 
-			m_Index = (ownerMethod.IsStatic ? (byte)(index - 1) : index);
+			m_Index = index;
 			m_Name = signature.ArgumentName[index - 1];
 			m_IsByRef = signature.ArgumentIsByRef[index - 1];
 			m_IsOut = signature.ArgumentIsOut[index - 1];
@@ -43,7 +43,7 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return string.Format("Arg{0}[{1}]", m_Index, m_Name);
+			return string.Format("Arg{0}[{1}]", this.Index, m_Name);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,6 +76,17 @@ namespace Happil.Operands
 			{
 				return true;
 			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region ITransformType Members
+
+		Operand<TCast> ITransformType.TransformToType<TCast>()
+		{
+			return new Argument<TCast>(m_OwnerMethod, m_Index);
 		}
 
 		#endregion
@@ -129,7 +140,14 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return m_Index;
+				if ( m_OwnerMethod.IsStatic )
+				{
+					return m_Index - 1;
+				}
+				else
+				{
+					return m_Index;
+				}
 			}
 		}
 
@@ -187,7 +205,7 @@ namespace Happil.Operands
 		{
 			if ( !m_IsByRef )
 			{
-				il.Emit(OpCodes.Starg_S, m_Index);
+				il.Emit(OpCodes.Starg_S, this.Index);
 			}
 			else if ( !OperandType.IsValueType )
 			{
@@ -209,7 +227,7 @@ namespace Happil.Operands
 			}
 			else
 			{
-				il.Emit(OpCodes.Ldarga_S, m_Index);
+				il.Emit(OpCodes.Ldarga_S, this.Index);
 			}
 		}
 
@@ -217,7 +235,7 @@ namespace Happil.Operands
 
 		private void EmitLdarg(ILGenerator il)
 		{
-			switch ( m_Index )
+			switch ( this.Index )
 			{
 				case 0:
 					il.Emit(OpCodes.Ldarg_0);
@@ -232,7 +250,7 @@ namespace Happil.Operands
 					il.Emit(OpCodes.Ldarg_3);
 					break;
 				default:
-					il.Emit(OpCodes.Ldarg_S, m_Index);
+					il.Emit(OpCodes.Ldarg_S, this.Index);
 					break;
 			}
 		}

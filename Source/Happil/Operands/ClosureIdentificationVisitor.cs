@@ -43,6 +43,23 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodMember HostMethod
+		{
+			get
+			{
+				if ( m_OutermostClosure != null )
+				{
+					return m_OutermostClosure.ScopeBlock.OwnerMethod;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public IOperand[] Externals
 		{
 			get

@@ -19,11 +19,7 @@ namespace Happil.Operands
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			var methodFactory = (
-				ownerMethod.IsStatic
-				? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn))
-				: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn)));
-
+			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn));
 			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
 
 			ownerMethod.OwnerClass.AddMember(m_Method);
@@ -64,7 +60,18 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
+			if ( m_Method.HasClosure )
+			{
+				var target = m_Method.Closure.ClosureInstanceReference;
+
+				target.EmitTarget(il);
+				target.EmitLoad(il);
+			}
+			else
+			{
+				il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
+			}
+
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}
@@ -105,10 +112,12 @@ namespace Happil.Operands
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			var methodFactory = (
-				ownerMethod.IsStatic
-				? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn))
-				: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn)));
+			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
+
+			//var methodFactory = (
+			//	ownerMethod.IsStatic
+			//	? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn))
+			//	: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn)));
 
 			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
 
@@ -150,7 +159,18 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
+			if ( m_Method.HasClosure )
+			{
+				var target = m_Method.Closure.ClosureInstanceReference;
+
+				target.EmitTarget(il);
+				target.EmitLoad(il);
+			}
+			else
+			{
+				il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
+			}
+
 			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
 			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
 		}

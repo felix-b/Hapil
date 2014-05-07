@@ -9,7 +9,7 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class Local<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand
+	public class Local<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand, ITransformType
 	{
 		private readonly StatementBlock m_HomeStatementBlock;
 		private readonly LocalBuilder m_LocalBuilder;
@@ -20,6 +20,14 @@ namespace Happil.Operands
 		{
 			m_HomeStatementBlock = (StatementScope.Exists ? StatementScope.Current.StatementBlock : ownerMethod.Body);
 			m_LocalBuilder = ownerMethod.MethodFactory.GetILGenerator().DeclareLocal(TypeTemplate.Resolve<T>());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private Local(StatementBlock homeStatementBlock, LocalBuilder localBuilder)
+		{
+			m_HomeStatementBlock = homeStatementBlock;
+			m_LocalBuilder = localBuilder;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -52,6 +60,17 @@ namespace Happil.Operands
 			{
 				return false;
 			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region ITransformType Members
+
+		Operand<TCast> ITransformType.TransformToType<TCast>()
+		{
+			return new Local<TCast>(m_HomeStatementBlock, m_LocalBuilder);
 		}
 
 		#endregion

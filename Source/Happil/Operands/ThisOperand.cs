@@ -10,7 +10,7 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class ThisOperand<T> : Operand<T>, IScopedOperand
+	public class ThisOperand<T> : Operand<T>, IScopedOperand, ITransformType
 	{
 		private readonly ClassType m_OwnerClass;
 
@@ -72,6 +72,17 @@ namespace Happil.Operands
 			{
 				return true;
 			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region ITransformType Members
+
+		Operand<TCast> ITransformType.TransformToType<TCast>()
+		{
+			return new ThisOperand<TCast>(m_OwnerClass);
 		}
 
 		#endregion

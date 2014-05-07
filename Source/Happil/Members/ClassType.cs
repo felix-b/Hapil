@@ -116,7 +116,7 @@ namespace Happil.Members
 						action(member);
 					}
 					
-					if ( !object.ReferenceEquals(member, m_Members[index]) )
+					if ( index >= m_Members.Count || !object.ReferenceEquals(member, m_Members[index]) )
 					{
 						continue; // member was deleted (moved to nested class, e.g. closure)
 					}
@@ -199,26 +199,18 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void CreateAnonymousMethodClosure(MethodMember method)
+		internal void MoveMember(MemberBase member, ClassType destination)
 		{
-			var closureClass = new NestedClassType(
-				containingClass: this, 
-				classFullName: method.Name + "Closure", 
-				baseType: typeof(object));
+			m_Members.Remove(member);
 
-			m_Members.Remove(method);
+			MemberBase memberByName;
 
-			MemberBase methodByName;
-
-			if ( m_MembersByName.TryGetValue(method.Name, out methodByName) && methodByName == method )
+			if ( m_MembersByName.TryGetValue(member.Name, out memberByName) && memberByName == member )
 			{
-				m_MembersByName.Remove(method.Name);
+				m_MembersByName.Remove(member.Name);
 			}
 
-			method.MoveAnonymousMethodToClosure(closureClass);
-			closureClass.AddMember(method);
-
-			m_NestedClasses.Add(closureClass);
+			destination.AddMember(member);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -282,13 +274,13 @@ namespace Happil.Members
 			ForEachMember<MemberBase>(m => m.Write());
 			ForEachMember<MemberBase>(m => m.Compile());
 
+			m_CompiledType = m_TypeBuilder.CreateType();
+			FixupFactoryMethods();
+			
 			foreach ( var nestedClass in m_NestedClasses )
 			{
 				nestedClass.Compile();
 			}
-			
-			m_CompiledType = m_TypeBuilder.CreateType();
-			FixupFactoryMethods();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

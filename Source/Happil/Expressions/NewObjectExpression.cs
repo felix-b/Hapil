@@ -40,6 +40,24 @@ namespace Happil.Expressions
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public NewObjectExpression(ConstructorInfo constructor, IOperand[] constructorArguments)
+		{
+			m_ObjectType = TypeTemplate.Resolve<TObject>();
+			m_ConstructorArguments = constructorArguments;
+			m_Constructor = constructor;
+
+			var scope = StatementScope.Current;
+
+			foreach ( var argument in constructorArguments.Reverse() )
+			{
+				scope.Consume(argument);
+			}
+
+			scope.RegisterExpressionStatement(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region IAcceptOperandVisitor Members
 
 		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)

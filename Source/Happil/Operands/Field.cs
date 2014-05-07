@@ -9,7 +9,7 @@ using Happil.Operands;
 
 namespace Happil.Operands
 {
-	public class Field<T> : MutableOperand<T>, IAcceptOperandVisitor
+	public class Field<T> : MutableOperand<T>, IAcceptOperandVisitor, ITransformType
 	{
 		private readonly FieldInfo m_FieldInfo;
 		private readonly FieldMember m_FieldMember;
@@ -38,9 +38,26 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal Field(string name, IOperand target, FieldInfo fieldInfo, FieldMember fieldMember)
+		{
+			m_Name = name;
+			m_Target = target;
+			m_FieldInfo = fieldInfo;
+			m_FieldMember = fieldMember;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
 		{
 			visitor.VisitOperand(ref m_Target);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		Operand<TCast> ITransformType.TransformToType<TCast>()
+		{
+			return new Field<TCast>(m_Name, m_Target, m_FieldInfo, m_FieldMember);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -93,6 +93,18 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodSignature ChangeModifiers(bool? isPublic, bool? isStatic)
+		{
+			return new MethodSignature(
+				isStatic ?? this.IsStatic,
+				isPublic ?? this.IsPublic,
+				argumentTypes:this.ArgumentType,
+				argumentNames: this.ArgumentName,
+				returnType: this.ReturnType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region Overrides of Object
 
 		public override string ToString()

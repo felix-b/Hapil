@@ -50,7 +50,7 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(result, Is.EqualTo(23));
-			Assert.That(AnonymousMethodInfo.IsStatic, Is.False);
+			Assert.That(AnonymousMethodInfo.IsStatic, Is.True);
 			Assert.That(AnonymousMethodInfo.DeclaringType, Is.SameAs(obj.GetType()));
 		}
 
@@ -90,7 +90,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("not implemented")]
+		[Test]
 		public void CaptureLocal()
 		{
 			//-- Arrange
@@ -118,7 +118,8 @@ namespace Happil.UnitTests
 			Assert.That(result, Is.EqualTo(23));
 			Assert.That(AnonymousMethodInfo.IsStatic, Is.False);
 			Assert.That(AnonymousMethodInfo.DeclaringType, Is.Not.SameAs(obj.GetType()));
-			Assert.That(obj.GetType().GetNestedTypes().Contains(AnonymousMethodInfo.DeclaringType));
+			Assert.That(AnonymousMethodInfo.DeclaringType.IsNested);
+			//Assert.That(obj.GetType().GetNestedTypes().Contains(AnonymousMethodInfo.DeclaringType));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

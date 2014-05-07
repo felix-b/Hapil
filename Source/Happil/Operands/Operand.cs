@@ -45,8 +45,13 @@ namespace Happil.Operands
 
 		#region IOperand Members
 
-		public Operand<TCast> CastTo<TCast>()
+		public virtual Operand<TCast> CastTo<TCast>()
 		{
+			if ( this is ITransformType && TypeTemplate.Resolve<TCast>() == m_OperandType )
+			{
+				return ((ITransformType)this).TransformToType<TCast>();
+			}
+
 			return new BinaryExpressionOperand<T, Type, TCast>(
 				@operator: new BinaryOperators.OperatorCastOrThrow<T>(),
 				left: this,
@@ -62,6 +67,11 @@ namespace Happil.Operands
 			if ( castType.IsValueType && !castType.IsNullableValueType() )
 			{
 				throw new ArgumentException("The cast type must be a reference type or a nullable value type.");
+			}
+
+			if ( this is ITransformType && TypeTemplate.Resolve<TCast>() == m_OperandType )
+			{
+				return ((ITransformType)this).TransformToType<TCast>();
 			}
 
 			return new BinaryExpressionOperand<T, Type, TCast>(

@@ -647,7 +647,7 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			if ( m_OwnerMethod.IsAnonymous )
+			if ( m_OwnerMethod.IsAnonymous && !m_OwnerMethod.SuppressAutomaticClosures )
 			{
 				WriteMethodClosureIfNeeded();
 			}
@@ -749,15 +749,54 @@ namespace Happil.Writers
 			if ( !m_OwnerMethod.HasClosure )
 			{
 				IClosureIdentification closureIdentification;
+				var closuresNeeded = m_OwnerMethod.NeedsClosures(out closureIdentification);
 
-				if ( m_OwnerMethod.NeedsClosures(out closureIdentification) )
+				if ( closureIdentification.Captures.Length > 0 )
 				{
-					foreach ( var closure in closureIdentification.ClosuresOuterToInner )
+					MakeInstanceMethod();
+				}
+
+				if ( closuresNeeded )
+				{
+					using ( StatementScope.Stash() )
 					{
-						closure.ImplementClosure();
+						ImplementClosureClasses(closureIdentification);
+						RewriteCapturedOperandsInHostMethod(closureIdentification);
 					}
 				}
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void MakeInstanceMethod()
+		{
+			((AnonymousMethodFactory)m_OwnerMethod.MethodFactory).ChangeMethodAttributes(isStatic: false);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void ImplementClosureClasses(IClosureIdentification closureIdentification)
+		{
+			foreach ( var closure in closureIdentification.ClosuresOuterToInner )
+			{
+				if ( closure == closureIdentification.InnermostClosure )
+				{
+					closure.ImplementClosure(anonymousMethodToHoist: m_OwnerMethod);
+				}
+				else
+				{
+					closure.ImplementClosure();
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private void RewriteCapturedOperandsInHostMethod(IClosureIdentification closureIdentification)
+		{
+			var hostMethodRewriter = new ClosureHostMethodRewritingVisitor(closureIdentification);
+			closureIdentification.HostMethod.AcceptVisitor(hostMethodRewriter);
 		}
 	}
 }

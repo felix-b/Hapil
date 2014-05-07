@@ -414,5 +414,15 @@ namespace Happil.UnitTests.Operands
 				new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "this", "Local4[Int32]" }, // parent captures are pulled by child closure
 				visitor.InnermostClosure.Captures.ToStringArray());
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override bool SuppressAutomaticClosures
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

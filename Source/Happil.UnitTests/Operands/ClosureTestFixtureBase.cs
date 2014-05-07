@@ -23,12 +23,23 @@ namespace Happil.UnitTests.Operands
 			implementedMethod.Write();
 
 			lambaAnonymousMethod = base.Class.GetAllMembers().OfType<MethodMember>().Single(m => m.IsAnonymous);
+			lambaAnonymousMethod.SuppressAutomaticClosures = this.SuppressAutomaticClosures;
 			lambaAnonymousMethod.Write();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override bool ShouldSaveAssembly
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected virtual bool SuppressAutomaticClosures
 		{
 			get
 			{

@@ -64,7 +64,7 @@ namespace Happil.Operands
 				}
 				else
 				{
-					operand = (IOperand<T>)replaceable;
+					operand = replaceable.CastTo<T>();
 				}
 			}
 		}
@@ -108,7 +108,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void VisitStatementBlock(StatementBlock statementBlock)
+		public virtual void VisitStatementBlock(StatementBlock statementBlock)
 		{
 			if ( statementBlock != null )
 			{

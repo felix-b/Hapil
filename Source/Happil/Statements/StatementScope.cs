@@ -80,7 +80,7 @@ namespace Happil.Statements
 		public StatementScope(StatementBlock statementBlock, RewriteMode rewriteMode)
 		{
 			m_Previous = s_Current;
-			m_Root = m_Previous.Root;
+			m_Root = (m_Previous != null ? m_Previous.Root : this);
 
 			m_StatementBlock = statementBlock;
 			m_OwnerMethod = statementBlock.OwnerMethod;
@@ -89,8 +89,12 @@ namespace Happil.Statements
 
 			m_ThisExceptionBlockType = ExceptionBlockType.None;
 			m_ThisExceptionStatement = null;
-			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
-			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
+
+			if ( m_Previous != null )
+			{
+				m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
+				m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
+			}
 
 			m_StatementBlock = statementBlock;
 			m_IsRewriteMode = true;
@@ -143,14 +147,7 @@ namespace Happil.Statements
 				}
 			}
 
-			if ( m_IsRewriteMode )
-			{
-				m_StatementBlock.Insert(m_RewriteInsertionIndex++, effectiveStatementToAdd);
-			}
-			else
-			{
-				m_StatementBlock.Add(effectiveStatementToAdd);
-			}
+			InsertStatementToBlock(effectiveStatementToAdd);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -159,7 +156,7 @@ namespace Happil.Statements
 		{
 			if ( expression != null )
 			{
-				m_StatementBlock.Add(new ExpressionStatement(expression));
+				InsertStatementToBlock(new ExpressionStatement(expression));
 			}
 		}
 
@@ -181,7 +178,12 @@ namespace Happil.Statements
 		{
 			if ( expression != null )
 			{
-				m_StatementBlock.RemoveExpressionStatement(expression);
+				var removedIndex = m_StatementBlock.RemoveExpressionStatement(expression);
+
+				if ( m_IsRewriteMode && removedIndex >= 0 && removedIndex < m_RewriteInsertionIndex )
+				{
+					m_RewriteInsertionIndex--;
+				}
 			}
 		}
 
@@ -334,6 +336,20 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private void InsertStatementToBlock(StatementBase statement)
+		{
+			if ( m_IsRewriteMode )
+			{
+				m_StatementBlock.Insert(m_RewriteInsertionIndex++, statement);
+			}
+			else
+			{
+				m_StatementBlock.Add(statement);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private StatementBlock AttachStatementBlock(StatementBlock statementBlock)
 		{
 			statementBlock.Attach(this);
@@ -371,6 +387,15 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static IDisposable Stash()
+		{
+			var stash = new StashScope(s_Current);
+			s_Current = null;
+			return stash;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static bool Exists
 		{
 			get
@@ -384,6 +409,36 @@ namespace Happil.Statements
 		public enum RewriteMode
 		{
 			On
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class StashScope : IDisposable
+		{
+			private readonly StatementScope m_SavedCurrent;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public StashScope(StatementScope current)
+			{
+				m_SavedCurrent = current;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region IDisposable Members
+
+			public void Dispose()
+			{
+				if ( s_Current != null )
+				{
+					throw new InvalidOperationException("StatementScope.Current must be null in order to restore the saved state.");
+				}
+
+				s_Current = m_SavedCurrent;
+			}
+
+			#endregion
 		}
 	}
 }

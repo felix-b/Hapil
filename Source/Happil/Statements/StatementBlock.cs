@@ -60,7 +60,7 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void RemoveExpressionStatement(IExpressionOperand expression)
+		public int RemoveExpressionStatement(IExpressionOperand expression)
 		{
 			for ( int index = m_StatementList.Count - 1 ; index >= 0 ; index-- )
 			{
@@ -69,9 +69,11 @@ namespace Happil.Statements
 				if ( statement != null && ReferenceEquals(statement.Expression, expression) )
 				{
 					m_StatementList.RemoveAt(index);
-					break;
+					return index;
 				}
 			}
+
+			return -1;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

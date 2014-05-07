@@ -40,15 +40,5 @@ namespace Happil.UnitTests.Operands
 
 			
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override bool ShouldSaveAssembly
-		{
-			get
-			{
-				return false;
-			}
-		}
 	}
 }

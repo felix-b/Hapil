@@ -1,7 +1,10 @@
-﻿namespace Happil.Operands
+﻿using Happil.Members;
+
+namespace Happil.Operands
 {
 	internal interface IClosureIdentification
 	{
+		MethodMember HostMethod { get; }
 		IOperand[] Externals { get; }
 		OperandCapture[] Captures { get; }
 		bool ClosuresRequired { get; }

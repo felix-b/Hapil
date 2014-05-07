@@ -15,13 +15,15 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void DefineHoistedField(ClassWriterBase closureClassWriter)
+		public void HoistInClosure(ClosureDefinition closure, ClassWriterBase closureClassWriter)
 		{
 			this.HoistedField = closureClassWriter.DefineField(
 				name: "<hoisted>" + this.Name,
 				isStatic: false,
 				isPublic: true,
 				fieldType: this.OperandType);
+
+			this.HoistingClosure = closure;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -36,6 +38,7 @@ namespace Happil.Operands
 		public StatementBlock SourceOperandHome { get; private set; }
 		public IScopedOperand SourceOperand { get; private set; }
 		public FieldMember HoistedField { get; private set; }
+		public ClosureDefinition HoistingClosure { get; private set; }
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 

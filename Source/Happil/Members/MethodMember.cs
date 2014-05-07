@@ -17,7 +17,7 @@ namespace Happil.Members
 		private readonly TransparentMethodWriter m_TransparentWriter;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
-		private bool m_HasClosure = false;
+		private ClosureDefinition m_Closure;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -163,7 +163,7 @@ namespace Happil.Members
 
 		internal bool NeedsClosures(out IClosureIdentification identification)
 		{
-			if ( m_HasClosure )
+			if ( HasClosure )
 			{
 				identification = null;
 				return false;
@@ -179,7 +179,7 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void MoveAnonymousMethodToClosure(ClassType closureClass)
+		internal void MoveAnonymousMethodToClosure(ClosureDefinition closure)
 		{
 			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
 
@@ -188,10 +188,13 @@ namespace Happil.Members
 				throw new InvalidOperationException("Only anonymous method can be moved to a closure class.");
 			}
 
-			base.OwnerClass = closureClass;
-			anonymousMethodFactory.MethodMovedToClosure(closureClass);
+			base.OwnerClass.MoveMember(this, destination: closure.ClosureClass);
+			base.OwnerClass = closure.ClosureClass;
 
-			m_HasClosure = true;
+			anonymousMethodFactory.MethodMovedToClosure(closure.ClosureClass);
+
+			m_Writers.Clear();
+			m_Closure = closure;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -210,9 +213,11 @@ namespace Happil.Members
 
 		internal override void Write()
 		{
+			var writersArray = m_Writers.ToArray();
+
 			using ( new StatementScope(OwnerClass, this, m_Statements) )
 			{
-				foreach ( var writer in m_Writers )
+				foreach ( var writer in writersArray )
 				{
 					writer.Flush();
 				}
@@ -272,21 +277,25 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal bool SuppressAutomaticClosures { get; set; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal bool HasClosure
 		{
 			get
 			{
-				return m_HasClosure;
+				return (m_Closure != null);
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal ClassType ClosureClass
+		internal ClosureDefinition Closure
 		{
 			get
 			{
-				return (m_HasClosure ? OwnerClass : null);
+				return m_Closure;
 			}
 		}
 	}
