@@ -15,15 +15,20 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void HoistInClosure(ClosureDefinition closure, ClassWriterBase closureClassWriter)
+		public void HoistInClosure(ClosureDefinition closure)
+		{
+			this.HoistingClosure = closure;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void DefineHoistedField(ClassWriterBase closureClassWriter)
 		{
 			this.HoistedField = closureClassWriter.DefineField(
 				name: "<hoisted>" + this.Name,
 				isStatic: false,
 				isPublic: true,
 				fieldType: this.OperandType);
-
-			this.HoistingClosure = closure;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

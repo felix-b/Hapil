@@ -99,7 +99,8 @@ namespace Happil.UnitTests.Operands
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
-			
+			visitor.DefineClosures();
+
 			//-- Assert
 
 			Assert.That(visitor.ClosuresRequired, Is.True);
@@ -111,6 +112,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]" },
 				visitor.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -151,6 +156,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]" },
 				visitor.OutermostClosure.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -214,6 +223,7 @@ namespace Happil.UnitTests.Operands
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
+			visitor.DefineClosures();
 
 			//-- Assert
 
@@ -226,6 +236,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]", "this" },
 				visitor.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -268,6 +282,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]", "this" },
 				visitor.OutermostClosure.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null), 
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -299,6 +317,7 @@ namespace Happil.UnitTests.Operands
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
+			visitor.DefineClosures();
 
 			//-- Assert
 
@@ -311,6 +330,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Local2[Int32]", "Local3[Int32]", "Arg1[n]", "this" },
 				visitor.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -344,6 +367,7 @@ namespace Happil.UnitTests.Operands
 
 			var visitor = new ClosureIdentificationVisitor(lambdaAnonymousMethod);
 			lambdaAnonymousMethod.AcceptVisitor(visitor);
+			visitor.DefineClosures();
 
 			//-- Assert
 
@@ -413,6 +437,10 @@ namespace Happil.UnitTests.Operands
 			CollectionAssert.AreEquivalent(
 				new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "this", "Local4[Int32]" }, // parent captures are pulled by child closure
 				visitor.InnermostClosure.Captures.ToStringArray());
+
+			Assert.That(
+				visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
+				"At least one captured operand was not hoisted");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

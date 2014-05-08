@@ -124,6 +124,77 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CaptureLocalAndArgument()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var numerator = w.Local(123);
+					var remainder = w.Local(initialValue: w.Delegate<int, int>((ww, x) => {
+						Static.Prop(() => AnonymousMethodInfo).Assign(Static.Func(MethodBase.GetCurrentMethod));
+						var denominator = ww.Local<int>(initialValue: x + n);
+						Static.Void<string, object, object>(Console.WriteLine, ww.Const("x={0} n={1}"), x.CastTo<object>(), n.CastTo<object>());
+						Static.Void<string, object, object>(Console.WriteLine, ww.Const("numerator={0} denominator={1}"), numerator.CastTo<object>(), denominator.CastTo<object>());
+						ww.Return(numerator % denominator);
+					}));
+					w.Return(remainder.Invoke(w.Const(1)).Func<string>(x => x.ToString));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(99);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("23"));
+			Assert.That(AnonymousMethodInfo.IsStatic, Is.False);
+			Assert.That(AnonymousMethodInfo.DeclaringType, Is.Not.SameAs(obj.GetType()));
+			Assert.That(AnonymousMethodInfo.DeclaringType.IsNested);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CaptureLocalArgumentAndThisInLambda()
+		{
+			//-- Arrange
+
+			Field<int> remainder;
+
+			DeriveClassFrom<object>()
+				.PrimaryConstructor("remainder", out remainder)
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var r = w.Local<int>(initialValueConst: 1);
+					var input = w.Local(w.NewArray<int>(100, 123, 200, 223));
+					var query = w.Local(initialValue: input.Where(w.Lambda<int, bool>(x => (x % n) == r + remainder)));
+					var results = w.Local(initialValue: query.Select(w.Lambda<int, string>(item => item.Func<string>(x => x.ToString))));
+					w.Return(Static.Func(String.Join, w.Const(";"), results));
+				})
+				.AllMethods().Throw<NotImplementedException>()
+				.Flush();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor<int>(22);
+			var result = obj.Five(100);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("123;223"));
+			//Assert.That(AnonymousMethodInfo.IsStatic, Is.False);
+			//Assert.That(AnonymousMethodInfo.DeclaringType, Is.Not.SameAs(obj.GetType()));
+			//Assert.That(AnonymousMethodInfo.DeclaringType.IsNested);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test, Ignore("Manual test")]
 		public void RunCompiledExamples()
 		{

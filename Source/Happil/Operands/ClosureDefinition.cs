@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -66,6 +67,7 @@ namespace Happil.Operands
 		{
 			ValidateMutability();
 			m_Captures.Add(capture);
+			capture.HoistInClosure(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,9 +210,14 @@ namespace Happil.Operands
 				{
 					return new Field<TypeTemplate.TField>(target, capture.HoistedField);
 				}
-				else
+				else if ( m_Parent != null )
 				{
 					return m_Parent.GetRewrittenOperand(capture, m_ParentField.AsOperand<TypeTemplate.TField>(target));
+				}
+				else
+				{
+					Debug.Fail("Captured operand is not hoisted.");
+					throw new Exception();
 				}
 			}
 		}
@@ -242,9 +249,9 @@ namespace Happil.Operands
 					fieldType: m_Parent.ClosureClass.TypeBuilder);
 			}
 
-			foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == m_ScopeBlock) )
+			foreach ( var capture in m_Captures.Where(c => c.HoistingClosure == this) )
 			{
-				capture.HoistInClosure(this, closureWriter);
+				capture.DefineHoistedField(closureWriter);
 			}
 
 			if ( anonymousMethodToHoist != null )
@@ -275,7 +282,7 @@ namespace Happil.Operands
 						WriteParentFieldInitialization();
 					}
 
-					foreach ( var capture in m_Captures.Where(c => c.SourceOperandHome == m_ScopeBlock) )
+					foreach ( var capture in m_Captures.Where(c => c.HoistingClosure == this) )
 					{
 						WriteCaptureFieldInitialization(capture);
 					}
@@ -291,7 +298,7 @@ namespace Happil.Operands
 			{
 				if ( capture.SourceOperand.ShouldInitializeHoistedField )
 				{
-					capture.HoistedField.AsOperand<TypeTemplate.TField>().Assign(capture.SourceOperand.CastTo<TypeTemplate.TField>());
+					capture.HoistedField.AsOperand<TypeTemplate.TField>(m_ClosureInstanceReference).Assign(capture.SourceOperand.CastTo<TypeTemplate.TField>());
 				}
 			}
 		}

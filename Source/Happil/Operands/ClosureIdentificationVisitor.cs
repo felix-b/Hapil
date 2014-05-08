@@ -129,20 +129,29 @@ namespace Happil.Operands
 
 		protected override void OnVisitOperand(ref IOperand operand)
 		{
-			var scopedOperand = (IScopedOperand)operand;
-			var operandHome = scopedOperand.HomeStatementBlock;
+			AddCapture((IScopedOperand)operand);
+		}
 
-			if ( operandHome != null )
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void AddCapture(IScopedOperand operand)
+		{
+			if ( operand.HomeStatementBlock != null )
 			{
-				if ( operandHome.OwnerMethod != m_Method )
+				if ( operand.HomeStatementBlock.OwnerMethod == m_Method )
 				{
-					m_Externals.Add(operand);
-					m_Captures.Add(new OperandCapture(scopedOperand, operandHome));
+					return;
+				}
+
+				if ( !m_Externals.Add(operand) )
+				{
+					return;
 				}
 			}
-			else
+
+			if ( !m_Captures.Any(c => c.SourceOperand == operand) )
 			{
-				m_Captures.Add(new OperandCapture(scopedOperand, sourceOperandHome: null));
+				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock));
 			}
 		}
 

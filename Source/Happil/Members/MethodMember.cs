@@ -14,10 +14,12 @@ namespace Happil.Members
 	{
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly StatementBlock m_Statements;
+		private readonly List<ILocal> m_Locals;
 		private readonly TransparentMethodWriter m_TransparentWriter;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
 		private ClosureDefinition m_Closure;
+		private bool m_LocalsDeclared = false;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,6 +29,7 @@ namespace Happil.Members
 			m_MethodFactory = methodFactory;
 			m_Writers = new List<MethodWriterBase>();
 			m_Statements = new StatementBlock();
+			m_Locals = new List<ILocal>();
 			m_TransparentWriter = new TransparentMethodWriter(this);
 		}
 
@@ -147,6 +150,19 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal void RegisterLocal(ILocal local, out int localIndex)
+		{
+			localIndex = m_Locals.Count;
+			m_Locals.Add(local);
+
+			if ( m_LocalsDeclared )
+			{
+				local.Declare(this.MethodFactory.GetILGenerator());
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal Label AddLabel()
 		{
 			return m_MethodFactory.GetILGenerator().DefineLabel();
@@ -229,6 +245,13 @@ namespace Happil.Members
 		internal override void Compile()
 		{
 			var il = m_MethodFactory.GetILGenerator();
+
+			foreach ( var local in m_Locals )
+			{
+				local.Declare(il);
+			}
+
+			m_LocalsDeclared = true;
 
 			foreach ( var statement in m_Statements )
 			{
