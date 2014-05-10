@@ -18,6 +18,7 @@ namespace Happil.Members
 			: base(containingClass.Module, null, classFullName, baseType, containingClass)
 		{
 			m_ContainingClass = containingClass;
+			//m_ContainingClass.AddNestedClass(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -66,8 +66,12 @@ namespace Happil.Operands
 		public void AddCapture(OperandCapture capture)
 		{
 			ValidateMutability();
-			m_Captures.Add(capture);
-			capture.HoistInClosure(this);
+
+			if ( !m_Captures.Any(c => c.SourceOperand == capture.SourceOperand) )
+			{
+				m_Captures.Add(capture);
+				capture.HoistInClosure(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -309,7 +313,7 @@ namespace Happil.Operands
 		{
 			using ( TypeTemplate.CreateScope<TypeTemplate.TField>(m_Parent.ClosureClass.TypeBuilder) )
 			{
-				m_ParentField.AsOperand<TypeTemplate.TField>().Assign(m_Parent.m_ClosureInstanceReference.CastTo<TypeTemplate.TField>());
+				m_ParentField.AsOperand<TypeTemplate.TField>(m_ClosureInstanceReference).Assign(m_Parent.m_ClosureInstanceReference.CastTo<TypeTemplate.TField>());
 			}
 		}
 

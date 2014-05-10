@@ -424,7 +424,7 @@ namespace Happil.Operands
 				property: indexerProperty,
 				indexArguments: new IOperand[] { indexArg1, indexArg2 });
 		}
-
+		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<T> OrDefault(IOperand<T> defaultValue)

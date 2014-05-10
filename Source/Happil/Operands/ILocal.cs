@@ -10,5 +10,6 @@ namespace Happil.Operands
 	interface ILocal : IMutableOperand
 	{
 		void Declare(ILGenerator il);
+		LocalBuilder LocalBuilder { get; }
 	}
 }

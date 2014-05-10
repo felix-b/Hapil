@@ -836,6 +836,19 @@ namespace Happil.UnitTests.Assumptions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void ReuseCapturesInManyAnonymousMethods(int y, int z)
+			{
+				var input = new int[] { 100, 101 };
+
+				var output1 = input.Select(item => y.ToString() + ":" + item.ToString() + ":" + m_X.ToString()).ToArray();
+				var output2 = input.Select(item => z.ToString() + ":" + item.ToString() + ":" + m_X.ToString()).ToArray();
+
+				Output.AddRange(output1);
+				Output.AddRange(output2);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			static ClosureExamples()
 			{
 				Output = new List<string>();

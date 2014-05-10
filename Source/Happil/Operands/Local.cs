@@ -12,6 +12,7 @@ namespace Happil.Operands
 {
 	public class Local<T> : MutableOperand<T>, ILocal, ICanEmitAddress, IScopedOperand, ITransformType
 	{
+		private readonly ILocal m_OriginalLocal;
 		private readonly StatementBlock m_HomeStatementBlock;
 		private readonly int m_LocalIndex;
 		private LocalBuilder m_LocalBuilder;
@@ -26,8 +27,9 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private Local(StatementBlock homeStatementBlock, int localIndex, LocalBuilder localBuilder)
+		private Local(ILocal originalLocal, StatementBlock homeStatementBlock, int localIndex, LocalBuilder localBuilder)
 		{
+			m_OriginalLocal = originalLocal;
 			m_HomeStatementBlock = homeStatementBlock;
 			m_LocalIndex = localIndex;
 			m_LocalBuilder = localBuilder;
@@ -41,6 +43,16 @@ namespace Happil.Operands
 		{
 			m_LocalBuilder = il.DeclareLocal(base.OperandType);
 			Debug.Assert(m_LocalIndex == m_LocalBuilder.LocalIndex, "Local index mismatch after declaring a local.");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		LocalBuilder ILocal.LocalBuilder
+		{
+			get 
+			{
+				return GetLocalBuilder();
+			}
 		}
 
 		#endregion
@@ -85,7 +97,7 @@ namespace Happil.Operands
 
 		Operand<TCast> ITransformType.TransformToType<TCast>()
 		{
-			return new Local<TCast>(m_HomeStatementBlock, m_LocalIndex, m_LocalBuilder);
+			return new Local<TCast>(this, m_HomeStatementBlock, m_LocalIndex, m_LocalBuilder);
 		}
 
 		#endregion
@@ -117,21 +129,34 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldloc, m_LocalBuilder);
+			il.Emit(OpCodes.Ldloc, GetLocalBuilder());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			il.Emit(OpCodes.Stloc, m_LocalBuilder);
+			il.Emit(OpCodes.Stloc, GetLocalBuilder());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			il.Emit(OpCodes.Ldloca, (short)m_LocalBuilder.LocalIndex);
+			il.Emit(OpCodes.Ldloca, (short)GetLocalBuilder().LocalIndex);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private LocalBuilder GetLocalBuilder()
+		{
+			if ( m_LocalBuilder == null && m_OriginalLocal != null )
+			{
+				m_LocalBuilder = m_OriginalLocal.LocalBuilder;
+			}
+
+			Debug.Assert(m_LocalBuilder != null, "Local was not declared in ILGenerator.");
+			return m_LocalBuilder;
 		}
 	}
 }

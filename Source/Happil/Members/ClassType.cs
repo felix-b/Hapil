@@ -321,6 +321,13 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal void AddNestedClass(NestedClassType nestedClass)
+		{
+			m_NestedClasses.Add(nestedClass);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal TypeBuilder TypeBuilder
 		{
 			get { return m_TypeBuilder; }

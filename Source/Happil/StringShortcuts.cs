@@ -14,6 +14,14 @@ namespace Happil
 {
 	public static class StringShortcuts
 	{
+		public static Operand<string> FuncToString<T>(this IOperand<T> obj)
+		{
+			var @operator = new UnaryOperators.OperatorCall<object>(s_ObjectToString);
+			return new UnaryExpressionOperand<object, string>(@operator, obj.CastTo<object>());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static IOperand<char> CharAt(this IOperand<string> s, IOperand<int> index)
 		{
 			return new Property<char>(s, s_Item, index);
@@ -465,6 +473,7 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private static readonly MethodInfo s_ObjectToString;
 		private static readonly PropertyInfo s_Item;
 		private static readonly MethodInfo s_Compare;
 		private static readonly MethodInfo s_Concat;
@@ -514,6 +523,7 @@ namespace Happil
 
 		static StringShortcuts()
 		{
+			s_ObjectToString = GetMethodInfo<Expression<Func<object, string>>>(obj => obj.ToString());
 			s_Item = typeof(string).GetProperty("Chars");
 			s_Compare = GetMethodInfo<Expression<Func<string, int>>>(s => string.Compare(s, "s", StringComparison.InvariantCultureIgnoreCase));
 			s_Concat = GetMethodInfo<Expression<Func<string, string>>>(s => string.Concat(s, s));

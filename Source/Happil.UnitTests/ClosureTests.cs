@@ -177,8 +177,7 @@ namespace Happil.UnitTests
 					var results = w.Local(initialValue: query.Select(w.Lambda<int, string>(item => item.Func<string>(x => x.ToString))));
 					w.Return(Static.Func(String.Join, w.Const(";"), results));
 				})
-				.AllMethods().Throw<NotImplementedException>()
-				.Flush();
+				.AllMethods().Throw<NotImplementedException>();
 
 			//-- Act
 
@@ -191,6 +190,195 @@ namespace Happil.UnitTests
 			//Assert.That(AnonymousMethodInfo.IsStatic, Is.False);
 			//Assert.That(AnonymousMethodInfo.DeclaringType, Is.Not.SameAs(obj.GetType()));
 			//Assert.That(AnonymousMethodInfo.DeclaringType.IsNested);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CaptureOperandsFromTwoDifferentScopes()
+		{
+			//-- Arrange
+
+			Field<int> field;
+
+			DeriveClassFrom<object>()
+				.PrimaryConstructor("Field", out field)
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, argument) => {				
+					var input = w.Local(w.NewArray<int>(100, 101));
+					var output = w.Local(w.New<List<string>>());
+					w.For(from: 0, to: input.Length(), increment: 1).Do((loop, i) => {			
+						var copyOfI = w.Local(initialValue: i);
+						output.AddRange(input.Select(w.Lambda<int, string>(item => 
+							field.FuncToString() + w.Const(":") +
+							argument.FuncToString() + w.Const(":") +
+							copyOfI.FuncToString() + w.Const(":") +
+							item.FuncToString())));
+					});
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor<int>(22);
+			var result = obj.Five(99);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("22:99:0:100;22:99:0:101;22:99:1:100;22:99:1:101"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CaptureOperandsFromNonConsecutiveScopes()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var input = w.Local(w.NewArray<int>(100, 101));
+					var output = w.Local(w.New<List<string>>());
+					w.For(from: 0, to: input.Length(), increment: 1).Do((loop, i) => 
+						w.Try(() => {
+							var copyOfI = w.Local(initialValue: i);
+							output.AddRange(input.Select(w.Lambda<int, string>(item =>
+								n.FuncToString() + w.Const(":") +
+								copyOfI.FuncToString() + w.Const(":") +
+								item.FuncToString())));
+						})
+						.Catch<Exception>(e => { })
+					);
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(99);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("99:0:100;99:0:101;99:1:100;99:1:101"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CaptureOperandsForOneOfTwoAnonymousMethods()
+		{
+			//-- Arrange
+
+			Field<string> field;
+
+			DeriveClassFrom<object>()
+				.PrimaryConstructor("Field", out field)
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var input = w.Local(w.NewArray<int>(100, 101));
+					var output = w.Local(w.New<List<string>>());
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						n.FuncToString() + w.Const(":") +
+						item.FuncToString())));
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						field + w.Const(":") +
+						item.FuncToString())));
+
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor<string>("ABC");
+			var result = obj.Five(11);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("11:100;11:101;ABC:100;ABC:101"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void CaptureDifferentOperandsForTwoAnonymousMethods()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var prefix = w.Local("PFX");
+					var input = w.Local(w.NewArray<int>(100, 101));
+					var output = w.Local(w.New<List<string>>());
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						n.FuncToString() + w.Const(":") +
+						item.FuncToString())));
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						prefix + w.Const(":") +
+						item.FuncToString())));
+
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(11);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("11:100;11:101;PFX:100;PFX:101"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void CaptureSameOperandsForTwoAnonymousMethods()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var prefix = w.Local("PFX");
+					var input = w.Local(w.NewArray<int>(100, 101));
+					var output = w.Local(w.New<List<string>>());
+
+					n.Assign(99);
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						n.FuncToString() + w.Const(":") +
+						item.FuncToString())));
+
+					output.AddRange(input.Select(w.Lambda<int, string>(item =>
+						prefix + w.Const(":") +
+						n.FuncToString() + w.Const(":") +
+						item.FuncToString())));
+
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(11);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("99:100;99:101;PFX:99:100;PFX:99:101"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

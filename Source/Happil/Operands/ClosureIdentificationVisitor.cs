@@ -165,7 +165,7 @@ namespace Happil.Operands
 
 				if ( !m_Closures.TryGetValue(capture.SourceOperandHome, out closure) )
 				{
-					closure = new ClosureDefinition(capture.SourceOperandHome);
+					closure = capture.SourceOperandHome.GetClosureDefinition();
 					m_Closures.Add(closure.ScopeBlock, closure);
 				}
 

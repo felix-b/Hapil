@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 
 namespace Happil.Statements
 {
@@ -14,6 +15,7 @@ namespace Happil.Statements
 		private MethodMember m_OwnerMethod;
 		private StatementBlock m_ParentBlock;
 		private StatementBlock m_RootBlock;
+		private ClosureDefinition m_ClosureDefinition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -83,6 +85,18 @@ namespace Happil.Statements
 			m_OwnerMethod = scope.OwnerMethod; 
 			m_ParentBlock = (scope.Previous != null ? scope.Previous.StatementBlock : null);
 			m_RootBlock = scope.Root.StatementBlock;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClosureDefinition GetClosureDefinition()
+		{
+			if ( m_ClosureDefinition == null )
+			{
+				m_ClosureDefinition = new ClosureDefinition(this);
+			}
+
+			return m_ClosureDefinition;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

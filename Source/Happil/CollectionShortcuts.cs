@@ -70,6 +70,13 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static void AddRange<T>(this IOperand<List<T>> collection, IOperand<IEnumerable<T>> items)
+		{
+			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().AddRange, items));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static void Clear<T>(this IOperand<ICollection<T>> collection)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(collection, GetReflectionCache<T>().Clear));
@@ -141,6 +148,7 @@ namespace Happil
 		private abstract class ReflectionCache
 		{
 			public MethodInfo Add { get; protected set; }
+			public MethodInfo AddRange { get; protected set; }
 			public MethodInfo IndexOf { get; protected set; }
 			public MethodInfo Insert { get; protected set; }
 			public MethodInfo RemoveAt { get; protected set; }
@@ -160,6 +168,7 @@ namespace Happil
 			public ReflectionCache()
 			{
 				Add = Helpers.GetMethodInfo<Expression<Action<ICollection<T>>>>(x => x.Add(default(T)));
+				AddRange = Helpers.GetMethodInfo<Expression<Action<List<T>>>>(x => x.AddRange(new T[0]));
 				IndexOf = Helpers.GetMethodInfo<Expression<Func<IList<T>, int>>>(x => x.IndexOf(default(T)));
 				Insert = Helpers.GetMethodInfo<Expression<Action<IList<T>>>>(x => x.Insert(0, default(T)));
 				RemoveAt = Helpers.GetMethodInfo<Expression<Action<IList<T>>>>(x => x.RemoveAt(0));
