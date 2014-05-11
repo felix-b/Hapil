@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Operands;
 using Happil.Writers;
 
 namespace Happil.Members
@@ -103,13 +104,26 @@ namespace Happil.Members
 		/// <param name="action"></param>
 		public void ForEachMember<TMember>(Action<TMember> action) where TMember : MemberBase
 		{
+			ForEachMember<TMember>(action, predicate: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TMember"></typeparam>
+		/// <param name="predicate"></param>
+		/// <param name="action"></param>
+		public void ForEachMember<TMember>(Action<TMember> action, Func<TMember, bool> predicate) where TMember : MemberBase
+		{
 			int index = 0;
 
 			while ( index < m_Members.Count )
 			{
 				var member = (m_Members[index] as TMember);
 
-				if ( member != null )
+				if ( member != null && (predicate == null || predicate(member)) )
 				{
 					using ( member.CreateTypeTemplateScope() )
 					{
@@ -272,6 +286,10 @@ namespace Happil.Members
 			
 			ForEachMember<ConstructorMember>(m => m.FreezeSignature(dependencyFieldsArray));
 			ForEachMember<MemberBase>(m => m.Write());
+
+			var closureWriter = new AnonymousMethodClosureWriter(this);
+			closureWriter.Flush();
+
 			ForEachMember<MemberBase>(m => m.Compile());
 
 			m_CompiledType = m_TypeBuilder.CreateType();

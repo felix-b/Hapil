@@ -11,7 +11,7 @@ namespace Happil.Operands
 {
 	internal class ClosureIdentificationVisitor : OperandVisitorBase, IClosureIdentification
 	{
-		private readonly MethodMember m_Method;
+		private readonly MethodMember m_AnonymousMethod;
 		private readonly HashSet<IOperand> m_Externals = new HashSet<IOperand>();
 		private readonly HashSet<OperandCapture> m_Captures = new HashSet<OperandCapture>();
 		private readonly Dictionary<StatementBlock, ClosureDefinition> m_Closures = new Dictionary<StatementBlock, ClosureDefinition>();
@@ -21,9 +21,9 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClosureIdentificationVisitor(MethodMember method)
+		public ClosureIdentificationVisitor(MethodMember anonymousMethod)
 		{
-			m_Method = method;
+			m_AnonymousMethod = anonymousMethod;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -38,7 +38,15 @@ namespace Happil.Operands
 				MapUnscopedCapturesToOutermostClosure();
 				ListClosuresInOuterToInnerOrder();
 				PushOuterCapturesDownToInnerClosures();
+				MapAnonymousMethodsToClosures();
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Merge(IClosureIdentification other)
+		{
+			throw new NotImplementedException();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,7 +57,7 @@ namespace Happil.Operands
 			{
 				if ( m_OutermostClosure != null )
 				{
-					return m_OutermostClosure.ScopeBlock.OwnerMethod;
+					return m_OutermostClosure.HostScopeBlock.OwnerMethod;
 				}
 				else
 				{
@@ -129,16 +137,16 @@ namespace Happil.Operands
 
 		protected override void OnVisitOperand(ref IOperand operand)
 		{
-			AddCapture((IScopedOperand)operand);
+			CaptureOperandIfExternal((IScopedOperand)operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void AddCapture(IScopedOperand operand)
+		private void CaptureOperandIfExternal(IScopedOperand operand)
 		{
 			if ( operand.HomeStatementBlock != null )
 			{
-				if ( operand.HomeStatementBlock.OwnerMethod == m_Method )
+				if ( operand.HomeStatementBlock.OwnerMethod == m_AnonymousMethod )
 				{
 					return;
 				}
@@ -151,7 +159,7 @@ namespace Happil.Operands
 
 			if ( !m_Captures.Any(c => c.SourceOperand == operand) )
 			{
-				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock));
+				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock, consumerMethod: m_AnonymousMethod));
 			}
 		}
 
@@ -166,7 +174,7 @@ namespace Happil.Operands
 				if ( !m_Closures.TryGetValue(capture.SourceOperandHome, out closure) )
 				{
 					closure = capture.SourceOperandHome.GetClosureDefinition();
-					m_Closures.Add(closure.ScopeBlock, closure);
+					m_Closures.Add(closure.HostScopeBlock, closure);
 				}
 
 				closure.AddCapture(capture);
@@ -238,9 +246,27 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private void MapAnonymousMethodsToClosures()
+		{
+			var hoistedMethods = new HashSet<MethodMember>();
+
+			for ( var closure = m_InnermostClosure ; closure != null ; closure = closure.Parent )
+			{
+				foreach ( var anonymousMethod in closure.Captures.SelectMany(c => c.ConsumerMethods) )
+				{
+					if ( hoistedMethods.Add(anonymousMethod) )
+					{
+						closure.AddAnonymousMethod(anonymousMethod);
+					}
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private ClosureDefinition TryFindParentClosure(ClosureDefinition closure)
 		{
-			var scopeBlock = closure.ScopeBlock.ParentBlock;
+			var scopeBlock = closure.HostScopeBlock.ParentBlock;
 
 			while ( scopeBlock != null )
 			{

@@ -151,7 +151,7 @@ namespace Happil.UnitTests.Operands
 			Assert.That(visitor.ClosuresRequired, Is.True);
 			Assert.That(visitor.InnermostClosure, Is.Not.Null);
 			Assert.That(visitor.OutermostClosure, Is.SameAs(visitor.InnermostClosure));
-			Assert.That(visitor.InnermostClosure.ScopeBlock, Is.SameAs(methodTwo.Body));
+			Assert.That(visitor.InnermostClosure.HostScopeBlock, Is.SameAs(methodTwo.Body));
 
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]" },
@@ -277,7 +277,7 @@ namespace Happil.UnitTests.Operands
 			Assert.That(visitor.ClosuresRequired, Is.True);
 			Assert.That(visitor.InnermostClosure, Is.Not.Null);
 			Assert.That(visitor.OutermostClosure, Is.SameAs(visitor.InnermostClosure));
-			Assert.That(visitor.InnermostClosure.ScopeBlock, Is.SameAs(methodTwo.Body));
+			Assert.That(visitor.InnermostClosure.HostScopeBlock, Is.SameAs(methodTwo.Body));
 
 			CollectionAssert.AreEquivalent(
 				new[] { "Local0[Int32]", "Arg1[n]", "this" },
@@ -424,11 +424,11 @@ namespace Happil.UnitTests.Operands
 			Assert.That(visitor.InnermostClosure, Is.Not.Null);
 			Assert.That(visitor.OutermostClosure, Is.Not.Null);
 			Assert.That(visitor.OutermostClosure, Is.Not.SameAs(visitor.InnermostClosure));
-			Assert.That(visitor.OutermostClosure.ScopeBlock, Is.SameAs(methodTwo.Body));
+			Assert.That(visitor.OutermostClosure.HostScopeBlock, Is.SameAs(methodTwo.Body));
 			Assert.That(visitor.OutermostClosure.ChildCount, Is.EqualTo(1));
 			Assert.That(visitor.OutermostClosure.Children, Is.EqualTo(new[] { visitor.InnermostClosure }));
 			Assert.That(visitor.InnermostClosure.Parent, Is.SameAs(visitor.OutermostClosure));
-			Assert.That(visitor.InnermostClosure.ScopeBlock.ParentBlock, Is.SameAs(methodTwo.Body));
+			Assert.That(visitor.InnermostClosure.HostScopeBlock.ParentBlock, Is.SameAs(methodTwo.Body));
 
 			CollectionAssert.AreEquivalent(
 				new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "this" },

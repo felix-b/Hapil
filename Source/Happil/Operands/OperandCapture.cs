@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Happil.Members;
 using Happil.Statements;
 using Happil.Writers;
@@ -7,10 +8,18 @@ namespace Happil.Operands
 {
 	internal class OperandCapture
 	{
-		public OperandCapture(IScopedOperand sourceOperand, StatementBlock sourceOperandHome)
+		private readonly List<MethodMember> m_ConsumerMethods;
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public OperandCapture(IScopedOperand sourceOperand, StatementBlock sourceOperandHome, MethodMember consumerMethod)
 		{
 			this.SourceOperand = sourceOperand;
 			this.SourceOperandHome = sourceOperandHome;
+			
+			m_ConsumerMethods = new List<MethodMember>() {
+				consumerMethod
+			};
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,6 +71,16 @@ namespace Happil.Operands
 			get
 			{
 				return SourceOperand.OperandType;
+			}
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodMember[] ConsumerMethods
+		{
+			get
+			{
+				return m_ConsumerMethods.ToArray();
 			}
 		}
 	}

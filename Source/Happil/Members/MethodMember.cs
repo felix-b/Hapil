@@ -195,7 +195,21 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void MoveAnonymousMethodToClosure(ClosureDefinition closure)
+		internal void MakeInstanceMethod()
+		{
+			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+
+			if ( anonymousMethodFactory == null )
+			{
+				throw new InvalidOperationException("Method modifiers are mutable only for anonymous methods.");
+			}
+
+			anonymousMethodFactory.ChangeMethodAttributes(isStatic: false);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal void HoistInClosure(ClosureDefinition closure)
 		{
 			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
 

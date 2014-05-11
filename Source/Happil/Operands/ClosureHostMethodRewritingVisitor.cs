@@ -24,7 +24,7 @@ namespace Happil.Operands
 
 		public override void VisitStatementBlock(StatementBlock statementBlock)
 		{
-			var effectiveClosure = m_Identification.ClosuresOuterToInner.FirstOrDefault(c => c.ScopeBlock == statementBlock);
+			var effectiveClosure = m_Identification.ClosuresOuterToInner.FirstOrDefault(c => c.HostScopeBlock == statementBlock);
 
 			if ( effectiveClosure != null )
 			{

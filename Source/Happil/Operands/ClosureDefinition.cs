@@ -15,9 +15,10 @@ namespace Happil.Operands
 {
 	internal class ClosureDefinition
 	{
-		private readonly StatementBlock m_ScopeBlock;
+		private readonly StatementBlock m_HostScopeBlock;
 		private readonly ClassType m_OwnerClass;
-		private readonly MethodMember m_OwnerMethod;
+		private readonly MethodMember m_HostMethod;
+		private readonly HashSet<MethodMember> m_AnonymousMethodsToHoist;
 		private readonly HashSet<OperandCapture> m_Captures;
 		private readonly List<ClosureDefinition> m_Children;
 		private readonly Dictionary<OperandCapture, IOperand> m_RewrittenOperands;
@@ -32,8 +33,9 @@ namespace Happil.Operands
 
 		public ClosureDefinition(StatementBlock scopeBlock)
 		{
-			m_ScopeBlock = scopeBlock;
-			m_OwnerMethod = scopeBlock.OwnerMethod;
+			m_HostScopeBlock = scopeBlock;
+			m_HostMethod = scopeBlock.OwnerMethod;
+			m_AnonymousMethodsToHoist = new HashSet<MethodMember>();
 			m_OwnerClass = scopeBlock.OwnerMethod.OwnerClass;
 			m_Captures = new HashSet<OperandCapture>();
 			m_Parent = null;
@@ -76,6 +78,13 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void AddAnonymousMethod(MethodMember anonymousMethod)
+		{
+			m_AnonymousMethodsToHoist.Add(anonymousMethod);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void PullCapturesFromParent()
 		{
 			if ( m_Parent == null || m_ParentCapturesPulled )
@@ -95,11 +104,11 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void ImplementClosure(MethodMember anonymousMethodToHoist = null)
+		public void ImplementClosure()
 		{
 			if ( m_ClosureClass == null )
 			{
-				CompileClosureClass(anonymousMethodToHoist);
+				CompileClosureClass();
 				WriteClosureInstanceInitialization();
 			}
 		}
@@ -156,11 +165,11 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementBlock ScopeBlock
+		public StatementBlock HostScopeBlock
 		{
 			get
 			{
-				return m_ScopeBlock;
+				return m_HostScopeBlock;
 			}
 		}
 
@@ -171,6 +180,16 @@ namespace Happil.Operands
 			get
 			{
 				return m_Captures.ToArray();
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodMember[] AnonymousMethodsToHoist
+		{
+			get
+			{
+				return m_AnonymousMethodsToHoist.ToArray();
 			}
 		}
 
@@ -228,11 +247,11 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void CompileClosureClass(MethodMember anonymousMethodToHoist)
+		private void CompileClosureClass()
 		{
 			m_ClosureClass = new NestedClassType(
 				containingClass: m_OwnerClass, 
-				classFullName: m_OwnerMethod.Name + "Closure", 
+				classFullName: m_HostMethod.Name + "Closure", 
 				baseType: typeof(object));
 
 			m_ClosureClassConstructor = m_ClosureClass.TypeBuilder.DefineDefaultConstructor(
@@ -258,10 +277,10 @@ namespace Happil.Operands
 				capture.DefineHoistedField(closureWriter);
 			}
 
-			if ( anonymousMethodToHoist != null )
+			foreach ( var anonymousMethod in m_AnonymousMethodsToHoist )
 			{
-				anonymousMethodToHoist.MoveAnonymousMethodToClosure(this);
-				anonymousMethodToHoist.AcceptVisitor(new ClosureHoistedMethodRewritingVisitor(this));
+				anonymousMethod.HoistInClosure(this);
+				anonymousMethod.AcceptVisitor(new ClosureHoistedMethodRewritingVisitor(this));
 			}
 
 			m_ClosureClass.Compile();
@@ -273,9 +292,9 @@ namespace Happil.Operands
 		{
 			using ( TypeTemplate.CreateScope<TypeTemplate.TClosure>(m_ClosureClass.TypeBuilder) )
 			{
-				using ( var scope = new StatementScope(m_ScopeBlock, StatementScope.RewriteMode.On) )
+				using ( var scope = new StatementScope(m_HostScopeBlock, StatementScope.RewriteMode.On) )
 				{
-					var scopeRewriter = m_ScopeBlock.OwnerMethod.TransparentWriter;
+					var scopeRewriter = m_HostMethod.TransparentWriter;
 					var closureInstance = scopeRewriter.Local<TypeTemplate.TClosure>();
 					closureInstance.Assign(new NewObjectExpression<TypeTemplate.TClosure>(m_ClosureClassConstructor, new IOperand[0]));
 					
