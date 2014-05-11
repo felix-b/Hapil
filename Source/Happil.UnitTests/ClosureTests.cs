@@ -306,7 +306,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void CaptureDifferentOperandsForTwoAnonymousMethods()
 		{
 			//-- Arrange
@@ -343,7 +343,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("Not yet implemented")]
+		[Test]
 		public void CaptureSameOperandsForTwoAnonymousMethods()
 		{
 			//-- Arrange

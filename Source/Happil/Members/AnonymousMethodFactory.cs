@@ -9,6 +9,7 @@ namespace Happil.Members
 {
 	public class AnonymousMethodFactory : MethodFactoryBase
 	{
+		private readonly MethodMember m_HostMethod;
 		private readonly string m_MethodName;
 		private MethodSignature m_Signature;
 		private MethodAttributes m_MethodAttributes;
@@ -19,9 +20,10 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType classType, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
+		private AnonymousMethodFactory(MethodMember hostMethod, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
 		{
-			m_ClassType = classType;
+			m_HostMethod = hostMethod;
+			m_ClassType = hostMethod.OwnerClass;
 			m_MethodAttributes = (MethodAttributes.Final | MethodAttributes.HideBySig | GetMethodModifierAttributes(isStatic, isPublic));
 			m_MethodName = m_ClassType.TakeMemberName("AnonymousMethod");
 
@@ -146,6 +148,16 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodMember HostMethod
+		{
+			get
+			{
+				return m_HostMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal void MethodMovedToClosure(ClassType closureClass)
 		{
 			if ( m_MethodBuilder != null )
@@ -189,31 +201,31 @@ namespace Happil.Members
 			m_Signature = m_Signature.ChangeModifiers(isPublic, isStatic);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false, isPublic: false);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static AnonymousMethodFactory StaticMethod(ClassType type, Type[] argumentTypes, Type returnType)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: true, isPublic: false);
-		}
+		//public static AnonymousMethodFactory InstanceMethod(ClassType type, Type[] argumentTypes, Type returnType)
+		//{
+		//	return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: false, isPublic: false);
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static AnonymousMethodFactory FromMethodInfo(ClassType type, MethodInfo methodInfo)
+		public static AnonymousMethodFactory StaticMethod(MethodMember hostMethod, Type[] argumentTypes, Type returnType)
 		{
-			return new AnonymousMethodFactory(
-				type, 
-				argumentTypes: methodInfo.GetParameters().Select(p => p.ParameterType).ToArray(),
-				returnType: methodInfo.ReturnType,
-				isStatic: methodInfo.IsStatic,
-				isPublic: methodInfo.IsPublic);
+			return new AnonymousMethodFactory(hostMethod, argumentTypes, returnType, isStatic: true, isPublic: false);
 		}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public static AnonymousMethodFactory FromMethodInfo(ClassType type, MethodInfo methodInfo)
+		//{
+		//	return new AnonymousMethodFactory(
+		//		type, 
+		//		argumentTypes: methodInfo.GetParameters().Select(p => p.ParameterType).ToArray(),
+		//		returnType: methodInfo.ReturnType,
+		//		isStatic: methodInfo.IsStatic,
+		//		isPublic: methodInfo.IsPublic);
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

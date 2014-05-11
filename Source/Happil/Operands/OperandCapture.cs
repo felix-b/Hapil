@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Happil.Members;
 using Happil.Statements;
 using Happil.Writers;
 
 namespace Happil.Operands
 {
-	internal class OperandCapture
+	internal class OperandCapture //: IEquatable<OperandCapture>
 	{
-		private readonly List<MethodMember> m_ConsumerMethods;
+		private readonly HashSet<MethodMember> m_ConsumerMethods;
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -16,10 +17,75 @@ namespace Happil.Operands
 		{
 			this.SourceOperand = sourceOperand;
 			this.SourceOperandHome = sourceOperandHome;
-			
-			m_ConsumerMethods = new List<MethodMember>() {
+
+			m_ConsumerMethods = new HashSet<MethodMember>() {
 				consumerMethod
 			};
+		}
+
+		////-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//#region IEquatable<OperandCapture> Members
+
+		//public bool Equals(OperandCapture other)
+		//{
+		//	if ( other != null )
+		//	{
+		//		return this.SourceOperand.Equals(other.SourceOperand);
+		//	}
+		//	else
+		//	{
+		//		return false;
+		//	}
+		//}
+
+		//#endregion
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		//public override bool Equals(object obj)
+		//{
+		//	return Equals(obj as OperandCapture);
+		//}
+
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public override int GetHashCode()
+		//{
+		//	return this.SourceOperand.GetHashCode();
+		//}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override string ToString()
+		{
+			return (HoistedField != null ? HoistedField.ToString() : SourceOperand.ToString());
+		}
+
+		#endregion
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void Merge(OperandCapture other)
+		{
+			if ( this.HoistingClosure != null )
+			{
+				throw new InvalidOperationException("Cannot merge other captures because current capture was already assigned a closure.");
+			}
+
+			if ( other.HoistingClosure != null )
+			{
+				throw new ArgumentException("Cannot merge specified capture because it was already assigned a closure.");
+			}
+
+			if ( other.SourceOperand != this.SourceOperand )
+			{
+				throw new ArgumentException("Cannot merge specified capture because of source operands mismatch.");
+			}
+
+			m_ConsumerMethods.UnionWith(other.ConsumerMethods);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -38,13 +104,6 @@ namespace Happil.Operands
 				isStatic: false,
 				isPublic: true,
 				fieldType: this.OperandType);
-		}
-
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public override string ToString()
-		{
-			return (HoistedField != null ? HoistedField.ToString() : SourceOperand.ToString());
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

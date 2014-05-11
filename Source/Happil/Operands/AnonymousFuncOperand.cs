@@ -19,7 +19,7 @@ namespace Happil.Operands
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1) }, typeof(TReturn));
+			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1) }, typeof(TReturn));
 			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
 
 			ownerMethod.OwnerClass.AddMember(m_Method);
@@ -112,7 +112,7 @@ namespace Happil.Operands
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
+			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
 
 			//var methodFactory = (
 			//	ownerMethod.IsStatic

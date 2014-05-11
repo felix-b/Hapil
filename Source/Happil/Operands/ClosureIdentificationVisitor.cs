@@ -46,7 +46,31 @@ namespace Happil.Operands
 
 		public void Merge(IClosureIdentification other)
 		{
-			throw new NotImplementedException();
+			if ( this.ClosuresOuterToInner != null )
+			{
+				throw new InvalidOperationException("Cannot merge other identifications because current identification already has defined closures.");
+			}
+
+			if ( other.ClosuresOuterToInner != null )
+			{
+				throw new ArgumentException("Cannot merge specified identification because it already has defined closures.");
+			}
+
+			m_Externals.UnionWith(other.Externals);
+
+			foreach ( var otherCapture in other.Captures )
+			{
+				var existingCapture = m_Captures.FirstOrDefault(c => c.SourceOperand == otherCapture.SourceOperand);
+
+				if ( existingCapture != null )
+				{
+					existingCapture.Merge(otherCapture);
+				}
+				else
+				{
+					m_Captures.Add(otherCapture);
+				}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

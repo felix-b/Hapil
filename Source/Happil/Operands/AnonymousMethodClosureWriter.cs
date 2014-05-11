@@ -44,13 +44,13 @@ namespace Happil.Operands
 			{
 				IClosureIdentification existingIdentification;
 
-				if ( m_ClosuresByHostMethod.TryGetValue(newIdentification.HostMethod, out existingIdentification) )
+				if ( m_ClosuresByHostMethod.TryGetValue(anonymousMethod.HostMethod, out existingIdentification) )
 				{
 					existingIdentification.Merge(newIdentification);
 				}
 				else
 				{
-					m_ClosuresByHostMethod.Add(newIdentification.HostMethod, newIdentification);
+					m_ClosuresByHostMethod.Add(anonymousMethod.HostMethod, newIdentification);
 				}
 			}
 		}
@@ -59,23 +59,27 @@ namespace Happil.Operands
 
 		private void ImplementClosuresIfAny()
 		{
-			foreach ( var hostMethodClosures in m_ClosuresByHostMethod.Values )
+			foreach ( var hostMethodClosures in m_ClosuresByHostMethod )
 			{
-				ImplementClosuresInHostMethod(hostMethodClosures);
+				ImplementClosuresInHostMethod(
+					hostMethod: hostMethodClosures.Key,
+					closureIdentification: hostMethodClosures.Value);
 			}
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void ImplementClosuresInHostMethod(IClosureIdentification hostMethodClosures)
+		private void ImplementClosuresInHostMethod(MethodMember hostMethod, IClosureIdentification closureIdentification)
 		{
-			foreach ( var closure in hostMethodClosures.ClosuresOuterToInner )
+			closureIdentification.DefineClosures();
+
+			foreach ( var closure in closureIdentification.ClosuresOuterToInner )
 			{
 				closure.ImplementClosure();
 			}
 
-			var hostMethodRewriter = new ClosureHostMethodRewritingVisitor(hostMethodClosures);
-			hostMethodClosures.HostMethod.AcceptVisitor(hostMethodRewriter);
+			var hostMethodRewriter = new ClosureHostMethodRewritingVisitor(closureIdentification);
+			hostMethod.AcceptVisitor(hostMethodRewriter);
 		}
 	}
 }

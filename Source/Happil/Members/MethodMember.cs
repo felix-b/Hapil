@@ -129,6 +129,25 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public MethodMember HostMethod
+		{
+			get
+			{
+				var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+
+				if ( anonymousMethodFactory != null )
+				{
+					return anonymousMethodFactory.HostMethod;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal void AddWriter(MethodWriterBase writer)
 		{
 			if ( writer.IsDecorator )
@@ -187,7 +206,7 @@ namespace Happil.Members
 
 			var visitor = new ClosureIdentificationVisitor(this);
 			AcceptVisitor(visitor);
-			visitor.DefineClosures();
+			//visitor.DefineClosures();
 			identification = visitor;
 
 			return identification.ClosuresRequired;
