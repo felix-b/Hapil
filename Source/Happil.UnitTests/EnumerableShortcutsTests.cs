@@ -62,6 +62,29 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void TestAverage()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, int>(cls => cls.DoIntTest).Implement((m, source) =>
+					m.Return(source.Select(s => Static.Func(Int32.Parse, s)).Average().CastTo<int>())
+				);
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoIntTest(new[] { "10", "30" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(20));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void TestGroupBy()
 		{
 			//-- Arrange
@@ -779,6 +802,52 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void TestMin()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, int>(cls => cls.DoIntTest).Implement((m, source) => 
+					m.Return(source.Select(s => Static.Func(Int32.Parse, s)).Min())
+				);
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoIntTest(new[] { "123", "23", "223" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(23));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestMax()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, int>(cls => cls.DoIntTest).Implement((m, source) =>
+					m.Return(source.Select(s => Static.Func(Int32.Parse, s)).Max())
+				);
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoIntTest(new[] { "123", "223", "23" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(223));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void TestReverse()
 		{
 			//-- Arrange
@@ -1008,6 +1077,29 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(result, Is.EqualTo(new[] { "CX", "DX" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void TestSum()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, int>(cls => cls.DoIntTest).Implement((m, source) =>
+					m.Return(source.Select(s => Static.Func(Int32.Parse, s)).Sum())
+				);
+
+			//-- Act
+
+			var tester = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = tester.DoIntTest(new[] { "100", "20", "1" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(121));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -54,6 +54,39 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static Operand<Double> Average(this IOperand<IEnumerable<Int32>> source)
+		{
+			var methods = GetReflectionCache<Int32>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<Int32>>(methods.Average, source);
+			return new UnaryExpressionOperand<IEnumerable<Int32>, Double>(@operator, null);
+		}
+		public static Operand<Double> Average(this IOperand<IEnumerable<Int64>> source)
+		{
+			var methods = GetReflectionCache<Int64>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<Int64>>(methods.Average, source);
+			return new UnaryExpressionOperand<IEnumerable<Int64>, Double>(@operator, null);
+		}
+		public static Operand<Single> Average(this IOperand<IEnumerable<Single>> source)
+		{
+			var methods = GetReflectionCache<Single>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<Single>>(methods.Average, source);
+			return new UnaryExpressionOperand<IEnumerable<Single>, Single>(@operator, null);
+		}
+		public static Operand<Decimal> Average(this IOperand<IEnumerable<Decimal>> source)
+		{
+			var methods = GetReflectionCache<Decimal>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<Decimal>>(methods.Average, source);
+			return new UnaryExpressionOperand<IEnumerable<Decimal>, Decimal>(@operator, null);
+		}
+		public static Operand<Double> Average(this IOperand<IEnumerable<Double>> source)
+		{
+			var methods = GetReflectionCache<Double>();
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<Double>>(methods.Average, source);
+			return new UnaryExpressionOperand<IEnumerable<Double>, Double>(@operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Operand<IEnumerable<TResult>> Cast<TResult>(this IOperand<System.Collections.IEnumerable> source)
 		{
 			var castMethod = GetCastMethod<TResult>();
@@ -76,6 +109,36 @@ namespace Happil
 			var methods = GetReflectionCache<TSource>();
 			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.GroupBy<TKey>(), source, keySelector);
 			return new UnaryExpressionOperand<IEnumerable<TSource>, IEnumerable<IGrouping<TKey, TSource>>>(@operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TSource> Min<TSource>(this IOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+
+			if ( methods.Min == null )
+			{
+				throw new InvalidOperationException(string.Format("Method [Min] is not supported on enumerable of element type [{0}]", typeof(TSource).Name));
+			}
+
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Min, source);
+			return new UnaryExpressionOperand<IEnumerable<TSource>, TSource>(@operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TSource> Max<TSource>(this IOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+
+			if ( methods.Max == null )
+			{
+				throw new InvalidOperationException(string.Format("Method [Max] is not supported on enumerable of element type [{0}]", typeof(TSource).Name));
+			}
+
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Max, source);
+			return new UnaryExpressionOperand<IEnumerable<TSource>, TSource>(@operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -153,6 +216,21 @@ namespace Happil
 			var methods = GetReflectionCache<TSource>();
 			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.SelectMany<TResult>(), source, resultSelector);
 			return new UnaryExpressionOperand<IEnumerable<TSource>, IEnumerable<TResult>>(@operator, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TSource> Sum<TSource>(this IOperand<IEnumerable<TSource>> source)
+		{
+			var methods = GetReflectionCache<TSource>();
+
+			if ( methods.Sum == null )
+			{
+				throw new InvalidOperationException(string.Format("Method [Sum] is not supported on enumerable of element type [{0}]", typeof(TSource).Name));
+			}
+
+			var @operator = new UnaryOperators.OperatorCall<IEnumerable<TSource>>(methods.Sum, source);
+			return new UnaryExpressionOperand<IEnumerable<TSource>, TSource>(@operator, null);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -765,6 +843,10 @@ namespace Happil
 			public MethodInfo Union { get; protected set; }
 			public MethodInfo Where { get; protected set; }
 			public MethodInfo WhereWithIndex { get; protected set; }
+			public MethodInfo Average { get; protected set; }
+			public MethodInfo Min { get; protected set; }
+			public MethodInfo Max { get; protected set; }
+			public MethodInfo Sum { get; protected set; }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -812,6 +894,8 @@ namespace Happil
 				Union = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>, IEnumerable<TSource>>>>((left, right) => left.Union(right));
 				Where = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>>>>(source => source.Where(item => true));
 				WhereWithIndex = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>>>>(source => source.Where((item, index) => true));
+
+				InitializeTypeSpecificMethods();
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -851,6 +935,47 @@ namespace Happil
 			public override MethodInfo ToDictionary<TKey, TElement>()
 			{
 				return GetMethodInfo(ToDictionaryMethod<TKey, TElement>());
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			private void InitializeTypeSpecificMethods()
+			{
+				if ( typeof(TSource) == typeof(Int32) )
+				{
+					Min = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Min());
+					Max = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Max());
+					Average = GetMethodInfo<Expression<Func<IEnumerable<Int32>,	Double>>>(source => source.Average());
+					Sum = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Sum());
+				}
+				else if ( typeof(TSource) == typeof(Int64) )
+				{
+					Min = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Min());
+					Max = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Max());
+					Average = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Double>>>(source => source.Average());
+					Sum = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Sum());
+				}
+				else if ( typeof(TSource) == typeof(Single) )
+				{
+					Min = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Min());
+					Max = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Max());
+					Average = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Average());
+					Sum = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Sum());
+				}
+				else if ( typeof(TSource) == typeof(Decimal) )
+				{
+					Min = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Min());
+					Max = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Max());
+					Average = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Average());
+					Sum = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Sum());
+				}
+				else if ( typeof(TSource) == typeof(Double) )
+				{
+					Min = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Min());
+					Max = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Max());
+					Average = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Average());
+					Sum = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Sum());
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
