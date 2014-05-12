@@ -383,6 +383,46 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test, Ignore("Not yet implemented")]
+		public void NestedAnonymousMethods()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var input = w.Local(w.NewArray<int>(100, 101, 102, 103));
+					var output = w.Local(w.New<List<string>>());
+
+					output.AddRange(
+						input.Select(
+							w.Lambda<int, string>(item =>
+								(item + n).FuncToString().ToCharArray().Select(c => 
+									c.CastTo<int>() + n
+								)
+								.Sum()
+								.FuncToString()
+							)
+						)
+					);
+
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(11);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("99:100;99:101;PFX:99:100;PFX:99:101"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test, Ignore("Manual test")]
 		public void RunCompiledExamples()
 		{

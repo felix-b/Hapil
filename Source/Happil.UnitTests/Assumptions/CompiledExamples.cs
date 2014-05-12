@@ -849,6 +849,30 @@ namespace Happil.UnitTests.Assumptions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void TwoLevelsOfAnonymousMethods(int y)
+			{
+				var input = new int[] { 100, 101, 102, 103 };
+				var output = input.Select(item => item.ToString().ToCharArray().Select(c => (int)c + y).Sum().ToString()).ToArray();
+					
+				Output.AddRange(output);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public void TwoLevelsOfAnonymousMethods2(int y)
+			{
+				var input = new int[] { 100, 101, 102, 103 };
+				var output = input.Select(
+					delegate(int item) {
+						var q = item * item;
+						return item.ToString().ToCharArray().Select(c => (int)c + y * q).Sum().ToString();
+					}).ToArray();
+
+				Output.AddRange(output);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			static ClosureExamples()
 			{
 				Output = new List<string>();
