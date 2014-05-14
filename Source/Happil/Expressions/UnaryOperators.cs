@@ -121,7 +121,7 @@ namespace Happil.Expressions
 		{
 			private readonly UnaryOperatorPosition m_Position;
 			private readonly bool m_Positive;
-			private readonly MethodMember m_OwnerMethod;
+			private readonly StatementScope m_StatementScope;
 			private bool m_ShouldLeaveValueOnStack;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ namespace Happil.Expressions
 			{
 				m_Position = position;
 				m_Positive = positive;
-				m_OwnerMethod = StatementScope.Current.OwnerMethod;
+				m_StatementScope = StatementScope.Current;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ namespace Happil.Expressions
 
 				if ( operand.HasTarget )
 				{
-					var temp = m_OwnerMethod.AddLocal<T>();
+					var temp = m_StatementScope.AddLocal<T>();
 
 					temp.EmitStore(il);
 					operand.EmitTarget(il);
@@ -199,7 +199,7 @@ namespace Happil.Expressions
 
 				if ( operand.HasTarget && m_ShouldLeaveValueOnStack )
 				{
-					var temp = m_OwnerMethod.AddLocal<T>();
+					var temp = m_StatementScope.AddLocal<T>();
 
 					temp.EmitStore(il);
 					operand.EmitStore(il);

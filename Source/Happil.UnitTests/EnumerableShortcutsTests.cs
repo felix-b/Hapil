@@ -311,7 +311,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[Test, Ignore("FAILS - FIXING IN NEXT COMMIT")]
+		[Test]
 		public void TestSelectMany()
 		{
 			//-- Arrange

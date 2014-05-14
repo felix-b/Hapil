@@ -4,7 +4,7 @@ namespace Happil.Operands
 {
 	internal interface IAnonymousMethodIdentification
 	{
-		void Merge(IAnonymousMethodIdentification other);
+		//void Merge(IAnonymousMethodIdentification other);
 		void DefineClosures();
 		AnonymousMethodScope GetAnonymousMethodScope(IAnonymousMethodOperand anonymousMethod);
 		IAnonymousMethodOperand[] AnonymousMethods { get; }

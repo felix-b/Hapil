@@ -152,7 +152,7 @@ namespace Happil.Statements
 
 				using ( var scope = new StatementScope(Statements, ownerStatement, ExceptionBlockType.Catch) )
 				{
-					m_ExceptionObject = scope.OwnerMethod.AddLocal<TException>();
+					m_ExceptionObject = scope.AddLocal<TException>();
 					body(ExceptionObject);
 				}
 			}

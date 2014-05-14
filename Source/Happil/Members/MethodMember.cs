@@ -274,7 +274,7 @@ namespace Happil.Members
 		{
 			var writersArray = m_Writers.ToArray();
 
-			using ( new StatementScope(OwnerClass, this, m_Statements) )
+			using ( new StatementScope(OwnerClass, m_TransparentWriter, m_Statements) )
 			{
 				foreach ( var writer in writersArray )
 				{

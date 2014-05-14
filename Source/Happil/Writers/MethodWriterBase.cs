@@ -14,6 +14,7 @@ namespace Happil.Writers
 {
 	public abstract class MethodWriterBase : MemberWriterBase
 	{
+		private readonly ClassType m_OwnerClass;
 		private readonly MethodMember m_OwnerMethod;
 		private MethodWriterModes m_Mode;
 		private AttributeWriter m_ReturnAttributeWriter;
@@ -30,6 +31,14 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		protected MethodWriterBase(ClassType ownerClass)
+			: this(null, MethodWriterModes.Normal, attachToOwner: true)
+		{
+			m_OwnerClass = ownerClass;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected MethodWriterBase(MethodMember ownerMethod, MethodWriterModes mode, bool attachToOwner)
 		{
 			m_OwnerMethod = ownerMethod;
@@ -37,9 +46,14 @@ namespace Happil.Writers
 			m_ReturnValueLocal = null;
 			m_InnerWriters = null;
 
-			if ( attachToOwner )
+			if ( ownerMethod != null )
 			{
-				ownerMethod.AddWriter(this);
+				m_OwnerClass = ownerMethod.OwnerClass;
+
+				if ( attachToOwner )
+				{
+					ownerMethod.AddWriter(this);
+				}
 			}
 		}
 
@@ -48,6 +62,8 @@ namespace Happil.Writers
 		public void Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
 			where TAttribute : Attribute
 		{
+			ValidateNotAnonymousMethod();
+
 			var builder = new AttributeArgumentWriter<TAttribute>(values);
 			m_OwnerMethod.MethodFactory.SetAttribute(builder.GetAttributeBuilder());
 		}
@@ -167,14 +183,14 @@ namespace Happil.Writers
 
 		public IHappilIfBody If(IOperand<bool> condition)
 		{
-			return OwnerMethod.AddStatement(new IfStatement(condition));
+			return AddStatement(new IfStatement(condition));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilIfBody If(IOperand<bool> condition, bool isTautology)
 		{
-			return OwnerMethod.AddStatement(new IfStatement(condition, isTautology));
+			return AddStatement(new IfStatement(condition, isTautology));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -206,56 +222,56 @@ namespace Happil.Writers
 
 		public IHappilWhileSyntax While(IOperand<bool> condition)
 		{
-			return OwnerMethod.AddStatement(new WhileStatement(condition));
+			return AddStatement(new WhileStatement(condition));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilDoWhileSyntax Do(Action<ILoopBody> body)
 		{
-			return OwnerMethod.AddStatement(new DoWhileStatement(body));
+			return AddStatement(new DoWhileStatement(body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilForShortSyntax For(Operand<int> from, IOperand<int> to, int increment = 1)
 		{
-			return new HappilForShortSyntax(OwnerMethod, from, to.CastTo<int>(), increment);
+			return new HappilForShortSyntax(this, from, to.CastTo<int>(), increment);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilForShortSyntax For(IOperand<int> from, Operand<int> to, int increment = 1)
 		{
-			return new HappilForShortSyntax(OwnerMethod, from.CastTo<int>(), to, increment);
+			return new HappilForShortSyntax(this, from.CastTo<int>(), to, increment);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilForShortSyntax For(IOperand<int> from, IOperand<int> to, int increment = 1)
 		{
-			return new HappilForShortSyntax(OwnerMethod, from.CastTo<int>(), to.CastTo<int>(), increment);
+			return new HappilForShortSyntax(this, from.CastTo<int>(), to.CastTo<int>(), increment);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public HappilForShortSyntax For(Operand<int> from, Operand<int> to, int increment = 1)
 		{
-			return new HappilForShortSyntax(OwnerMethod, from, to, increment);
+			return new HappilForShortSyntax(this, from, to, increment);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilForWhileSyntax For(Action precondition)
 		{
-			return OwnerMethod.AddStatement(new ForStatement(precondition));
+			return AddStatement(new ForStatement(precondition));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilForeachInSyntax<T> Foreach<T>(Local<T> element)
 		{
-			return OwnerMethod.AddStatement(new ForeachStatement<T>(element));
+			return AddStatement(new ForeachStatement<T>(element));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -265,7 +281,7 @@ namespace Happil.Writers
 			var element = this.Local<T>();
 			var statement = new ForeachStatement<T>(element);
 
-			OwnerMethod.AddStatement(statement);
+			AddStatement(statement);
 			statement.In(collection);
 
 			return statement;
@@ -275,42 +291,42 @@ namespace Happil.Writers
 
 		public IHappilUsingSyntax Using(IOperand<IDisposable> disposable)
 		{
-			return OwnerMethod.AddStatement(new UsingStatement(disposable));
+			return AddStatement(new UsingStatement(disposable));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilLockSyntax Lock(IOperand<object> syncRoot, int millisecondsTimeout)
 		{
-			return OwnerMethod.AddStatement(new LockStatement(syncRoot, millisecondsTimeout));
+			return AddStatement(new LockStatement(syncRoot, millisecondsTimeout));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilCatchSyntax Try(Action body)
 		{
-			return OwnerMethod.AddStatement(new TryStatement(body));
+			return AddStatement(new TryStatement(body));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IHappilSwitchSyntax<T> Switch<T>(IOperand<T> value)
 		{
-			return OwnerMethod.AddStatement(new SwitchStatement<T>(value));
+			return AddStatement(new SwitchStatement<T>(value));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ThisOperand<TBase> This<TBase>()
 		{
-			return new ThisOperand<TBase>(OwnerMethod);
+			return new ThisOperand<TBase>(OwnerClass);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void RaiseEvent(string eventName, IOperand<EventArgs> eventArgs)
 		{
-			var eventMember = m_OwnerMethod.OwnerClass.GetMemberByName<EventMember>(eventName);
+			var eventMember = m_OwnerClass.GetMemberByName<EventMember>(eventName);
 
 			using ( eventMember.CreateTypeTemplateScope() )
 			{
@@ -368,21 +384,21 @@ namespace Happil.Writers
 
 		public void Throw<TException>(string message) where TException : Exception
 		{
-			OwnerMethod.AddStatement(new ThrowStatement(typeof(TException), message));
+			AddStatement(new ThrowStatement(typeof(TException), message));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void Throw()
 		{
-			OwnerMethod.AddStatement(new RethrowStatement());
+			AddStatement(new RethrowStatement());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			return new AnonymousFuncOperand<TArg1, TReturn>(OwnerMethod, body);
+			return new AnonymousFuncOperand<TArg1, TReturn>(OwnerClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -405,7 +421,7 @@ namespace Happil.Writers
 		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
 			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			return new AnonymousFuncOperand<TArg1, TArg2, TReturn>(m_OwnerMethod, body);
+			return new AnonymousFuncOperand<TArg1, TArg2, TReturn>(m_OwnerClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -514,6 +530,8 @@ namespace Happil.Writers
 
 		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>> action)
 		{
+			ValidateNotAnonymousMethod();
+
 			//TODO: refactor to reuse the overloaded method
 			var argumentTypes = OwnerMethod.Signature.ArgumentType;
 			var indexBase = (OwnerMethod.Signature.IsStatic ? 0 : 1);
@@ -533,6 +551,8 @@ namespace Happil.Writers
 		//TODO: refactor to reuse the overloaded method
 		public void ForEachArgument(Action<Argument<TypeTemplate.TArgument>, int> action)
 		{
+			ValidateNotAnonymousMethod();
+
 			var argumentTypes = OwnerMethod.Signature.ArgumentType;
 
 			for ( int index = 0 ; index < argumentTypes.Length ; index++ )
@@ -549,13 +569,15 @@ namespace Happil.Writers
 
 		public Operand<TResult> Proceed<TResult>()
 		{
+			ValidateNotAnonymousMethod();
+
 			if ( !m_Mode.HasFlag(MethodWriterModes.Decorator) )
 			{
 				throw new InvalidOperationException("Proceed is only allowed in the Decorator mode.");
 			}
 
 			var returnValueLocal = (m_OwnerMethod.Signature.IsVoid ? null : m_OwnerMethod.AddLocal<TResult>());
-			m_OwnerMethod.AddStatement(new ProceedStatement(m_OwnerMethod, m_InnerWriters, returnValueLocal));
+			AddStatement(new ProceedStatement(m_OwnerMethod, m_InnerWriters, returnValueLocal));
 
 			return returnValueLocal;
 		}
@@ -564,6 +586,8 @@ namespace Happil.Writers
 
 		public Operand<TResult> PropagateCall<TResult>(IOperand target)
 		{
+			ValidateNotAnonymousMethod();
+
 			Local<TResult> returnValueLocal = null;
 
 			if ( !OwnerMethod.IsVoid )
@@ -586,6 +610,16 @@ namespace Happil.Writers
 		public void RawIL(Action<ILGenerator> script)
 		{
 			StatementScope.Current.AddStatement(new RawILStatement(script));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClassType OwnerClass
+		{
+			get
+			{
+				return m_OwnerClass;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -655,6 +689,8 @@ namespace Happil.Writers
 
 		protected internal void AddAttributes(Func<MethodMember, AttributeWriter> attributeWriterFactory)
 		{
+			ValidateNotAnonymousMethod();
+
 			if ( attributeWriterFactory != null )
 			{
 				AttributeWriter.Include(attributeWriterFactory(m_OwnerMethod));
@@ -665,7 +701,16 @@ namespace Happil.Writers
 
 		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
 		{
+			ValidateNotAnonymousMethod();
 			m_OwnerMethod.MethodFactory.SetAttribute(attribute);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal TStatement AddStatement<TStatement>(TStatement statement) where TStatement : StatementBase
+		{
+			StatementScope.Current.AddStatement(statement);
+			return statement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -733,12 +778,24 @@ namespace Happil.Writers
 				return;
 			}
 
+			ValidateNotAnonymousMethod();
+
 			if ( m_OwnerMethod.MethodFactory.ReturnParameter != null )
 			{
 				foreach ( var attribute in m_ReturnAttributeWriter.GetAttributes() )
 				{
 					m_OwnerMethod.MethodFactory.ReturnParameter.SetCustomAttribute(attribute);
 				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	
+		private void ValidateNotAnonymousMethod()
+		{
+			if ( m_OwnerMethod == null )
+			{
+				throw new InvalidOperationException("Requested operation is not available within anonymous delegate or lambda expression.");
 			}
 		}
 	}

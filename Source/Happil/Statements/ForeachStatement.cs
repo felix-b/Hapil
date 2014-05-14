@@ -83,13 +83,13 @@ namespace Happil.Statements
 		{
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
-				var method = scope.OwnerMethod.TransparentWriter;
-				var enumerator = method.Local<IEnumerator<TElement>>();
+				var writer = scope.Writer;
+				var enumerator = writer.Local<IEnumerator<TElement>>();
 
 				enumerator.Assign(m_Collection.CastTo<IEnumerable<TElement>>().Func<IEnumerator<TElement>>(x => x.GetEnumerator));
 
-				method.Using(enumerator).Do(() => {
-					m_InnerWhile = (WhileStatement)method.While(enumerator.Func<bool>(e => e.MoveNext));
+				writer.Using(enumerator).Do(() => {
+					m_InnerWhile = (WhileStatement)writer.While(enumerator.Func<bool>(e => e.MoveNext));
 					m_InnerWhile.Do(loop => {
 						m_Element.Assign(enumerator.Prop(e => e.Current));
 						body(this, m_Element);

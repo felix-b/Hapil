@@ -59,13 +59,13 @@ namespace Happil.Statements
 
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
-				var m = scope.OwnerMethod.TransparentWriter;
+				var w = scope.Writer;
 
-				m.If(!Static.Func(Monitor.TryEnter, m_SyncRoot, m.Const(m_MillisecondsTimeout))).Then(() => 
-					m.Throw<TimeoutException>(timeoutExceptionMessage)
+				w.If(!Static.Func(Monitor.TryEnter, m_SyncRoot, w.Const(m_MillisecondsTimeout))).Then(() => 
+					w.Throw<TimeoutException>(timeoutExceptionMessage)
 				);
 
-				m.Try(() => {
+				w.Try(() => {
 					body();
 				})
 				.Finally(() => {

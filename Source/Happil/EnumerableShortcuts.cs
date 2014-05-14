@@ -26,7 +26,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return All<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return All<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return Any<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Any<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return GroupBy<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return GroupBy<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<IEnumerable<IGrouping<TKey, TSource>>> GroupBy<TSource, TKey>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -156,7 +156,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return OrderBy<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return OrderBy<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<IOrderedEnumerable<TSource>> OrderBy<TSource, TKey>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -173,7 +173,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return OrderByDescending<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return OrderByDescending<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<IOrderedEnumerable<TSource>> OrderByDescending<TSource, TKey>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -190,7 +190,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TResult>> resultSelectorLambda)
 		{
-			return Select<TSource, TResult>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(resultSelectorLambda));
+			return Select<TSource, TResult>(source, StatementScope.Current.Writer.Lambda(resultSelectorLambda));
 		}
 		public static Operand<IEnumerable<TResult>> Select<TSource, TResult>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -207,7 +207,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<IEnumerable<TResult>>> resultSelectorLambda)
 		{
-			return SelectMany<TSource, TResult>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(resultSelectorLambda));
+			return SelectMany<TSource, TResult>(source, StatementScope.Current.Writer.Lambda(resultSelectorLambda));
 		}
 		public static Operand<IEnumerable<TResult>> SelectMany<TSource, TResult>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -239,7 +239,7 @@ namespace Happil
 			this IOperand<IOrderedEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return ThenBy<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return ThenBy<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<IOrderedEnumerable<TSource>> ThenBy<TSource, TKey>(
 			this IOperand<IOrderedEnumerable<TSource>> source,
@@ -256,7 +256,7 @@ namespace Happil
 			this IOperand<IOrderedEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return ThenByDescending<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return ThenByDescending<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<IOrderedEnumerable<TSource>> ThenByDescending<TSource, TKey>(
 			this IOperand<IOrderedEnumerable<TSource>> source,
@@ -273,7 +273,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<TKey>> keySelectorLambda)
 		{
-			return ToDictionary<TSource, TKey>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda));
+			return ToDictionary<TSource, TKey>(source, StatementScope.Current.Writer.Lambda(keySelectorLambda));
 		}
 		public static Operand<Dictionary<TKey, TSource>> ToDictionary<TSource, TKey>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -293,8 +293,8 @@ namespace Happil
 		{
 			return ToDictionary<TSource, TKey, TElement>(
 				source,
-				StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(keySelectorLambda),
-				StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(elementSelectorLambda));
+				StatementScope.Current.Writer.Lambda(keySelectorLambda),
+				StatementScope.Current.Writer.Lambda(elementSelectorLambda));
 		}
 		public static Operand<Dictionary<TKey, TElement>> ToDictionary<TSource, TKey, TElement>(
 			this IOperand<IEnumerable<TSource>> source,
@@ -320,7 +320,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return Where<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Where<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, Operand<int>, IOperand<bool>> predicateLambda)
 		{
-			return Where<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Where<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -385,7 +385,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return Count<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Count<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return First<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return First<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -499,7 +499,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return FirstOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return FirstOrDefault<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -536,7 +536,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return Last<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Last<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -562,7 +562,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return LastOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return LastOrDefault<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -608,7 +608,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return Single<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return Single<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return SingleOrDefault<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return SingleOrDefault<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -662,7 +662,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return SkipWhile<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return SkipWhile<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -679,7 +679,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, Operand<int>, IOperand<bool>> predicateLambda)
 		{
-			return SkipWhile<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return SkipWhile<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -707,7 +707,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, IOperand<bool>> predicateLambda)
 		{
-			return TakeWhile<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return TakeWhile<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -724,7 +724,7 @@ namespace Happil
 			this IOperand<IEnumerable<TSource>> source,
 			Func<Operand<TSource>, Operand<int>, IOperand<bool>> predicateLambda)
 		{
-			return TakeWhile<TSource>(source, StatementScope.Current.OwnerMethod.TransparentWriter.Lambda(predicateLambda));
+			return TakeWhile<TSource>(source, StatementScope.Current.Writer.Lambda(predicateLambda));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

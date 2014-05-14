@@ -22,7 +22,7 @@ namespace Happil.UnitTests.Expressions
 		[SetUp]
 		public void SetUp()
 		{
-			m_StatementScope = new StatementScope(null, null, new StatementBlock());
+			m_StatementScope = new StatementScope(ownerClass: null, writer: null, statementBlock: new StatementBlock());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

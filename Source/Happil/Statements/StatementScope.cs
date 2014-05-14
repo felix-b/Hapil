@@ -6,6 +6,7 @@ using System.Text;
 using Happil.Expressions;
 using Happil.Members;
 using Happil.Operands;
+using Happil.Writers;
 
 namespace Happil.Statements
 {
@@ -15,6 +16,7 @@ namespace Happil.Statements
 		private readonly StatementScope m_Root;
 		private readonly ClassType m_OwnerClass;
 		private readonly MethodMember m_OwnerMethod;
+		private readonly MethodWriterBase m_Writer;
 		private readonly StatementBlock m_StatementBlock;
 		private readonly int m_Depth;
 		private readonly TryStatement m_InheritedExceptionStatement;
@@ -26,14 +28,22 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementScope(ClassType ownerClass, MethodMember ownerMethod, StatementBlock statementBlock)
+		public StatementScope(ClassType ownerClass, MethodMember method, StatementBlock statementBlock)
+			: this(ownerClass, method.TransparentWriter, statementBlock)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope(ClassType ownerClass, MethodWriterBase writer, StatementBlock statementBlock)
 		{
 			if ( s_Current != null )
 			{
 				throw new InvalidOperationException("Root scope already exists.");
 			}
 
-			m_OwnerMethod = ownerMethod;
+			m_Writer = writer;
+			m_OwnerMethod = (writer != null ? writer.OwnerMethod : null);
 			m_OwnerClass = ownerClass;
 			m_Depth = 0;
 
@@ -62,6 +72,7 @@ namespace Happil.Statements
 			}
 
 			m_StatementBlock = statementBlock;
+			m_Writer = m_Previous.m_Writer;
 			m_OwnerMethod = m_Previous.m_OwnerMethod;
 			m_OwnerClass = m_Previous.m_OwnerClass;
 			m_Depth = m_Previous.Depth + 1;
@@ -83,6 +94,7 @@ namespace Happil.Statements
 			m_Root = (m_Previous != null ? m_Previous.Root : this);
 
 			m_StatementBlock = statementBlock;
+			m_Writer = statementBlock.OwnerMethod.TransparentWriter;
 			m_OwnerMethod = statementBlock.OwnerMethod;
 			m_OwnerClass = statementBlock.OwnerMethod.OwnerClass;
 			m_Depth = 1;
@@ -219,6 +231,13 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public Local<T> AddLocal<T>()
+		{
+			return new Local<T>(m_StatementBlock);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public DynamicModule OwnerModule
 		{
 			get
@@ -244,6 +263,16 @@ namespace Happil.Statements
 			get
 			{
 				return m_OwnerMethod;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodWriterBase Writer
+		{
+			get
+			{
+				return m_Writer;
 			}
 		}
 

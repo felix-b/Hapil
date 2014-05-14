@@ -6,6 +6,7 @@ using System.Text;
 using Happil.Members;
 using Happil.Operands;
 using Happil.Expressions;
+using Happil.Writers;
 
 namespace Happil.Statements
 {
@@ -177,16 +178,16 @@ namespace Happil.Statements
 
 	public class HappilForShortSyntax
 	{
-		private readonly MethodMember m_Method;
+		private readonly MethodWriterBase m_Writer;
 		private readonly Operand<int> m_From;
 		private readonly Operand<int> m_To;
 		private readonly int m_Increment;
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal HappilForShortSyntax(MethodMember method, Operand<int> from, Operand<int> to, int increment)
+		internal HappilForShortSyntax(MethodWriterBase writer, Operand<int> from, Operand<int> to, int increment)
 		{
-			m_Method = method;
+			m_Writer = writer;
 			m_From = from;
 			m_To = to;
 			m_Increment = increment;
@@ -199,7 +200,7 @@ namespace Happil.Statements
 
 		public void Do(Action<ILoopBody, Local<int>> body)
 		{
-			var counter = m_Method.AddLocal<int>();
+			var counter = m_Writer.Local<int>();
 			ForStatement statement;
 
 			if ( m_Increment > 0 )

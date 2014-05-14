@@ -15,16 +15,15 @@ namespace Happil.Expressions
 		private readonly Type m_StructType;
 		private readonly ConstructorInfo m_Constructor;
 		private readonly IOperand[] m_ConstructorArguments;
-		private readonly MethodMember m_OwnerMethod;
+		private readonly StatementScope m_StatementScope;
 		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public NewStructExpression(IOperand[] constructorArguments = null)
 		{
-			var statementScope = StatementScope.Current;
+			m_StatementScope = StatementScope.Current;
 
-			m_OwnerMethod = statementScope.OwnerMethod;
 			m_StructType = TypeTemplate.Resolve<TStruct>();
 			m_ConstructorArguments = (constructorArguments ?? new IOperand[0]);
 
@@ -40,11 +39,11 @@ namespace Happil.Expressions
 
 				foreach ( var argument in m_ConstructorArguments.Reverse() )
 				{
-					statementScope.Consume(argument);
+					m_StatementScope.Consume(argument);
 				}
 			}
-			
-			statementScope.RegisterExpressionStatement(this);
+
+			m_StatementScope.RegisterExpressionStatement(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -108,7 +107,7 @@ namespace Happil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			Local<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_OwnerMethod.AddLocal<TStruct>() : null);
+			Local<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_StatementScope.AddLocal<TStruct>() : null);
 			var effectiveTarget = (m_Target ?? tempLocal);
 
 			if ( effectiveTarget != null )

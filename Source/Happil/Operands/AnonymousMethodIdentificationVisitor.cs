@@ -47,39 +47,39 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Merge(IAnonymousMethodIdentification other)
-		{
-			if ( this.ClosuresOuterToInner != null )
-			{
-				throw new InvalidOperationException("Cannot merge other identifications because current identification already has defined closures.");
-			}
+		//public void Merge(IAnonymousMethodIdentification other)
+		//{
+		//	if ( this.ClosuresOuterToInner != null )
+		//	{
+		//		throw new InvalidOperationException("Cannot merge other identifications because current identification already has defined closures.");
+		//	}
 
-			if ( other.ClosuresOuterToInner != null )
-			{
-				throw new ArgumentException("Cannot merge specified identification because it already has defined closures.");
-			}
+		//	if ( other.ClosuresOuterToInner != null )
+		//	{
+		//		throw new ArgumentException("Cannot merge specified identification because it already has defined closures.");
+		//	}
 
-			m_MustCloseOverOperands.UnionWith(other.MustCloseOverOperands);
+		//	m_MustCloseOverOperands.UnionWith(other.MustCloseOverOperands);
 
-			foreach ( var otherCapture in other.Captures )
-			{
-				var existingCapture = m_Captures.FirstOrDefault(c => c.SourceOperand == otherCapture.SourceOperand);
+		//	foreach ( var otherCapture in other.Captures )
+		//	{
+		//		var existingCapture = m_Captures.FirstOrDefault(c => c.SourceOperand == otherCapture.SourceOperand);
 
-				if ( existingCapture != null )
-				{
-					existingCapture.Merge(otherCapture);
-				}
-				else
-				{
-					m_Captures.Add(otherCapture);
-				}
-			}
+		//		if ( existingCapture != null )
+		//		{
+		//			existingCapture.Merge(otherCapture);
+		//		}
+		//		else
+		//		{
+		//			m_Captures.Add(otherCapture);
+		//		}
+		//	}
 
-			foreach ( var anonymousMethod in other.AnonymousMethods )
-			{
-				AddOrUpdateAnonymousMethod(anonymousMethod, other.GetAnonymousMethodScope(anonymousMethod));
-			}
-		}
+		//	foreach ( var anonymousMethod in other.AnonymousMethods )
+		//	{
+		//		AddOrUpdateAnonymousMethod(anonymousMethod, other.GetAnonymousMethodScope(anonymousMethod));
+		//	}
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

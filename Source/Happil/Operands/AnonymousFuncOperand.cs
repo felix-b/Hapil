@@ -18,7 +18,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
+		public AnonymousFuncOperand(ClassType ownerClass, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
 			//var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1) }, typeof(TReturn));
 			//m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
@@ -28,14 +28,14 @@ namespace Happil.Operands
 
 			using ( StatementScope.Stash() )
 			{
-				using ( new StatementScope(ownerMethod.OwnerClass, ownerMethod: null, statementBlock: m_Statements) )
-				{
-					var writer = new FunctionMethodWriter<TReturn>(
-						m_Method,
-						script: w => body(w, w.Arg1<TArg1>()),
-						mode: MethodWriterModes.Normal,
-						attachToOwner: false);
+				var writer = new FunctionMethodWriter<TReturn>(
+					m_Method,
+					script: w => body(w, w.Arg1<TArg1>()),
+					mode: MethodWriterModes.Normal,
+					attachToOwner: false);
 
+				using ( new StatementScope(ownerClass, writer, statementBlock: m_Statements) )
+				{
 					body(writer, new Argument<TArg1>(m_Statements, index: 1, isByRef: false, isOut: false));
 				}
 			}
@@ -166,18 +166,18 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
+		public AnonymousFuncOperand(ClassType ownerClass, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.Create(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn), isStatic: true, isPublic: false);
+			var methodFactory = AnonymousMethodFactory.Create(ownerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn), isStatic: true, isPublic: false);
 
 			//var methodFactory = (
 			//	ownerMethod.IsStatic
 			//	? AnonymousMethodFactory.StaticMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn))
 			//	: AnonymousMethodFactory.InstanceMethod(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn)));
 
-			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
+			m_Method = new MethodMember(ownerClass, methodFactory);
 
-			ownerMethod.OwnerClass.AddMember(m_Method);
+			ownerClass.AddMember(m_Method);
 			var writer = new FunctionMethodWriter<TReturn>(
 				m_Method, 
 				w => body(w, w.Arg1<TArg1>(), w.Arg2<TArg2>()));

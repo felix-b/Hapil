@@ -42,6 +42,21 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal Local(StatementBlock homeStatementBlock)
+		{
+			m_OriginalLocal = null;
+			m_HomeStatementBlock = homeStatementBlock;
+			m_LocalIndex = -1;
+			m_LocalBuilder = null;
+
+			if ( homeStatementBlock.OwnerMethod != null )
+			{
+				homeStatementBlock.OwnerMethod.RegisterLocal(this, out m_LocalIndex);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private Local(ILocal originalLocal, StatementBlock homeStatementBlock, int localIndex, LocalBuilder localBuilder)
 		{
 			m_OriginalLocal = originalLocal;

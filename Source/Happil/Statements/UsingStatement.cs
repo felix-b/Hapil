@@ -50,14 +50,14 @@ namespace Happil.Statements
 		{
 			using ( var scope = new StatementScope(m_BodyBlock) )
 			{
-				var method = scope.OwnerMethod.TransparentWriter;
-				var disposable = method.Local<IDisposable>(initialValue: m_Disposable.CastTo<IDisposable>());
+				var writer = scope.Writer;
+				var disposable = writer.Local<IDisposable>(initialValue: m_Disposable.CastTo<IDisposable>());
 
-				method.Try(() => {
+				writer.Try(() => {
 					body();
 				})
 				.Finally(() => {
-					method.If(disposable != method.Const<IDisposable>(null)).Then(() => {
+					writer.If(disposable != writer.Const<IDisposable>(null)).Then(() => {
 						disposable.Void(x => x.Dispose);
 					});
 				});

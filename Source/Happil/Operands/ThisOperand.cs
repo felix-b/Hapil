@@ -16,13 +16,6 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal ThisOperand(MethodMember ownerMethod)
-		{
-			m_OwnerClass = ownerMethod.OwnerClass;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		internal ThisOperand(ClassType ownerClass)
 		{
 			m_OwnerClass = ownerClass;

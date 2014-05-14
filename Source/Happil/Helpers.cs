@@ -333,8 +333,8 @@ namespace Happil
 
 		public static Local<T[]> BuildArrayLocal<T>(params T[] constantValues)
 		{
-			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
-			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new Constant<int>(constantValues.Length)));
+			var writer = StatementScope.Current.Writer;
+			var arrayLocal = writer.Local<T[]>(initialValue: writer.NewArray<T>(new Constant<int>(constantValues.Length)));
 
 			for ( int i = 0 ; i < constantValues.Length ; i++ )
 			{
@@ -348,7 +348,7 @@ namespace Happil
 
 		public static Local<T[]> BuildArrayLocal<T>(params IOperand<T>[] values)
 		{
-			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
+			var method = StatementScope.Current.Writer;
 			var arrayLocal = method.Local<T[]>(initialValue: method.NewArray<T>(new Constant<int>(values.Length)));
 
 			for ( int i = 0 ; i < values.Length ; i++ )

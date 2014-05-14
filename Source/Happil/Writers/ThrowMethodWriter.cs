@@ -25,7 +25,7 @@ namespace Happil.Writers
 
 		protected internal override void Flush()
 		{
-			OwnerMethod.AddStatement(new ThrowStatement(m_ExceptionType, m_Message));
+			AddStatement(new ThrowStatement(m_ExceptionType, m_Message));
 			base.Flush();
 		}
 	}

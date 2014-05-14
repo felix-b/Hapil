@@ -49,8 +49,8 @@ namespace Happil
 
 		public static IOperand<string> Concat(this IOperand<string> str, params IOperand<string>[] values)
 		{
-			var method = StatementScope.Current.OwnerMethod.TransparentWriter;
-			var newArray = method.Local(method.NewArray<string>(new Constant<int>(values.Length + 1)));
+			var writer = StatementScope.Current.Writer;
+			var newArray = writer.Local(writer.NewArray<string>(new Constant<int>(values.Length + 1)));
 			newArray.ElementAt(0).Assign(str);
 
 			for ( int i = 0 ; i < values.Length ; i++ )
