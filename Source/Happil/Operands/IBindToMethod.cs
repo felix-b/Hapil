@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
 
 namespace Happil.Operands
 {
-	interface ILocal : IMutableOperand
+	internal interface IBindToMethod
 	{
-		void Declare(ILGenerator il);
-		LocalBuilder LocalBuilder { get; }
+		void BindToMethod(MethodMember ownerMethod);
+		bool IsBound { get; }
 	}
 }

@@ -9,16 +9,16 @@ namespace Happil.Operands
 {
 	internal class OperandCapture //: IEquatable<OperandCapture>
 	{
-		private readonly HashSet<MethodMember> m_ConsumerMethods;
+		private readonly HashSet<IAnonymousMethodOperand> m_Consumers;
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public OperandCapture(IScopedOperand sourceOperand, StatementBlock sourceOperandHome, MethodMember consumerMethod)
+		public OperandCapture(IScopedOperand sourceOperand, StatementBlock sourceOperandHome, IAnonymousMethodOperand consumerMethod)
 		{
 			this.SourceOperand = sourceOperand;
 			this.SourceOperandHome = sourceOperandHome;
 
-			m_ConsumerMethods = new HashSet<MethodMember>() {
+			m_Consumers = new HashSet<IAnonymousMethodOperand>() {
 				consumerMethod
 			};
 		}
@@ -85,7 +85,7 @@ namespace Happil.Operands
 				throw new ArgumentException("Cannot merge specified capture because of source operands mismatch.");
 			}
 
-			m_ConsumerMethods.UnionWith(other.ConsumerMethods);
+			m_Consumers.UnionWith(other.Consumers);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -135,11 +135,11 @@ namespace Happil.Operands
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodMember[] ConsumerMethods
+		public IAnonymousMethodOperand[] Consumers
 		{
 			get
 			{
-				return m_ConsumerMethods.ToArray();
+				return m_Consumers.ToArray();
 			}
 		}
 	}

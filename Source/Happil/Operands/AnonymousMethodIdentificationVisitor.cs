@@ -1,6 +1,4 @@
-﻿#if false
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,24 +9,24 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal class ClosureIdentificationVisitor : OperandVisitorBase, IClosureIdentification
+	internal class AnonymousMethodIdentificationVisitor : OperandVisitorBase, IAnonymousMethodIdentification
 	{
-		private readonly MethodMember m_Method;
-		private readonly HashSet<IOperand> m_Externals = new HashSet<IOperand>();
-		private readonly HashSet<OperandCapture> m_Captures = new HashSet<OperandCapture>();
+		private readonly MethodMember m_HostMethod;
+		private readonly HashSet<IOperand> m_MustCloseOverOperands = new HashSet<IOperand>();
+		private readonly List<OperandCapture> m_Captures = new List<OperandCapture>();
 		private readonly Dictionary<StatementBlock, ClosureDefinition> m_Closures = new Dictionary<StatementBlock, ClosureDefinition>();
-		private readonly List<IAnonymousMethodOperand> m_AnonymousMethodOperands = new List<IAnonymousMethodOperand>();
-		private IAnonymousMethodOperand m_CurrentAnonymousMethodOperand;
+		private readonly Dictionary<IAnonymousMethodOperand, AnonymousMethodScope> m_AnonymousMethods = new Dictionary<IAnonymousMethodOperand, AnonymousMethodScope>();
+		private IAnonymousMethodOperand m_CurrentAnonymousMethod;
 		private ClosureDefinition m_OutermostClosure = null;
 		private ClosureDefinition m_InnermostClosure = null;
 		private ClosureDefinition[] m_ClosuresFromOuterToInner = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClosureIdentificationVisitor(MethodMember method)
+		public AnonymousMethodIdentificationVisitor(MethodMember hostMethod)
 		{
-			m_Method = method;
-			m_CurrentAnonymousMethodOperand = null;
+			m_HostMethod = hostMethod;
+			m_CurrentAnonymousMethod = null;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,7 +47,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Merge(IClosureIdentification other)
+		public void Merge(IAnonymousMethodIdentification other)
 		{
 			if ( this.ClosuresOuterToInner != null )
 			{
@@ -61,7 +59,7 @@ namespace Happil.Operands
 				throw new ArgumentException("Cannot merge specified identification because it already has defined closures.");
 			}
 
-			m_Externals.UnionWith(other.MustCloseOverOperands);
+			m_MustCloseOverOperands.UnionWith(other.MustCloseOverOperands);
 
 			foreach ( var otherCapture in other.Captures )
 			{
@@ -76,6 +74,30 @@ namespace Happil.Operands
 					m_Captures.Add(otherCapture);
 				}
 			}
+
+			foreach ( var anonymousMethod in other.AnonymousMethods )
+			{
+				AddOrUpdateAnonymousMethod(anonymousMethod, other.GetAnonymousMethodScope(anonymousMethod));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void AddOrUpdateAnonymousMethod(IAnonymousMethodOperand anonymousMethod, AnonymousMethodScope scope)
+		{
+			AnonymousMethodScope existingScope;
+
+			if ( !m_AnonymousMethods.TryGetValue(anonymousMethod, out existingScope) || scope > existingScope )
+			{
+				m_AnonymousMethods[anonymousMethod] = scope;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public AnonymousMethodScope GetAnonymousMethodScope(IAnonymousMethodOperand anonymousMethod)
+		{
+			return m_AnonymousMethods[anonymousMethod];
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,7 +106,7 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return m_Externals.ToArray();
+				return m_MustCloseOverOperands.ToArray();
 			}
 		}
 
@@ -104,7 +126,7 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return m_AnonymousMethodOperands.ToArray();
+				return m_AnonymousMethods.Keys.ToArray();
 			}
 		}
 
@@ -114,7 +136,7 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return (m_AnonymousMethodOperands.Count > 0);
+				return (m_AnonymousMethods.Count > 0);
 			}
 		}
 
@@ -124,7 +146,7 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return (m_Externals.Count > 0);
+				return (m_MustCloseOverOperands.Count > 0);
 			}
 		}
 
@@ -185,14 +207,14 @@ namespace Happil.Operands
 
 		private void OnVisitAnonymousMethod(IAnonymousMethodOperand anonymousMethodOperand)
 		{
-			var isTopLevelAnonymousMethod = (m_CurrentAnonymousMethodOperand == null);
+			var isTopLevelAnonymousMethod = (m_CurrentAnonymousMethod == null);
 
 			try
 			{
 				if ( isTopLevelAnonymousMethod )
 				{
-					m_CurrentAnonymousMethodOperand = anonymousMethodOperand;
-					m_AnonymousMethodOperands.Add(anonymousMethodOperand);
+					m_CurrentAnonymousMethod = anonymousMethodOperand;
+					m_AnonymousMethods.Add(anonymousMethodOperand, AnonymousMethodScope.Static);
 				}
 
 				base.VisitStatementBlock(anonymousMethodOperand.Statements);
@@ -201,7 +223,7 @@ namespace Happil.Operands
 			{
 				if ( isTopLevelAnonymousMethod )
 				{
-					m_CurrentAnonymousMethodOperand = null;
+					m_CurrentAnonymousMethod = null;
 				}
 			}
 		}
@@ -212,22 +234,26 @@ namespace Happil.Operands
 		{
 			if ( operand.HomeStatementBlock != null )
 			{
-				var isExternal = (operand.HomeStatementBlock.OwnerMethod == null);
+				var mustCloseOver = (operand.HomeStatementBlock.OwnerMethod != null);
 
-				if ( !isExternal )
+				if ( !mustCloseOver )
 				{
 					return;
 				}
 
-				if ( !m_Externals.Add(operand) )
+				if ( !m_MustCloseOverOperands.Add(operand) )
 				{
 					return;
 				}
 			}
+			else 
+			{
+				AddOrUpdateAnonymousMethod(m_CurrentAnonymousMethod, AnonymousMethodScope.Instance);
+			}
 
 			if ( !m_Captures.Any(c => c.SourceOperand == operand) )
 			{
-				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock, consumerMethod: m_CurrentAnonymousMethodOperand));
+				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock, consumerMethod: m_CurrentAnonymousMethod));
 			}
 		}
 
@@ -357,11 +383,8 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return (m_CurrentAnonymousMethodOperand != null);
+				return (m_CurrentAnonymousMethod != null);
 			}
 		}
 	}
 }
-
-
-#endif

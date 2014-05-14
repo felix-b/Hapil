@@ -9,12 +9,12 @@ namespace Happil.Operands
 {
 	internal class ClosureHostMethodRewritingVisitor : OperandVisitorBase
 	{
-		private readonly IClosureIdentification m_Identification;
+		private readonly IAnonymousMethodIdentification m_Identification;
 		private readonly Stack<ClosureDefinition> m_EffectiveClosures;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClosureHostMethodRewritingVisitor(IClosureIdentification identification)
+		public ClosureHostMethodRewritingVisitor(IAnonymousMethodIdentification identification)
 		{
 			m_Identification = identification;
 			m_EffectiveClosures = new Stack<ClosureDefinition>();

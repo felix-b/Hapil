@@ -13,12 +13,11 @@ namespace Happil.Members
 	public class MethodMember : MemberBase
 	{
 		private readonly List<MethodWriterBase> m_Writers;
-		private readonly StatementBlock m_Statements;
 		private readonly List<ILocal> m_Locals;
 		private readonly TransparentMethodWriter m_TransparentWriter;
+		private StatementBlock m_Statements;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
-		private ClosureDefinition m_Closure;
 		private bool m_LocalsDeclared = false;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -109,6 +108,16 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public bool IsPublic
+		{
+			get
+			{
+				return m_MethodFactory.Signature.IsPublic;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public bool IsAnonymous
 		{
 			get
@@ -127,23 +136,31 @@ namespace Happil.Members
 			}
 		}
 
+		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//public MethodMember HostMethod
+		//{
+		//	get
+		//	{
+		//		var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+
+		//		if ( anonymousMethodFactory != null )
+		//		{
+		//			return anonymousMethodFactory.HostMethod;
+		//		}
+		//		else
+		//		{
+		//			return null;
+		//		}
+		//	}
+		//}
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodMember HostMethod
+		internal void SetBody(StatementBlock body)
 		{
-			get
-			{
-				var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
-
-				if ( anonymousMethodFactory != null )
-				{
-					return anonymousMethodFactory.HostMethod;
-				}
-				else
-				{
-					return null;
-				}
-			}
+			body.BindToMethod(this);
+			m_Statements = body;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -196,55 +213,48 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal bool NeedsClosures(out IClosureIdentification identification)
+		internal bool IdentifyAnonymousMethods(out IAnonymousMethodIdentification identification)
 		{
-			if ( HasClosure )
-			{
-				identification = null;
-				return false;
-			}
-
-			var visitor = new ClosureIdentificationVisitor(this);
+			var visitor = new AnonymousMethodIdentificationVisitor(this);
 			AcceptVisitor(visitor);
-			//visitor.DefineClosures();
+
 			identification = visitor;
-
-			return identification.ClosuresRequired;
+			return identification.AnonymousMethodsFound;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void MakeInstanceMethod()
-		{
-			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+		//internal void MakeInstanceMethod()
+		//{
+		//	var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
 
-			if ( anonymousMethodFactory == null )
-			{
-				throw new InvalidOperationException("Method modifiers are mutable only for anonymous methods.");
-			}
+		//	if ( anonymousMethodFactory == null )
+		//	{
+		//		throw new InvalidOperationException("Method modifiers are mutable only for anonymous methods.");
+		//	}
 
-			anonymousMethodFactory.ChangeMethodAttributes(isStatic: false);
-		}
+		//	anonymousMethodFactory.ChangeMethodAttributes(isStatic: false);
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void HoistInClosure(ClosureDefinition closure)
-		{
-			var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
+		//internal void HoistInClosure(ClosureDefinition closure)
+		//{
+		//	var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
 
-			if ( anonymousMethodFactory == null )
-			{
-				throw new InvalidOperationException("Only anonymous method can be moved to a closure class.");
-			}
+		//	if ( anonymousMethodFactory == null )
+		//	{
+		//		throw new InvalidOperationException("Only anonymous method can be moved to a closure class.");
+		//	}
 
-			base.OwnerClass.MoveMember(this, destination: closure.ClosureClass);
-			base.OwnerClass = closure.ClosureClass;
+		//	base.OwnerClass.MoveMember(this, destination: closure.ClosureClass);
+		//	base.OwnerClass = closure.ClosureClass;
 
-			anonymousMethodFactory.MethodMovedToClosure(closure.ClosureClass);
+		//	anonymousMethodFactory.MethodMovedToClosure(closure.ClosureClass);
 
-			m_Writers.Clear();
-			m_Closure = closure;
-		}
+		//	m_Writers.Clear();
+		//	m_Closure = closure;
+		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -271,6 +281,8 @@ namespace Happil.Members
 					writer.Flush();
 				}
 			}
+
+			new AnonymousMethodWriter(this).Flush();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -333,25 +345,21 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal bool SuppressAutomaticClosures { get; set; }
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal bool HasClosure
+		internal virtual bool HasClosure
 		{
 			get
 			{
-				return (m_Closure != null);
+				return OwnerClass.IsClosure;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal ClosureDefinition Closure
+		internal virtual ClosureDefinition Closure
 		{
 			get
 			{
-				return m_Closure;
+				return OwnerClass.ClosureDefinition;
 			}
 		}
 	}

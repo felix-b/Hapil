@@ -142,6 +142,13 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public NestedClassType[] GetNestedClasses()
+		{
+			return m_NestedClasses.ToArray();
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region Overrides of Object
 
 		public override string ToString()
@@ -286,16 +293,12 @@ namespace Happil.Members
 			
 			ForEachMember<ConstructorMember>(m => m.FreezeSignature(dependencyFieldsArray));
 			ForEachMember<MemberBase>(m => m.Write());
-
-			var closureWriter = new AnonymousMethodClosureWriter(this);
-			closureWriter.Flush();
-
 			ForEachMember<MemberBase>(m => m.Compile());
 
 			m_CompiledType = m_TypeBuilder.CreateType();
 			FixupFactoryMethods();
 			
-			foreach ( var nestedClass in m_NestedClasses )
+			foreach ( var nestedClass in m_NestedClasses.Where(c => c.CompiledType == null) )
 			{
 				nestedClass.Compile();
 			}
@@ -356,6 +359,26 @@ namespace Happil.Members
 		internal Type CompiledType
 		{
 			get { return m_CompiledType; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual bool IsClosure
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual ClosureDefinition ClosureDefinition
+		{
+			get
+			{
+				return null;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

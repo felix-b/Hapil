@@ -9,22 +9,20 @@ namespace Happil.UnitTests.Operands
 {
 	public abstract class ClosureTestFixtureBase : ClassPerTestCaseFixtureBase
 	{
-		protected void WriteMethods(string implementedMethodName, out MethodMember lambaAnonymousMethod)
+		protected MethodMember WriteMethod(string methodName)
 		{
-			MethodMember implementedMethod;
-			WriteMethods(implementedMethodName, out implementedMethod, out lambaAnonymousMethod);
+			var method = base.Class.GetAllMembers().OfType<MethodMember>().Single(m => m.Name == methodName);
+			method.Write();
+			return method;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected void WriteMethods(string implementedMethodName, out MethodMember implementedMethod, out MethodMember lambaAnonymousMethod)
+		protected MethodMember[] FindAnonymousMethods()
 		{
-			implementedMethod = base.Class.GetAllMembers().OfType<MethodMember>().Single(m => m.Name == implementedMethodName);
-			implementedMethod.Write();
-
-			lambaAnonymousMethod = base.Class.GetAllMembers().OfType<MethodMember>().Single(m => m.IsAnonymous);
-			lambaAnonymousMethod.SuppressAutomaticClosures = this.SuppressAutomaticClosures;
-			lambaAnonymousMethod.Write();
+			var foundMethods = new List<MethodMember>();
+			FindAnonymousMethods(base.Class, foundMethods);
+			return foundMethods.ToArray();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,11 +37,13 @@ namespace Happil.UnitTests.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected virtual bool SuppressAutomaticClosures
+		private void FindAnonymousMethods(ClassType classType, List<MethodMember> foundMethods)
 		{
-			get
+			classType.ForEachMember<MethodMember>(foundMethods.Add, predicate: m => m.IsAnonymous);
+
+			foreach ( var nestedClass in classType.GetNestedClasses() )
 			{
-				return false;
+				FindAnonymousMethods(nestedClass, foundMethods);
 			}
 		}
 	}

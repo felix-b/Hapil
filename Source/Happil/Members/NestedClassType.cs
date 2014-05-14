@@ -5,20 +5,23 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Operands;
 
 namespace Happil.Members
 {
 	public class NestedClassType : ClassType
 	{
 		private readonly ClassType m_ContainingClass;
+		private readonly ClosureDefinition m_ClosureDefinition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal NestedClassType(ClassType containingClass, string classFullName, Type baseType)
+		internal NestedClassType(ClassType containingClass, string classFullName, Type baseType, ClosureDefinition closureDefinition = null)
 			: base(containingClass.Module, null, classFullName, baseType, containingClass)
 		{
 			m_ContainingClass = containingClass;
-			//m_ContainingClass.AddNestedClass(this);
+			m_ClosureDefinition = closureDefinition;
+			m_ContainingClass.AddNestedClass(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,6 +32,26 @@ namespace Happil.Members
 				containingClass.TakeMemberName(classFullName, mustUseThisName: false), 
 				TypeAttributes.NestedPrivate, 
 				baseType);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal override bool IsClosure
+		{
+			get
+			{
+				return (m_ClosureDefinition != null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal override ClosureDefinition ClosureDefinition
+		{
+			get
+			{
+				return m_ClosureDefinition;
+			}
 		}
 	}
 }

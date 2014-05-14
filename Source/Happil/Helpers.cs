@@ -16,17 +16,17 @@ namespace Happil
 	internal static class Helpers
 	{
 		private static readonly Dictionary<Type, OpCode> s_ValueTypeCastInstructions = new Dictionary<Type, OpCode>() {
-				{ typeof(sbyte), OpCodes.Conv_I1 },
-				{ typeof(short), OpCodes.Conv_I2 },
-				{ typeof(int), OpCodes.Conv_I4 },
-				{ typeof(long), OpCodes.Conv_I8 },
-				{ typeof(byte), OpCodes.Conv_U1 },
-				{ typeof(ushort), OpCodes.Conv_U2 },
-				{ typeof(uint), OpCodes.Conv_U4 },
-				{ typeof(ulong), OpCodes.Conv_U8 },
-				{ typeof(float), OpCodes.Conv_R4 },
-				{ typeof(double), OpCodes.Conv_R8 }
-			};
+			{ typeof(sbyte), OpCodes.Conv_I1 },
+			{ typeof(short), OpCodes.Conv_I2 },
+			{ typeof(int), OpCodes.Conv_I4 },
+			{ typeof(long), OpCodes.Conv_I8 },
+			{ typeof(byte), OpCodes.Conv_U1 },
+			{ typeof(ushort), OpCodes.Conv_U2 },
+			{ typeof(uint), OpCodes.Conv_U4 },
+			{ typeof(ulong), OpCodes.Conv_U8 },
+			{ typeof(float), OpCodes.Conv_R4 },
+			{ typeof(double), OpCodes.Conv_R8 }
+		};
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

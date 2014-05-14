@@ -16,7 +16,14 @@ namespace Happil.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public FunctionMethodWriter(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>> script)
-			: base(ownerMethod)
+			: this(ownerMethod, script, mode: MethodWriterModes.Normal, attachToOwner: true)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal FunctionMethodWriter(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>> script, MethodWriterModes mode, bool attachToOwner)
+			: base(ownerMethod, mode, attachToOwner)
 		{
 			m_Script = script;
 		}

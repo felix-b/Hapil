@@ -14,7 +14,7 @@ namespace Happil.Statements
 		private readonly List<StatementBase> m_StatementList;
 		private MethodMember m_OwnerMethod;
 		private StatementBlock m_ParentBlock;
-		private StatementBlock m_RootBlock;
+		private int m_Depth;
 		private ClosureDefinition m_ClosureDefinition;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,6 +22,7 @@ namespace Happil.Statements
 		public StatementBlock()
 		{
 			m_StatementList = new List<StatementBase>();
+			m_Depth = 0;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -55,6 +56,14 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public void BindToMethod(MethodMember ownerMethod)
+		{
+			m_OwnerMethod = ownerMethod;
+			m_ParentBlock = null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void Insert(int index, params StatementBase[] statements)
 		{
 			m_StatementList.InsertRange(index, statements);
@@ -84,7 +93,7 @@ namespace Happil.Statements
 		{
 			m_OwnerMethod = scope.OwnerMethod; 
 			m_ParentBlock = (scope.Previous != null ? scope.Previous.StatementBlock : null);
-			m_RootBlock = scope.Root.StatementBlock;
+			m_Depth = (m_ParentBlock != null ? m_ParentBlock.Depth + 1 : 0);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -137,11 +146,11 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public StatementBlock RootBlock
+		public int Depth
 		{
 			get
 			{
-				return m_RootBlock;
+				return m_Depth;
 			}
 		}
 

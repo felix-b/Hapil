@@ -4,37 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
-using Happil.Statements;
 
 namespace Happil.Operands
 {
-	internal class ClosureHoistedMethodRewritingVisitor : OperandVisitorBase
+	internal class BindToMethodOperandVisitor : OperandVisitorBase
 	{
-		private readonly MethodMember m_HoistedMethod;
-		private readonly ClosureDefinition m_HoistingClosure;
+		private readonly MethodMember m_Method;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ClosureHoistedMethodRewritingVisitor(MethodMember hoistedMethod, ClosureDefinition hoistingClosure)
+		public BindToMethodOperandVisitor(MethodMember method)
 		{
-			m_HoistedMethod = hoistedMethod;
-			m_HoistingClosure = hoistingClosure;
+			m_Method = method;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override bool OnFilterOperand(IOperand operand)
 		{
-			return (operand is IScopedOperand);
+			return (operand is IBindToMethod);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnVisitOperand(ref IOperand operand)
 		{
-			m_HoistingClosure.RewriteOperandIfCaptured(
-				ref operand,
-				closureInstanceReference: new ThisOperand<object>(m_HoistingClosure.ClosureClass));
+			var bindableOperand = (IBindToMethod)operand;
+
+			if ( !bindableOperand.IsBound )
+			{
+				bindableOperand.BindToMethod(m_Method);
+			}
 		}
 	}
 }

@@ -10,19 +10,34 @@ using Happil.Statements;
 
 namespace Happil.Operands
 {
-	public class Local<T> : MutableOperand<T>, ILocal, ICanEmitAddress, IScopedOperand, ITransformType
+	public class Local<T> : MutableOperand<T>, ILocal, ICanEmitAddress, IScopedOperand, ITransformType, IBindToMethod
 	{
 		private readonly ILocal m_OriginalLocal;
-		private readonly StatementBlock m_HomeStatementBlock;
-		private readonly int m_LocalIndex;
+		private StatementBlock m_HomeStatementBlock;
+		private int m_LocalIndex;
 		private LocalBuilder m_LocalBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal Local(MethodMember ownerMethod)
 		{
-			m_HomeStatementBlock = (StatementScope.Exists ? StatementScope.Current.StatementBlock : ownerMethod.Body);
-			ownerMethod.RegisterLocal(this, out m_LocalIndex);
+			if ( StatementScope.Exists )
+			{
+				m_HomeStatementBlock = StatementScope.Current.StatementBlock;
+			}
+			else if ( ownerMethod != null )
+			{
+				m_HomeStatementBlock = ownerMethod.Body;
+			}
+
+			if ( ownerMethod != null )
+			{
+				ownerMethod.RegisterLocal(this, out m_LocalIndex);
+			}
+			else
+			{
+				m_LocalIndex = -1;
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,6 +49,32 @@ namespace Happil.Operands
 			m_LocalIndex = localIndex;
 			m_LocalBuilder = localBuilder;
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IBindToMethod Members
+
+		void IBindToMethod.BindToMethod(MethodMember method)
+		{
+			if ( m_HomeStatementBlock == null )
+			{
+				m_HomeStatementBlock = method.Body;
+			}
+
+			method.RegisterLocal(this, out m_LocalIndex);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		bool IBindToMethod.IsBound
+		{
+			get
+			{
+				return (m_LocalIndex >= 0);
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

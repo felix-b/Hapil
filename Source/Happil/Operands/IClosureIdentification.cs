@@ -1,4 +1,6 @@
-﻿using Happil.Members;
+﻿#if false
+
+using Happil.Members;
 
 namespace Happil.Operands
 {
@@ -6,12 +8,15 @@ namespace Happil.Operands
 	{
 		void Merge(IClosureIdentification other);
 		void DefineClosures();
-		MethodMember HostMethod { get; }
-		IOperand[] Externals { get; }
+		IAnonymousMethodOperand[] AnonymousMethods { get; }
+		IOperand[] MustCloseOverOperands { get; }
 		OperandCapture[] Captures { get; }
+		bool AnonymousMethodsFound { get; }
 		bool ClosuresRequired { get; }
 		ClosureDefinition OutermostClosure { get; }
 		ClosureDefinition InnermostClosure { get; }
 		ClosureDefinition[] ClosuresOuterToInner { get; }
 	}
 }
+
+#endif

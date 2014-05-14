@@ -73,7 +73,7 @@
     <Compile Include="Operands\DelegateTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />
-    <Compile Include="Operands\ClosureIdentificationVisitorTests.cs" />
+    <Compile Include="Operands\AnonymousMethodIdentificationVisitorTests.cs" />
     <Compile Include="Operands\OperandVisitorBaseTests.cs" />
     <Compile Include="Operands\PropertyTests.cs" />
     <Compile Include="Expressions\TernaryConditionalOperatorTests.cs" />

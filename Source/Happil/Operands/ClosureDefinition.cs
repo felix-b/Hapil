@@ -18,7 +18,7 @@ namespace Happil.Operands
 		private readonly StatementBlock m_HostScopeBlock;
 		private readonly ClassType m_OwnerClass;
 		private readonly MethodMember m_HostMethod;
-		private readonly HashSet<MethodMember> m_AnonymousMethodsToHoist;
+		private readonly HashSet<IAnonymousMethodOperand> m_AnonymousMethodsToHoist;
 		private readonly HashSet<OperandCapture> m_Captures;
 		private readonly List<ClosureDefinition> m_Children;
 		private readonly Dictionary<OperandCapture, IOperand> m_RewrittenOperands;
@@ -35,7 +35,7 @@ namespace Happil.Operands
 		{
 			m_HostScopeBlock = scopeBlock;
 			m_HostMethod = scopeBlock.OwnerMethod;
-			m_AnonymousMethodsToHoist = new HashSet<MethodMember>();
+			m_AnonymousMethodsToHoist = new HashSet<IAnonymousMethodOperand>();
 			m_OwnerClass = scopeBlock.OwnerMethod.OwnerClass;
 			m_Captures = new HashSet<OperandCapture>();
 			m_Parent = null;
@@ -78,7 +78,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AddAnonymousMethod(MethodMember anonymousMethod)
+		public void AddAnonymousMethod(IAnonymousMethodOperand anonymousMethod)
 		{
 			m_AnonymousMethodsToHoist.Add(anonymousMethod);
 		}
@@ -185,7 +185,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public MethodMember[] AnonymousMethodsToHoist
+		public IAnonymousMethodOperand[] AnonymousMethodsToHoist
 		{
 			get
 			{
@@ -252,7 +252,8 @@ namespace Happil.Operands
 			m_ClosureClass = new NestedClassType(
 				containingClass: m_OwnerClass, 
 				classFullName: m_HostMethod.Name + "Closure", 
-				baseType: typeof(object));
+				baseType: typeof(object),
+				closureDefinition: this);
 
 			m_ClosureClassConstructor = m_ClosureClass.TypeBuilder.DefineDefaultConstructor(
 				MethodAttributes.Public |
@@ -277,10 +278,10 @@ namespace Happil.Operands
 				capture.DefineHoistedField(closureWriter);
 			}
 
-			foreach ( var anonymousMethod in m_AnonymousMethodsToHoist )
+			foreach ( var anonymousMethodOperand in m_AnonymousMethodsToHoist )
 			{
-				anonymousMethod.HoistInClosure(this);
-				anonymousMethod.AcceptVisitor(new ClosureHoistedMethodRewritingVisitor(this));
+				anonymousMethodOperand.CreateAnonymousMethod(m_ClosureClass, isStatic: false, isPublic: true);
+				anonymousMethodOperand.AnonymousMethod.AcceptVisitor(new ClosureHoistedMethodRewritingVisitor(anonymousMethodOperand.AnonymousMethod, this));
 			}
 
 			m_ClosureClass.Compile();

@@ -11,22 +11,78 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand
+	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand, IAnonymousMethodOperand
 	{
-		private readonly MethodMember m_Method;
+		private readonly StatementBlock m_Statements;
+		private MethodMember m_Method = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1) }, typeof(TReturn));
-			m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
+			//var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1) }, typeof(TReturn));
+			//m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
+			//ownerMethod.OwnerClass.AddMember(m_Method);
+			
+			m_Statements = new StatementBlock();
 
-			ownerMethod.OwnerClass.AddMember(m_Method);
-			var writer = new FunctionMethodWriter<TReturn>(
-				m_Method, 
-				w => body(w, w.Arg1<TArg1>()));
+			using ( StatementScope.Stash() )
+			{
+				using ( new StatementScope(ownerMethod.OwnerClass, ownerMethod: null, statementBlock: m_Statements) )
+				{
+					var writer = new FunctionMethodWriter<TReturn>(
+						m_Method,
+						script: w => body(w, w.Arg1<TArg1>()),
+						mode: MethodWriterModes.Normal,
+						attachToOwner: false);
+
+					body(writer, new Argument<TArg1>(m_Statements, index: 1, isByRef: false, isOut: false));
+				}
+			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region IAnonymousMethodOperand Members
+
+		public void CreateAnonymousMethod(ClassType ownerClass, bool isStatic, bool isPublic)
+		{
+			var methodFactory = AnonymousMethodFactory.Create(
+				ownerClass,
+				argumentTypes: new[] { typeof(TArg1) },
+				returnType: typeof(TReturn),
+				isStatic: isStatic,
+				isPublic: isPublic);
+				
+			m_Method = new MethodMember(ownerClass, methodFactory);
+			m_Method.SetBody(m_Statements);
+			ownerClass.AddMember(m_Method);
+
+			var operandBinder = new BindToMethodOperandVisitor(m_Method);
+			m_Method.AcceptVisitor(operandBinder);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementBlock Statements
+		{
+			get
+			{
+				return m_Statements;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public MethodMember AnonymousMethod
+		{
+			get
+			{
+				return m_Method;
+			}
+		}
+
+		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,7 +168,7 @@ namespace Happil.Operands
 
 		public AnonymousFuncOperand(MethodMember ownerMethod, Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
 		{
-			var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn));
+			var methodFactory = AnonymousMethodFactory.Create(ownerMethod.OwnerClass, new[] { typeof(TArg1), typeof(TArg2) }, typeof(TReturn), isStatic: true, isPublic: false);
 
 			//var methodFactory = (
 			//	ownerMethod.IsStatic
@@ -199,5 +255,14 @@ namespace Happil.Operands
 		{
 			s_DelegateConstructor = typeof(Func<TArg1, TArg2, TReturn>).GetConstructor(new[] { typeof(object), typeof(IntPtr) });
 		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	internal interface IAnonymousMethodOperand
+	{
+		void CreateAnonymousMethod(ClassType ownerClass, bool isStatic, bool isPublic);
+		StatementBlock Statements { get; }
+		MethodMember AnonymousMethod { get; }
 	}
 }

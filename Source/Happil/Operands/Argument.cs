@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -10,14 +11,15 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand, ITransformType
+	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand, ITransformType, IBindToMethod
 	{
-		private readonly MethodMember m_OwnerMethod;
+		private readonly StatementBlock m_HomeStatementBlock;
 		private readonly byte m_Index;
 		private readonly int m_ParameterIndex;
 		private readonly string m_Name;
 		private readonly bool m_IsByRef;
 		private readonly bool m_IsOut;
+		private MethodMember m_OwnerMethod;
 		//private readonly ParameterBuilder m_ParameterBuilder;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -30,6 +32,8 @@ namespace Happil.Operands
 			}
 
 			m_OwnerMethod = ownerMethod;
+			m_HomeStatementBlock = ownerMethod.Body;
+
 			var signature = ownerMethod.Signature;
 
 			m_Index = index;
@@ -41,9 +45,27 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		internal Argument(StatementBlock homeStatementBlock, byte index, bool isByRef, bool isOut)
+		{
+			if ( index < 1 )
+			{
+				throw new ArgumentOutOfRangeException("index", "Argument index must be 1-based.");
+			}
+
+			m_OwnerMethod = null;
+			m_HomeStatementBlock = homeStatementBlock;
+			m_Index = index;
+			m_Name = "arg" + index;
+			m_IsByRef = isByRef;
+			m_IsOut = isOut;
+			m_ParameterIndex = index - 1;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public override string ToString()
 		{
-			return string.Format("Arg{0}[{1}]", this.Index, m_Name);
+			return string.Format("Arg{0}[{1}]", this.EmitIndex, m_Name);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,7 +76,7 @@ namespace Happil.Operands
 		{
 			get
 			{
-				return m_OwnerMethod.Body;
+				return m_HomeStatementBlock;
 			}
 		}
 
@@ -82,6 +104,27 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IBindToMethod Members
+
+		void IBindToMethod.BindToMethod(MethodMember method)
+		{
+			m_OwnerMethod = method;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		bool IBindToMethod.IsBound
+		{
+			get
+			{
+				return (m_OwnerMethod != null);
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region ITransformType Members
 
 		Operand<TCast> ITransformType.TransformToType<TCast>()
@@ -96,6 +139,8 @@ namespace Happil.Operands
 		public Argument<T> Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
 			where TAttribute : Attribute
 		{
+			ValidateBoundToMethod();
+			
 			var writer = new AttributeArgumentWriter<TAttribute>(values);
 			var parameter = m_OwnerMethod.MethodFactory.Parameters[m_ParameterIndex];
 
@@ -136,11 +181,11 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public int Index
+		public int EmitIndex
 		{
 			get
 			{
-				if ( m_OwnerMethod.IsStatic )
+				if ( m_OwnerMethod == null || m_OwnerMethod.IsStatic )
 				{
 					return m_Index - 1;
 				}
@@ -171,10 +216,13 @@ namespace Happil.Operands
 			}
 		}
 
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
+			ValidateBoundToMethod();
+
 			if ( m_IsByRef )
 			{
 				EmitLdarg(il);
@@ -185,6 +233,8 @@ namespace Happil.Operands
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
+			ValidateBoundToMethod();
+
 			if ( !m_IsByRef )
 			{
 				EmitLdarg(il);
@@ -203,9 +253,11 @@ namespace Happil.Operands
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
+			ValidateBoundToMethod();
+
 			if ( !m_IsByRef )
 			{
-				il.Emit(OpCodes.Starg_S, this.Index);
+				il.Emit(OpCodes.Starg_S, this.EmitIndex);
 			}
 			else if ( !OperandType.IsValueType )
 			{
@@ -221,13 +273,15 @@ namespace Happil.Operands
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
+			ValidateBoundToMethod();
+			
 			if ( m_IsByRef )
 			{
 				EmitLdarg(il);
 			}
 			else
 			{
-				il.Emit(OpCodes.Ldarga_S, this.Index);
+				il.Emit(OpCodes.Ldarga_S, this.EmitIndex);
 			}
 		}
 
@@ -235,7 +289,7 @@ namespace Happil.Operands
 
 		private void EmitLdarg(ILGenerator il)
 		{
-			switch ( this.Index )
+			switch ( this.EmitIndex )
 			{
 				case 0:
 					il.Emit(OpCodes.Ldarg_0);
@@ -250,9 +304,16 @@ namespace Happil.Operands
 					il.Emit(OpCodes.Ldarg_3);
 					break;
 				default:
-					il.Emit(OpCodes.Ldarg_S, this.Index);
+					il.Emit(OpCodes.Ldarg_S, this.EmitIndex);
 					break;
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void ValidateBoundToMethod()
+		{
+			Debug.Assert(m_OwnerMethod != null, "The argument is not bound to a method.");
 		}
 	}
 }
