@@ -113,14 +113,14 @@ namespace Happil.Statements
 		public override string ToString()
 		{
 			var text = new StringBuilder();
-			text.Append("{");
+			text.AppendLine("{");
 
 			foreach ( var statement in m_StatementList )
 			{
-				text.Append(statement.ToString() + ";");
+				text.AppendLine("\t" + statement.ToString() + ";");
 			}
 
-			text.Append("}");
+			text.AppendLine("}");
 			return text.ToString();
 		}
 

@@ -51,5 +51,21 @@ namespace Happil.Statements
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public override string ToString()
+		{
+			var argumentString = string.Join(",", m_Arguments.Select(a => a.ToString()));
+
+			if ( m_Method.IsStatic )
+			{
+				return string.Format("{0}::{1}({2})", m_Method.DeclaringType.Name, m_Method.Name, argumentString);
+			}
+			else
+			{
+				return string.Format("{0}->{1}({2})", m_Target, m_Method.Name, argumentString);
+			}
+		}
 	}
 }

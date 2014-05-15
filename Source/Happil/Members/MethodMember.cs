@@ -34,9 +34,14 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public string BodyToString()
+		public string BodyToString(bool formatted = true)
 		{
-			return m_Statements.ToString();
+			var bodyString = m_Statements.ToString();
+
+			return (
+				formatted ? 
+				bodyString : 
+				bodyString.Replace("\r\n", "").Replace("\t", ""));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

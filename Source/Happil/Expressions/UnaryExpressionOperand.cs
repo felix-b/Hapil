@@ -54,7 +54,7 @@ namespace Happil.Expressions
 				"[{0}{1}]" :
 				"[{1}{0}]");
 
-			return string.Format(formatString, m_Operator.ToString(), m_Operand.ToString());
+			return string.Format(formatString, m_Operator, m_Operand);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

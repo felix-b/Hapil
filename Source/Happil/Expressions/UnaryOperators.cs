@@ -311,7 +311,15 @@ namespace Happil.Expressions
 			public override string ToString()
 			{
 				var argumentString = string.Join(",", m_Arguments.Select(a => a.ToString()));
-				return string.Format("->{0}({1})", m_Method.Name, argumentString);
+
+				if ( m_Method.IsStatic )
+				{
+					return string.Format("{0}::{1}({2})", m_Method.DeclaringType.Name, m_Method.Name, argumentString);
+				}
+				else
+				{
+					return string.Format("->{0}({1})", m_Method.Name, argumentString);
+				}
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

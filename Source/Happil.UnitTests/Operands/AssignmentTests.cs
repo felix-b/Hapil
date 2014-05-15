@@ -38,7 +38,7 @@ namespace Happil.UnitTests.Operands
 			var method = classWriter.OwnerClass.GetMemberByName<MethodMember>("VirtualVoidMethod");
 
 			Assert.That(
-				method.BodyToString(),
+				method.BodyToString(formatted: false),
 				Is.EqualTo("{[this.Field[f1] = this.Field[f2]];}"));
 		}
 
@@ -67,7 +67,7 @@ namespace Happil.UnitTests.Operands
 			var method = classWriter.OwnerClass.GetMemberByName<MethodMember>("VirtualVoidMethod");
 
 			Assert.That(
-				method.BodyToString(),
+				method.BodyToString(formatted: false),
 				Is.EqualTo("{[this.Field[f1] = Const[123]];}"));
 		}
 
@@ -96,7 +96,7 @@ namespace Happil.UnitTests.Operands
 			var method = classWriter.OwnerClass.GetMemberByName<MethodMember>("VirtualVoidMethod");
 
 			Assert.That(
-				method.BodyToString(),
+				method.BodyToString(formatted: false),
 				Is.EqualTo("{[this.Field[f1] = [this.Field[f2] + Const[123]]];}"));
 		}
 
