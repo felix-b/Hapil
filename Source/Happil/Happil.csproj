@@ -77,7 +77,6 @@
     <Compile Include="Operands\IClosureIdentification.cs" />
     <Compile Include="Operands\ILocal.cs" />
     <Compile Include="Operands\IScopedOperand.cs" />
-    <Compile Include="Operands\ClosureIdentificationVisitor.cs" />
     <Compile Include="Operands\Field.cs" />
     <Compile Include="Operands\AnonymousFuncOperand.cs">
       <SubType>Code</SubType>

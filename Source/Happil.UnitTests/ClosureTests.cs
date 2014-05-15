@@ -384,7 +384,7 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void NestedAnonymousMethods()
+		public void NestedAnonymousMethodsInSameClosure()
 		{
 			//-- Arrange
 
@@ -419,6 +419,45 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(result, Is.EqualTo("180;181;182;183"));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void NestedAnonymousMethodsInNestedClosures()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<object>()
+				.DefaultConstructor()
+				.ImplementInterface<AncestorRepository.IFewMethods>()
+				.Method<int, string>(intf => intf.Five).Implement((w, n) => {
+					var input = w.Local(w.NewArray<int>(100, 101, 102, 103));
+					var output = w.Local(w.New<List<string>>());
+
+					output.AddRange(
+						input.Select(
+							w.Delegate<int, string>((ww, item) => {
+								var number = ww.Local(initialValue: item + n);
+								var digits = ww.Local(initialValue: number.FuncToString().ToCharArray());
+								var sum = ww.Local(initialValue: digits.Select(c => c.CastTo<int>() + number + n).Sum());
+								ww.Return(sum.FuncToString());
+							})
+						)
+					);
+
+					w.Return(Static.Func(String.Join, w.Const(";"), output));
+				})
+				.AllMethods().Throw<NotImplementedException>();
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+			var result = obj.Five(11);
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo("513;517;521;525"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
