@@ -11,9 +11,10 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand, IAnonymousMethodOperand
+	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand, IAnonymousMethodOperand, IAcceptOperandVisitor
 	{
 		private readonly StatementBlock m_Statements;
+		private MethodSignature m_Signature;
 		private MethodMember m_Method = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,6 +26,11 @@ namespace Happil.Operands
 			//ownerMethod.OwnerClass.AddMember(m_Method);
 			
 			m_Statements = new StatementBlock();
+			m_Signature = new MethodSignature(
+				isStatic: true, 
+				isPublic: false, 
+				argumentTypes: new[] { TypeTemplate.Resolve<TArg1>() },
+				returnType: TypeTemplate.Resolve<TReturn>());
 
 			using ( StatementScope.Stash() )
 			{
@@ -45,7 +51,7 @@ namespace Happil.Operands
 
 		#region IAnonymousMethodOperand Members
 
-		public void CreateAnonymousMethod(ClassType ownerClass, bool isStatic, bool isPublic)
+		public void CreateAnonymousMethod(ClassType ownerClass, ClosureDefinition closure, bool isStatic, bool isPublic)
 		{
 			var methodFactory = AnonymousMethodFactory.Create(
 				ownerClass,
@@ -54,9 +60,14 @@ namespace Happil.Operands
 				isStatic: isStatic,
 				isPublic: isPublic);
 				
-			m_Method = new MethodMember(ownerClass, methodFactory);
+			m_Method = new MethodMember(ownerClass, methodFactory, closure);
 			m_Method.SetBody(m_Statements);
 			ownerClass.AddMember(m_Method);
+
+			m_Signature = m_Method.Signature;
+
+			//var operandUnbinder = new UnbindFromMethodOperandVisitor();
+			//m_Method.AcceptVisitor(operandUnbinder);
 
 			var operandBinder = new BindToMethodOperandVisitor(m_Method);
 			m_Method.AcceptVisitor(operandBinder);
@@ -86,11 +97,25 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region IAcceptOperandVisitor Members
+
+		void IAcceptOperandVisitor.AcceptVisitor(OperandVisitorBase visitor)
+		{
+			if ( m_Method == null ) // the statements belong to host method until the anonymous method is created
+			{
+				visitor.VisitStatementBlock(m_Statements);
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		#region Overrides of Object
 
 		public override string ToString()
 		{
-			return string.Format("Func[{0}]", m_Method);
+			return string.Format("Func{0} {1}", m_Signature, m_Statements);
 		}
 
 		#endregion
@@ -261,7 +286,7 @@ namespace Happil.Operands
 
 	internal interface IAnonymousMethodOperand
 	{
-		void CreateAnonymousMethod(ClassType ownerClass, bool isStatic, bool isPublic);
+		void CreateAnonymousMethod(ClassType ownerClass, ClosureDefinition closure, bool isStatic, bool isPublic);
 		StatementBlock Statements { get; }
 		MethodMember AnonymousMethod { get; }
 	}

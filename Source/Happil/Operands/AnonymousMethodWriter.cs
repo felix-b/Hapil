@@ -61,6 +61,7 @@ namespace Happil.Operands
 
 				anonymousMethod.CreateAnonymousMethod(
 					OwnerMethod.OwnerClass, 
+					closure: null,
 					isStatic: scope == AnonymousMethodScope.Static,
 					isPublic: false);
 			}

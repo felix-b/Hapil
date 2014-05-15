@@ -12,6 +12,7 @@ namespace Happil.Members
 {
 	public class MethodMember : MemberBase
 	{
+		private readonly ClosureDefinition m_Closure;
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly List<ILocal> m_Locals;
 		private readonly TransparentMethodWriter m_TransparentWriter;
@@ -23,9 +24,17 @@ namespace Happil.Members
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory)
+			: this(ownerClass, methodFactory, closure: null)
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory, ClosureDefinition closure)
 			: base(ownerClass, methodFactory.MemberName)
 		{
 			m_MethodFactory = methodFactory;
+			m_Closure = closure;
 			m_Writers = new List<MethodWriterBase>();
 			m_Statements = new StatementBlock();
 			m_Locals = new List<ILocal>();
@@ -354,7 +363,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return OwnerClass.IsClosure;
+				return (m_Closure != null);
 			}
 		}
 
@@ -364,7 +373,7 @@ namespace Happil.Members
 		{
 			get
 			{
-				return OwnerClass.ClosureDefinition;
+				return m_Closure;
 			}
 		}
 	}

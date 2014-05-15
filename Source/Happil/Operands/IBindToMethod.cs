@@ -10,6 +10,7 @@ namespace Happil.Operands
 	internal interface IBindToMethod
 	{
 		void BindToMethod(MethodMember ownerMethod);
+		void ResetBinding();
 		bool IsBound { get; }
 	}
 }

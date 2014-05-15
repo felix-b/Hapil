@@ -280,7 +280,7 @@ namespace Happil.Operands
 
 			foreach ( var anonymousMethodOperand in m_AnonymousMethodsToHoist )
 			{
-				anonymousMethodOperand.CreateAnonymousMethod(m_ClosureClass, isStatic: false, isPublic: true);
+				anonymousMethodOperand.CreateAnonymousMethod(m_ClosureClass, closure: this, isStatic: false, isPublic: true);
 				anonymousMethodOperand.AnonymousMethod.AcceptVisitor(new ClosureHoistedMethodRewritingVisitor(anonymousMethodOperand.AnonymousMethod, this));
 			}
 

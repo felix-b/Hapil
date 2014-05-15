@@ -71,6 +71,7 @@
     <Compile Include="Operands\ClosureHostMethodRewritingVisitor.cs" />
     <Compile Include="Operands\ClosureHoistedMethodRewritingVisitor.cs" />
     <Compile Include="Operands\AnonymousMethodIdentificationVisitor.cs" />
+    <Compile Include="Operands\UnbindFromMethodOperandVisitor.cs" />
     <Compile Include="Operands\IAnonymousMethodIdentification.cs" />
     <Compile Include="Operands\IBindToMethod.cs" />
     <Compile Include="Operands\IClosureIdentification.cs" />

@@ -81,6 +81,19 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		void IBindToMethod.ResetBinding()
+		{
+			if ( m_HomeStatementBlock != null && m_HomeStatementBlock == m_HomeStatementBlock.OwnerMethod.Body )
+			{
+				m_HomeStatementBlock = null;
+			}
+
+			m_LocalBuilder = null;
+			m_LocalIndex = -1;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		bool IBindToMethod.IsBound
 		{
 			get
