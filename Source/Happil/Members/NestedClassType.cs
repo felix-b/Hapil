@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Closures;
 using Happil.Operands;
 
 namespace Happil.Members

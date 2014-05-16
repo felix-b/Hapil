@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Operands;
 using Happil.Statements;
 
-namespace Happil.Operands
+namespace Happil.Closures
 {
 	internal class ClosureHostMethodRewritingVisitor : OperandVisitorBase
 	{

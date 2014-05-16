@@ -1,6 +1,7 @@
 ﻿using Happil.Members;
+using Happil.Operands;
 
-namespace Happil.Operands
+namespace Happil.Closures
 {
 	internal interface IAnonymousMethodIdentification
 	{

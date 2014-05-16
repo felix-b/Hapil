@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Closures;
 using Happil.Expressions;
 using Happil.Members;
 using Happil.Operands;
@@ -113,14 +114,14 @@ namespace Happil.Statements
 		public override string ToString()
 		{
 			var text = new StringBuilder();
-			text.AppendLine("{");
+			text.Append("{");
 
 			foreach ( var statement in m_StatementList )
 			{
-				text.AppendLine("\t" + statement.ToString() + ";");
+				text.Append(statement.ToString() + ";");
 			}
 
-			text.AppendLine("}");
+			text.Append("}");
 			return text.ToString();
 		}
 

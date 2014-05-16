@@ -137,6 +137,55 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static string FriendlyName(this Type type)
+		{
+			if ( type.IsGenericType )
+			{
+				var nameBuilder = new StringBuilder();
+				AppendFriendlyName(type, nameBuilder);
+
+				return nameBuilder.ToString();
+			}
+			else
+			{
+				return type.Name;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static void AppendFriendlyName(Type type, StringBuilder output)
+		{
+			if ( type.IsGenericType )
+			{
+				var nameBuilder = new StringBuilder();
+				var backquoteIndex = type.Name.IndexOf('`');
+
+				output.Append(type.Name.Substring(0, backquoteIndex));
+				output.Append('<');
+
+				var typeArguments = type.GetGenericArguments();
+
+				for ( int i = 0 ; i < typeArguments.Length ; i++ )
+				{
+					AppendFriendlyName(typeArguments[i], output);
+
+					if ( i < typeArguments.Length - 1 )
+					{
+						output.Append(',');
+					}
+				}
+
+				output.Append('>');
+			}
+			else
+			{
+				output.Append(type.Name);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void GetAllBaseTypes(Type currentType, HashSet<Type> baseTypes)
 		{
 			if ( baseTypes.Add(currentType) )

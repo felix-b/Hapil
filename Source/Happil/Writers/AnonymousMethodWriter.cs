@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Happil.Closures;
 using Happil.Members;
 using Happil.Writers;
 
-namespace Happil.Operands
+namespace Happil.Writers
 {
 	internal class AnonymousMethodWriter : MethodWriterBase
 	{

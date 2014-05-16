@@ -69,7 +69,7 @@
     <Compile Include="Expressions\ExpressionTreeTests.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="Operands\ClosureDefinitionTests.cs" />
-    <Compile Include="Operands\ClosureTestFixtureBase.cs" />
+    <Compile Include="ClosureTestFixtureBase.cs" />
     <Compile Include="Operands\DelegateTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />
@@ -100,8 +100,10 @@
     <Compile Include="Statements\WhileStatementTests.cs" />
     <Compile Include="StringShortcutsTests.cs" />
     <Compile Include="TargetRepository.cs" />
+    <Compile Include="TypeExtensionTests.cs" />
     <Compile Include="TypeKeyTests.cs" />
     <Compile Include="TypeTemplateTests.cs" />
+    <Compile Include="Writers\AnonymousMethodWriterTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>

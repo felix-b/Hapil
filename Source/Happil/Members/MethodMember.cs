@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Happil.Closures;
 using Happil.Operands;
 using Happil.Statements;
 using Happil.Writers;
@@ -43,14 +44,12 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public string BodyToString(bool formatted = true)
+		public string GetMethodText()
 		{
-			var bodyString = m_Statements.ToString();
-
 			return (
-				formatted ? 
-				bodyString : 
-				bodyString.Replace("\r\n", "").Replace("\t", ""));
+				base.Name + 
+				m_MethodFactory.Signature.ToString() + 
+				m_Statements.ToString());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

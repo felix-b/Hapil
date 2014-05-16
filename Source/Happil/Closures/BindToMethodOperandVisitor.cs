@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
+using Happil.Operands;
 
-namespace Happil.Operands
+namespace Happil.Closures
 {
 	internal class BindToMethodOperandVisitor : OperandVisitorBase
 	{

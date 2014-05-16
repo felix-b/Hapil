@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Happil.Expressions;
 using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
 using Happil.Writers;
 
-namespace Happil.Operands
+namespace Happil.Closures
 {
 	internal class ClosureDefinition
 	{

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Happil.Members;
 
-namespace Happil.UnitTests.Operands
+namespace Happil.UnitTests
 {
 	public abstract class ClosureTestFixtureBase : ClassPerTestCaseFixtureBase
 	{

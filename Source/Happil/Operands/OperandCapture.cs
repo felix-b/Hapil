@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Happil.Closures;
 using Happil.Members;
 using Happil.Statements;
 using Happil.Writers;
