@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Happil.Closures;
 using Happil.Members;
+using Happil.Operands;
 using Happil.Statements;
 using Happil.Writers;
 
-namespace Happil.Operands
+namespace Happil.Closures
 {
 	internal class OperandCapture //: IEquatable<OperandCapture>
 	{
@@ -105,6 +106,13 @@ namespace Happil.Operands
 				isStatic: false,
 				isPublic: true,
 				fieldType: this.OperandType);
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AddConsumer(IAnonymousMethodOperand consumerMethod)
+		{
+			m_Consumers.Add(consumerMethod);
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

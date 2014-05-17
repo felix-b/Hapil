@@ -384,6 +384,35 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void CaptureSameOperandsForTwoAnonymousMethods_2()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(intf => intf.DoTest).Implement((w, source) => {
+					var output = w.Local<IEnumerable<string>>();
+					var prefix = w.Local("prefix");
+					var suffix = w.Local("suffix");
+					var forward = w.Local(initialValue: source.Select(s => prefix + s + suffix));
+					var reverse = w.Local(initialValue: source.Select(s => suffix + s + prefix).Reverse());
+					output.Assign(forward.Concat(reverse));
+					w.Return(output);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result = obj.DoTest(new[] { "AAA", "BBB" });
+
+			//-- Assert
+
+			Assert.That(result, Is.EqualTo(new[] { "prefixAAAsuffix", "prefixBBBsuffix", "suffixBBBprefix", "suffixAAAprefix" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void NestedAnonymousMethodsInSameClosure()
 		{
 			//-- Arrange

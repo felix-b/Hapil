@@ -94,7 +94,7 @@
     <Compile Include="Operands\IAcceptOperandVisitor.cs" />
     <Compile Include="Closures\ClosureDefinition.cs" />
     <Compile Include="Operands\ITransformType.cs" />
-    <Compile Include="Operands\OperandCapture.cs" />
+    <Compile Include="Closures\OperandCapture.cs" />
     <Compile Include="Operands\OperandKind.cs" />
     <Compile Include="Operands\OperandVisitorBase.cs" />
     <Compile Include="Operands\Property.cs" />

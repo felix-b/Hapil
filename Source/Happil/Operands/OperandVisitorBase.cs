@@ -121,7 +121,7 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void VisitAcceptor(IAcceptOperandVisitor acceptor)
+		public virtual void VisitAcceptor(IAcceptOperandVisitor acceptor)
 		{
 			if ( acceptor != null )
 			{

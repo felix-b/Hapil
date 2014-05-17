@@ -32,6 +32,22 @@ namespace Happil.Closures
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of OperandVisitorBase
+
+		public override void VisitAcceptor(IAcceptOperandVisitor acceptor)
+		{
+			if ( acceptor is IAnonymousMethodOperand && object.ReferenceEquals(m_CurrentAnonymousMethod, null) )
+			{
+				return;
+			}
+
+			base.VisitAcceptor(acceptor);
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void DefineClosures()
 		{
 			if ( ClosuresRequired )
@@ -81,18 +97,6 @@ namespace Happil.Closures
 		//		AddOrUpdateAnonymousMethod(anonymousMethod, other.GetAnonymousMethodScope(anonymousMethod));
 		//	}
 		//}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private void AddOrUpdateAnonymousMethod(IAnonymousMethodOperand anonymousMethod, AnonymousMethodScope scope)
-		{
-			AnonymousMethodScope existingScope;
-
-			if ( !m_AnonymousMethods.TryGetValue(anonymousMethod, out existingScope) || scope > existingScope )
-			{
-				m_AnonymousMethods[anonymousMethod] = scope;
-			}
-		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -242,19 +246,34 @@ namespace Happil.Closures
 					return;
 				}
 
-				if ( !m_MustCloseOverOperands.Add(operand) )
-				{
-					return;
-				}
+				m_MustCloseOverOperands.Add(operand);
 			}
 			else 
 			{
 				AddOrUpdateAnonymousMethod(m_CurrentAnonymousMethod, AnonymousMethodScope.Instance);
 			}
 
-			if ( !m_Captures.Any(c => c.SourceOperand == operand) )
+			var existingCapture = m_Captures.FirstOrDefault(c => c.SourceOperand == operand);
+
+			if ( existingCapture != null )
+			{
+				existingCapture.AddConsumer(m_CurrentAnonymousMethod);
+			}
+			else 
 			{
 				m_Captures.Add(new OperandCapture(operand, operand.HomeStatementBlock, consumerMethod: m_CurrentAnonymousMethod));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void AddOrUpdateAnonymousMethod(IAnonymousMethodOperand anonymousMethod, AnonymousMethodScope scope)
+		{
+			AnonymousMethodScope existingScope;
+
+			if ( !m_AnonymousMethods.TryGetValue(anonymousMethod, out existingScope) || scope > existingScope )
+			{
+				m_AnonymousMethods[anonymousMethod] = scope;
 			}
 		}
 

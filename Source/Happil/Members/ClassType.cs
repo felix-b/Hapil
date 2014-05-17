@@ -143,9 +143,18 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public NestedClassType[] GetNestedClasses()
+		public NestedClassType[] GetNestedClasses(bool recursive = false)
 		{
-			return m_NestedClasses.ToArray();
+			if ( recursive )
+			{
+				var nestedClasses = new List<NestedClassType>();
+				ListNestedClassesRecursive(destination: nestedClasses);
+				return nestedClasses.ToArray();
+			}
+			else
+			{
+				return m_NestedClasses.ToArray();
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -403,6 +412,17 @@ namespace Happil.Members
 			var closedDelegateType = openDelegateType.MakeGenericType(delegateTypeParameters.ToArray());
 
 			return Delegate.CreateDelegate(closedDelegateType, factoryMethod);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void ListNestedClassesRecursive(List<NestedClassType> destination)
+		{
+			foreach ( var nestedClass in m_NestedClasses )
+			{
+				destination.Add(nestedClass);
+				nestedClass.ListNestedClassesRecursive(destination);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
