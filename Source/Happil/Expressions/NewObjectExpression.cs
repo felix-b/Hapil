@@ -75,7 +75,7 @@ namespace Happil.Expressions
 		{
 			return string.Format(
 				"NewObj[{0}]({1})", 
-				m_ObjectType.Name, 
+				m_ObjectType.FriendlyName(), 
 				string.Join(",", m_ConstructorArguments.Select(a => a.ToString())));
 		}
 

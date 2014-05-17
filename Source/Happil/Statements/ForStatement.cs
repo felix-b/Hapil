@@ -131,7 +131,23 @@ namespace Happil.Statements
 		}
 
 		#endregion
-		
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return string.Format(
+				"FOR ({0} ; {1} ; {2}) {3}",
+				m_PreconditionBlock.ToString(),
+				m_Condition.ToString(),
+				m_NextBlock.ToString(),
+				m_BodyBlock.ToString());
+		}
+
+		#endregion
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected internal override Label LoopStartLabel

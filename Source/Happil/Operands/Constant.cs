@@ -83,14 +83,14 @@ namespace Happil.Operands
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
-			throw new NotSupportedException("Constants are not assignabble.");
+			throw new NotSupportedException("Constants are not assignable.");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitAddress(ILGenerator il)
 		{
-			throw new NotSupportedException("Constants are not assignabble.");
+			throw new NotSupportedException("Constants are not assignable.");
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

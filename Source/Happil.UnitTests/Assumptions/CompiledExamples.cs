@@ -816,6 +816,27 @@ namespace Happil.UnitTests.Assumptions
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+			public void CapturedFieldAndTwoLocalsFromDifferentScopes_2()
+			{
+				m_X = 100;
+				int y = 123;
+
+				if ( m_X < 100 )
+				{
+					int z = m_X * 2;
+					y--;
+					z--;
+					Action d = () => { Output.Add((m_X + y + z).ToString()); };
+					y++;
+					y++;
+					z++;
+					z++;
+					d();
+				}
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 			public void CapturedLoopCounter()
 			{
 				var actionList = new List<Action>();

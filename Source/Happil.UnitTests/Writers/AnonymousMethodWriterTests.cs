@@ -389,7 +389,7 @@ namespace Happil.UnitTests.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void SameCapturesForTwoAnonymousMethod_WriteOneClosure_1()
+		public void SameCapturesForTwoAnonymousMethod_WriteOneClosure_FromClosureTests()
 		{
 			//-- Arrange
 
@@ -430,7 +430,7 @@ namespace Happil.UnitTests.Writers
 					"[Loc4.Field[<hoisted>Loc0_String] = Const[PFX]];" +
 					"[Loc1 = [new Int32[]Const[2]]];[Loc1[Const[0]] = Const[100]];[Loc1[Const[1]] = Const[101]];" +
 					"[Loc2 = Loc1];" +
-					"[Loc3 = NewObj[List`1]()];" +
+					"[Loc3 = NewObj[List<String>]()];" +
 					"[Loc4.Field[<hoisted>Arg_n] = Const[99]];" +
 					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.AnonymousMethod))]);" +
 					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.AnonymousMethod1))]);" +
@@ -544,6 +544,74 @@ namespace Happil.UnitTests.Writers
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void OverlappingCapturesForTwoAnonymousMethod_WriteOneUnionClosure()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					var output = w.Local<IEnumerable<string>>();
+					var prefix = w.Local("prefix");
+					var suffix = w.Local("suffix");
+					var prefixed = w.Local(initialValue: source.Select(s => prefix + s));
+					var suffixed = w.Local(initialValue: source.Select(s => s + suffix));
+					output.Assign(prefixed.Concat(suffixed));
+					w.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>()
+				.Flush();
+
+			//-- Act
+
+			var doTestMethod = WriteMethod("DoTest");
+
+			//-- Assert
+
+			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
+				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
+					"[Loc5 = NewObj[DoTestClosure]()];" +
+					"[Loc5.Field[<hoisted>Loc1_String] = Const[prefix]];" +
+					"[Loc5.Field[<hoisted>Loc2_String] = Const[suffix]];" +
+					"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod))]];" +
+					"[Loc4 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod1))]];" +
+					"[Loc0 = [Enumerable::Concat(Loc3,Loc4)]];" +
+					"Return[Loc0];" +
+				"}"
+			));
+
+			var anonymousMethods = base.FindAnonymousMethods();
+			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
+
+			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod(String):String{" +
+					"Return[" +
+						"[this.Field[<hoisted>Loc1_String] + Arg1[arg1]]" +
+					"];" +
+				"}"
+			));
+
+			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod1(String):String{" +
+					"Return[" +
+						"[Arg1[arg1] + this.Field[<hoisted>Loc2_String]]" +
+					"];" +
+				"}"
+			));
+
+			var closure = base.Class.GetNestedClasses().Single();
+
+			Assert.That(anonymousMethods[0].OwnerClass, Is.SameAs(closure));
+			Assert.That(anonymousMethods[1].OwnerClass, Is.SameAs(closure));
+
+			CollectionAssert.AreEquivalent(
+				new[] { "InstanceField[<hoisted>Loc1_String]", "InstanceField[<hoisted>Loc2_String]" },
+				ListClassFields(closure));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void NestedAnonymousMethods_SameClosure()
 		{
 			//-- Arrange
@@ -585,7 +653,7 @@ namespace Happil.UnitTests.Writers
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" +
 					"[Loc1 = Loc0];" +
-					"[Loc2 = NewObj[List`1]()];" +
+					"[Loc2 = NewObj[List<String>]()];" +
 					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.AnonymousMethod))]);" +
 					"Return[[String::Join(Const[;],Loc2)]];" + 
 				"}"
@@ -664,7 +732,7 @@ namespace Happil.UnitTests.Writers
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" + 
 					"[Loc1 = Loc0];" +
-					"[Loc2 = NewObj[List`1]()];" +
+					"[Loc2 = NewObj[List<String>]()];" +
 					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.AnonymousMethod))]);" +
 					"Return[[String::Join(Const[;],Loc2)]];" +
 				"}"
@@ -706,6 +774,57 @@ namespace Happil.UnitTests.Writers
 			CollectionAssert.AreEquivalent(
 				new[] { "InstanceField[<hoisted>This]", "InstanceField[<hoisted>Loc0_Int32]" },
 				ListClassFields(closure2));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, Ignore("Not yet implemented")]
+		public void AnonymousMethodInLoopWithNoClosure_CacheDelegate()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					var site = w.Local<Func<string, string>>(initialValue: null);
+					var output = w.Local<IEnumerable<string>>();
+					w.For(from: 0, to: 10).Do((loop, i) => {
+						w.If(site == w.Const<Func<string, string>>(null)).Then(() => 
+							site.Assign(w.New<Func<string, string>>(w.Const<object>(null), w.Const((IntPtr)0)))
+						);
+						output = w.Local(initialValue: source.Select(site));
+					});
+					w.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>()
+				.Flush();
+
+			//-- Act
+
+			var doTestMethod = WriteMethod("DoTest");
+
+			//-- Assert
+
+			var anonymousMethod = base.FindAnonymousMethods().Single();
+
+			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
+				"DoTest(IEnumerable<String>):IEnumerable<String>{"  +
+					"[Loc0 = Const[null]];" +
+					"FOR ({[Loc2 = Const[0]];} ; [Loc2 < Const[10]] ; {[Loc2 = [Loc2 + Const[1]]];}) {" +
+						"IF ([Loc0 == Const[null]]) THEN {" +
+							"[Loc0 = NewObj[Func<String,String>](Const[null],Const[0])];" +
+						"};" +
+						"[Loc3 = [Enumerable::Select(Arg1[source],Loc0)]];" +
+					"};" +
+					"Return[Loc3];" +
+				"}"
+			));
+
+			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
+				"AnonymousMethod(String):String{" +
+					"Return[[Arg0[arg1].ToUpper()]];" +
+				"}"
+			));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
