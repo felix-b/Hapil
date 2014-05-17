@@ -76,6 +76,19 @@ namespace Happil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			return (
+				"WHILE (" + m_Condition.ToString() + ") " +
+				m_BodyBlock.ToString());
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal protected override Label LoopStartLabel
 		{
 			get

@@ -68,7 +68,7 @@ namespace Happil.UnitTests.Operands
 
 			//-- Assert
 
-			CollectionAssert.Contains(visitedOperandStrings, "Local0[String]");
+			CollectionAssert.Contains(visitedOperandStrings, "Loc0");
 			CollectionAssert.Contains(visitedOperandStrings, "Arg1[n]");
 		}
 

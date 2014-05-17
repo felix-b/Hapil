@@ -64,7 +64,7 @@ namespace Happil.Statements
 			}
 			else
 			{
-				return string.Format("{0}->{1}({2})", m_Target, m_Method.Name, argumentString);
+				return string.Format("{0}.{1}({2})", m_Target, m_Method.Name, argumentString);
 			}
 		}
 	}

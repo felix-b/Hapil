@@ -109,7 +109,7 @@ namespace Happil.Members
 
 		public override string ToString()
 		{
-			return string.Format("({0}):{1}", string.Join(",", ArgumentType.Select(t => t.Name)), IsVoid ? "void" : ReturnType.Name);
+			return string.Format("({0}):{1}", string.Join(",", ArgumentType.Select(t => t.FriendlyName())), IsVoid ? "void" : ReturnType.FriendlyName());
 		}
 
 		#endregion

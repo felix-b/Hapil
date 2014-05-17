@@ -242,7 +242,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<long, long>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("[[Field[f1] cast-to Const[System.Int64]] + Field[f2]]"));
+				Is.EqualTo("[[Field[f1] cast-to Type[Int64]] + Field[f2]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ namespace Happil.UnitTests.Expressions
 			Assert.That(expression, Is.InstanceOf<BinaryExpressionOperand<string, string>>());
 			Assert.That(
 				expression.ToString(),
-				Is.EqualTo("[Field[f1] + [Field[f2] as Const[System.String]]]"));
+				Is.EqualTo("[Field[f1] + [Field[f2] as Type[String]]]"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

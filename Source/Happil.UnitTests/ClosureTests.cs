@@ -12,7 +12,7 @@ using NUnit.Framework;
  
 Closures design:
 
-1. Determine whether an anonynous method accesses operands that must be captured in a closure --> needs closure(s)
+1. Determine whether an anonynous method accesses operands that must be captured in a closure -. needs closure(s)
 2. Determine list of additional operands that need to be captured, when anonynous method is moved to a closure (this + anything else?). 
 3. Generate closure class(es) containing captured operands and the anonymous method.
 4. Instantiate closure class(es) in the beginning of their corresponding scope(s)

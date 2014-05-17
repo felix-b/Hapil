@@ -100,6 +100,27 @@ namespace Happil.Statements
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		#region Overrides of Object
+
+		public override string ToString()
+		{
+			if ( m_ConditionIsAlwaysTrue )
+			{
+				return m_ThenBlock.ToString();
+			}
+			else
+			{
+				return (
+					"IF (" + m_Condition.ToString() + ") " + 
+					"THEN " + m_ThenBlock.ToString() +
+					(m_ElseBlock.Count > 0 ? " ELSE " + m_ElseBlock.ToString() : ""));
+			}
+		}
+
+		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		private void EmitThenBlock(ILGenerator il)
 		{

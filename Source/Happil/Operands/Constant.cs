@@ -23,7 +23,15 @@ namespace Happil.Operands
 		public override string ToString()
 		{
 			bool isNull = object.ReferenceEquals(null, m_Value);
-			return string.Format("Const[{0}]", isNull ? "null" : m_Value.ToString());
+
+			if ( m_Value is Type )
+			{
+				return string.Format("Type[{0}]", isNull ? "null" : (m_Value as Type).FriendlyName());
+			}
+			else
+			{
+				return string.Format("Const[{0}]", isNull ? "null" : m_Value.ToString());
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

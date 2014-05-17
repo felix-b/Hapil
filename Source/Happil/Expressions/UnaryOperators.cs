@@ -318,7 +318,7 @@ namespace Happil.Expressions
 				}
 				else
 				{
-					return string.Format("->{0}({1})", m_Method.Name, argumentString);
+					return string.Format(".{0}({1})", m_Method.Name, argumentString);
 				}
 			}
 

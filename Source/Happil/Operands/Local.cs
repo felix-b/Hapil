@@ -175,7 +175,7 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return string.Format("Local{0}[{1}]", m_LocalIndex, base.OperandType.Name);
+			return string.Format("Loc{0}", m_LocalIndex);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

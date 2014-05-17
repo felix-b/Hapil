@@ -116,7 +116,21 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			return string.Format("Func{0} {1}", m_Signature, m_Statements);
+			if ( m_Method != null )
+			{
+				var target = (m_Method.IsStatic ? "" : (m_Method.HasClosure ? m_Method.Closure.ClosureInstanceReference.ToString() + "." : "this."));
+				
+				return string.Format(
+					"Func<{0},{1}>({2}{3})", 
+					m_Signature.ArgumentType[0].FriendlyName(), 
+					m_Signature.ReturnType.FriendlyName(), 
+					target, 
+					m_Method.Name);
+			}
+			else
+			{
+				return string.Format("Delegate{0}{1}", m_Signature, m_Statements);
+			}
 		}
 
 		#endregion
