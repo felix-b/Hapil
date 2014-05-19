@@ -492,7 +492,39 @@ namespace Happil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void AnonymousMethodsInsideLoop()
+		public void AnonymousMethodsInsideLoopWithNoDelegateCaching()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					var output = w.Local<List<string>>(initialValue: w.New<List<string>>());
+					w.If(source != w.Const<IEnumerable<string>>(null)).Then(() =>
+						w.For(from: 0, to: 3).Do((loop, i) => {
+							var suffix = w.Local<string>("z");
+							output.AddRange(source.Select(s => i.FuncToString() + s + suffix));
+						})
+					);
+					w.Return(output);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = obj.DoTest(new[] { "a", "b" });
+			var result2 = obj.DoTest(null);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "0az", "0bz", "1az", "1bz", "2az", "2bz" }));
+			Assert.That(result2, Is.Empty);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void AnonymousMethodsInsideLoopWithOneDelegateCached()
 		{
 			//-- Arrange
 
@@ -521,6 +553,43 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(result1, Is.EqualTo(new[] { "0AZ", "0BZ", "1AZ", "1BZ", "2AZ", "2BZ" }));
+			Assert.That(result2, Is.Empty);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void AnonymousMethodsInsideLoopWithAllDelegatesCached()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					var output = w.Local<List<string>>(initialValue: w.New<List<string>>());
+					var prefix = w.Local<string>("y");
+					w.If(source != w.Const<IEnumerable<string>>(null)).Then(() => {
+						var suffix = w.Local<string>("z");
+						w.For(from: 0, to: 3).Do((loop, i) => 
+							output.AddRange(source
+								.Select(s => i.FuncToString() + s)
+								.Select(s => prefix + s)
+								.Select(s => s + suffix)
+								.Select(s => s.ToUpper()))
+						);
+					});
+					w.Return(output);
+				});
+
+			//-- Act
+
+			var obj = CreateClassInstanceAs<AncestorRepository.EnumerableTester>().UsingDefaultConstructor();
+			var result1 = obj.DoTest(new[] { "a", "b" });
+			var result2 = obj.DoTest(null);
+
+			//-- Assert
+
+			Assert.That(result1, Is.EqualTo(new[] { "Y0AZ", "Y0BZ", "Y1AZ", "Y1BZ", "Y2AZ", "Y2BZ" }));
 			Assert.That(result2, Is.Empty);
 		}
 

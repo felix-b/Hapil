@@ -921,6 +921,102 @@ namespace Happil.UnitTests.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void AnonymousMethodsInLoopWithNoOrOutsideClosures_AllDelegatesCached()
+		{
+			//-- Arrange
+
+			DeriveClassFrom<AncestorRepository.EnumerableTester>()
+				.DefaultConstructor()
+				.Method<IEnumerable<string>, IEnumerable<string>>(cls => cls.DoTest).Implement((w, source) => {
+					var output = w.Local<List<string>>(initialValue: w.New<List<string>>());
+					var prefix = w.Local<string>("y");
+					w.If(source != w.Const<IEnumerable<string>>(null)).Then(() => {
+						var suffix = w.Local<string>("z");
+						w.For(from: 0, to: 3).Do((loop, i) => 
+							output.AddRange(source
+								.Select(s => i.FuncToString() + s)
+								.Select(s => prefix + s)
+								.Select(s => s + suffix)
+								.Select(s => s.ToUpper()))
+						);
+					});
+					w.Return(output);
+				})
+				.AllMethods().Throw<NotImplementedException>()
+				.Flush();
+
+			//-- Act
+
+			var doTestMethod = WriteMethod("DoTest");
+
+			//-- Assert
+
+			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
+				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
+					#region Full Method Text
+					"[Loc4 = NewObj[DoTestClosure]()];" +
+					"[Loc0 = NewObj[List<String>]()];" +
+					"[Loc4.Field[<hoisted>Loc1_String] = Const[y]];" +
+					"IF ([Arg1[source] != Const[null]]) THEN {" +
+						"[Loc9 = Const[null]];" +
+						"[Loc8 = Const[null]];" +
+						"[Loc7 = Const[null]];" +
+						"[Loc6 = Const[null]];" +
+						"[Loc5 = NewObj[DoTestClosure1]()];" +
+						"[Loc5.Field[Parent] = Loc4];" +
+						"[Loc5.Field[<hoisted>Loc2_String] = Const[z]];" +
+						"FOR ({[Loc5.Field[<hoisted>Loc3_Int32] = Const[0]];} ; " +
+							"[Loc5.Field[<hoisted>Loc3_Int32] < Const[3]] ; " +
+							"{[Loc5.Field[<hoisted>Loc3_Int32] = [Loc5.Field[<hoisted>Loc3_Int32] + Const[1]]];}) " +
+						"{" +
+							"IF ([Loc9 == Const[null]]) THEN {" +
+								"[Loc9 = NewObj[Func<String,String>](Const[null],Method[AnonymousMethod])];" +
+							"};" +
+							"IF ([Loc8 == Const[null]]) THEN {" +
+								"[Loc8 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod2])];" +
+							"};" +
+							"IF ([Loc7 == Const[null]]) THEN {" +
+								"[Loc7 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod1])];" +
+							"};" +
+							"IF ([Loc6 == Const[null]]) THEN {" +
+								"[Loc6 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod])];" +
+							"};" +
+							"Loc0.AddRange(" + 
+								"[Enumerable::Select(" +
+									"[Enumerable::Select(" +
+										"[Enumerable::Select(" +
+											"[Enumerable::Select(Arg1[source],Loc6)]," + 
+											"Loc8)]," + 
+										"Loc7)]," + 
+									"Loc9)]" +
+							");" +	//end AddRange
+						"};" +		//end FOR
+					"};" +			//end IF
+					"Return[Loc0];" +
+					#endregion
+				"}"
+			));
+
+			var anonymousMethods = base.FindAnonymousMethods();
+			Assert.That(anonymousMethods.Length, Is.EqualTo(4));
+
+			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod(String):String{Return[[Arg0[arg1].ToUpper()]];}"
+			));
+			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod(String):String{Return[[[[this.Field[<hoisted>Loc3_Int32] cast-to Type[Object]].ToString()] + Arg1[arg1]]];}"
+			));
+			Assert.That(anonymousMethods[2].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod1(String):String{Return[[Arg1[arg1] + this.Field[<hoisted>Loc2_String]]];}"
+			));
+			Assert.That(anonymousMethods[3].GetMethodText(), Is.EqualTo(
+				"AnonymousMethod2(String):String{Return[[this.Field[Parent].Field[<hoisted>Loc1_String] + Arg1[arg1]]];}"
+			));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private string[] ListClassFields(ClassType classType)
 		{
 			return classType.GetAllMembers().OfType<FieldMember>().Select(m => m.ToString()).ToArray();
