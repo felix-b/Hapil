@@ -397,50 +397,6 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TArg1>> body)
-		{
-			return new AnonymousFuncOperand<TArg1, TReturn>(OwnerClass, body);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public Operand<Func<TArg1, TReturn>> Delegate<TArg1, TReturn>(
-			ref IDelegateOperand site,
-			Action<FunctionMethodWriter<TReturn>,
-			Argument<TArg1>> body)
-		{
-			if ( site == null )
-			{
-				site = (IDelegateOperand)Delegate(body);
-			}
-
-			return (AnonymousFuncOperand<TArg1, TReturn>)site;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
-			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
-		{
-			return new AnonymousFuncOperand<TArg1, TArg2, TReturn>(m_OwnerClass, body);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public Operand<Func<TArg1, TArg2, TReturn>> Delegate<TArg1, TArg2, TReturn>(
-			ref IDelegateOperand site,
-			Action<FunctionMethodWriter<TReturn>, Argument<TArg1>, Argument<TArg2>> body)
-		{
-			if ( site == null )
-			{
-				site = (IDelegateOperand)Delegate(body);
-			}
-
-			return (AnonymousFuncOperand<TArg1, TArg2, TReturn>)site;
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
 		public Operand<TDelegate> MakeDelegate<TTarget, TDelegate>(IOperand<TTarget> target, Expression<Func<TTarget, TDelegate>> methodSelector)
 		{
 			var method = Helpers.ResolveMethodFromLambda(methodSelector);
@@ -457,45 +413,71 @@ namespace Happil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(Func<Operand<TArg1>, IOperand<TResult>> expression)
+		public Operand<Action> Delegate(Action<VoidMethodWriter> body)
 		{
-			return Delegate<TArg1, TResult>((m, arg1) => m.Return(expression(arg1)));
+			return new AnonymousActionOperand(OwnerClass, body);
+		}
+		public Operand<Action<TA1>> Delegate<TA1>(Action<VoidMethodWriter, Argument<TA1>> body)
+		{
+			return new AnonymousActionOperand<TA1>(OwnerClass, body);
+		}
+		public Operand<Action<TA1, TA2>> Delegate<TA1, TA2>(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>> body)
+		{
+			return new AnonymousActionOperand<TA1, TA2>(m_OwnerClass, body);
+		}
+		public Operand<Action<TA1, TA2, TA3>> Delegate<TA1, TA2, TA3>(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
+		{
+			return new AnonymousActionOperand<TA1, TA2, TA3>(m_OwnerClass, body);
+		}
+		public Operand<Action<TA1, TA2, TA3, TA4>> Delegate<TA1, TA2, TA3, TA4>(Action<VoidMethodWriter, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
+		{
+			return new AnonymousActionOperand<TA1, TA2, TA3, TA4>(m_OwnerClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<Func<TArg1, TResult>> Lambda<TArg1, TResult>(
-			ref IDelegateOperand site,
-			Func<Operand<TArg1>, IOperand<TResult>> expression)
+		public Operand<Func<TReturn>> Delegate<TReturn>(Action<FunctionMethodWriter<TReturn>> body)
 		{
-			if ( site == null )
-			{
-				site = (IDelegateOperand)Lambda(expression);
-			}
-
-			return (AnonymousFuncOperand<TArg1, TResult>)site;
+			return new AnonymousFuncOperand<TReturn>(OwnerClass, body);
+		}
+		public Operand<Func<TA1, TReturn>> Delegate<TA1, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TA1>> body)
+		{
+			return new AnonymousFuncOperand<TA1, TReturn>(OwnerClass, body);
+		}
+		public Operand<Func<TA1, TA2, TReturn>> Delegate<TA1, TA2, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>> body)
+		{
+			return new AnonymousFuncOperand<TA1, TA2, TReturn>(m_OwnerClass, body);
+		}
+		public Operand<Func<TA1, TA2, TA3, TReturn>> Delegate<TA1, TA2, TA3, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>> body)
+		{
+			return new AnonymousFuncOperand<TA1, TA2, TA3, TReturn>(m_OwnerClass, body);
+		}
+		public Operand<Func<TA1, TA2, TA3, TA4, TReturn>> Delegate<TA1, TA2, TA3, TA4, TReturn>(Action<FunctionMethodWriter<TReturn>, Argument<TA1>, Argument<TA2>, Argument<TA3>, Argument<TA4>> body)
+		{
+			return new AnonymousFuncOperand<TA1, TA2, TA3, TA4, TReturn>(m_OwnerClass, body);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
-			Func<Operand<TArg1>, Operand<TArg2>, IOperand<TResult>> expression)
+		public Operand<Func<TResult>> Lambda<TResult>(Func<IOperand<TResult>> expression)
 		{
-			return Delegate<TArg1, TArg2, TResult>((m, arg1, arg2) => m.Return(expression(arg1, arg2)));
+			return Delegate<TResult>(w => w.Return(expression()));
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public Operand<Func<TArg1, TArg2, TResult>> Lambda<TArg1, TArg2, TResult>(
-			ref IDelegateOperand site,
-			Func<Operand<TArg1>, Operand<TArg2>, IOperand<TResult>> expression)
+		public Operand<Func<TA1, TResult>> Lambda<TA1, TResult>(Func<Operand<TA1>, IOperand<TResult>> expression)
 		{
-			if ( site == null )
-			{
-				site = (IDelegateOperand)Lambda(expression);
-			}
-
-			return (AnonymousFuncOperand<TArg1, TArg2, TResult>)site;
+			return Delegate<TA1, TResult>((w, arg1) => w.Return(expression(arg1)));
+		}
+		public Operand<Func<TA1, TA2, TResult>> Lambda<TA1, TA2, TResult>(Func<Operand<TA1>, Operand<TA2>, IOperand<TResult>> expression)
+		{
+			return Delegate<TA1, TA2, TResult>((w, arg1, arg2) => w.Return(expression(arg1, arg2)));
+		}
+		public Operand<Func<TA1, TA2, TA3, TResult>> Lambda<TA1, TA2, TA3, TResult>(Func<Operand<TA1>, Operand<TA2>, Operand<TA3>, IOperand<TResult>> expression)
+		{
+			return Delegate<TA1, TA2, TA3, TResult>((w, arg1, arg2, arg3) => w.Return(expression(arg1, arg2, arg3)));
+		}
+		public Operand<Func<TA1, TA2, TA3, TA4, TResult>> Lambda<TA1, TA2, TA3, TA4, TResult>(Func<Operand<TA1>, Operand<TA2>, Operand<TA3>, Operand<TA4>, IOperand<TResult>> expression)
+		{
+			return Delegate<TA1, TA2, TA3, TA4, TResult>((w, arg1, arg2, arg3, arg4) => w.Return(expression(arg1, arg2, arg3, arg4)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
