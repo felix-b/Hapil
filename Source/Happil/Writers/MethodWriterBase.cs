@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Happil.Expressions;
@@ -495,6 +496,28 @@ namespace Happil.Writers
 			}
 
 			return (AnonymousFuncOperand<TArg1, TArg2, TResult>)site;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<IntPtr> MethodOf(MethodInfo method)
+		{
+			return new MethodOf(method);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<IntPtr> MethodOf(MethodMember method)
+		{
+			return new MethodOf(method);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public Operand<IntPtr> MethodOf<TTarget, TMethod>(IOperand<TTarget> target, Expression<Func<TTarget, TMethod>> methodSelector)
+		{
+			var method = Helpers.ResolveMethodFromLambda(methodSelector);
+			return new MethodOf(method);
 		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------

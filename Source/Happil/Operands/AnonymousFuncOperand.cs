@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -14,8 +15,11 @@ namespace Happil.Operands
 {
 	internal class AnonymousFuncOperand<TArg1, TReturn> : Operand<Func<TArg1, TReturn>>, IDelegateOperand, IAnonymousMethodOperand, IAcceptOperandVisitor
 	{
+		private readonly ClassType m_OwnerClass;
+		private readonly StatementBlock m_HomeScopeBlock;
 		private readonly StatementBlock m_Statements;
 		private MethodSignature m_Signature;
+		private Local<Func<TArg1, TReturn>> m_CallSite = null;
 		private MethodMember m_Method = null;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +29,9 @@ namespace Happil.Operands
 			//var methodFactory = AnonymousMethodFactory.StaticMethod(ownerMethod, new[] { typeof(TArg1) }, typeof(TReturn));
 			//m_Method = new MethodMember(ownerMethod.OwnerClass, methodFactory);
 			//ownerMethod.OwnerClass.AddMember(m_Method);
-			
+
+			m_OwnerClass = ownerClass;
+			m_HomeScopeBlock = StatementScope.Current.StatementBlock;
 			m_Statements = new StatementBlock();
 			m_Signature = new MethodSignature(
 				isStatic: true, 
@@ -54,6 +60,8 @@ namespace Happil.Operands
 
 		public void CreateAnonymousMethod(ClassType ownerClass, ClosureDefinition closure, bool isStatic, bool isPublic)
 		{
+			Debug.Assert(m_Method == null, "CreateAnonymousMethod was already called.");
+
 			var methodFactory = AnonymousMethodFactory.Create(
 				ownerClass,
 				argumentTypes: new[] { typeof(TArg1) },
@@ -72,6 +80,33 @@ namespace Happil.Operands
 
 			var operandBinder = new BindToMethodOperandVisitor(m_Method);
 			m_Method.AcceptVisitor(operandBinder);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void WriteCallSite()
+		{
+			Debug.Assert(m_Method != null, "CreateAnonymousMethod was not called.");
+
+			if ( !NeedCallSite() )
+			{
+				return;
+			}
+
+			var writer = m_HomeScopeBlock.OwnerMethod.TransparentWriter;
+			m_CallSite = writer.Local<Func<TArg1, TReturn>>();
+
+			using ( new StatementScope(m_HomeScopeBlock.EnclosingLoopStatement.HomeScope.StatementBlock, StatementScope.RewriteMode.On) )
+			{
+				m_CallSite.Assign(writer.Const<Func<TArg1, TReturn>>(null));
+			}
+
+			using ( new StatementScope(m_HomeScopeBlock, StatementScope.RewriteMode.On) )
+			{
+				writer.If(m_CallSite == writer.Const<Func<TArg1, TReturn>>(null)).Then(() =>
+					m_CallSite.Assign(writer.New<Func<TArg1, TReturn>>(GetTargetOperand(), writer.MethodOf(m_Method)))
+				);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,15 +151,19 @@ namespace Happil.Operands
 
 		public override string ToString()
 		{
-			if ( m_Method != null )
+			if ( m_CallSite.IsDefined() )
+			{
+				return m_CallSite.ToString();
+			}
+			else if ( m_Method != null )
 			{
 				var target = (m_Method.IsStatic ? "" : (m_Method.HasClosure ? m_Method.Closure.ClosureInstanceReference.ToString() + "." : "this."));
-				
+
 				return string.Format(
-					"Func<{0},{1}>({2}{3})", 
-					m_Signature.ArgumentType[0].FriendlyName(), 
-					m_Signature.ReturnType.FriendlyName(), 
-					target, 
+					"Func<{0},{1}>({2}{3})",
+					m_Signature.ArgumentType[0].FriendlyName(),
+					m_Signature.ReturnType.FriendlyName(),
+					target,
 					m_Method.Name);
 			}
 			else
@@ -149,27 +188,42 @@ namespace Happil.Operands
 
 		protected override void OnEmitTarget(ILGenerator il)
 		{
-			// nothing
+			if ( m_CallSite.IsDefined() )
+			{
+				m_CallSite.EmitTarget(il);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			if ( m_Method.HasClosure )
+			if ( m_CallSite.IsDefined() )
 			{
-				var target = m_Method.Closure.ClosureInstanceReference;
-
-				target.EmitTarget(il);
-				target.EmitLoad(il);
+				m_CallSite.EmitLoad(il);
 			}
 			else
 			{
-				il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
-			}
+				var target = GetTargetOperand();
 
-			il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
-			il.Emit(OpCodes.Newobj, s_DelegateConstructor);
+				target.EmitTarget(il);
+				target.EmitLoad(il);
+
+				//if ( m_Method.HasClosure )
+				//{
+				//	var target = m_Method.Closure.ClosureInstanceReference;
+
+				//	target.EmitTarget(il);
+				//	target.EmitLoad(il);
+				//}
+				//else
+				//{
+				//	il.Emit(m_Method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0);
+				//}
+
+				il.Emit(OpCodes.Ldftn, (MethodBuilder)m_Method.MethodFactory.Builder);
+				il.Emit(OpCodes.Newobj, s_DelegateConstructor);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -188,13 +242,45 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private IOperand GetTargetOperand()
+		{
+			if ( m_Method.HasClosure )
+			{
+				return m_Method.Closure.ClosureInstanceReference;
+			}
+			else if ( m_Method.IsStatic )
+			{
+				return new Constant<object>(null);
+			}
+			else
+			{
+				return new ThisOperand<object>(m_OwnerClass);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private bool NeedCallSite()
+		{
+			if ( m_Method.HasClosure )
+			{
+				return (m_HomeScopeBlock.EnclosingLoopStatement != m_Method.Closure.HostScopeBlock.EnclosingLoopStatement);
+			}
+			else
+			{
+				return (m_HomeScopeBlock.EnclosingLoopStatement != null);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static readonly ConstructorInfo s_DelegateConstructor;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		static AnonymousFuncOperand()
 		{
-			s_DelegateConstructor = typeof(Func<TArg1, TReturn>).GetConstructor(new[] { typeof(object), typeof(IntPtr) });
+			s_DelegateConstructor = DelegateShortcuts.GetDelegateConstructor(typeof(Func<TArg1, TReturn>));
 		}
 	}
 
@@ -302,6 +388,7 @@ namespace Happil.Operands
 	internal interface IAnonymousMethodOperand
 	{
 		void CreateAnonymousMethod(ClassType ownerClass, ClosureDefinition closure, bool isStatic, bool isPublic);
+		void WriteCallSite();
 		StatementBlock Statements { get; }
 		MethodMember AnonymousMethod { get; }
 	}

@@ -21,7 +21,7 @@ namespace Happil.Statements
 		{
 			m_BodyBlock = new StatementBlock();
 
-			using ( new StatementScope(m_BodyBlock) )
+			using ( new StatementScope(m_BodyBlock, loopStatement: this) )
 			{
 				body(this);
 			}

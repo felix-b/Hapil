@@ -9,16 +9,33 @@ namespace Happil
 {
 	public static class OperandExtensions
 	{
+		public static bool IsDefined(this IOperand operand)
+		{
+			return !object.ReferenceEquals(operand, null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal static void EmitTarget(this IOperand operand, ILGenerator il)
 		{
-			((IOperandEmitter)operand).EmitTarget(il);
+			if ( operand != null )
+			{
+				((IOperandEmitter)operand).EmitTarget(il);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal static void EmitLoad(this IOperand operand, ILGenerator il)
 		{
-			((IOperandEmitter)operand).EmitLoad(il);
+			if ( operand != null )
+			{
+				((IOperandEmitter)operand).EmitLoad(il);
+			}
+			else
+			{
+				il.Emit(OpCodes.Ldnull);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

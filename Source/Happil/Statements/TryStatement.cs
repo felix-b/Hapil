@@ -218,7 +218,7 @@ namespace Happil.Statements
 
 			public void AcceptVisitor(OperandVisitorBase visitor)
 			{
-				((StatementBase)m_LeaveStatement).AcceptVisitor(visitor);
+				visitor.VisitStatement((StatementBase)m_LeaveStatement);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------

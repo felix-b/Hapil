@@ -47,7 +47,7 @@ namespace Happil.Statements
 			visitor.VisitOperand(ref m_Element);
 			visitor.VisitOperand(ref m_Collection);
 			visitor.VisitStatementBlock(m_BodyBlock);
-			m_InnerWhile.AcceptVisitor(visitor);
+			visitor.VisitStatement(m_InnerWhile);
 		}
 
 		#endregion
@@ -81,7 +81,7 @@ namespace Happil.Statements
 
 		public void Do(Action<ILoopBody, Local<TElement>> body)
 		{
-			using ( var scope = new StatementScope(m_BodyBlock) )
+			using ( var scope = new StatementScope(m_BodyBlock, loopStatement: this) )
 			{
 				var writer = scope.Writer;
 				var enumerator = writer.Local<IEnumerator<TElement>>();

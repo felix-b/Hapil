@@ -108,7 +108,7 @@ namespace Happil.Statements
 
 		public IHappilForDoSyntax Next(Action next)
 		{
-			using ( new StatementScope(m_NextBlock) )
+			using ( new StatementScope(m_NextBlock, loopStatement: this) )
 			{
 				next();
 			}
@@ -124,7 +124,7 @@ namespace Happil.Statements
 
 		public void Do(Action<ILoopBody> body)
 		{
-			using ( new StatementScope(m_BodyBlock) )
+			using ( new StatementScope(m_BodyBlock, loopStatement: this) )
 			{
 				body(this);
 			}

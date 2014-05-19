@@ -62,6 +62,7 @@
     <Compile Include="DynamicModule.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EnumerableShortcuts.cs" />
+    <Compile Include="Operands\MethodOf.cs" />
     <Compile Include="Writers\AnonymousMethodWriter.cs" />
     <Compile Include="Operands\ArrayElementOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />

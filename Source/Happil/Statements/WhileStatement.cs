@@ -66,7 +66,7 @@ namespace Happil.Statements
 
 		public void Do(Action<ILoopBody> body)
 		{
-			using ( new StatementScope(m_BodyBlock) )
+			using ( new StatementScope(m_BodyBlock, loopStatement: this) )
 			{
 				body(this);
 			}

@@ -17,6 +17,8 @@ namespace Happil.Statements
 		private StatementBlock m_ParentBlock;
 		private int m_Depth;
 		private ClosureDefinition m_ClosureDefinition;
+		private TryStatement m_EnclosingTryStatement;
+		private LoopStatementBase m_EnclosingLoopStatement;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -95,6 +97,8 @@ namespace Happil.Statements
 			m_OwnerMethod = scope.OwnerMethod; 
 			m_ParentBlock = (scope.Previous != null ? scope.Previous.StatementBlock : null);
 			m_Depth = (m_ParentBlock != null ? m_ParentBlock.Depth + 1 : 0);
+			m_EnclosingTryStatement = scope.InheritedExceptionStatement;
+			m_EnclosingLoopStatement = scope.InheritedLoopStatement;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -142,6 +146,26 @@ namespace Happil.Statements
 			get
 			{
 				return m_ParentBlock;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		public TryStatement EnclosingTryStatement
+		{
+			get
+			{
+				return m_EnclosingTryStatement;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LoopStatementBase EnclosingLoopStatement
+		{
+			get
+			{
+				return m_EnclosingLoopStatement;
 			}
 		}
 

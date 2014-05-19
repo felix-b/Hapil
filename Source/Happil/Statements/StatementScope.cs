@@ -19,6 +19,7 @@ namespace Happil.Statements
 		private readonly MethodWriterBase m_Writer;
 		private readonly StatementBlock m_StatementBlock;
 		private readonly int m_Depth;
+		private readonly LoopStatementBase m_InheritedLoopStatement;
 		private readonly TryStatement m_InheritedExceptionStatement;
 		private readonly ExceptionBlockType m_InheritedExceptionBlockType;
 		private readonly TryStatement m_ThisExceptionStatement;
@@ -47,6 +48,7 @@ namespace Happil.Statements
 			m_OwnerClass = ownerClass;
 			m_Depth = 0;
 
+			m_InheritedLoopStatement = null;
 			m_ThisExceptionBlockType = ExceptionBlockType.None;
 			m_ThisExceptionStatement = null;
 			m_InheritedExceptionStatement = null;
@@ -62,28 +64,8 @@ namespace Happil.Statements
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public StatementScope(StatementBlock statementBlock)
+			: this(statementBlock, attachStatementBlock: true)
 		{
-			m_Previous = s_Current;
-			m_Root = m_Previous.Root;
-
-			if ( m_Previous == null )
-			{
-				throw new InvalidOperationException("Parent scope is not present.");
-			}
-
-			m_StatementBlock = statementBlock;
-			m_Writer = m_Previous.m_Writer;
-			m_OwnerMethod = m_Previous.m_OwnerMethod;
-			m_OwnerClass = m_Previous.m_OwnerClass;
-			m_Depth = m_Previous.Depth + 1;
-
-			m_ThisExceptionBlockType = ExceptionBlockType.None;
-			m_ThisExceptionStatement = null;
-			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
-			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
-
-			m_StatementBlock = AttachStatementBlock(statementBlock);
-			s_Current = this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,6 +86,7 @@ namespace Happil.Statements
 
 			if ( m_Previous != null )
 			{
+				m_InheritedLoopStatement = m_Previous.InheritedLoopStatement;
 				m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
 				m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
 			}
@@ -118,12 +101,51 @@ namespace Happil.Statements
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public StatementScope(StatementBlock statementBlock, TryStatement exceptionStatement, ExceptionBlockType blockType)
-			: this(statementBlock)
+			: this(statementBlock, attachStatementBlock: false)
 		{
 			m_ThisExceptionStatement = exceptionStatement;
 			m_ThisExceptionBlockType = blockType;
 			m_InheritedExceptionStatement = exceptionStatement;
 			m_InheritedExceptionBlockType = blockType;
+	
+			m_StatementBlock = AttachStatementBlock(statementBlock);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public StatementScope(StatementBlock statementBlock, LoopStatementBase loopStatement)
+			: this(statementBlock, attachStatementBlock: false)
+		{
+			m_InheritedLoopStatement = loopStatement;
+			m_StatementBlock = AttachStatementBlock(statementBlock);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private StatementScope(StatementBlock statementBlock, bool attachStatementBlock)
+		{
+			m_Previous = s_Current;
+			m_Root = m_Previous.Root;
+
+			if ( m_Previous == null )
+			{
+				throw new InvalidOperationException("Parent scope is not present.");
+			}
+
+			m_StatementBlock = statementBlock;
+			m_Writer = m_Previous.m_Writer;
+			m_OwnerMethod = m_Previous.m_OwnerMethod;
+			m_OwnerClass = m_Previous.m_OwnerClass;
+			m_Depth = m_Previous.Depth + 1;
+
+			m_InheritedLoopStatement = m_Previous.InheritedLoopStatement;
+			m_ThisExceptionBlockType = ExceptionBlockType.None;
+			m_ThisExceptionStatement = null;
+			m_InheritedExceptionStatement = m_Previous.InheritedExceptionStatement;
+			m_InheritedExceptionBlockType = m_Previous.InheritedExceptionBlockType;
+
+			m_StatementBlock = (attachStatementBlock ? AttachStatementBlock(statementBlock) : null);
+			s_Current = this;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -313,6 +335,16 @@ namespace Happil.Statements
 			get
 			{
 				return m_Depth;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public LoopStatementBase InheritedLoopStatement
+		{
+			get
+			{
+				return m_InheritedLoopStatement;
 			}
 		}
 

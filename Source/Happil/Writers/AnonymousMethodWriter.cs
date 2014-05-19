@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Happil.Closures;
 using Happil.Members;
+using Happil.Operands;
+using Happil.Statements;
 using Happil.Writers;
 
 namespace Happil.Writers
@@ -60,12 +62,21 @@ namespace Happil.Writers
 				var scope = m_Identification.GetAnonymousMethodScope(anonymousMethod);
 				Debug.Assert(scope != AnonymousMethodScope.Closure, "Anonymous method was not implemented by its closure.");
 
-				anonymousMethod.CreateAnonymousMethod(
-					OwnerMethod.OwnerClass, 
-					closure: null,
-					isStatic: scope == AnonymousMethodScope.Static,
-					isPublic: false);
+				WriteAnonymousMethodThatHasNoClosure(anonymousMethod, scope);
 			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void WriteAnonymousMethodThatHasNoClosure(IAnonymousMethodOperand anonymousMethod, AnonymousMethodScope scope)
+		{
+			anonymousMethod.CreateAnonymousMethod(
+				OwnerMethod.OwnerClass, 
+				closure: null, 
+				isStatic: scope == AnonymousMethodScope.Static, 
+				isPublic: false);
+
+			anonymousMethod.WriteCallSite();
 		}
 	}
 }

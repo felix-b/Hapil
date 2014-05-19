@@ -111,6 +111,7 @@ namespace Happil.Closures
 			{
 				CompileClosureClass();
 				WriteClosureInstanceInitialization();
+				WriteAnonymousMethodCallSites();
 			}
 		}
 
@@ -335,6 +336,16 @@ namespace Happil.Closures
 			using ( TypeTemplate.CreateScope<TypeTemplate.TField>(m_Parent.ClosureClass.TypeBuilder) )
 			{
 				m_ParentField.AsOperand<TypeTemplate.TField>(m_ClosureInstanceReference).Assign(m_Parent.m_ClosureInstanceReference.CastTo<TypeTemplate.TField>());
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private void WriteAnonymousMethodCallSites()
+		{
+			foreach ( var anonymousMethodOperand in m_AnonymousMethodsToHoist )
+			{
+				anonymousMethodOperand.WriteCallSite();
 			}
 		}
 

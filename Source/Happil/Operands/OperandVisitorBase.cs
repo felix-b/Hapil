@@ -121,6 +121,13 @@ namespace Happil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public virtual void VisitStatement(StatementBase statement)
+		{
+			statement.AcceptVisitor(this);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public virtual void VisitAcceptor(IAcceptOperandVisitor acceptor)
 		{
 			if ( acceptor != null )
