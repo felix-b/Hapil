@@ -110,9 +110,9 @@ namespace Happil
 
 		public static IOperand<string> Format(
 			this IOperand<string> format,
-			params IOperand<object>[] args)
+			params IOperand[] args)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_Format, format, Helpers.BuildArrayLocal(values: args));
+			var @operator = new UnaryOperators.OperatorCall<string>(s_Format, format, Helpers.BuildArrayLocal(values: CastOperandsToObject(args)));
 			return new UnaryExpressionOperand<string, string>(@operator, null);
 		}
 
@@ -131,9 +131,14 @@ namespace Happil
 		public static IOperand<string> Format(
 			this IOperand<string> format,
 			IOperand<IFormatProvider> provider,
-			params IOperand<object>[] args)
+			params IOperand[] args)
 		{
-			var @operator = new UnaryOperators.OperatorCall<string>(s_FormatWithProvider, provider, format, Helpers.BuildArrayLocal(values: args));
+			var @operator = new UnaryOperators.OperatorCall<string>(
+				s_FormatWithProvider, 
+				provider, 
+				format, 
+				Helpers.BuildArrayLocal(values: CastOperandsToObject(args)));
+
 			return new UnaryExpressionOperand<string, string>(@operator, null);
 		}
 
@@ -582,6 +587,20 @@ namespace Happil
 		private static PropertyInfo GetPropertyInfo<TLambda>(TLambda lambda) where TLambda : LambdaExpression
 		{
 			return (PropertyInfo)((MemberExpression)lambda.Body).Member;
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private static IOperand<object>[] CastOperandsToObject(IOperand[] args)
+		{
+			var argsAsOperandsOfObject = new IOperand<object>[args.Length];
+
+			for ( int i = 0 ; i < args.Length ; i++ )
+			{
+				argsAsOperandsOfObject[i] = args[i].CastTo<object>();
+			}
+
+			return argsAsOperandsOfObject;
 		}
 	}
 }

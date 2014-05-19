@@ -18,6 +18,7 @@ namespace Happil
 		private static readonly Dictionary<Type, OpCode> s_ValueTypeCastInstructions = new Dictionary<Type, OpCode>() {
 			{ typeof(sbyte), OpCodes.Conv_I1 },
 			{ typeof(short), OpCodes.Conv_I2 },
+			{ typeof(char), OpCodes.Conv_I2 },
 			{ typeof(int), OpCodes.Conv_I4 },
 			{ typeof(long), OpCodes.Conv_I8 },
 			{ typeof(byte), OpCodes.Conv_U1 },

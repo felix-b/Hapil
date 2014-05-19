@@ -287,28 +287,6 @@ namespace Happil.UnitTests.Operands
 					"InstanceField[<hoisted>Loc4_Int32]", 
 				},
 				closureClasses[1].ClosureDefinition.Captures.ToStringArray());
-
-			//Assert.That(visitor.ClosuresRequired, Is.True);
-			//Assert.That(visitor.InnermostClosure, Is.Not.Null);
-			//Assert.That(visitor.OutermostClosure, Is.Not.Null);
-			//Assert.That(visitor.OutermostClosure, Is.Not.SameAs(visitor.InnermostClosure));
-			//Assert.That(visitor.OutermostClosure.HostScopeBlock, Is.SameAs(methodTwo.Body));
-			//Assert.That(visitor.OutermostClosure.ChildCount, Is.EqualTo(1));
-			//Assert.That(visitor.OutermostClosure.Children, Is.EqualTo(new[] { visitor.InnermostClosure }));
-			//Assert.That(visitor.InnermostClosure.Parent, Is.SameAs(visitor.OutermostClosure));
-			//Assert.That(visitor.InnermostClosure.HostScopeBlock.ParentBlock, Is.SameAs(methodTwo.Body));
-
-			//CollectionAssert.AreEquivalent(
-			//	new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "this" },
-			//	visitor.OutermostClosure.Captures.ToStringArray());
-
-			//CollectionAssert.AreEquivalent(
-			//	new[] { "Arg1[n]", "Local2[Int32]", "Local3[Int32]", "this", "Local4[Int32]" }, // parent captures are pulled by child closure
-			//	visitor.InnermostClosure.Captures.ToStringArray());
-
-			//Assert.That(
-			//	visitor.ClosuresOuterToInner.SelectMany(closure => closure.Captures).All(capture => capture.HoistingClosure != null),
-			//	"At least one captured operand was not hoisted");
 		}
 	}
 }

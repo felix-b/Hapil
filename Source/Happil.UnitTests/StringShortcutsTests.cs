@@ -241,7 +241,7 @@ namespace Happil.UnitTests
 			DeriveClassFrom<AncestorRepository.StringTester>()
 				.DefaultConstructor()
 				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
-					m.Return(str.Format(m.Const("ABC"), m.Const(123).CastTo<object>()));
+					m.Return(str.Format(m.Const("ABC"), m.Const(123)));
 				});
 
 			//-- Act
@@ -287,7 +287,7 @@ namespace Happil.UnitTests
 			DeriveClassFrom<AncestorRepository.StringTester>()
 				.DefaultConstructor()
 				.Method<string, string>(cls => cls.DoTest).Implement((m, str) => {
-					m.Return(str.Format(Static.Prop(() => CultureInfo.CurrentCulture), m.Const("ABC"), m.Const(123).CastTo<object>()));
+					m.Return(str.Format(Static.Prop(() => CultureInfo.CurrentCulture), m.Const("ABC"), m.Const(123)));
 				});
 
 			//-- Act
