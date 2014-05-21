@@ -319,7 +319,7 @@ namespace Happil.Members
 		internal void DefineFactoryMethod(ConstructorInfo constructor, Type[] parameterTypes)
 		{
 			var resolvedParameterTypes = parameterTypes.Select(TypeTemplate.Resolve).ToArray();
-			var factoryMethodName = TakeMemberName("FactoryMethod" + (m_FactoryMethods.Count + 1).ToString());
+			var factoryMethodName = TakeMemberName("<FactoryMethod>" + (m_FactoryMethods.Count + 1).ToString());
 			var factoryMethod = m_TypeBuilder.DefineMethod(
 				factoryMethodName,
 				MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static,

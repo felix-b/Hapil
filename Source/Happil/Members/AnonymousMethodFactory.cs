@@ -9,6 +9,10 @@ namespace Happil.Members
 {
 	public class AnonymousMethodFactory : MethodFactoryBase
 	{
+		private const string AnonymousNameSuffix = "<AnonymousMethod>";
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private readonly MethodBuilder m_MethodBuilder;
 		private readonly MethodSignature m_Signature;
 		private readonly ParameterBuilder[] m_Parameters;
@@ -16,14 +20,14 @@ namespace Happil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private AnonymousMethodFactory(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
+		public AnonymousMethodFactory(ClassType type, MethodMember hostMethod, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
 		{
 			var resolvedArgumentTypes = argumentTypes.Select(TypeTemplate.Resolve).ToArray();
 			var resolvedReturnType = (returnType != null ? TypeTemplate.Resolve(returnType) : null);
 			var methodAttributes = (MethodAttributes.Final | MethodAttributes.HideBySig | GetMethodModifierAttributes(isStatic, isPublic));
 
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(
-				type.TakeMemberName("AnonymousMethod"),
+				type.TakeMemberName(GetAnonymousMethodName(hostMethod.Name)),
 				methodAttributes,
 				resolvedReturnType,
 				resolvedArgumentTypes);
@@ -149,13 +153,6 @@ namespace Happil.Members
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public static AnonymousMethodFactory Create(ClassType type, Type[] argumentTypes, Type returnType, bool isStatic, bool isPublic)
-		{
-			return new AnonymousMethodFactory(type, argumentTypes, returnType, isStatic: isStatic, isPublic: isPublic);
-		}
-
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static AnonymousMethodFactory FromMethodInfo(ClassType type, MethodInfo methodInfo)
@@ -167,6 +164,20 @@ namespace Happil.Members
 		//		isStatic: methodInfo.IsStatic,
 		//		isPublic: methodInfo.IsPublic);
 		//}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private static string GetAnonymousMethodName(string hostMethodName)
+		{
+			if ( hostMethodName.Contains(AnonymousNameSuffix) )
+			{
+				return hostMethodName + "N";
+			}
+			else
+			{
+				return hostMethodName + AnonymousNameSuffix;
+			}
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -253,7 +253,7 @@ namespace Happil.Closures
 		{
 			m_ClosureClass = new NestedClassType(
 				containingClass: m_OwnerClass, 
-				classFullName: m_HostMethod.Name + "Closure", 
+				classFullName: m_HostMethod.Name + "<Closure>", 
 				baseType: typeof(object),
 				closureDefinition: this);
 

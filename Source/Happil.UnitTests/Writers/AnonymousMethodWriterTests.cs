@@ -36,13 +36,13 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(AnonymousMethod))]];" +
+					"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(DoTest<AnonymousMethod>))]];" +
 					"Return[Loc0];" +
 				"}"
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[Arg0[arg1].ToUpper()]];" +
 				"}"
 			));
@@ -80,13 +80,13 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(this.AnonymousMethod))]];" +
+					"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(this.DoTest<AnonymousMethod>))]];" +
 					"Return[Loc0];" +
 				"}"
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[this.Field[m_Prefix] + Arg1[arg1]]];" +
 				"}"
 			));
@@ -122,9 +122,9 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" + 
-				    "[Loc2 = NewObj[DoTestClosure]()];" + 
+				    "[Loc2 = NewObj[DoTest<Closure>]()];" + 
 					"[Loc2.Field[<hoisted>Loc0_String] = Const[prefix]];" +
-					"[Loc1 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc2.AnonymousMethod))]];" +
+					"[Loc1 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc2.DoTest<AnonymousMethod>))]];" +
 					"Return[Loc1];" + 
 				"}"
 			));
@@ -134,7 +134,7 @@ namespace Happil.UnitTests.Writers
 			}));
 			
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 				    "Return[[this.Field[<hoisted>Loc0_String] + Arg1[arg1]]];" +
 				"}"
 			));
@@ -166,9 +166,9 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc1 = NewObj[DoTestClosure]()];" +
+					"[Loc1 = NewObj[DoTest<Closure>]()];" +
 					"[Loc1.Field[<hoisted>Arg_source] = Arg1[source]];" +
-					"[Loc0 = [Enumerable::Select(Loc1.Field[<hoisted>Arg_source],Func<String,String>(Loc1.AnonymousMethod))]];" +
+					"[Loc0 = [Enumerable::Select(Loc1.Field[<hoisted>Arg_source],Func<String,String>(Loc1.DoTest<AnonymousMethod>))]];" +
 					"Return[Loc0];" +
 				"}"
 			));
@@ -178,7 +178,7 @@ namespace Happil.UnitTests.Writers
 			}));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[[Enumerable::First(this.Field[<hoisted>Arg_source])] + Arg1[arg1]]];" +
 				"}"
 			));
@@ -214,11 +214,11 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" + 
-					"[Loc2 = NewObj[DoTestClosure]()];" +
+					"[Loc2 = NewObj[DoTest<Closure>]()];" +
 					"[Loc2.Field[<hoisted>Arg_source] = Arg1[source]];" + 
 					"[Loc2.Field[<hoisted>This] = this];" + 
 					"[Loc2.Field[<hoisted>Loc0_String] = Const[prefix]];" + 
-					"[Loc1 = [Enumerable::Select(Loc2.Field[<hoisted>Arg_source],Func<String,String>(Loc2.AnonymousMethod))]];" +
+					"[Loc1 = [Enumerable::Select(Loc2.Field[<hoisted>Arg_source],Func<String,String>(Loc2.DoTest<AnonymousMethod>))]];" +
 					"Return[Loc1];" +
 				"}"
 			));
@@ -232,7 +232,7 @@ namespace Happil.UnitTests.Writers
 				ListClassFields(anonymousMethod.Closure.ClosureClass));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[" + 
 						"[[this.Field[<hoisted>Loc0_String] + [Enumerable::First(this.Field[<hoisted>Arg_source])]] + " +
 						"Arg1[arg1]] + " +
@@ -275,21 +275,21 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc2 = NewObj[DoTestClosure]()];" + 
+					"[Loc2 = NewObj[DoTest<Closure>]()];" + 
 					"[Loc2.Field[<hoisted>Arg_source] = Arg1[source]];" + 
 					"[Loc2.Field[<hoisted>This] = this];" +
 					"IF ([Loc2.Field[<hoisted>Arg_source] != Const[null]]) THEN {" +
-						"[Loc3 = NewObj[DoTestClosure1]()];" +
+						"[Loc3 = NewObj[DoTest<Closure>1]()];" +
 						"[Loc3.Field[Parent] = Loc2];" +
 						"[Loc3.Field[<hoisted>Loc0_String] = Const[prefix]];" +
-						"[Loc1 = [Enumerable::Select(Loc3.Field[Parent].Field[<hoisted>Arg_source],Func<String,String>(Loc3.AnonymousMethod))]];" + 
+						"[Loc1 = [Enumerable::Select(Loc3.Field[Parent].Field[<hoisted>Arg_source],Func<String,String>(Loc3.DoTest<AnonymousMethod>))]];" + 
 						"Return[Loc1];" +
 					"};" +
 				"}"
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[" +
 						"[[this.Field[<hoisted>Loc0_String] + " +
 						"[Enumerable::First(this.Field[Parent].Field[<hoisted>Arg_source])]] + " +
@@ -347,14 +347,14 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc3 = NewObj[DoTestClosure]()];" +
+					"[Loc3 = NewObj[DoTest<Closure>]()];" +
 					"[Loc3.Field[<hoisted>Loc1_Int32] = Const[123]];" +
 					"IF ([Arg1[source] != Const[null]]) THEN {" +
 						"WHILE ([Enumerable::Any(Arg1[source])]) {" +
-							"[Loc4 = NewObj[DoTestClosure1]()];" +
+							"[Loc4 = NewObj[DoTest<Closure>1]()];" +
 							"[Loc4.Field[Parent] = Loc3];" +
 							"[Loc4.Field[<hoisted>Loc2_String] = Const[suffix]];" +
-							"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc4.AnonymousMethod))]];" +
+							"[Loc0 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc4.DoTest<AnonymousMethod>))]];" +
 						"};" +
 					"};" +
 					"Return[Loc0];" +
@@ -362,7 +362,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[[[[" +
 						"this.Field[Parent].Field[<hoisted>Loc1_Int32] cast-to Type[Object]].ToString()] + " +
 						"Arg1[arg1]] + " +
@@ -425,15 +425,15 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
-					"[Loc4 = NewObj[FiveClosure]()];" +
+					"[Loc4 = NewObj[Five<Closure>]()];" +
 					"[Loc4.Field[<hoisted>Arg_n] = Arg1[n]];" +
 					"[Loc4.Field[<hoisted>Loc0_String] = Const[PFX]];" +
 					"[Loc1 = [new Int32[]Const[2]]];[Loc1[Const[0]] = Const[100]];[Loc1[Const[1]] = Const[101]];" +
 					"[Loc2 = Loc1];" +
 					"[Loc3 = NewObj[List<String>]()];" +
 					"[Loc4.Field[<hoisted>Arg_n] = Const[99]];" +
-					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.AnonymousMethod))]);" +
-					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.AnonymousMethod1))]);" +
+					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.Five<AnonymousMethod>))]);" +
+					"Loc3.AddRange([Enumerable::Select(Loc2,Func<Int32,String>(Loc4.Five<AnonymousMethod>1))]);" +
 					"Return[[String::Join(Const[;],Loc3)]];" +
 				"}"
 			));
@@ -442,7 +442,7 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(Int32):String{" +
+				"Five<AnonymousMethod>(Int32):String{" +
 					"Return[[" +
 						"[[[this.Field[<hoisted>Arg_n] cast-to Type[Object]].ToString()] + " +
 						"Const[:]] + " +
@@ -452,7 +452,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod1(Int32):String{" +
+				"Five<AnonymousMethod>1(Int32):String{" +
 					"Return[[" +
 						"[[[this.Field[<hoisted>Loc0_String] + " +
 						"Const[:]] + " +
@@ -502,11 +502,11 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc5 = NewObj[DoTestClosure]()];" +
+					"[Loc5 = NewObj[DoTest<Closure>]()];" +
 					"[Loc5.Field[<hoisted>Loc1_String] = Const[prefix]];" +
 					"[Loc5.Field[<hoisted>Loc2_String] = Const[suffix]];" +
-					"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod))]];" +
-					"[Loc4 = [Enumerable::Reverse([Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod1))])]];" +
+					"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.DoTest<AnonymousMethod>))]];" +
+					"[Loc4 = [Enumerable::Reverse([Enumerable::Select(Arg1[source],Func<String,String>(Loc5.DoTest<AnonymousMethod>1))])]];" +
 					"[Loc0 = [Enumerable::Concat(Loc3,Loc4)]];" +
 					"Return[Loc0];" +
 				"}"
@@ -516,7 +516,7 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[" +
 						"[[this.Field[<hoisted>Loc1_String] + Arg1[arg1]] + this.Field[<hoisted>Loc2_String]]" +
 					"];" +
@@ -524,7 +524,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod1(String):String{" +
+				"DoTest<AnonymousMethod>1(String):String{" +
 					"Return[" +
 						"[[this.Field[<hoisted>Loc2_String] + Arg1[arg1]] + this.Field[<hoisted>Loc1_String]]" +
 					"];" +
@@ -570,11 +570,11 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
-					"[Loc5 = NewObj[DoTestClosure]()];" +
+					"[Loc5 = NewObj[DoTest<Closure>]()];" +
 					"[Loc5.Field[<hoisted>Loc1_String] = Const[prefix]];" +
 					"[Loc5.Field[<hoisted>Loc2_String] = Const[suffix]];" +
-					"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod))]];" +
-					"[Loc4 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.AnonymousMethod1))]];" +
+					"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.DoTest<AnonymousMethod>))]];" +
+					"[Loc4 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc5.DoTest<AnonymousMethod>1))]];" +
 					"[Loc0 = [Enumerable::Concat(Loc3,Loc4)]];" +
 					"Return[Loc0];" +
 				"}"
@@ -584,7 +584,7 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[" +
 						"[this.Field[<hoisted>Loc1_String] + Arg1[arg1]]" +
 					"];" +
@@ -592,7 +592,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod1(String):String{" +
+				"DoTest<AnonymousMethod>1(String):String{" +
 					"Return[" +
 						"[Arg1[arg1] + this.Field[<hoisted>Loc2_String]]" +
 					"];" +
@@ -648,13 +648,13 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
-					"[Loc3 = NewObj[FiveClosure]()];" +
+					"[Loc3 = NewObj[Five<Closure>]()];" +
 					"[Loc3.Field[<hoisted>Arg_n] = Arg1[n]];" +
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" +
 					"[Loc1 = Loc0];" +
 					"[Loc2 = NewObj[List<String>]()];" +
-					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.AnonymousMethod))]);" +
+					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.Five<AnonymousMethod>))]);" +
 					"Return[[String::Join(Const[;],Loc2)]];" + 
 				"}"
 			));
@@ -663,18 +663,18 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(Int32):String{" +
+				"Five<AnonymousMethod>(Int32):String{" +
 					"Return[[[[" +
 						"Enumerable::Sum([Enumerable::Select(" +
 							"[[[[Arg1[arg1] + this.Field[<hoisted>Arg_n]] cast-to Type[Object]].ToString()].ToCharArray()]," +
-							"Func<Char,Int32>(this.AnonymousMethod1)" +
+							"Func<Char,Int32>(this.Five<AnonymousMethod>N)" +
 						")])] cast-to Type[Object]].ToString()" +
 					"]];" + 
 				"}"
 			));
 
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod1(Char):Int32{" +
+				"Five<AnonymousMethod>N(Char):Int32{" +
 					"Return[[[Arg1[arg1] cast-to Type[Int32]] + this.Field[<hoisted>Arg_n]]];" +
 				"}"
 			));
@@ -727,13 +727,13 @@ namespace Happil.UnitTests.Writers
 
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
-					"[Loc3 = NewObj[FiveClosure]()];" +
+					"[Loc3 = NewObj[Five<Closure>]()];" +
 					"[Loc3.Field[<hoisted>Arg_n] = Arg1[n]];" +
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" + 
 					"[Loc1 = Loc0];" +
 					"[Loc2 = NewObj[List<String>]()];" +
-					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.AnonymousMethod))]);" +
+					"Loc2.AddRange([Enumerable::Select(Loc1,Func<Int32,String>(Loc3.Five<AnonymousMethod>))]);" +
 					"Return[[String::Join(Const[;],Loc2)]];" +
 				"}"
 			));
@@ -742,18 +742,18 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(2));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(Int32):String{" +
-					"[Loc3 = NewObj[AnonymousMethodClosure]()];" +
+				"Five<AnonymousMethod>(Int32):String{" +
+					"[Loc3 = NewObj[Five<AnonymousMethod><Closure>]()];" +
 					"[Loc3.Field[<hoisted>This] = this];" +
 					"[Loc3.Field[<hoisted>Loc0_Int32] = [Arg1[arg1] + this.Field[<hoisted>Arg_n]]];" +
 					"[Loc1 = [[[Loc3.Field[<hoisted>Loc0_Int32] cast-to Type[Object]].ToString()].ToCharArray()]];" +
-					"[Loc2 = [Enumerable::Sum([Enumerable::Select(Loc1,Func<Char,Int32>(Loc3.AnonymousMethod))])]];" +
+					"[Loc2 = [Enumerable::Sum([Enumerable::Select(Loc1,Func<Char,Int32>(Loc3.Five<AnonymousMethod>N))])]];" +
 					"Return[[[Loc2 cast-to Type[Object]].ToString()]];" +
 				"}"
 			));
 
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(Char):Int32{" +
+				"Five<AnonymousMethod>N(Char):Int32{" +
 					"Return[[" +
 						"[[Arg1[arg1] cast-to Type[Int32]] + this.Field[<hoisted>Loc0_Int32]] + this.Field[<hoisted>This].Field[<hoisted>Arg_n]" +
 					"]];" +
@@ -808,7 +808,7 @@ namespace Happil.UnitTests.Writers
 					"[Loc3 = Const[null]];" +
 					"FOR ({[Loc1 = Const[0]];} ; [Loc1 < Const[10]] ; {[Loc1 = [Loc1 + Const[1]]];}) {" +
 						"IF ([Loc3 == Const[null]]) THEN {" +
-							"[Loc3 = NewObj[Func<String,String>](Const[null],Method[AnonymousMethod])];" +
+							"[Loc3 = NewObj[Func<String,String>](Const[null],Method[DoTest<AnonymousMethod>])];" +
 						"};" +
 						"[Loc2 = [Enumerable::Select(Arg1[source],Loc3)]];" +
 					"};" +
@@ -817,7 +817,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[Arg0[arg1].ToUpper()]];" +
 				"}"
 			));
@@ -854,11 +854,11 @@ namespace Happil.UnitTests.Writers
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
 					"[Loc5 = Const[null]];" +
-					"[Loc4 = NewObj[DoTestClosure]()];" +
+					"[Loc4 = NewObj[DoTest<Closure>]()];" +
 					"[Loc4.Field[<hoisted>Loc1_String] = Const[zz]];" +
 					"FOR ({[Loc2 = Const[0]];} ; [Loc2 < Const[10]] ; {[Loc2 = [Loc2 + Const[1]]];}) {" +
 						"IF ([Loc5 == Const[null]]) THEN {" +
-							"[Loc5 = NewObj[Func<String,String>](Loc4,Method[AnonymousMethod])];" +
+							"[Loc5 = NewObj[Func<String,String>](Loc4,Method[DoTest<AnonymousMethod>])];" +
 						"};" +
 						"[Loc3 = [Enumerable::Select(Arg1[source],Loc5)]];" +
 					"};" +
@@ -867,7 +867,7 @@ namespace Happil.UnitTests.Writers
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[[Arg1[arg1].ToUpper()] + this.Field[<hoisted>Loc1_String]]];" +
 				"}"
 			));
@@ -904,16 +904,16 @@ namespace Happil.UnitTests.Writers
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
 					"FOR ({[Loc1 = Const[0]];} ; [Loc1 < Const[10]] ; {[Loc1 = [Loc1 + Const[1]]];}) {" +
-						"[Loc4 = NewObj[DoTestClosure]()];" +
+						"[Loc4 = NewObj[DoTest<Closure>]()];" +
 						"[Loc4.Field[<hoisted>Loc2_String] = [Const[z] + [[Loc1 cast-to Type[Object]].ToString()]]];" +
-						"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc4.AnonymousMethod))]];" +
+						"[Loc3 = [Enumerable::Select(Arg1[source],Func<String,String>(Loc4.DoTest<AnonymousMethod>))]];" +
 					"};" +
 					"Return[Loc3];" +
 				"}"
 			));
 
 			Assert.That(anonymousMethod.GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{" +
+				"DoTest<AnonymousMethod>(String):String{" +
 					"Return[[[Arg1[arg1].ToUpper()] + this.Field[<hoisted>Loc2_String]]];" +
 				"}"
 			));
@@ -955,7 +955,7 @@ namespace Happil.UnitTests.Writers
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
 					#region Full Method Text
-					"[Loc4 = NewObj[DoTestClosure]()];" +
+					"[Loc4 = NewObj[DoTest<Closure>]()];" +
 					"[Loc0 = NewObj[List<String>]()];" +
 					"[Loc4.Field[<hoisted>Loc1_String] = Const[y]];" +
 					"IF ([Arg1[source] != Const[null]]) THEN {" +
@@ -963,7 +963,7 @@ namespace Happil.UnitTests.Writers
 						"[Loc8 = Const[null]];" +
 						"[Loc7 = Const[null]];" +
 						"[Loc6 = Const[null]];" +
-						"[Loc5 = NewObj[DoTestClosure1]()];" +
+						"[Loc5 = NewObj[DoTest<Closure>1]()];" +
 						"[Loc5.Field[Parent] = Loc4];" +
 						"[Loc5.Field[<hoisted>Loc2_String] = Const[z]];" +
 						"FOR ({[Loc5.Field[<hoisted>Loc3_Int32] = Const[0]];} ; " +
@@ -971,16 +971,16 @@ namespace Happil.UnitTests.Writers
 							"{[Loc5.Field[<hoisted>Loc3_Int32] = [Loc5.Field[<hoisted>Loc3_Int32] + Const[1]]];}) " +
 						"{" +
 							"IF ([Loc9 == Const[null]]) THEN {" +
-								"[Loc9 = NewObj[Func<String,String>](Const[null],Method[AnonymousMethod])];" +
+								"[Loc9 = NewObj[Func<String,String>](Const[null],Method[DoTest<AnonymousMethod>])];" +
 							"};" +
 							"IF ([Loc8 == Const[null]]) THEN {" +
-								"[Loc8 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod2])];" +
+								"[Loc8 = NewObj[Func<String,String>](Loc5,Method[DoTest<AnonymousMethod>2])];" +
 							"};" +
 							"IF ([Loc7 == Const[null]]) THEN {" +
-								"[Loc7 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod1])];" +
+								"[Loc7 = NewObj[Func<String,String>](Loc5,Method[DoTest<AnonymousMethod>1])];" +
 							"};" +
 							"IF ([Loc6 == Const[null]]) THEN {" +
-								"[Loc6 = NewObj[Func<String,String>](Loc5,Method[AnonymousMethod])];" +
+								"[Loc6 = NewObj[Func<String,String>](Loc5,Method[DoTest<AnonymousMethod>])];" +
 							"};" +
 							"Loc0.AddRange(" + 
 								"[Enumerable::Select(" +
@@ -1002,16 +1002,16 @@ namespace Happil.UnitTests.Writers
 			Assert.That(anonymousMethods.Length, Is.EqualTo(4));
 
 			Assert.That(anonymousMethods[0].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{Return[[Arg0[arg1].ToUpper()]];}"
+				"DoTest<AnonymousMethod>(String):String{Return[[Arg0[arg1].ToUpper()]];}"
 			));
 			Assert.That(anonymousMethods[1].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod(String):String{Return[[[[this.Field[<hoisted>Loc3_Int32] cast-to Type[Object]].ToString()] + Arg1[arg1]]];}"
+				"DoTest<AnonymousMethod>(String):String{Return[[[[this.Field[<hoisted>Loc3_Int32] cast-to Type[Object]].ToString()] + Arg1[arg1]]];}"
 			));
 			Assert.That(anonymousMethods[2].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod1(String):String{Return[[Arg1[arg1] + this.Field[<hoisted>Loc2_String]]];}"
+				"DoTest<AnonymousMethod>1(String):String{Return[[Arg1[arg1] + this.Field[<hoisted>Loc2_String]]];}"
 			));
 			Assert.That(anonymousMethods[3].GetMethodText(), Is.EqualTo(
-				"AnonymousMethod2(String):String{Return[[this.Field[Parent].Field[<hoisted>Loc1_String] + Arg1[arg1]]];}"
+				"DoTest<AnonymousMethod>2(String):String{Return[[this.Field[Parent].Field[<hoisted>Loc1_String] + Arg1[arg1]]];}"
 			));
 		}
 

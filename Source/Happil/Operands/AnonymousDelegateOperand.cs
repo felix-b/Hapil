@@ -41,8 +41,9 @@ namespace Happil.Operands
 		{
 			Debug.Assert(m_Method == null, "CreateAnonymousMethod was already called.");
 
-			var methodFactory = AnonymousMethodFactory.Create(
+			var methodFactory = new AnonymousMethodFactory(
 				ownerClass,
+				hostMethod: m_HomeScopeBlock.OwnerMethod,
 				argumentTypes: m_Signature.ArgumentType,
 				returnType: m_Signature.ReturnType,
 				isStatic: isStatic,
