@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 using Happil;
 
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class SetShortcutsTests : ClassPerTestCaseFixtureBase
+	public class SetShortcutsTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestAdd()

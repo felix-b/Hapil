@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Expressions;
 using Happil.Operands;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Members
 {
 	[TestFixture]
-	public class ConstructorTests : ClassPerTestCaseFixtureBase
+	public class ConstructorTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanCreateObjectUsingNonDefaultConstructor()

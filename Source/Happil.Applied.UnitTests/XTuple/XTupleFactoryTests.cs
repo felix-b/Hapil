@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Happil.Applied.UnitTests.XTuple
 {
 	[TestFixture]
-	public class XTupleFactoryTests
+	public class XTupleFactoryTests 
 	{
 		private DynamicModule m_Module;
 		private XTupleFactory m_Factory;

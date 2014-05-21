@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using Happil.Members;
 using Happil.Operands;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class OperandVisitorBaseTests : ClassPerTestCaseFixtureBase
+	public class OperandVisitorBaseTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanReturnEmptyListIfNoOperandsFound()

@@ -26,10 +26,13 @@ namespace Happil.Expressions
 			m_Operator = @operator;
 			m_Position = position;
 
-			var scope = StatementScope.Current; 
+			if ( StatementScope.Exists )
+			{
+				var scope = StatementScope.Current;
 
-			scope.Consume(operand as IExpressionOperand);
-			scope.RegisterExpressionStatement(this);
+				scope.Consume(operand as IExpressionOperand);
+				scope.RegisterExpressionStatement(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

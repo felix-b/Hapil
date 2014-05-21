@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class CollectionShortcutsTests : ClassPerTestCaseFixtureBase
+	public class CollectionShortcutsTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestIndexOf()

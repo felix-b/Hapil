@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Expressions;
 using Happil;
 using Happil.Operands;
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class DelegateTests : ClassPerTestCaseFixtureBase
+	public class DelegateTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestLambdaExpression()

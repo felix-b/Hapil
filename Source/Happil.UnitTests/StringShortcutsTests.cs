@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class StringShortcutsTests : ClassPerTestCaseFixtureBase
+	public class StringShortcutsTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestCharAt()

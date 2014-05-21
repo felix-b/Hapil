@@ -66,6 +66,7 @@
     <Compile Include="Operands\AnonymousActionOperand.cs" />
     <Compile Include="Operands\IAnonymousMethodOperand.cs" />
     <Compile Include="Operands\MethodOf.cs" />
+    <Compile Include="Testing\EmittedTypesTestBase.cs" />
     <Compile Include="Writers\AnonymousMethodWriter.cs" />
     <Compile Include="Operands\ArrayElementOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />

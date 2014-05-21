@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class EnumerableShortcutsTests : ClassPerTestCaseFixtureBase
+	public class EnumerableShortcutsTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestAll()

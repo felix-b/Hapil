@@ -4,6 +4,7 @@ using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 using InOut = Happil.UnitTests.AncestorRepository.OperatorInputOutput;
 using Happil;
@@ -11,7 +12,7 @@ using Happil;
 namespace Happil.UnitTests.Expressions
 {
 	[TestFixture]
-	public class BinaryOperatorTests : ClassPerTestCaseFixtureBase
+	public class BinaryOperatorTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestAddition()

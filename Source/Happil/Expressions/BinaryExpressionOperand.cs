@@ -26,15 +26,18 @@ namespace Happil.Expressions
 			m_Right = right;
 			m_Operator = @operator;
 
-			var scope = StatementScope.Current;
+			if ( StatementScope.Exists )
+			{
+				var scope = StatementScope.Current;
 
-			scope.Consume(left as IExpressionOperand);
-			scope.Consume(right as IExpressionOperand);
-			// since the unregister method only checks the last statement, the following line is 
-			// required to remove dependency on the order of left and right registration:
-			scope.Consume(left as IExpressionOperand);
-			
-			scope.RegisterExpressionStatement(this);
+				scope.Consume(left as IExpressionOperand);
+				scope.Consume(right as IExpressionOperand);
+				// since the unregister method only checks the last statement, the following line is 
+				// required to remove dependency on the order of left and right registration:
+				scope.Consume(left as IExpressionOperand);
+
+				scope.RegisterExpressionStatement(this);
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

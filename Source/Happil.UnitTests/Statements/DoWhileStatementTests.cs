@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]
-	public class DoWhileStatementTests : ClassPerTestCaseFixtureBase
+	public class DoWhileStatementTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestDoWhile()

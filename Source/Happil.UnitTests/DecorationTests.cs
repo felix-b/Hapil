@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using Happil.Decorators;
 using Happil.Expressions;
 using Happil.Members;
@@ -15,7 +16,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class DecorationTests : ClassPerTestCaseFixtureBase
+	public class DecorationTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void ManualDecorator()

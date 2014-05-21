@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Expressions;
 using Happil.Operands;
 using Happil.Writers;
@@ -11,7 +12,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class AttributeTests : ClassPerTestCaseFixtureBase
+	public class AttributeTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void AttributeOnClass_NoArguments()

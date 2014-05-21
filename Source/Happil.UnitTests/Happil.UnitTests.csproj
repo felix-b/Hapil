@@ -55,9 +55,6 @@
     <Compile Include="Assumptions\CompiledExamples.cs" />
     <Compile Include="Assumptions\CSharpTests.cs" />
     <Compile Include="AttributeTests.cs" />
-    <Compile Include="ClassPerTestCaseFixtureBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ClosureTests.cs" />
     <Compile Include="CollectionShortcutsTests.cs" />
     <Compile Include="ConventionObjectFactoryTests.cs" />
@@ -107,6 +104,10 @@
     <Compile Include="Writers\MethodWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hapil.Testing.NUnit\Hapil.Testing.NUnit.csproj">
+      <Project>{b02584d9-46fc-4d39-b3fa-8c58238b540a}</Project>
+      <Name>Hapil.Testing.NUnit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Happil\Happil.csproj">
       <Project>{25e37cc2-7e18-4592-8102-dfbaa4ddd2a7}</Project>
       <Name>Happil</Name>

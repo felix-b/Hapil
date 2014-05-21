@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Expressions;
 using Happil.Operands;
 using Moq;
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class SignatureTests : ClassPerTestCaseFixtureBase
+	public class SignatureTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void InterfaceMethods_OnyByOne()

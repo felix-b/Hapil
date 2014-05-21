@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class PropertyTests : ClassPerTestCaseFixtureBase
+	public class PropertyTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanReadImplementedProperties()

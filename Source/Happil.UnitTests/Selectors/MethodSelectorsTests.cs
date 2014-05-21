@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Selectors
 {
 	[TestFixture]
-	public class MethodSelectorsTests : ClassPerTestCaseFixtureBase 
+	public class MethodSelectorsTests : NUnitEmittedTypesTestBase 
 	{
 		[Test]
 		public void CanSelectAllMethodsAndLoopOver()
@@ -78,7 +79,7 @@ namespace Happil.UnitTests.Selectors
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		#region Overrides of ClassPerTestCaseFixtureBase
+		#region Overrides of NUnitEmittedTypesTestBase
 
 		protected override bool AllClassesAreCompleteTypes
 		{

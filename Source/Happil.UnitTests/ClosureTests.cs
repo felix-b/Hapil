@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using Happil.Operands;
 using Happil.UnitTests.Assumptions;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ Closures design:
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class ClosureTests : ClassPerTestCaseFixtureBase
+	public class ClosureTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CaptureNothing()

@@ -84,7 +84,22 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal protected class TypeEntry
+		public interface IConstructors<out TBase>
+		{
+			TBase UsingDefaultConstructor(int constructorIndex = 0);
+			TBase UsingConstructor<T>(T arg, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3, T4, T5>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3, T4, T5, T6>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int constructorIndex = 0);
+			TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7, T8>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int constructorIndex = 0);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public class TypeEntry
 		{
 			internal TypeEntry(ClassType classType)
 			{
@@ -161,6 +176,87 @@ namespace Happil
 
 			public Type DynamicType { get; private set; }
 			public Delegate[] FactoryMethods { get; private set; }
+		}
+		
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected class Constructors<TBase> : IConstructors<TBase>
+		{
+			private readonly TypeEntry m_TypeEntry;
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public Constructors(TypeEntry typeEntry)
+			{
+				m_TypeEntry = typeEntry;
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			#region ICreateObjectSyntax<TBase> Members
+
+			public TBase UsingDefaultConstructor(int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase>(constructorIndex);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T>(T arg, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T>(constructorIndex, arg);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2>(constructorIndex, arg1, arg2);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3>(constructorIndex, arg1, arg2, arg3);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3, T4>(constructorIndex, arg1, arg2, arg3, arg4);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3, T4, T5>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5>(constructorIndex, arg1, arg2, arg3, arg4, arg5);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6, T7>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7, T8>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int constructorIndex = 0)
+			{
+				return m_TypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6, T7, T8>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+			}
+
+			#endregion
 		}
 	}
 }

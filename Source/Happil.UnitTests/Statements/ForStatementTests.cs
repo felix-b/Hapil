@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil;
 using Happil.Operands;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]
-	public class ForStatementTests : ClassPerTestCaseFixtureBase
+	public class ForStatementTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestShortSyntaxAscending()

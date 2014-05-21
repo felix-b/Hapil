@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -11,7 +12,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]
-	public class SwitchStatementTests : ClassPerTestCaseFixtureBase
+	public class SwitchStatementTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestJumpTableNoAdjustment()

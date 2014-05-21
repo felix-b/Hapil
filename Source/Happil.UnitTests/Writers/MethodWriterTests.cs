@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Writers
 {
 	[TestFixture]
-	public class MethodWriterTests : ClassPerTestCaseFixtureBase
+	public class MethodWriterTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void ImplementInterfaceMethods_AllEmpty()

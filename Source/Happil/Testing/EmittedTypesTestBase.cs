@@ -5,12 +5,10 @@ using System.Text;
 using Happil;
 using Happil.Members;
 using Happil.Writers;
-using NUnit.Framework;
 
-namespace Happil.UnitTests
+namespace Happil.Testing
 {
-	[TestFixture]
-	public abstract class ClassPerTestCaseFixtureBase
+	public abstract class EmittedTypesTestBase
 	{
 		private DynamicModule m_Module;
 		private ClassType m_Class;
@@ -18,19 +16,17 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestFixtureSetUp]
-		public void BaseFixtureSetUp()
+		protected void InitializeTestClass()
 		{
 			m_Module = new DynamicModule(
-				"Happil.UnitTests.EmittedBy" + this.GetType().Name,
+				"EmittedBy" + this.GetType().Name,
 				allowSave: this.ShouldSaveAssembly,
-				saveDirectory: TestContext.CurrentContext.TestDirectory);
+				saveDirectory: TestDirectory);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestFixtureTearDown]
-		public void BaseFixtureTearDown()
+		protected void FinalizeTestClass()
 		{
 			if ( ShouldSaveAssembly )
 			{
@@ -47,10 +43,15 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[SetUp]
-		public void BaseSetUp()
+		protected void InitializeTestCase()
 		{
 			m_Factory = null;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected void FinalizeTestCase()
+		{
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -90,11 +91,11 @@ namespace Happil.UnitTests
 			try
 			{
 				codeUnderTest();
-				Assert.Fail("Expected exception of type " + typeof(TException).Name);
+				FailAssertion("Expected exception of type " + typeof(TException).Name);
 			}
 			catch ( TException e )
 			{
-				StringAssert.Contains(messageContains, e.Message, "Exception message was not as expected");
+				AssertStringContains(e.Message, messageContains, "Exception message was not as expected");
 			}
 		}
 
@@ -105,7 +106,7 @@ namespace Happil.UnitTests
 			try
 			{
 				codeUnderTest();
-				Assert.Fail("Expected exception of type " + typeof(TException).Name);
+				FailAssertion("Expected exception of type " + typeof(TException).Name);
 			}
 			catch ( TException )
 			{
@@ -144,7 +145,23 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal IConstructors<TBase> CreateClassInstanceAs<TBase>()
+		protected abstract void AssertStringContains(string s, string subString, string message);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected abstract void FailAssertion(string message);
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected abstract string TestDirectory { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected abstract string TestCaseName { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal protected ObjectFactoryBase.IConstructors<TBase> CreateClassInstanceAs<TBase>()
 		{
 			if ( m_Factory == null )
 			{
@@ -152,7 +169,7 @@ namespace Happil.UnitTests
 				m_Factory.DefineClass();
 			}
 
-			return new Constructors<TBase>(m_Factory);
+			return new ObjectFactoryBase.Constructors<TBase>(m_Factory.ClassTypeEntry);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -164,7 +181,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal DynamicModule Module
+		internal protected DynamicModule Module
 		{
 			get
 			{
@@ -174,7 +191,7 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal ClassType Class
+		internal protected ClassType Class
 		{
 			get
 			{
@@ -184,28 +201,13 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal string TestCaseClassName
+		internal protected string TestCaseClassName
 		{
 			get
 			{
-				var currentTestName = TestContext.CurrentContext.Test.Name;
+				var currentTestName = TestCaseName;
 				return (m_Module.SimpleName + ".TestCase" + currentTestName);
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal interface IConstructors<TBase>
-		{
-			TBase UsingDefaultConstructor(int constructorIndex = 0);
-			TBase UsingConstructor<T>(T arg, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3, T4, T5>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3, T4, T5, T6>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int constructorIndex = 0);
-			TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7, T8>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int constructorIndex = 0);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -243,7 +245,7 @@ namespace Happil.UnitTests
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			internal TypeEntry ClassTypeEntry { get; private set; }
+			public TypeEntry ClassTypeEntry { get; private set; }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -258,87 +260,6 @@ namespace Happil.UnitTests
 					return m_ClassDefinitionCallback(key).OwnerClass;
 				}
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private class Constructors<TBase> : IConstructors<TBase>
-		{
-			private readonly TestFactory m_Factory;
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public Constructors(TestFactory factory)
-			{
-				m_Factory = factory;
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			#region ICreateObjectSyntax<TBase> Members
-
-			public TBase UsingDefaultConstructor(int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase>(constructorIndex);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T>(T arg, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T>(constructorIndex, arg);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2>(T1 arg1, T2 arg2, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2>(constructorIndex, arg1, arg2);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3>(constructorIndex, arg1, arg2, arg3);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3, T4>(constructorIndex, arg1, arg2, arg3, arg4);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3, T4, T5>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5>(constructorIndex, arg1, arg2, arg3, arg4, arg5);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6, T7>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public TBase UsingConstructor<T1, T2, T3, T4, T5, T6, T7, T8>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int constructorIndex = 0)
-			{
-				return m_Factory.ClassTypeEntry.CreateInstance<TBase, T1, T2, T3, T4, T5, T6, T7, T8>(constructorIndex, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-			}
-
-			#endregion
 		}
 	}
 }

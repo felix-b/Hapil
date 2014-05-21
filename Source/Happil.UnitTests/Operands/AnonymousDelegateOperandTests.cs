@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using Happil.Operands;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class AnonymousDelegateOperandTests : ClassPerTestCaseFixtureBase
+	public class AnonymousDelegateOperandTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void Action0Arguments()

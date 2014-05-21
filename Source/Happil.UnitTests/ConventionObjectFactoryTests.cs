@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using Happil.Decorators;
 using Happil.Members;
 using Happil.Writers;
@@ -12,7 +13,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests
 {
 	[TestFixture]
-	public class ConventionObjectFactoryTests : ClassPerTestCaseFixtureBase
+	public class ConventionObjectFactoryTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanImplementObjectByConventions()
@@ -26,7 +27,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>();
+			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
 
 			obj.AString = "ABC";
 			obj.AnInt = 123;
@@ -55,7 +56,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>();
+			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -77,7 +78,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = factory.CreateInstanceOf<AncestorRepository.BaseOne>();
+			var obj = factory.CreateInstanceOf<AncestorRepository.BaseOne>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -100,7 +101,7 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>();
+			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
 
 			//-- Assert
 
@@ -125,13 +126,39 @@ namespace Happil.UnitTests
 
 			//-- Act
 
-			var obj1 = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>();
-			var obj2 = factory.CreateInstanceOf<AncestorRepository.IFewMethods>();
+			var obj1 = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
+			var obj2 = factory.CreateInstanceOf<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
 
 			//-- Assert
 
 			Assert.That(obj1.GetType().IsDefined(typeof(HasPropertiesAttribute), inherit: true), Is.True);
 			Assert.That(obj2.GetType().IsDefined(typeof(HasPropertiesAttribute), inherit: true), Is.False);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CanUseTransientConventions()
+		{
+			//-- Arrange
+
+			var factory = new ConventionObjectFactory(
+				base.Module,
+				transientConventionFactory: context => new IObjectFactoryConvention[] {
+					new ClassNameConvention(TestCaseClassName),
+					new DefaultConstructorConvention(),
+					new AutomaticPropertyConvention()
+				});
+
+			//-- Act
+
+			var obj = factory.CreateInstanceOf<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
+			obj.AString = "ABC";
+
+			//-- Assert
+
+			Assert.That(obj.GetType().FullName, Is.EqualTo(base.TestCaseClassName));
+			Assert.That(obj.AString, Is.EqualTo("ABC"));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

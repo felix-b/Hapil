@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 namespace Happil.UnitTests.Expressions
 {
 	[TestFixture]
-	public class NewObjectExpressionTests : ClassPerTestCaseFixtureBase
+	public class NewObjectExpressionTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanCreateNewObjectWithDefaultConstructor()

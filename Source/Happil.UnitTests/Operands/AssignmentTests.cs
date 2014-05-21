@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil;
 using Happil.Operands;
 using Happil.Expressions;
@@ -13,7 +14,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Operands
 {
 	[TestFixture]
-	public class AssignmentTests : ClassPerTestCaseFixtureBase
+	public class AssignmentTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void AssignFieldToField()

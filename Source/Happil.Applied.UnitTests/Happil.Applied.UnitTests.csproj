@@ -48,10 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiContracts\ApiContractConventionTests.cs" />
+    <Compile Include="ApiContracts\ITestComponent.cs" />
+    <Compile Include="Conventions\CallTargetConventionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XTuple\XTupleFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hapil.Testing.NUnit\Hapil.Testing.NUnit.csproj">
+      <Project>{b02584d9-46fc-4d39-b3fa-8c58238b540a}</Project>
+      <Name>Hapil.Testing.NUnit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Happil.Applied\Happil.Applied.csproj">
       <Project>{391cf61b-aeef-48b3-a8f8-ecb50409b9fc}</Project>
       <Name>Happil.Applied</Name>

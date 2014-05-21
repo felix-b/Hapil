@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Operands;
 using NUnit.Framework;
 using InOut = Happil.UnitTests.AncestorRepository.OperatorInputOutput;
@@ -9,7 +10,7 @@ using InOut = Happil.UnitTests.AncestorRepository.OperatorInputOutput;
 namespace Happil.UnitTests.Expressions
 {
 	[TestFixture]
-	public class UnaryOperatorTests : ClassPerTestCaseFixtureBase
+	public class UnaryOperatorTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void TestLogicalNot()

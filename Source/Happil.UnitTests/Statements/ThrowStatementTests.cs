@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -10,7 +11,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]
-	public class ThrowStatementTests : ClassPerTestCaseFixtureBase
+	public class ThrowStatementTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		[ExpectedException(typeof(ExceptionRepository.TestExceptionOne), ExpectedMessage = "TestThrowException")]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Testing.NUnit;
 using Happil.Expressions;
 using Happil.Operands;
 using NUnit.Framework;
@@ -9,7 +10,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Expressions
 {
 	[TestFixture]
-	public class NewStructExpressionTests : ClassPerTestCaseFixtureBase
+	public class NewStructExpressionTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void CanCreateValueTypeWithDefaultConstructor()

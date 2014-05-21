@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hapil.Testing.NUnit;
 using NUnit.Framework;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -12,7 +13,7 @@ using NUnit.Framework;
 namespace Happil.UnitTests.Statements
 {
 	[TestFixture]
-	public class LockStatementTests : ClassPerTestCaseFixtureBase
+	public class LockStatementTests : NUnitEmittedTypesTestBase
 	{
 		[SetUp]
 		public void SetUp()
