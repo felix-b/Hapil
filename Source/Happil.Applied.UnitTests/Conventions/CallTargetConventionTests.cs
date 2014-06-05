@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hapil.Testing.NUnit;
 using Happil.Applied.Conventions;
+using Happil.Testing;
 using NUnit.Framework;
 
 namespace Happil.Applied.UnitTests.Conventions
@@ -12,20 +13,33 @@ namespace Happil.Applied.UnitTests.Conventions
 	[TestFixture]
 	public class CallTargetConventionTests : NUnitEmittedTypesTestBase
 	{
+		private ConventionObjectFactory m_Factory;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[SetUp]
+		public void SetUp()
+		{
+			m_Factory = new ConventionObjectFactory(
+				module: base.Module,
+				transientConventionsFactory: context => new IObjectFactoryConvention[] {
+					new TestNameConvention(this), 
+					new CallTargetConvention(), 
+				});
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test]
 		public void CanCallVoidMethodOnTarget()
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module, 
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention()} );
-
 			var target = new TestTarget();
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 			wrapper.One("ABC");
 
 			//-- Assert
@@ -40,15 +54,11 @@ namespace Happil.Applied.UnitTests.Conventions
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention() });
-
 			var target = new TestTarget();
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 			var result = wrapper.Two(123, "ABC");
 
 			//-- Assert
@@ -64,17 +74,13 @@ namespace Happil.Applied.UnitTests.Conventions
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention() });
-
 			var target = new TestTarget();
 			target.StringValue = "DEF";
 			target.Log.Clear();
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 			
 			var result1 = wrapper.StringValue;
 			wrapper.StringValue = "GHI";
@@ -94,17 +100,13 @@ namespace Happil.Applied.UnitTests.Conventions
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention() });
-
 			var target = new TestTarget();
 			target[123] = "ABC";
 			target.Log.Clear();
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 
 			var result1 = wrapper[123];
 			wrapper[456] = "DEF";
@@ -124,17 +126,13 @@ namespace Happil.Applied.UnitTests.Conventions
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention() });
-
 			var target = new TestTarget();
 			var eventCount = 0;
 			string eventValue = null;
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 			wrapper.EventOne += (sender, args) => {
 				eventCount++;
 				eventValue = args.Value;
@@ -155,10 +153,6 @@ namespace Happil.Applied.UnitTests.Conventions
 		{
 			//-- Arrange
 
-			var factory = new ConventionObjectFactory(
-				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] { new CallTargetConvention() });
-
 			var target = new TestTarget();
 			var eventCount = 0;
 			string eventValue = null;
@@ -172,7 +166,7 @@ namespace Happil.Applied.UnitTests.Conventions
 
 			//-- Act
 
-			var wrapper = factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
 
 			target.RaiseEventOne("YYY");
 			wrapper.EventOne -= eventHandler;

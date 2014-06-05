@@ -47,6 +47,7 @@
     <Compile Include="Attributes.cs" />
     <Compile Include="CodeGenerationException.cs" />
     <Compile Include="CollectionShortcuts.cs" />
+    <Compile Include="CompositeConvention.cs" />
     <Compile Include="ConventionObjectFactory.cs" />
     <Compile Include="Members\NestedClassType.cs" />
     <Compile Include="ObjectFactoryContext.cs" />
@@ -65,8 +66,10 @@
     <Compile Include="Operands\AnonymousDelegateOperand.cs" />
     <Compile Include="Operands\AnonymousActionOperand.cs" />
     <Compile Include="Operands\IAnonymousMethodOperand.cs" />
+    <Compile Include="Operands\IArgument.cs" />
     <Compile Include="Operands\MethodOf.cs" />
     <Compile Include="Testing\EmittedTypesTestBase.cs" />
+    <Compile Include="Testing\TestNameConvention.cs" />
     <Compile Include="Writers\AnonymousMethodWriter.cs" />
     <Compile Include="Operands\ArrayElementOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />

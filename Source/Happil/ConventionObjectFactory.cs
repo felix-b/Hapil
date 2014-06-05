@@ -23,10 +23,10 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ConventionObjectFactory(DynamicModule module, TransientConventionFactoryCallback transientConventionFactory)
+		public ConventionObjectFactory(DynamicModule module, TransientConventionFactoryCallback transientConventionsFactory)
 			: base(module)
 		{
-			m_TransientConventionFactory = transientConventionFactory;
+			m_TransientConventionFactory = transientConventionsFactory;
 			m_ConventionSingletonInstances = null;
 		}
 

@@ -11,7 +11,7 @@ using Happil.Writers;
 
 namespace Happil.Operands
 {
-	public class Argument<T> : MutableOperand<T>, ICanEmitAddress, IScopedOperand, ITransformType, IBindToMethod
+	public class Argument<T> : MutableOperand<T>, IArgument, ICanEmitAddress, IScopedOperand, ITransformType, IBindToMethod
 	{
 		private readonly StatementBlock m_HomeStatementBlock;
 		private readonly byte m_Index;

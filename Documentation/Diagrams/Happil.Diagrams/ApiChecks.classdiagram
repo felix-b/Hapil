@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="ba0268a0-ce1e-43ce-9137-825c31b15107" name="ApiChecks" linkedPackageId="19e99de4-8af1-4d82-b094-6a1f95b29d9f" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="8ffdc366-be96-4a3f-8ea4-e9e880851692">
+      <profileInstance Id="b032068c-4b89-4fe9-ae24-7f5bf8e6e564" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="c7965aa3-40ed-4294-814a-9b0dc5480a71">
+      <profileInstance Id="7c7761b2-b3b6-4a44-820c-5fc53b47df87" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f9a54603-a9c6-46da-ae83-2d22f7be32aa" name="ApiContractDescription" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1ce55036-990d-4b92-9219-a3d3afabe043" />
+        <targetEnds>
+          <association Id="14271627-0d5f-4adc-839f-2988ed1e1d2f" isDerived="false" sourceEndRoleName="Members" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="dea39151-6b44-4fd9-bd1a-1fe1b677a6d3" LastKnownName="ApiMemberDescription" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b9e9b471-5a51-480f-b70c-f2ecce40b41d" name="Members" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="22f82825-56bd-45c7-8d14-4b7f7a0b40ff" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8f4c55a2-5abe-4ae1-a15b-30c0a2f11b8d" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="ae4e20b3-c744-4a1e-a787-de18b63f16c0" name="Lower" value="*">
+                      <elementDefinition Id="0cf95fb7-c3ce-43d0-913d-8f91d4ac90fe" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="27f5f341-4243-47d7-ac51-6e2697350bc9" name="Upper" value="*">
+                      <elementDefinition Id="536eaf6e-3526-4062-8d33-a0900fe91d29" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="7d4c1ec1-111f-44cb-aaca-17482a2266b8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="b2ced97d-f1b2-47b7-bac3-b686e149a5bb" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="dea39151-6b44-4fd9-bd1a-1fe1b677a6d3" name="ApiMemberDescription" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="299c7f0c-bfc6-42ac-9e37-6b4b50707a3c" />
+        <targetEnds>
+          <association Id="eb30f710-033f-45fc-b152-eb0c13782765" isDerived="false" sourceEndRoleName="Checks" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="9e84c9b7-094c-41d0-8ad6-e06163b26bd3" LastKnownName="ApiCheckWriter" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e07e136c-b72f-42fb-b65f-d3f5e4bcc35a" name="Checks" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="61f47e14-a238-463d-bcf9-c0d47d4724dd" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c83c0886-6156-4630-bf66-27c446880d4f" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <lowerValueInternal>
+                    <literalString Id="cf41cf72-e527-4b53-be17-33be294dcbf6" name="Lower" value="*">
+                      <elementDefinition Id="be744341-e7b4-42b2-b28e-be77a3345e20" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="ee1c6985-dfc0-41bd-a291-c98eb3e6cf95" name="Upper" value="*">
+                      <elementDefinition Id="234963f0-bda3-43c6-8f1a-35554740078c" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="a75336cf-6c79-4d07-a5eb-28ed771d27d6" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="f1ca1187-ae32-4eed-b870-a603e34f62af" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9e84c9b7-094c-41d0-8ad6-e06163b26bd3" name="ApiCheckWriter" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2d83bba1-676f-49ac-a15f-7d48c333dcd9" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="0ec81c7b-10cf-4871-a9a5-6e382457b67d" name="ApiCheckAttribute" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="d378185f-91d1-4155-b362-c8beaf3323ad" />
+        <targetEnds>
+          <association Id="9331a46b-689d-41be-935b-bcfd8788b71c" isDerived="false" sourceEndRoleName="" targetEndRoleName="instantiate" isLeaf="false" isAbstract="false">
+            <classMoniker Id="9e84c9b7-094c-41d0-8ad6-e06163b26bd3" LastKnownName="ApiCheckWriter" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f287fddc-d972-4364-b777-2f75a284bb5d" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="0095060d-122a-47a4-9df9-a1c8b26a4cdb" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="704d3789-e55c-4a52-ae39-ae1a2fff35e7" name="instantiate" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="11bcdbe5-5d9a-4fdb-9268-0cdfcbce1388" name="Lower" value="*">
+                      <elementDefinition Id="86cde86b-8299-4a74-81e0-b7f2200efb4d" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="4b2a5f93-c2cb-4ebe-98ca-75a2ee4f1c74" name="Upper" value="*">
+                      <elementDefinition Id="1c51b92a-0a26-4bbf-907f-ae265c1572d3" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="af2e0125-5802-4180-9e87-82bc0cafd791" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="1b1bcec5-42c4-436d-8a4a-5c62787a68df" />
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="b6c11508-117e-42f6-91aa-8807209832f3" name="ContributeChecks" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="444106f9-e74f-4d5f-a9b9-42705a8adbe9" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="86410a3f-b209-4ddc-8b6d-a9adb5941ac2" name="ICustomAttributeProvider" direction="In">
+                  <elementDefinition Id="0609632d-6041-4ee9-9cef-1a8edea0e5e3" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="936bad93-9e36-4f15-854d-017681db78a9" name="ApiMemberDescription" direction="In">
+                  <elementDefinition Id="a2028368-3a9e-4d92-87c0-1e517951c122" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7288523f-eb49-48b3-be0b-303a1c7ba505" name="ApiContractCheckConvention" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ffd218f6-e9a8-4811-8dc2-bd6376ff1e78" />
+        <suppliersInternal>
+          <dependency Id="0ccddcdb-3534-4419-a280-3664e6b37ca0" name="Contract">
+            <classMoniker Id="f9a54603-a9c6-46da-ae83-2d22f7be32aa" LastKnownName="ApiContractDescription" />
+            <elementDefinition Id="8b465de7-d5bd-4410-bcb4-4232b8ee75af" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="a9c503a0-676f-4a51-b88b-5c7d41f5b2d0" isSubstitutable="false">
+            <classMoniker Id="5b2434fc-d1f5-4809-9eb5-adf980f5ff62" LastKnownName="DecorationConvention" />
+            <elementDefinition Id="90c51080-e486-45f6-8286-fa771c65e096" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="5b2434fc-d1f5-4809-9eb5-adf980f5ff62" name="DecorationConvention" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="115a95e4-e7ce-4856-a43c-a57a7670a9df" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="2eaeb118-9d4c-4517-9b86-d2bb87d95cdf" name="ApiMethodCheckWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="06e53767-5fc3-4bed-9387-30d259fbb1b3" />
+        <generalsInternal>
+          <generalization Id="e5cf8028-66ba-418e-b878-fed42fc108ea" isSubstitutable="false">
+            <classMoniker Id="9e84c9b7-094c-41d0-8ad6-e06163b26bd3" LastKnownName="ApiCheckWriter" />
+            <elementDefinition Id="ceabaa74-8485-4cc0-9e9e-9d2cb3663fc7" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="a9ae86b0-a7a1-40b7-a691-ba32d95105b6" name="WriteMethodCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="80ac6894-c780-48be-aed5-635cbf38e73e" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="c64af0a1-1e35-448c-b505-b450cb9e82f3" name="MethodDecorationBuilder" direction="In">
+                  <elementDefinition Id="4b6ca726-d47b-4346-9755-8c3a03a20402" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c0e6aba8-13ef-4074-868e-c28c53651cd2" name="ApiPropertyCheckWriter" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="428e9cf5-be81-4431-ade7-4bd4bb056bca" />
+        <generalsInternal>
+          <generalization Id="7ca77fe0-3430-4992-acc7-e3a6d1046802" isSubstitutable="false">
+            <classMoniker Id="9e84c9b7-094c-41d0-8ad6-e06163b26bd3" LastKnownName="ApiCheckWriter" />
+            <elementDefinition Id="bc47fce4-44e0-4849-84c2-0889a7f4db62" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="8bcb0c36-6f1a-4e13-855e-3f20ac4a23b1" name="WritePropertyCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="53f03e57-e075-4dd3-80c3-b0ad486b0fbb" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="0e9f7f92-be8b-4d1e-a15e-1077bdeb17e9" name="PropertyDecorationBuilder" direction="In">
+                  <elementDefinition Id="e1ef3a5a-5d65-424f-9ce6-bf26451fd0b6" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="19e99de4-8af1-4d82-b094-6a1f95b29d9f" name="Happil.Diagrams">
+    <elementDefinition Id="dd3e4df7-8296-4a40-b681-5aadd12251b4" />
+  </package>
+</logicalClassDesignerModel>

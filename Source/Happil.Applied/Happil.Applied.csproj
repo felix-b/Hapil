@@ -44,8 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiContracts\ApiContractAttribute.cs" />
-    <Compile Include="ApiContracts\ApiContractConvention.cs" />
+    <Compile Include="ApiContracts\ApiContract.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckDirection.cs" />
+    <Compile Include="ApiContracts\ApiContractException.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckType.cs" />
+    <Compile Include="ApiContracts\NotEmptyAttribute.cs" />
+    <Compile Include="ApiContracts\Impl\ApiCheckAttribute.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckConvention.cs" />
+    <Compile Include="ApiContracts\Impl\ApiContractDescription.cs" />
+    <Compile Include="ApiContracts\ApiContractWrapperConvention.cs" />
+    <Compile Include="ApiContracts\Impl\ApiCheckWriter.cs" />
+    <Compile Include="ApiContracts\Impl\ApiMemberDescription.cs" />
+    <Compile Include="ApiContracts\NotNullAttribute.cs" />
     <Compile Include="Conventions\CallTargetConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XTuple\XTupleFactory.cs" />

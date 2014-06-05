@@ -42,9 +42,15 @@ namespace Happil
 
 			for ( int i = 0 ; i < arguments.Length ; i++ )
 			{
-				arguments[i].EmitTarget(il);
+				var isFormalByRef = (methodParameters != null && methodParameters[i].ParameterType.IsByRef);
+				var isActualByRef = (arguments[i].Kind == OperandKind.Argument && ((IArgument)arguments[i]).IsByRef);
 
-				if ( methodParameters != null && methodParameters[i].ParameterType.IsByRef )
+				if ( !(isActualByRef && isFormalByRef) )
+				{
+					arguments[i].EmitTarget(il);
+				}
+
+				if ( isFormalByRef )
 				{
 					arguments[i].EmitAddress(il);
 				}

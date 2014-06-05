@@ -144,7 +144,7 @@ namespace Happil.UnitTests
 
 			var factory = new ConventionObjectFactory(
 				base.Module,
-				transientConventionFactory: context => new IObjectFactoryConvention[] {
+				transientConventionsFactory: context => new IObjectFactoryConvention[] {
 					new ClassNameConvention(TestCaseClassName),
 					new DefaultConstructorConvention(),
 					new AutomaticPropertyConvention()

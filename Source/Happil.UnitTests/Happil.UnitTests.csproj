@@ -57,6 +57,7 @@
     <Compile Include="AttributeTests.cs" />
     <Compile Include="ClosureTests.cs" />
     <Compile Include="CollectionShortcutsTests.cs" />
+    <Compile Include="CompositeConventionTests.cs" />
     <Compile Include="ConventionObjectFactoryTests.cs" />
     <Compile Include="DecorationTests.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
