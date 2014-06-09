@@ -95,6 +95,17 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			{
 				data = new MemoryStream(new byte[size]);
 			}
+			else if ( size < 0 )
+			{
+				data = null;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithNotEmptyCollection(string[] items)
+		{
+			LogCall("AMethodWithNotEmptyCollection", items.Cast<object>().ToArray());
 		}
 
 		#endregion

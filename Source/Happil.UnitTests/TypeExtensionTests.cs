@@ -97,5 +97,38 @@ namespace Happil.UnitTests
 
 			Assert.That(friendlyName, Is.EqualTo("Dictionary<List<DayOfWeek>,List<Dictionary<Int32,String>>>"));
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void UnderlyingType_RegularType_ReturnTypeAsIs()
+		{
+			//-- Act
+
+			var underlyingType = typeof(int).UnderlyingType();
+
+			//-- Assert
+
+			Assert.That(underlyingType, Is.EqualTo(typeof(int)));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void UnderlyingType_ByRefType_ReturnUnderlyingType()
+		{
+			//-- Arrange
+
+			var byRefType = typeof(int).MakeByRefType();
+
+			//-- Act
+
+			var underlyingType = byRefType.UnderlyingType();
+
+			//-- Assert
+
+			Assert.That(byRefType, Is.Not.EqualTo(typeof(int)));
+			Assert.That(underlyingType, Is.EqualTo(typeof(int)));
+		}
 	}
 }

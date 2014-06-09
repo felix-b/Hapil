@@ -26,7 +26,7 @@ namespace Happil.Applied.Conventions
 		protected override void OnImplementBaseClass(ImplementationClassWriter<TypeTemplate.TBase> writer)
 		{
 			writer.PrimaryConstructor("Target", out m_TargetField);
-			writer.AllMethods().ImplementPropagate(m_TargetField);
+			writer.AllMethods(where: m => m.DeclaringType != typeof(object)).ImplementPropagate(m_TargetField);
 			writer.AllProperties().ImplementPropagate(m_TargetField);
 			writer.AllEvents().ImplementPropagate(m_TargetField);
 		}

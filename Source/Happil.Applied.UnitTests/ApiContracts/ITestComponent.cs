@@ -21,5 +21,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 		void AMethodWithNotNullOutParam(int size, [NotNull] out Stream data);
 
 		void AMethodWithNotNullRefParam(int size, [NotNull] ref Stream data);
+
+		void AMethodWithNotEmptyCollection([NotEmpty] string[] items);
 	}
 }

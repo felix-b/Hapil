@@ -89,6 +89,24 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void RefArgumentNotNull_SetToNull_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "data";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotNull;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Output;
+			m_ExpectedExceptionLog = new[] { "AMethodWithNotNullRefParam(-1,Stream[123])" };
+
+			//-- Act
+
+			Stream data = new MemoryStream(new byte[123]);
+			m_ApiContractWrapper.AMethodWithNotNullRefParam(size: -1, data: ref data);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		[Test]
 		public void RefArgumentNotNull_PassNonNullValue_DoNotThrow()
 		{
@@ -105,6 +123,27 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 			Assert.That(data, Is.SameAs(originalData));
 			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullRefParam(0,Stream[123])" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void RefArgumentNotNull_SetToNonNullValue_DoNotThrow()
+		{
+			//-- Arrange
+
+			Stream originalData = new MemoryStream(new byte[123]);
+			var data = originalData;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullRefParam(size: 456, data: ref data);
+
+			//-- Assert
+
+			Assert.That(data, Is.Not.SameAs(originalData));
+			Assert.That(data.Length, Is.EqualTo(456));
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullRefParam(456,Stream[123])" }));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -265,6 +304,52 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 			Assert.That(result, Is.EqualTo("123"));
 			Assert.That(m_Component.Log, Is.EqualTo(new[] { "ANotEmptyStringFunction(123)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void CollectionArgumentNotEmpty_PassNull_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotEmpty;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotEmptyCollection(items: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void CollectionArgumentNotEmpty_PassEmptyCollection_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotEmpty;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotEmptyCollection(items: new string[0]);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void CollectionArgumentNotEmpty_PassNonEmptyCollection_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotEmptyCollection(items: new[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotEmptyCollection(A,B,C)" }));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -31,6 +31,32 @@ namespace Happil.Applied.UnitTests.Conventions
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
+		public void DoNotOverrideSystemObjectMethods()
+		{
+			//-- Arrange
+
+			var target = new TestTarget();
+
+			//-- Act
+
+			var wrapper = m_Factory.CreateInstanceOf<ITestTarget>().UsingConstructor(target);
+			var implementedMethodNames = wrapper.GetType()
+				.GetMethods()
+				.Where(m => m.DeclaringType == wrapper.GetType())
+				.Select(m => m.Name)
+				.ToArray();
+
+			//-- Assert
+
+			CollectionAssert.DoesNotContain(implementedMethodNames, "Equals");
+			CollectionAssert.DoesNotContain(implementedMethodNames, "Finalize");
+			CollectionAssert.DoesNotContain(implementedMethodNames, "GetHashCode");
+			CollectionAssert.DoesNotContain(implementedMethodNames, "ToString");
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
 		public void CanCallVoidMethodOnTarget()
 		{
 			//-- Arrange

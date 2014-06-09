@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using Happil.Applied.ApiContracts.Impl;
 using Happil.Decorators;
+using Happil.Operands;
+using Happil.Writers;
 
 namespace Happil.Applied.ApiContracts
 {
@@ -10,39 +12,54 @@ namespace Happil.Applied.ApiContracts
 	{
 		public override void ContributeChecks(ICustomAttributeProvider info, ApiMemberDescription member)
 		{
-			member.AddCheck(new StringNotEmptyCheckWriter((ParameterInfo)info));
+			var parameterInfo = (ParameterInfo)info;
+			var parameterType = parameterInfo.ParameterType.UnderlyingType();
+
+			if ( parameterType == typeof(string) )
+			{
+				member.AddCheck(new StringNotEmptyCheckWriter(parameterInfo));
+			}
+			else if ( typeof(System.Collections.ICollection).IsAssignableFrom(parameterType) )
+			{
+				member.AddCheck(new CollectionNotEmptyCheckWriter(parameterInfo));
+			}
+			else
+			{
+				throw new NotSupportedException(string.Format("NotEmpty is not supported on parameter of type [{0}].", parameterType.FullName));
+			}
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class StringNotEmptyCheckWriter : ApiMethodCheckWriter
+		private class StringNotEmptyCheckWriter : ApiArgumentCheckWriter
 		{
-			private readonly ParameterInfo m_Parameter;
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public StringNotEmptyCheckWriter(ParameterInfo parameter)
+			public StringNotEmptyCheckWriter(ParameterInfo parameterInfo)
+				: base(parameterInfo)
 			{
-				m_Parameter = parameter;
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void WriteMethodCheck(MethodDecorationBuilder decoration)
+			protected override void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
 			{
-				if ( m_Parameter.Position < 0 )
-				{
-					decoration.OnReturnValue((w, retVal) =>
-						Static.Void(ApiContract.NotEmpty, retVal.CastTo<string>(), w.Const("(Return Value)"), w.Const(true))
-					);
-				}
-				else
-				{
-					decoration.OnBefore(w => {
-						var argument = w.Argument<string>(m_Parameter.Position + 1);
-						Static.Void(ApiContract.NotEmpty, argument, w.Const(m_Parameter.Name), w.Const(false));
-					});
-				}
+				Static.Void(ApiContract.NotEmpty, argument.CastTo<string>(), writer.Const(ParameterName), writer.Const(isOutput));
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		private class CollectionNotEmptyCheckWriter : ApiArgumentCheckWriter
+		{
+			public CollectionNotEmptyCheckWriter(ParameterInfo parameterInfo)
+				: base(parameterInfo)
+			{
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
+			{
+				Static.Void(ApiContract.NotEmpty, argument.CastTo<System.Collections.ICollection>(), writer.Const(ParameterName), writer.Const(isOutput));
 			}
 		}
 	}

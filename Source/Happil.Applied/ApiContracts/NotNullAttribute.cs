@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using Happil.Applied.ApiContracts.Impl;
 using Happil.Decorators;
+using Happil.Operands;
+using Happil.Writers;
 
 namespace Happil.Applied.ApiContracts
 {
@@ -10,68 +12,23 @@ namespace Happil.Applied.ApiContracts
 	{
 		public override void ContributeChecks(ICustomAttributeProvider info, ApiMemberDescription member)
 		{
-			var parameter = (ParameterInfo)info;
-
-			if ( parameter.Position < 0 )
-			{
-				member.AddCheck(new ReturnValueNotNullCheckWriter());
-			}
-			else
-			{
-				member.AddCheck(new ArgumentNotNullCheckWriter((ParameterInfo)info));
-			}
-		}
-		
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private class ArgumentNotNullCheckWriter : ApiMethodCheckWriter
-		{
-			private readonly ParameterInfo m_Parameter;
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public ArgumentNotNullCheckWriter(ParameterInfo parameter)
-			{
-				m_Parameter = parameter;
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public override void WriteMethodCheck(MethodDecorationBuilder decoration)
-			{
-				if ( !m_Parameter.IsOut )
-				{
-					decoration.OnBefore(w => {
-						using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(m_Parameter.ParameterType) )
-						{
-							var argument = w.Argument<TypeTemplate.TArgument>(m_Parameter.Position + 1);
-							Static.Void(ApiContract.NotNull, argument.CastTo<object>(), w.Const(m_Parameter.Name), w.Const(false));
-						}
-					});
-				}
-
-				if ( m_Parameter.IsOut || m_Parameter.ParameterType.IsByRef )
-				{
-					decoration.OnAfter(w => {
-						using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(m_Parameter.ParameterType) )
-						{
-							var argument = w.Argument<TypeTemplate.TArgument>(m_Parameter.Position + 1);
-							Static.Void(ApiContract.NotNull, argument.CastTo<object>(), w.Const(m_Parameter.Name), w.Const(true));
-						}
-					});
-				}
-			}
+			member.AddCheck(new NotNullCheckWriter((ParameterInfo)info));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class ReturnValueNotNullCheckWriter : ApiMethodCheckWriter
+		private class NotNullCheckWriter : ApiArgumentCheckWriter
 		{
-			public override void WriteMethodCheck(MethodDecorationBuilder decoration)
+			public NotNullCheckWriter(ParameterInfo parameterInfo)
+				: base(parameterInfo)
 			{
-				decoration.OnReturnValue((w, retVal) =>
-					Static.Void(ApiContract.NotNull, retVal.CastTo<object>(), w.Const("(Return Value)"), w.Const(true))
-				);
+			}
+
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			protected override void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
+			{
+				Static.Void(ApiContract.NotNull, argument.CastTo<object>(), writer.Const(ParameterName), writer.Const(isOutput));
 			}
 		}
 	}

@@ -154,6 +154,20 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static Type UnderlyingType(this Type type)
+		{
+			if ( type.IsByRef )
+			{
+				return type.GetElementType();
+			}
+			else
+			{
+				return type;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private static void AppendFriendlyName(Type type, StringBuilder output)
 		{
 			if ( type.IsGenericType )

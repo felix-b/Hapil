@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,16 @@ namespace Happil.Applied.ApiContracts
 		public static void NotEmpty(string value, string parameterName, bool isOutput = false)
 		{
 			if ( string.IsNullOrEmpty(value) )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.NotEmpty, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void NotEmpty(ICollection collection, string parameterName, bool isOutput = false)
+		{
+			if ( collection == null || collection.Count == 0 )
 			{
 				throw new ApiContractException(parameterName, ApiContractCheckType.NotEmpty, isOutput);
 			}
