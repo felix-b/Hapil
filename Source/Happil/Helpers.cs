@@ -38,27 +38,7 @@ namespace Happil
 				EmitCallTarget(il, target);
 			}
 
-			var methodParameters = (method is MethodBuilder || method is ConstructorBuilder ? null : method.GetParameters());
-
-			for ( int i = 0 ; i < arguments.Length ; i++ )
-			{
-				var isFormalByRef = (methodParameters != null && methodParameters[i].ParameterType.IsByRef);
-				var isActualByRef = (arguments[i].Kind == OperandKind.Argument && ((IArgument)arguments[i]).IsByRef);
-
-				if ( !(isActualByRef && isFormalByRef) )
-				{
-					arguments[i].EmitTarget(il);
-				}
-
-				if ( isFormalByRef )
-				{
-					arguments[i].EmitAddress(il);
-				}
-				else
-				{
-					arguments[i].EmitLoad(il);
-				}
-			}
+			EmitCallArguments(il, method, arguments);
 
 			var methodInfo = (method as MethodInfo);
 			var constructorInfo = (method as ConstructorInfo);
@@ -392,6 +372,39 @@ namespace Happil
 			else
 			{
 				target.EmitLoad(il);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		private static void EmitCallArguments(ILGenerator il, MethodBase method, IOperand[] arguments)
+		{
+			// Actual	Formal 	Should Emit		OnEmitTarget	OnEmitLoad			OnEmitAddress		TODO
+			// Val		Val		Value							Ldarg				Ldarga_s			EmitTarget + EmitLoad
+			// Val		Ref		Address							Ldarg				Ldarga_s			EmitTarget + EmitAddress
+			// Ref		Val		Addressed Value	Ldarg			Ldind_ref/Ldobj		Ldarg				EmitTarget + EmitLoad
+			// Ref		Ref		Value			Ldarg			Ldind_ref/Ldobj		Ldarg							 EmitAddress
+
+			var methodParameters = (method is MethodBuilder || method is ConstructorBuilder ? null : method.GetParameters());
+
+			for ( int i = 0 ; i < arguments.Length ; i++ )
+			{
+				var isFormalByRef = (methodParameters != null && methodParameters[i].ParameterType.IsByRef);
+				var isActualByRef = (arguments[i].Kind == OperandKind.Argument && ((IArgument)arguments[i]).IsByRef);
+
+				if ( !(isActualByRef && isFormalByRef) )
+				{
+					arguments[i].EmitTarget(il);
+				}
+
+				if ( isFormalByRef )
+				{
+					arguments[i].EmitAddress(il);
+				}
+				else
+				{
+					arguments[i].EmitLoad(il);
+				}
 			}
 		}
 
