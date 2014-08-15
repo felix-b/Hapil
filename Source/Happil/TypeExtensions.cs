@@ -128,6 +128,80 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static bool IsCollectionType(this Type type)
+		{
+			if ( type.IsGenericType )
+			{
+				return (type.IsGenericCollectionType() || type.GetInterfaces().Any(IsGenericCollectionType));
+			}
+			else
+			{
+				return typeof(System.Collections.ICollection).IsAssignableFrom(type);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsCollectionType(this Type type, out Type elementType)
+		{
+			if ( type.IsGenericType )
+			{
+				Type collectionType;
+
+				if ( type.IsGenericCollectionType() )
+				{
+					collectionType = type;
+				}
+				else
+				{
+					collectionType = type.GetInterfaces().FirstOrDefault(IsGenericCollectionType);
+				}
+
+				if ( collectionType != null )
+				{
+					elementType = collectionType.GetGenericArguments()[0]; 
+					return true;
+				}
+			}
+			else if ( typeof(System.Collections.ICollection).IsAssignableFrom(type) )
+			{
+				elementType = typeof(object);
+				return true;
+			}
+
+			elementType = null;
+			return false;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static bool IsGenericCollectionType(this Type type)
+		{
+			if ( !type.IsGenericType )
+			{
+				return false;
+			}
+			else if ( type.IsGenericTypeDefinition )
+			{
+				return (type == typeof(ICollection<>) || type.GetInterfaces().Contains(typeof(ICollection<>)));
+			}
+			else
+			{
+				var genericArguments = type.GetGenericArguments();
+
+				if ( genericArguments.Length == 1 )
+				{
+					return typeof(ICollection<>).MakeGenericType(genericArguments).IsAssignableFrom(type);
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Type[] GetTypeHierarchy(this Type type)
 		{
 			var baseTypes = new HashSet<Type>();
