@@ -36,5 +36,15 @@ namespace Happil.Applied.ApiContracts
 				throw new ApiContractException(parameterName, ApiContractCheckType.NotEmpty, isOutput);
 			}
 		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void ItemsNotNull(IEnumerable collection, string parameterName, bool isOutput = false)
+		{
+			if ( collection != null && collection.Cast<object>().Any(item => item == null) )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.ItemsNotNull, isOutput);
+			}
+		}
 	}
 }

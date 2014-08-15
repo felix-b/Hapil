@@ -9,6 +9,7 @@ namespace Happil.Applied.ApiContracts
 	public enum ApiContractCheckType
 	{
 		NotNull,
-		NotEmpty
+		NotEmpty,
+		ItemsNotNull
 	}
 }

@@ -108,6 +108,28 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			LogCall("AMethodWithNotEmptyCollection", items.Cast<object>().ToArray());
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithNotNullListItems(IList<string> items)
+		{
+			LogCall("AMethodWithNotNullListItems", items.Cast<object>().ToArray());
+		}
+
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithNotNullCollectionItems(ICollection<string> items)
+		{
+			LogCall("AMethodWithNotNullCollectionItems", items.Cast<object>().ToArray());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithNotNullCollectionItems(System.Collections.ICollection items)
+		{
+			LogCall("AMethodWithNotNullCollectionItems", items.Cast<object>().ToArray());
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

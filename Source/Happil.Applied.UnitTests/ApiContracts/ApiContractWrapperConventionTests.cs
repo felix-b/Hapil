@@ -354,6 +354,96 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void ItemsNotNull_ArrayWithNullItem_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullListItems(items: new[] {  "A", null, "C" });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ItemsNotNull_ArrayOfNonNullItems_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullListItems(items: new[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullListItems(A,B,C)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void ItemsNotNull_CustomCollectionWithNullItem_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullCollectionItems(items: new CustomCollection(new object[] { "A", null, "C" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ItemsNotNull_CustomCollectionWithNonNullItems_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullCollectionItems(items: new CustomCollection(new object[] { "A", "B", "C" }));
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullCollectionItems(A,B,C)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void ItemsNotNull_GenericCustomCollectionWithNullItem_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullCollectionItems(items: new CustomCollection<string> { "A", null, "C" });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ItemsNotNull_GenericCustomCollectionWithNonNullItems_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullCollectionItems(items: new CustomCollection<string> { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullCollectionItems(A,B,C)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void HandleApiContractException(Exception e)
 		{
 			var typedException = (ApiContractException)e;

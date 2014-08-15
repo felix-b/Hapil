@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiContracts\ApiContractWrapperConventionTests.cs" />
+    <Compile Include="ApiContracts\CustomCollection.cs" />
     <Compile Include="ApiContracts\ITestComponent.cs" />
     <Compile Include="ApiContracts\TestComponent.cs" />
     <Compile Include="Conventions\CallTargetConventionTests.cs" />
