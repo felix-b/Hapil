@@ -9,15 +9,15 @@ namespace Happil.Decorators
 	public class MethodDecorationBuilder
 	{
 		private readonly DecoratingMethodWriter m_OwnerWriter;
-		private Action<MethodWriterBase> m_OnBefore;
-		private Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> m_OnInputArgument;
-		private Action<MethodWriterBase> m_OnReturnVoid;
-		private Action<MethodWriterBase, Local<TypeTemplate.TReturn>> m_OnReturnValue;
-		private Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> m_OnOutputArgument;
-		private Action<MethodWriterBase> m_OnSuccess;
-		private readonly List<Action<MethodWriterBase, IHappilCatchSyntax>> m_OnCatchExceptions;
-		private Action<MethodWriterBase> m_OnFailure;
-		private Action<MethodWriterBase> m_OnAfter;
+		private LinkedList<Action<MethodWriterBase>> m_OnBefore;
+		private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnInputArgument;
+		private LinkedList<Action<MethodWriterBase>> m_OnReturnVoid;
+		private LinkedList<Action<MethodWriterBase, Local<TypeTemplate.TReturn>>> m_OnReturnValue;
+		private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnOutputArgument;
+		private LinkedList<Action<MethodWriterBase>> m_OnSuccess;
+		private readonly Dictionary<Type, LinkedList<Action<MethodWriterBase, IHappilCatchSyntax>>> m_OnCatchExceptions;
+		private LinkedList<Action<MethodWriterBase>> m_OnFailure;
+		private LinkedList<Action<MethodWriterBase>> m_OnAfter;
 		private bool m_IsEmpty;
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ namespace Happil.Decorators
 		internal MethodDecorationBuilder(DecoratingMethodWriter ownerWriter)
 		{
 			m_OwnerWriter = ownerWriter;
-			m_OnCatchExceptions = new List<Action<MethodWriterBase, IHappilCatchSyntax>>();
+			m_OnCatchExceptions = new Dictionary<Type, LinkedList<Action<MethodWriterBase, IHappilCatchSyntax>>>();
 			m_IsEmpty = true;
 		}
 
@@ -42,8 +42,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnBefore(Action<MethodWriterBase> decoration)
 		{
-			m_OnBefore = decoration;
+			if ( m_OnBefore == null )
+			{
+				m_OnBefore = new LinkedList<Action<MethodWriterBase>>();
+			}
+
+			m_OnBefore.AddFirst(decoration);
 			m_IsEmpty = false;
+			
 			return this;
 		}
 
@@ -51,8 +57,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnInputArgument(Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> decoration)
 		{
-			m_OnInputArgument = decoration;
+			if ( m_OnInputArgument == null )
+			{
+				m_OnInputArgument = new LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>>();
+			}
+
+			m_OnInputArgument.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -60,8 +72,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnReturnVoid(Action<MethodWriterBase> decoration)
 		{
-			m_OnReturnVoid = decoration;
+			if ( m_OnReturnVoid == null )
+			{
+				m_OnReturnVoid = new LinkedList<Action<MethodWriterBase>>();
+			}
+			
+			m_OnReturnVoid.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -69,8 +87,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnReturnValue(Action<MethodWriterBase, Local<TypeTemplate.TReturn>> decoration)
 		{
-			m_OnReturnValue = decoration;
+			if ( m_OnReturnValue == null )
+			{
+				m_OnReturnValue = new LinkedList<Action<MethodWriterBase, Local<TypeTemplate.TReturn>>>();
+			}
+
+			m_OnReturnValue.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -78,8 +102,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnOutputArgument(Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> decoration)
 		{
-			m_OnOutputArgument = decoration;
+			if ( m_OnOutputArgument == null )
+			{
+				m_OnOutputArgument = new LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>>();
+			}
+
+			m_OnOutputArgument.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -87,8 +117,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnSuccess(Action<MethodWriterBase> decoration)
 		{
-			m_OnSuccess = decoration;
+			if ( m_OnSuccess == null )
+			{
+				m_OnSuccess = new LinkedList<Action<MethodWriterBase>>();
+			}
+
+			m_OnSuccess.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -97,8 +133,17 @@ namespace Happil.Decorators
 		public MethodDecorationBuilder OnException<TException>(Action<MethodWriterBase, Operand<TException>> decoration)
 			where TException : Exception
 		{
-			m_OnCatchExceptions.Add((method, tryCatchStatement) => tryCatchStatement.Catch<TException>(excepion => decoration(method, excepion)));
+			LinkedList<Action<MethodWriterBase, IHappilCatchSyntax>> handlerList;
+
+			if ( !m_OnCatchExceptions.TryGetValue(typeof(TException), out handlerList) )
+			{
+				handlerList = new LinkedList<Action<MethodWriterBase, IHappilCatchSyntax>>();
+				m_OnCatchExceptions.Add(typeof(TException), handlerList);
+			}
+
+			handlerList.AddLast((method, tryCatchStatement) => tryCatchStatement.Catch<TException>(excepion => decoration(method, excepion)));
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -106,8 +151,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnFailure(Action<MethodWriterBase> decoration)
 		{
-			m_OnFailure = decoration;
+			if ( m_OnFailure == null )
+			{
+				m_OnFailure = new LinkedList<Action<MethodWriterBase>>();
+			}
+
+			m_OnFailure.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -115,8 +166,14 @@ namespace Happil.Decorators
 
 		public MethodDecorationBuilder OnAfter(Action<MethodWriterBase> decoration)
 		{
-			m_OnAfter = decoration;
+			if ( m_OnAfter == null )
+			{
+				m_OnAfter = new LinkedList<Action<MethodWriterBase>>();
+			}
+
+			m_OnAfter.AddLast(decoration);
 			m_IsEmpty = false;
+
 			return this;
 		}
 
@@ -128,7 +185,7 @@ namespace Happil.Decorators
 
 			if ( m_OnBefore != null )
 			{
-				m_OnBefore(m_OwnerWriter);
+				m_OnBefore.ForEach(f => f(m_OwnerWriter));
 			}
 
 			InspectInputArguments();
@@ -146,20 +203,20 @@ namespace Happil.Decorators
 					InspectOutputArguments();
 				});
 
-			foreach ( var exceptionHandler in m_OnCatchExceptions )
+			foreach ( var exceptionHandler in m_OnCatchExceptions.Values )
 			{
-				exceptionHandler(m_OwnerWriter, tryBlock);
+				exceptionHandler.ForEach(f => f(m_OwnerWriter, tryBlock));
 			}
 
 			tryBlock.Finally(() => {
 				if ( m_OnFailure != null )
 				{
-					m_OwnerWriter.If(!successLocal).Then(() => m_OnFailure(m_OwnerWriter));
+					m_OwnerWriter.If(!successLocal).Then(() => m_OnFailure.ForEach(f => f(m_OwnerWriter)));
 				}
 
 				if ( m_OnAfter != null )
 				{
-					m_OnAfter(m_OwnerWriter);
+					m_OnAfter.ForEach(f => f(m_OwnerWriter));
 				}
 			});
 		}
@@ -183,7 +240,7 @@ namespace Happil.Decorators
 				m_OwnerWriter.ForEachArgument(arg => {
 					if ( !arg.IsOut )
 					{
-						m_OnInputArgument(m_OwnerWriter, arg);
+						m_OnInputArgument.ForEach(f => f(m_OwnerWriter, arg));
 					}
 				});
 			}
@@ -199,12 +256,12 @@ namespace Happil.Decorators
 
 				if ( m_OnReturnValue != null )
 				{
-					m_OnReturnValue(m_OwnerWriter, returnValue);
+					m_OnReturnValue.ForEach(f => f(m_OwnerWriter, returnValue));
 				}
 
 				if ( m_OnSuccess != null )
 				{
-					m_OnSuccess(m_OwnerWriter);
+					m_OnSuccess.ForEach(f => f(m_OwnerWriter));
 				}
 
 				m_OwnerWriter.AddReturnStatement(returnValue);
@@ -213,12 +270,12 @@ namespace Happil.Decorators
 			{
 				if ( m_OnReturnVoid != null )
 				{
-					m_OnReturnVoid(m_OwnerWriter);
+					m_OnReturnVoid.ForEach(f => f(m_OwnerWriter));
 				}
 
 				if ( m_OnSuccess != null )
 				{
-					m_OnSuccess(m_OwnerWriter);
+					m_OnSuccess.ForEach(f => f(m_OwnerWriter));
 				}
 			}
 		}
@@ -232,7 +289,7 @@ namespace Happil.Decorators
 				m_OwnerWriter.ForEachArgument(arg => {
 					if ( arg.IsByRef || arg.IsOut )
 					{
-						m_OnOutputArgument(m_OwnerWriter, arg);
+						m_OnOutputArgument.ForEach(f => f(m_OwnerWriter, arg));
 					}
 				});
 			}
