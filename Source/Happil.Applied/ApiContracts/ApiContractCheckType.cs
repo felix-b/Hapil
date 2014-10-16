@@ -10,6 +10,9 @@ namespace Happil.Applied.ApiContracts
 	{
 		NotNull,
 		NotEmpty,
-		ItemsNotNull
+		GreaterThan,
+		GreaterThanOrEqual,
+		LessThan,
+		LessThanOrEqual,
 	}
 }

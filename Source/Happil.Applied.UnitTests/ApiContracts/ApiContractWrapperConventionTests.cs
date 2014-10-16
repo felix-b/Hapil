@@ -360,7 +360,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			//-- Arrange
 
 			m_ExpectedExceptionParamName = "items";
-			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotNull;
 			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
 
 			//-- Act
@@ -390,7 +390,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			//-- Arrange
 
 			m_ExpectedExceptionParamName = "items";
-			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotNull;
 			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
 
 			//-- Act
@@ -420,7 +420,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			//-- Arrange
 
 			m_ExpectedExceptionParamName = "items";
-			m_ExpectedExceptionFailedCheck = ApiContractCheckType.ItemsNotNull;
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotNull;
 			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
 
 			//-- Act
@@ -440,6 +440,36 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			//-- Assert
 
 			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullCollectionItems(A,B,C)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		public void ItemsNotEmpty_ArrayOfNonEmptyStrings_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullListItems(items: new string[] { "A", "B", "C" });
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithNotNullListItems(A,B,C)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void ItemsNotEmpty_ArrayWithEmptyString_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "items";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.NotEmpty;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithNotNullListItems(items: new string[] { "A", "", "C" });
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

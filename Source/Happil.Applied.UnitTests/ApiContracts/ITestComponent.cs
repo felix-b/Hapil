@@ -24,7 +24,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		void AMethodWithNotEmptyCollection([NotEmpty] string[] items);
 
-		void AMethodWithNotNullListItems([ItemsNotNull] IList<string> items);
+		void AMethodWithNotNullListItems([ItemsNotNull][ItemsNotEmpty] IList<string> items);
 
 		void AMethodWithNotNullCollectionItems([ItemsNotNull] ICollection<string> items);
 

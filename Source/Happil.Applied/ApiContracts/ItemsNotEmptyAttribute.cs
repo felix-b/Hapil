@@ -11,7 +11,7 @@ using Happil.Writers;
 namespace Happil.Applied.ApiContracts
 {
 	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
-	public class ItemsNotNullAttribute : ApiCheckAttribute
+	public class ItemsNotEmptyAttribute : ApiCheckAttribute
 	{
 		public override void ContributeChecks(ICustomAttributeProvider info, ApiMemberDescription member)
 		{
@@ -20,19 +20,19 @@ namespace Happil.Applied.ApiContracts
 
 			if ( typeof(System.Collections.IEnumerable).IsAssignableFrom(parameterType) )
 			{
-				member.AddCheck(new CollectionItemsNotNullCheckWriter(parameterInfo));
+				member.AddCheck(new CollectionItemsNotEmptyCheckWriter(parameterInfo));
 			}
 			else
 			{
-				throw new NotSupportedException(string.Format("ItemsNotNull is not supported on parameter of type [{0}].", parameterType.FullName));
+				throw new NotSupportedException(string.Format("ItemsNotEmpty is not supported on parameter of type [{0}].", parameterType.FullName));
 			}
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class CollectionItemsNotNullCheckWriter : ApiArgumentCheckWriter
+		private class CollectionItemsNotEmptyCheckWriter : ApiArgumentCheckWriter
 		{
-			public CollectionItemsNotNullCheckWriter(ParameterInfo parameterInfo)
+			public CollectionItemsNotEmptyCheckWriter(ParameterInfo parameterInfo)
 				: base(parameterInfo)
 			{
 			}
@@ -41,7 +41,7 @@ namespace Happil.Applied.ApiContracts
 
 			protected override void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
 			{
-				Static.Void(ApiContract.ItemsNotNull, argument.CastTo<System.Collections.IEnumerable>(), writer.Const(ParameterName), writer.Const(isOutput));
+				Static.Void(ApiContract.ItemsNotEmpty, argument.CastTo<System.Collections.IEnumerable>(), writer.Const(ParameterName), writer.Const(isOutput));
 			}
 		}
 	}
