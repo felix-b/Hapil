@@ -57,22 +57,85 @@ namespace Happil.Applied.ApiContracts
 			}
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public static void GreaterThan(double value, double minimum, string parameterName, bool isOutput = false)
-		//{
-		//	throw new ApiContractException(parameterName, ApiContractCheckType.RangeMin, isOutput);
-		//		}
-		//	}
+		public static void GreaterThan(long value, long minimum, string parameterName, bool isOutput = false)
+		{
+			if ( value <= minimum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.GreaterThan, isOutput);
+			}
+		}
 
-		//	if ( max.HasValue )
-		//	{
-		//		if ( (maxExclusive && value >= max.Value) || (!maxExclusive && value > max.Value) )
-		//		{
-		//			throw new ApiContractException(parameterName, ApiContractCheckType.RangeMin, isOutput);
-		//		}
-		//	}
-		//}
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void GreaterThanOrEqual(long value, long minimum, string parameterName, bool isOutput = false)
+		{
+			if ( value < minimum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.GreaterThanOrEqual, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void GreaterThan(double value, double minimum, string parameterName, bool isOutput = false)
+		{
+			if ( value <= minimum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.GreaterThan, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void GreaterThanOrEqual(double value, double minimum, string parameterName, bool isOutput = false)
+		{
+			if ( value < minimum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.GreaterThanOrEqual, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void LessThan(long value, long maximum, string parameterName, bool isOutput = false)
+		{
+			if ( value >= maximum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.LessThan, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void LessThanOrEqual(long value, long maximum, string parameterName, bool isOutput = false)
+		{
+			if ( value > maximum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.LessThanOrEqual, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void LessThan(double value, double maximum, string parameterName, bool isOutput = false)
+		{
+			if ( value >= maximum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.LessThan, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void LessThanOrEqual(double value, double maximum, string parameterName, bool isOutput = false)
+		{
+			if ( value > maximum )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.LessThanOrEqual, isOutput);
+			}
+		}
 
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 

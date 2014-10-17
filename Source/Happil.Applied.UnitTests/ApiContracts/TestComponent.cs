@@ -115,6 +115,12 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			LogCall("AMethodWithNotNullListItems", items.Cast<object>().ToArray());
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithNotEmptyListItems(IList<string> items)
+		{
+			LogCall("AMethodWithNotEmptyListItems", items.Cast<object>().ToArray());
+		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -128,6 +134,41 @@ namespace Happil.Applied.UnitTests.ApiContracts
 		public void AMethodWithNotNullCollectionItems(System.Collections.ICollection items)
 		{
 			LogCall("AMethodWithNotNullCollectionItems", items.Cast<object>().ToArray());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithMultipleChecksOnParameter(IList<string> items)
+		{
+			LogCall("AMethodWithMultipleChecksOnParameter", items.Cast<object>().ToArray());
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithExclusiveIntRange(int number)
+		{
+			LogCall("AMethodWithExclusiveIntRange", number);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithInclusiveIntRange(int number)
+		{
+			LogCall("AMethodWithInclusiveIntRange", number);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithExclusiveDoubleRange(float number)
+		{
+			LogCall("AMethodWithExclusiveDoubleRange", number);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithInclusiveDoubleRange(int number)
+		{
+			LogCall("AMethodWithInclusiveDoubleRange", number);
 		}
 
 		#endregion

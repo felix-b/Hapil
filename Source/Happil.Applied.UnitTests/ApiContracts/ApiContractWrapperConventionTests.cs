@@ -355,7 +355,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
-		public void ItemsNotNull_ArrayWithNullItem_Throw()
+		public void ItemsNotNullAndNotEmpty_ArrayWithNullItem_ThrowNotNull()
 		{
 			//-- Arrange
 
@@ -469,7 +469,79 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 			//-- Act
 
-			m_ApiContractWrapper.AMethodWithNotNullListItems(items: new string[] { "A", "", "C" });
+			m_ApiContractWrapper.AMethodWithNotEmptyListItems(items: new string[] { "A", "", "C" });
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		[TestCase(99, ApiContractCheckType.GreaterThan)]
+		[TestCase(100, ApiContractCheckType.GreaterThan)]
+		[TestCase(200, ApiContractCheckType.LessThan)]
+		[TestCase(201, ApiContractCheckType.LessThan)]
+		public void InRangeIntExclusive_ValueOutOfRange_Throw(int number, ApiContractCheckType failedCheck)
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "number";
+			m_ExpectedExceptionFailedCheck = failedCheck;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithExclusiveIntRange(number);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		[TestCase(101)]
+		[TestCase(199)]
+		public void InRangeIntExclusive_ValueWithinRange_DoNotThrow(int number)
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithExclusiveIntRange(number);
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithExclusiveIntRange(" + number + ")" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		[TestCase(99, ApiContractCheckType.GreaterThanOrEqual)]
+		[TestCase(201, ApiContractCheckType.LessThanOrEqual)]
+		public void InRangeIntInclusive_ValueOutOfRange_Throw(int number, ApiContractCheckType failedCheck)
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "number";
+			m_ExpectedExceptionFailedCheck = failedCheck;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithInclusiveIntRange(number);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		[TestCase(100)]
+		[TestCase(101)]
+		[TestCase(199)]
+		[TestCase(200)]
+		public void InRangeIntInclusive_ValueWithinRange_DoNotThrow(int number)
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithInclusiveIntRange(number);
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithInclusiveIntRange(" + number + ")" }));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

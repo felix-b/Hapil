@@ -48,6 +48,81 @@ namespace Happil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		public static void Void<TArg1, TArg2, TArg3, TArg4>(
+			Action<TArg1, TArg2, TArg3, TArg4> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4)
+		{
+			var method = GetValidStaticMethod(member);
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Void<TArg1, TArg2, TArg3, TArg4, TArg5>(
+			Action<TArg1, TArg2, TArg3, TArg4, TArg5> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5)
+		{
+			var method = GetValidStaticMethod(member);
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Void<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(
+			Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6)
+		{
+			var method = GetValidStaticMethod(member);
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Void<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>(
+			Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6,
+			IOperand<TArg7> arg7)
+		{
+			var method = GetValidStaticMethod(member);
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void Void<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>(
+			Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6,
+			IOperand<TArg7> arg7,
+			IOperand<TArg8> arg8)
+		{
+			var method = GetValidStaticMethod(member);
+			StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static void Void(MethodInfo method, params IOperand[] arguments)
 		{
 			StatementScope.Current.AddStatement(new CallStatement(null, method, arguments));
@@ -93,6 +168,91 @@ namespace Happil
 		{
 			var method = GetValidStaticMethod(member);
 			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
+
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TArg4, TReturn>(
+			Func<TArg1, TArg2, TArg3, TArg4, TReturn> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4);
+
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TArg4, TArg5, TReturn>(
+			Func<TArg1, TArg2, TArg3, TArg4, TArg5, TReturn> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5);
+
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TReturn>(
+			Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TReturn> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6);
+
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TReturn>(
+			Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TReturn> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6,
+			IOperand<TArg7> arg7)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+
+			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static Operand<TReturn> Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TReturn>(
+			Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TReturn> member,
+			IOperand<TArg1> arg1,
+			IOperand<TArg2> arg2,
+			IOperand<TArg3> arg3,
+			IOperand<TArg4> arg4,
+			IOperand<TArg5> arg5,
+			IOperand<TArg6> arg6,
+			IOperand<TArg7> arg7,
+			IOperand<TArg8> arg8)
+		{
+			var method = GetValidStaticMethod(member);
+			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
 			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
