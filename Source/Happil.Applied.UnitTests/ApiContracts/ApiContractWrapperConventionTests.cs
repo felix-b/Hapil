@@ -475,73 +475,125 @@ namespace Happil.Applied.UnitTests.ApiContracts
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
-		[TestCase(99, ApiContractCheckType.GreaterThan)]
-		[TestCase(100, ApiContractCheckType.GreaterThan)]
-		[TestCase(200, ApiContractCheckType.LessThan)]
-		[TestCase(201, ApiContractCheckType.LessThan)]
-		public void InRangeIntExclusive_ValueOutOfRange_Throw(int number, ApiContractCheckType failedCheck)
+		[TestCase(99, 150, 150, 150, "number1", ApiContractCheckType.GreaterThan)]
+		[TestCase(100, 150, 150, 150, "number1", ApiContractCheckType.GreaterThan)]
+		[TestCase(200, 150, 150, 150, "number1", ApiContractCheckType.LessThan)]
+		[TestCase(201, 150, 150, 150, "number1", ApiContractCheckType.LessThan)]
+		[TestCase(150, 99, 150, 150, "number2", ApiContractCheckType.GreaterThanOrEqual)]
+		[TestCase(150, 201, 150, 150, "number2", ApiContractCheckType.LessThanOrEqual)]
+		[TestCase(150, 150, 99, 150, "number3", ApiContractCheckType.GreaterThanOrEqual)]
+		[TestCase(150, 150, 150, 201, "number4", ApiContractCheckType.LessThanOrEqual)]
+		public void InRangeOfTypeInt_ValueOutOfRange_Throw(
+			int number1, int number2, int number3, int number4, string failedParamName, ApiContractCheckType failedCheckType)
 		{
 			//-- Arrange
 
-			m_ExpectedExceptionParamName = "number";
-			m_ExpectedExceptionFailedCheck = failedCheck;
+			m_ExpectedExceptionParamName = failedParamName;
+			m_ExpectedExceptionFailedCheck = failedCheckType;
 			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
 
 			//-- Act
 
-			m_ApiContractWrapper.AMethodWithExclusiveIntRange(number);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[Test]
-		[TestCase(101)]
-		[TestCase(199)]
-		public void InRangeIntExclusive_ValueWithinRange_DoNotThrow(int number)
-		{
-			//-- Act
-
-			m_ApiContractWrapper.AMethodWithExclusiveIntRange(number);
-
-			//-- Assert
-
-			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithExclusiveIntRange(" + number + ")" }));
+			m_ApiContractWrapper.AMethodWithIntRanges(number1, number2, number3, number4);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
-		[TestCase(99, ApiContractCheckType.GreaterThanOrEqual)]
-		[TestCase(201, ApiContractCheckType.LessThanOrEqual)]
-		public void InRangeIntInclusive_ValueOutOfRange_Throw(int number, ApiContractCheckType failedCheck)
+		[TestCase(-0.1, 0.5, 0.5, 0.5, "number1", ApiContractCheckType.GreaterThan)]
+		[TestCase(0.0, 0.5, 0.5, 0.5, "number1", ApiContractCheckType.GreaterThan)]
+		[TestCase(1.0, 0.5, 0.5, 0.5, "number1", ApiContractCheckType.LessThan)]
+		[TestCase(1.1, 0.5, 0.5, 0.5, "number1", ApiContractCheckType.LessThan)]
+		[TestCase(0.5, -0.1, 0.5, 0.5, "number2", ApiContractCheckType.GreaterThanOrEqual)]
+		[TestCase(0.5, 1.1, 0.5, 0.5, "number2", ApiContractCheckType.LessThanOrEqual)]
+		[TestCase(0.5, 0.5, -0.1, 0.5, "number3", ApiContractCheckType.GreaterThanOrEqual)]
+		[TestCase(0.5, 0.5, 0.5, 1.1, "number4", ApiContractCheckType.LessThanOrEqual)]
+		public void InRangeOfTypeDouble_ValueOutOfRange_Throw(
+			double number1, double number2, double number3, double number4, string failedParamName, ApiContractCheckType failedCheckType)
 		{
 			//-- Arrange
 
-			m_ExpectedExceptionParamName = "number";
-			m_ExpectedExceptionFailedCheck = failedCheck;
+			m_ExpectedExceptionParamName = failedParamName;
+			m_ExpectedExceptionFailedCheck = failedCheckType;
 			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
 
 			//-- Act
 
-			m_ApiContractWrapper.AMethodWithInclusiveIntRange(number);
+			m_ApiContractWrapper.AMethodWithDoubleRanges(number1, number2, number3, number4);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		[TestCase(100)]
-		[TestCase(101)]
-		[TestCase(199)]
-		[TestCase(200)]
-		public void InRangeIntInclusive_ValueWithinRange_DoNotThrow(int number)
+		[TestCase(150, 150, 150, 150)]
+		[TestCase(101, 100, 100, Int32.MinValue)]
+		[TestCase(199, 200, Int32.MaxValue, 200)]
+		public void InRangeOfTypeInt_ValueWithinRange_DoNotThrow(int number1, int number2, int number3, int number4)
 		{
 			//-- Act
 
-			m_ApiContractWrapper.AMethodWithInclusiveIntRange(number);
+			m_ApiContractWrapper.AMethodWithIntRanges(number1, number2, number3, number4);
 
 			//-- Assert
 
-			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithInclusiveIntRange(" + number + ")" }));
+			Assert.That(m_Component.Log.Count, Is.EqualTo(1));
+			StringAssert.StartsWith("AMethodWithIntRanges(", m_Component.Log[0]);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test]
+		[TestCase(0.5, 0.5, 0.5, 0.5)]
+		[TestCase(0.1, 0.0, 0.0, Double.MinValue)]
+		[TestCase(0.9, 1.0, Double.MaxValue, 1.0)]
+		public void InRangeOfTypeDouble_ValueWithinRange_DoNotThrow(double number1, double number2, double number3, double number4)
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithDoubleRanges(number1, number2, number3, number4);
+
+			//-- Assert
+
+			Assert.That(m_Component.Log.Count, Is.EqualTo(1));
+			StringAssert.StartsWith("AMethodWithDoubleRanges(", m_Component.Log[0]);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		[TestCase("12", "12345", "12345", ApiContractCheckType.MinLength, "str1")]
+		[TestCase("12345678901", "12345", "12345", ApiContractCheckType.MaxLength, "str1")]
+		[TestCase("12345", "12", "12345", ApiContractCheckType.MinLength, "str2")]
+		[TestCase("12345", "12345", "12345678901", ApiContractCheckType.MaxLength, "str3")]
+		public void StringLength_LengthOutOfRange_Throw(
+			string str1, string str2, string str3, ApiContractCheckType failedCheckType, string failedParamName)
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = failedParamName;
+			m_ExpectedExceptionFailedCheck = failedCheckType;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithStringLength(str1, str2, str3);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[TestCase("12345", "12345", "12345")]
+		[TestCase("123", "123", null)]
+		[TestCase("1234567890", "12345678901234567890", "1234567890")]
+		public void StringLength_LengthWithinRange_DoNotThrow(string str1, string str2, string str3)
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithStringLength(str1, str2, str3);
+
+			//-- Assert
+
+			Assert.That(m_Component.Log.Count, Is.EqualTo(1));
+			StringAssert.StartsWith("AMethodWithStringLength(", m_Component.Log[0]);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

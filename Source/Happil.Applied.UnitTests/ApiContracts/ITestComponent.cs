@@ -32,14 +32,24 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		void AMethodWithNotNullCollectionItems([ItemsNotNull] System.Collections.ICollection items);
 
+		//TODO: verify that checks are invoked in declaration order for input parameters
 		void AMethodWithMultipleChecksOnParameter([ItemsNotNull, ItemsNotEmpty] IList<string> items);
 
-		void AMethodWithExclusiveIntRange([InRange(100, 200, Exclusive = true)] int number);
-		
-		void AMethodWithInclusiveIntRange([InRange(100, 200)] int number);
-		
-		void AMethodWithExclusiveDoubleRange([InRange(0.0d, 1.0d, Exclusive = true)] float number);
+		void AMethodWithIntRanges(
+			[InRange(100, 200, Exclusive = true)] int number1,
+			[InRange(100, 200)] int number2,
+			[InRange(Min = 100)] int number3,
+			[InRange(Max = 200)] int number4);
 
-		void AMethodWithInclusiveDoubleRange([InRange(0.0d, 1.0d)] int number);
+		void AMethodWithDoubleRanges(
+			[InRange(0, 1, Exclusive = true)] double number1,
+			[InRange(0, 1)] double number2,
+			[InRange(Min = 0)] double number3,
+			[InRange(Max = 1)] double number4);
+
+		void AMethodWithStringLength(
+			[Length(3, 10)] string str1,
+			[MinLength(3)] string str2,
+			[MaxLength(10)] string str3);
 	}
 }

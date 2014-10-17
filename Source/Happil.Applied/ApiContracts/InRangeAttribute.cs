@@ -11,23 +11,10 @@ using Happil.Writers;
 namespace Happil.Applied.ApiContracts
 {
 	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
-	public class InRangeAttribute : ApiCheckAttribute
+	public abstract class InRangeAttributeBase : ApiCheckAttribute
 	{
-		private double? m_AssignedMin;
-		private double? m_AssignedMax;
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public InRangeAttribute()
+		protected InRangeAttributeBase()
 		{
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public InRangeAttribute(double min, double max)
-		{
-			this.Min = min;
-			this.Max = max;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -36,88 +23,27 @@ namespace Happil.Applied.ApiContracts
 		{
 			var parameterInfo = (ParameterInfo)info;
 
-			if ( m_AssignedMin.HasValue )
+			if ( AssignedMin.HasValue )
 			{
-				member.AddCheck(new MinValueCheckWriter(parameterInfo, m_AssignedMin.Value, MinExclusive));
+				member.AddCheck(new MinValueCheckWriter(parameterInfo, AssignedMin.Value, AssignedMinExclusive.GetValueOrDefault()));
 			}
 
-			if ( m_AssignedMax.HasValue )
+			if ( AssignedMax.HasValue )
 			{
-				member.AddCheck(new MaxValueCheckWriter(parameterInfo, m_AssignedMax.Value, MaxExclusive));
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public double Min
-		{
-			get
-			{
-				return m_AssignedMin.GetValueOrDefault();
-			}
-			set
-			{
-				m_AssignedMin = value;
+				member.AddCheck(new MaxValueCheckWriter(parameterInfo, AssignedMax.Value, AssignedMaxExclusive.GetValueOrDefault()));
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public double Max
-		{
-			get
-			{
-				return m_AssignedMax.GetValueOrDefault();
-			}
-			set
-			{
-				m_AssignedMax = value;
-			}
-		}
+		protected double? AssignedMin { get; set; }
+		protected bool? AssignedMinExclusive { get; set; }
+		protected double? AssignedMax { get; set; }
+		protected bool? AssignedMaxExclusive { get; set; }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public bool Exclusive
-		{
-			get
-			{
-				return (MinExclusive && MaxExclusive);
-			}
-			set
-			{
-				MinExclusive = value;
-				MaxExclusive = value;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public bool MinExclusive { get; set; }
-		public bool MaxExclusive { get; set; }
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public double? AssignedMin
-		{
-			get
-			{
-				return m_AssignedMin;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public double? AssignedMax
-		{
-			get
-			{
-				return m_AssignedMax;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private abstract class BoundValueCheckWriter : ApiArgumentCheckWriter
+		protected abstract class BoundValueCheckWriter : ApiArgumentCheckWriter
 		{
 			private readonly ParameterInfo m_ParameterInfo;
 			private readonly double m_BoundValue;
@@ -171,7 +97,7 @@ namespace Happil.Applied.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class MinValueCheckWriter : BoundValueCheckWriter
+		protected class MinValueCheckWriter : BoundValueCheckWriter
 		{
 			public MinValueCheckWriter(ParameterInfo parameterInfo, double minValue, bool exclusive)
 				: base(
@@ -188,7 +114,7 @@ namespace Happil.Applied.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class MaxValueCheckWriter : BoundValueCheckWriter
+		protected class MaxValueCheckWriter : BoundValueCheckWriter
 		{
 			public MaxValueCheckWriter(ParameterInfo parameterInfo, double maxValue, bool exclusive)
 				: base(
@@ -201,6 +127,163 @@ namespace Happil.Applied.ApiContracts
 					ApiContract.LessThanOrEqual)
 			{
 			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class InRangeAttribute : InRangeAttributeBase
+	{
+		public InRangeAttribute()
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public InRangeAttribute(double min, double max)
+		{
+			this.Min = min;
+			this.Max = max;
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public double Min
+		{
+			get
+			{
+				return AssignedMin.GetValueOrDefault();
+			}
+			set
+			{
+				AssignedMin = value;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public double Max
+		{
+			get
+			{
+				return AssignedMax.GetValueOrDefault();
+			}
+			set
+			{
+				AssignedMax = value;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool Exclusive
+		{
+			get
+			{
+				return (MinExclusive && MaxExclusive);
+			}
+			set
+			{
+				MinExclusive = value;
+				MaxExclusive = value;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool MinExclusive
+		{
+			get
+			{
+				return AssignedMinExclusive.GetValueOrDefault();
+			}
+			set
+			{
+				AssignedMinExclusive = value;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public bool MaxExclusive
+		{
+			get
+			{
+				return AssignedMaxExclusive.GetValueOrDefault();
+			}
+			set
+			{
+				AssignedMaxExclusive = value;
+			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class PositiveAttribute : InRangeAttributeBase
+	{
+		public PositiveAttribute()
+		{
+			base.AssignedMin = 0;
+			base.AssignedMinExclusive = true;
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class NegativeAttribute : InRangeAttributeBase
+	{
+		public NegativeAttribute()
+		{
+			base.AssignedMax = 0;
+			base.AssignedMaxExclusive = true;
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class NotNegativeAttribute : InRangeAttributeBase
+	{
+		public NotNegativeAttribute()
+		{
+			base.AssignedMin = 0;
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class NotPositiveAttribute : InRangeAttributeBase
+	{
+		public NotPositiveAttribute()
+		{
+			base.AssignedMax = 0;
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class OneBasedAttribute : InRangeAttributeBase
+	{
+		public OneBasedAttribute()
+		{
+			base.AssignedMin = 1;
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class ZeroBasedAttribute : InRangeAttributeBase
+	{
+		public ZeroBasedAttribute()
+		{
+			base.AssignedMin = 0;
 		}
 	}
 }

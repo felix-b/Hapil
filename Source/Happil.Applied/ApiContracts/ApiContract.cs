@@ -137,6 +137,26 @@ namespace Happil.Applied.ApiContracts
 			}
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void MinStringLength(string value, int minLength, string parameterName, bool isOutput = false)
+		{
+			if ( value == null || value.Length < minLength )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.MinLength, isOutput);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void MaxStringLength(string value, int maxLength, string parameterName, bool isOutput = false)
+		{
+			if ( value != null && value.Length > maxLength )
+			{
+				throw new ApiContractException(parameterName, ApiContractCheckType.MaxLength, isOutput);
+			}
+		}
+
 		////-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//public static void InRange(long value, long? min, long? max, bool minExclusive, bool maxExclusive, string parameterName, bool isOutput = false)

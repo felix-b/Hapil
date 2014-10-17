@@ -145,30 +145,23 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AMethodWithExclusiveIntRange(int number)
+		public void AMethodWithIntRanges(int number1, int number2, int number3, int number4)
 		{
-			LogCall("AMethodWithExclusiveIntRange", number);
+			LogCall("AMethodWithIntRanges", number1, number2, number3, number4);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AMethodWithInclusiveIntRange(int number)
+		public void AMethodWithDoubleRanges(double number1, double number2, double number3, double number4)
 		{
-			LogCall("AMethodWithInclusiveIntRange", number);
+			LogCall("AMethodWithDoubleRanges", number1, number2, number3, number4);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void AMethodWithExclusiveDoubleRange(float number)
+		public void AMethodWithStringLength(string str1, string str2, string str3)
 		{
-			LogCall("AMethodWithExclusiveDoubleRange", number);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		public void AMethodWithInclusiveDoubleRange(int number)
-		{
-			LogCall("AMethodWithInclusiveDoubleRange", number);
+			LogCall("AMethodWithStringLength", str1, str2, str3);
 		}
 
 		#endregion

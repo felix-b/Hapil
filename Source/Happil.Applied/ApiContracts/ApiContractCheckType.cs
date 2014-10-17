@@ -14,5 +14,8 @@ namespace Happil.Applied.ApiContracts
 		GreaterThanOrEqual,
 		LessThan,
 		LessThanOrEqual,
+		MinLength,
+		MaxLength,
+		Custom = 1000
 	}
 }
