@@ -196,7 +196,7 @@ namespace Happil
 				var resolvedPropertyType = TypeTemplate.Resolve(propertyInfo.PropertyType);
 				var resolvedParameterTypes = propertyInfo.GetIndexParameters().Select(p => TypeTemplate.Resolve(p.ParameterType)).ToArray();
 				var resolvedPropertyInfo = TypeMemberCache.Of(resolvedDeclaringType)
-					.Properties.Where(p => p.Name == propertyInfo.Name)
+					.Properties.Where(p => p.Name == propertyInfo.Name && p.DeclaringType == resolvedDeclaringType)
 					.OfSignature(resolvedPropertyType, resolvedParameterTypes)
 					.Single();
 

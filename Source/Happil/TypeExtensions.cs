@@ -163,6 +163,11 @@ namespace Happil
 					return true;
 				}
 			}
+			else if ( type.IsArray )
+			{
+				elementType = type.GetElementType();
+				return true;
+			}
 			else if ( typeof(System.Collections.ICollection).IsAssignableFrom(type) )
 			{
 				elementType = typeof(object);

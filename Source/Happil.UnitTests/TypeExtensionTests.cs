@@ -153,14 +153,16 @@ namespace Happil.UnitTests
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestCase(typeof(System.Collections.ICollection))]
-		[TestCase(typeof(ICollection<int>))]
-		[TestCase(typeof(ICollection<>))]
-		[TestCase(typeof(IList<int>))]
-		[TestCase(typeof(IList<>))]
-		[TestCase(typeof(List<int>))]
-		[TestCase(typeof(List<>))]
-		public void IsCollectionTypeWithElementType_True(Type typeUnderTest)
+		[TestCase(typeof(System.Collections.ICollection), "Object")]
+		[TestCase(typeof(Array), "Object")]
+		[TestCase(typeof(int[]), "Int32")]
+		[TestCase(typeof(ICollection<int>), "Int32")]
+		[TestCase(typeof(ICollection<>), "T")]
+		[TestCase(typeof(IList<int>), "Int32")]
+		[TestCase(typeof(IList<>), "T")]
+		[TestCase(typeof(List<int>), "Int32")]
+		[TestCase(typeof(List<>), "T")]
+		public void IsCollectionType_True_ElementTypeExtracted(Type typeUnderTest, string expectedElementTypeName)
 		{
 			//-- Arrange
 
@@ -173,20 +175,7 @@ namespace Happil.UnitTests
 			//-- Assert
 
 			Assert.That(isCollectionType, Is.True);
-
-			if ( typeUnderTest.IsGenericTypeDefinition )
-			{
-				Assert.That(elementType, Is.Not.Null);
-				Assert.That(elementType.IsGenericParameter, Is.True);
-			}
-			else if ( typeUnderTest.IsGenericType )
-			{
-				Assert.That(elementType, Is.SameAs(typeof(int)));
-			}
-			else
-			{
-				Assert.That(elementType, Is.SameAs(typeof(object)));
-			}
+			Assert.That(elementType.Name, Is.EqualTo(expectedElementTypeName));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
