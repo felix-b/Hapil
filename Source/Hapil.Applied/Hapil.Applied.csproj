@@ -4,35 +4,37 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B02584D9-46FC-4D39-B3FA-8C58238B540A}</ProjectGuid>
+    <ProjectGuid>{391CF61B-AEEF-48B3-A8F8-ECB50409B9FC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hapil.Testing.NUnit</RootNamespace>
-    <AssemblyName>Hapil.Testing.NUnit</AssemblyName>
+    <RootNamespace>Hapil.Applied</RootNamespace>
+    <AssemblyName>Hapil.Applied</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\Home\3rdParty\NUnit\2.5.10\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,8 +44,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NUnitEmittedTypesTestBase.cs" />
+    <Compile Include="ApiContracts\ApiContract.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckDirection.cs" />
+    <Compile Include="ApiContracts\ApiContractException.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckType.cs" />
+    <Compile Include="ApiContracts\ICheckCollectionTypes.cs" />
+    <Compile Include="ApiContracts\ItemsNotEmptyAttribute.cs" />
+    <Compile Include="ApiContracts\ItemsNotNullAttribute.cs" />
+    <Compile Include="ApiContracts\StringLengthAttribute.cs" />
+    <Compile Include="ApiContracts\NotEmptyAttribute.cs" />
+    <Compile Include="ApiContracts\Impl\ApiCheckAttribute.cs" />
+    <Compile Include="ApiContracts\ApiContractCheckConvention.cs" />
+    <Compile Include="ApiContracts\Impl\ApiContractDescription.cs" />
+    <Compile Include="ApiContracts\ApiContractWrapperConvention.cs" />
+    <Compile Include="ApiContracts\Impl\ApiCheckWriter.cs" />
+    <Compile Include="ApiContracts\Impl\ApiMemberDescription.cs" />
+    <Compile Include="ApiContracts\NotNullAttribute.cs" />
+    <Compile Include="ApiContracts\InRangeAttribute.cs" />
+    <Compile Include="Conventions\CallTargetConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XTuple\XTupleFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hapil\Hapil.csproj">

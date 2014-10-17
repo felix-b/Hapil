@@ -1,84 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using Hapil;
-using Hapil.Members;
-using Hapil.Testing;
-using Hapil.Writers;
-using NUnit.Framework;
 
-namespace Hapil.Testing.NUnit
+namespace Hapil.Members
 {
-	[TestFixture]
-	public abstract class NUnitEmittedTypesTestBase : EmittedTypesTestBase
+	public abstract class MemberBase
 	{
-		[TestFixtureSetUp]
-		public void BaseFixtureSetUp()
+		private readonly string m_Name;
+		private ClassType m_OwnerClass;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected MemberBase(ClassType ownerClass, string name)
 		{
-			base.InitializeTestClass();
+			m_OwnerClass = ownerClass;
+			m_Name = name;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestFixtureTearDown]
-		public void BaseFixtureTearDown()
+		#region Overrides of Object
+
+		public override string ToString()
 		{
-			base.FinalizeTestClass();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[SetUp]
-		public void BaseSetUp()
-		{
-			base.InitializeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[TearDown]
-		public void BaseTearDown()
-		{
-			base.FinalizeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region Overrides of EmittedTypeTestBase
-
-		protected override void AssertStringContains(string s, string subString, string message)
-		{
-			StringAssert.Contains(subString, s, message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void FailAssertion(string message)
-		{
-			Assert.Fail(message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override string TestDirectory
-		{
-			get
-			{
-				return TestContext.CurrentContext.TestDirectory;
-			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override string TestCaseName
-		{
-			get
-			{
-				return TestContext.CurrentContext.Test.Name;
-			}
+			return string.Format("{0}[{1}]", this.Kind, this.Name);
 		}
 
 		#endregion
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public virtual string Name
+		{
+			get { return m_Name; }
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract MemberKind Kind { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public abstract MemberInfo MemberDeclaration { get; }
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public ClassType OwnerClass
+		{
+			get
+			{
+				return m_OwnerClass;
+			}
+			protected set
+			{
+				m_OwnerClass = value;
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal abstract void Write();
+		internal abstract void Compile();
+	
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		internal virtual IDisposable CreateTypeTemplateScope()
+		{
+			return null;
+		}
 	}
 }

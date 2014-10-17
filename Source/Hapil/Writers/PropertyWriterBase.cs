@@ -1,84 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
-using Hapil;
+using Hapil.Expressions;
 using Hapil.Members;
-using Hapil.Testing;
-using Hapil.Writers;
-using NUnit.Framework;
+using Hapil.Operands;
 
-namespace Hapil.Testing.NUnit
+namespace Hapil.Writers
 {
-	[TestFixture]
-	public abstract class NUnitEmittedTypesTestBase : EmittedTypesTestBase
+	public abstract class PropertyWriterBase : MemberWriterBase
 	{
-		[TestFixtureSetUp]
-		public void BaseFixtureSetUp()
+		private readonly PropertyMember m_OwnerProperty;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected PropertyWriterBase(PropertyMember ownerProperty)
 		{
-			base.InitializeTestClass();
+			m_OwnerProperty = ownerProperty;
+			ownerProperty.AddWriter(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestFixtureTearDown]
-		public void BaseFixtureTearDown()
+		public void Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
+			where TAttribute : Attribute
 		{
-			base.FinalizeTestClass();
+			var builder = new AttributeArgumentWriter<TAttribute>(values);
+			m_OwnerProperty.PropertyBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[SetUp]
-		public void BaseSetUp()
-		{
-			base.InitializeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[TearDown]
-		public void BaseTearDown()
-		{
-			base.FinalizeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region Overrides of EmittedTypeTestBase
-
-		protected override void AssertStringContains(string s, string subString, string message)
-		{
-			StringAssert.Contains(subString, s, message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void FailAssertion(string message)
-		{
-			Assert.Fail(message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override string TestDirectory
+		public PropertyMember OwnerProperty
 		{
 			get
 			{
-				return TestContext.CurrentContext.TestDirectory;
+				return m_OwnerProperty;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override string TestCaseName
+		protected internal void AddAttributes(Func<PropertyMember, AttributeWriter> attributeWriterFactory)
 		{
-			get
+			if ( attributeWriterFactory != null )
 			{
-				return TestContext.CurrentContext.Test.Name;
+				AttributeWriter.Include(attributeWriterFactory(m_OwnerProperty));
 			}
 		}
 
-		#endregion
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_OwnerProperty.PropertyBuilder.SetCustomAttribute(attribute);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyWriterGetter
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IPropertyWriterSetter
+		{
+		}
 	}
 }

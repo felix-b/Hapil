@@ -1,84 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
-using Hapil;
 using Hapil.Members;
-using Hapil.Testing;
-using Hapil.Writers;
-using NUnit.Framework;
 
-namespace Hapil.Testing.NUnit
+namespace Hapil.Writers
 {
-	[TestFixture]
-	public abstract class NUnitEmittedTypesTestBase : EmittedTypesTestBase
+	public abstract class EventWriterBase : MemberWriterBase
 	{
-		[TestFixtureSetUp]
-		public void BaseFixtureSetUp()
+		private readonly EventMember m_OwnerEvent;
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected EventWriterBase(EventMember ownerEvent)
 		{
-			base.InitializeTestClass();
+			m_OwnerEvent = ownerEvent;
+			ownerEvent.AddWriter(this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[TestFixtureTearDown]
-		public void BaseFixtureTearDown()
+		public void Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
+			where TAttribute : Attribute
 		{
-			base.FinalizeTestClass();
+			var builder = new AttributeArgumentWriter<TAttribute>(values);
+			m_OwnerEvent.EventBuilder.SetCustomAttribute(builder.GetAttributeBuilder());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		[SetUp]
-		public void BaseSetUp()
-		{
-			base.InitializeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		[TearDown]
-		public void BaseTearDown()
-		{
-			base.FinalizeTestCase();
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		#region Overrides of EmittedTypeTestBase
-
-		protected override void AssertStringContains(string s, string subString, string message)
-		{
-			StringAssert.Contains(subString, s, message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override void FailAssertion(string message)
-		{
-			Assert.Fail(message);
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		protected override string TestDirectory
+		public EventMember OwnerEvent
 		{
 			get
 			{
-				return TestContext.CurrentContext.TestDirectory;
+				return m_OwnerEvent;
 			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override string TestCaseName
+		protected internal void AddAttributes(Func<EventMember, AttributeWriter> attributeWriterFactory)
 		{
-			get
+			if ( attributeWriterFactory != null )
 			{
-				return TestContext.CurrentContext.Test.Name;
+				AttributeWriter.Include(attributeWriterFactory(m_OwnerEvent));
 			}
 		}
 
-		#endregion
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		protected override void SetCustomAttribute(CustomAttributeBuilder attribute)
+		{
+			m_OwnerEvent.EventBuilder.SetCustomAttribute(attribute);
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IEventWriterAddOn
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public interface IEventWriterRemoveOn
+		{
+		}
 	}
 }
