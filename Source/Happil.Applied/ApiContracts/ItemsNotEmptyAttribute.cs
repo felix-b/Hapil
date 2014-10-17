@@ -30,7 +30,7 @@ namespace Happil.Applied.ApiContracts
 		
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class CollectionItemsNotEmptyCheckWriter : ApiArgumentCheckWriter
+		private class CollectionItemsNotEmptyCheckWriter : ApiArgumentCheckWriter, ICheckCollectionTypes
 		{
 			public CollectionItemsNotEmptyCheckWriter(ParameterInfo parameterInfo)
 				: base(parameterInfo)

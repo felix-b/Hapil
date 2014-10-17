@@ -51,5 +51,7 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			[Length(3, 10)] string str1,
 			[MinLength(3)] string str2,
 			[MaxLength(10)] string str3);
+
+		void AMethodWithArrayOfPositiveInts([Positive] int[] values);
 	}
 }

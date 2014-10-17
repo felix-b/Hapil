@@ -164,6 +164,13 @@ namespace Happil.Applied.UnitTests.ApiContracts
 			LogCall("AMethodWithStringLength", str1, str2, str3);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public void AMethodWithArrayOfPositiveInts(int[] values)
+		{
+			LogCall("AMethodWithArrayOfPositiveInts", values.Cast<object>().ToArray());
+		}
+
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

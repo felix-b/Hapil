@@ -45,9 +45,8 @@ namespace Happil.Applied.ApiContracts
 
 		protected abstract class BoundValueCheckWriter : ApiArgumentCheckWriter
 		{
-			private readonly ParameterInfo m_ParameterInfo;
+			//private readonly ParameterInfo m_ParameterInfo;
 			private readonly double m_BoundValue;
-			private readonly bool m_Exclusive;
 			private readonly Action<long, long, string, bool> m_CheckMethodTypeLong;
 			private readonly Action<double, double, string, bool> m_CheckMethodTypeDouble;
 
@@ -63,9 +62,9 @@ namespace Happil.Applied.ApiContracts
 				Action<double, double, string, bool> inclusiveCheckMethodTypeDouble)
 				: base(parameterInfo)
 			{
-				m_ParameterInfo = parameterInfo;
+				//m_ParameterInfo = parameterInfo;
 				m_BoundValue = boundValue;
-				m_Exclusive = exclusive;
+				//m_Exclusive = exclusive;
 				m_CheckMethodTypeLong = (exclusive ? exclusiveCheckMethodTypeInt : inclusiveCheckMethodTypeInt);
 				m_CheckMethodTypeDouble = (exclusive ? exclusiveCheckMethodTypeDouble : inclusiveCheckMethodTypeDouble);
 			}
@@ -74,7 +73,7 @@ namespace Happil.Applied.ApiContracts
 
 			protected override void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
 			{
-				Type actualParameterType = TypeTemplate.Resolve(m_ParameterInfo.ParameterType).UnderlyingType();
+				Type actualParameterType = TypeTemplate.Resolve<TypeTemplate.TArgument>().UnderlyingType();
 
 				if ( actualParameterType.IsIntegralType() )
 				{

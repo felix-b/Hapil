@@ -598,6 +598,36 @@ namespace Happil.Applied.UnitTests.ApiContracts
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+		[Test]
+		public void CheckPerCollectionItem_AllItemsConform_DoNotThrow()
+		{
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithArrayOfPositiveInts(new[] { 10, 20, 30 });
+
+			//-- Assert
+
+			Assert.That(m_Component.Log, Is.EqualTo(new[] { "AMethodWithArrayOfPositiveInts(10,20,30)" }));
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		[Test, ExpectedException(typeof(ApiContractException), Handler = "HandleApiContractException")]
+		public void CheckPerCollectionItem_OneItemViolatesCheck_Throw()
+		{
+			//-- Arrange
+
+			m_ExpectedExceptionParamName = "values";
+			m_ExpectedExceptionFailedCheck = ApiContractCheckType.GreaterThan;
+			m_ExpectedExceptionFailedCheckDirection = ApiContractCheckDirection.Input;
+
+			//-- Act
+
+			m_ApiContractWrapper.AMethodWithArrayOfPositiveInts(values: new int[] { 10, 0, 30 });
+		}
+	
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public void HandleApiContractException(Exception e)
 		{
 			var typedException = (ApiContractException)e;

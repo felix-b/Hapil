@@ -48,6 +48,7 @@
     <Compile Include="ApiContracts\ApiContractCheckDirection.cs" />
     <Compile Include="ApiContracts\ApiContractException.cs" />
     <Compile Include="ApiContracts\ApiContractCheckType.cs" />
+    <Compile Include="ApiContracts\ICheckCollectionTypes.cs" />
     <Compile Include="ApiContracts\ItemsNotEmptyAttribute.cs" />
     <Compile Include="ApiContracts\ItemsNotNullAttribute.cs" />
     <Compile Include="ApiContracts\StringLengthAttribute.cs" />

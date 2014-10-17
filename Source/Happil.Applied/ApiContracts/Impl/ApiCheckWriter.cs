@@ -65,6 +65,31 @@ namespace Happil.Applied.ApiContracts.Impl
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+		private void WriteArgumentOrCollectionItemCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput)
+		{
+			var actualType = argument.OperandType.UnderlyingType();
+			Type collectionItemType;
+
+			if ( actualType.IsCollectionType(out collectionItemType) && !(this is ICheckCollectionTypes) )
+			{
+				using ( TypeTemplate.CreateScope<TypeTemplate.TItem>(collectionItemType) )
+				{
+					writer.ForeachElementIn(argument.CastTo<IEnumerable<TypeTemplate.TItem>>()).Do((loop, item) => {
+						using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(collectionItemType) )
+						{
+							OnWriteArgumentCheck(writer, item.CastTo<TypeTemplate.TArgument>(), isOutput);
+						}
+					});
+				}
+			}
+			else
+			{
+				OnWriteArgumentCheck(writer, argument, isOutput);
+			}
+		}
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+
 		protected abstract void OnWriteArgumentCheck(MethodWriterBase writer, Operand<TypeTemplate.TArgument> argument, bool isOutput);
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -105,7 +130,7 @@ namespace Happil.Applied.ApiContracts.Impl
 				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(m_ParameterInfo.ParameterType) )
 				{
 					var argument = w.Argument<TypeTemplate.TArgument>(m_ParameterInfo.Position + 1);
-					OnWriteArgumentCheck(w, argument, isOutput: true);
+					WriteArgumentOrCollectionItemCheck(w, argument, isOutput: true);
 				}
 			});
 		}
@@ -118,7 +143,7 @@ namespace Happil.Applied.ApiContracts.Impl
 				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(m_ParameterInfo.ParameterType) )
 				{
 					var argument = w.Argument<TypeTemplate.TArgument>(m_ParameterInfo.Position + 1);
-					OnWriteArgumentCheck(w, argument, isOutput: false);
+					WriteArgumentOrCollectionItemCheck(w, argument, isOutput: false);
 				}
 			});
 		}
@@ -130,7 +155,7 @@ namespace Happil.Applied.ApiContracts.Impl
 			decoration.OnReturnValue((w, retVal) => {
 				using ( TypeTemplate.CreateScope<TypeTemplate.TArgument>(m_ParameterInfo.ParameterType) )
 				{
-					OnWriteArgumentCheck(w, retVal.CastTo<TypeTemplate.TArgument>(), isOutput: true);
+					WriteArgumentOrCollectionItemCheck(w, retVal.CastTo<TypeTemplate.TArgument>(), isOutput: true);
 				}
 			});
 		}
