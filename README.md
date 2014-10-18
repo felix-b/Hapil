@@ -1,9 +1,9 @@
-Happil
+Hapil
 ======
 
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming techniques for **.NET developers**:
 
-* **CoI - Convention over Implementation**: let developers only author interfaces of application components, then  let the framework dynamically generate corresponding implementations, based on conventions associated with every specific kind of the component (e.g., data transfer objects, data access layer, configuration, logging, etc etc). The conventions are authored by the users of the library. **Happil.Applied** is an additional library, which supplies a set of reusable out-of-the-box conventions.
+* **CoI - Convention over Implementation**: let developers only author interfaces of application components, then  let the framework dynamically generate corresponding implementations, based on conventions associated with every specific kind of the component (e.g., data transfer objects, data access layer, configuration, logging, etc etc). The conventions are authored by the users of the library. **Hapil.Applied** is an additional library, which supplies a set of reusable out-of-the-box conventions.
 * **Aspect-Oriented Programming**: transparently support black-box aspects, implemented as dynamically generated CoI decorators, which intercept the calls to the components. The aspects can be connected to both hard-coded and CoI components. 
 * **Subject-Oriented Programming**: extend single inheritance in CLR with a horizontal behavior composition technique similar to traits/mixins/modules in such languages as Scala, PHP, and Ruby.
 * **Duck Typing**: provide the Duck Typing mechanism in order to bring some of dynamic languages advantages to static programming. 
@@ -94,15 +94,15 @@ public sealed class CustomerDto : ICustomer
 
 ### More Information
 
-The [**Wiki**](https://github.com/felix-b/Happil/wiki) is the ultimate source of information on the **Happil** project.
+The [**Wiki**](https://github.com/felix-b/Hapil/wiki) is the ultimate source of information on the **Hapil** project.
 
 ### Why?
 
-For comparison of **Happil** with other similar libraries, see [**Alternatives**](https://github.com/felix-b/Happil/wiki/Alternatives).
+For comparison of **Hapil** with other similar libraries, see [**Alternatives**](https://github.com/felix-b/Hapil/wiki/Alternatives).
 
 ### Licenses
 
-**Happil** library is developed uner the [**MIT License**](https://github.com/felix-b/Happil/blob/master/LICENSE). 
+**Hapil** library is developed uner the [**MIT License**](https://github.com/felix-b/Hapil/blob/master/LICENSE). 
 
 [**NUnit**](http://www.nunit.org/) is licensed under [**zlib/libpng License (Zlib)**](http://nunit.org/index.php?p=license&r=2.5.10).
 
