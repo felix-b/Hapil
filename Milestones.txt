@@ -4,8 +4,8 @@ Arsenic [closed]
 Bismuth [closed]
 Cesium [closed]
 Dubnium [closed]
-Europium [CURRENT]
-Fermium
+Europium [closed]
+Fermium [CURRENT]
 Gold
 Helium
 Iron
