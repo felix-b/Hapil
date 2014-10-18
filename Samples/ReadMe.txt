@@ -1,0 +1,1 @@
+This folder will contains code of samle applications using the Hapil library.
