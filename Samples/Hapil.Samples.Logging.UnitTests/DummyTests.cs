@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace Happil.Samples.Logging.UnitTests
+namespace Hapil.Samples.Logging.UnitTests
 {
 	[TestFixture]
     public class DummyTests

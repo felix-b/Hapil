@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hapil.Samples.Logging", "Hapil.Samples.Logging\Hapil.Samples.Logging.csproj", "{40BB41F1-B21D-47EB-A47D-CF8B8722AD90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happil.Samples.Logging.UnitTests", "Happil.Samples.Logging.UnitTests\Happil.Samples.Logging.UnitTests.csproj", "{E098EDA0-9A03-4C4C-AC04-67EA9E3FD9A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hapil.Samples.Logging.UnitTests", "Hapil.Samples.Logging.UnitTests\Hapil.Samples.Logging.UnitTests.csproj", "{E098EDA0-9A03-4C4C-AC04-67EA9E3FD9A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,8 +7,8 @@
     <ProjectGuid>{E098EDA0-9A03-4C4C-AC04-67EA9E3FD9A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Happil.Samples.Logging.UnitTests</RootNamespace>
-    <AssemblyName>Happil.Samples.Logging.UnitTests</AssemblyName>
+    <RootNamespace>Hapil.Samples.Logging.UnitTests</RootNamespace>
+    <AssemblyName>Hapil.Samples.Logging.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
