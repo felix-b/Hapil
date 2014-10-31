@@ -12,6 +12,7 @@ namespace Hapil.Samples.Logging.UnitTests
 		[Test]
 		public void TestOne()
 		{
+			Assert.That(10, Is.EqualTo(10));
 		}
     }
 }
