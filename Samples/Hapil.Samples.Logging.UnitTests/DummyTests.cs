@@ -29,5 +29,9 @@ namespace Hapil.Samples.Logging.UnitTests
 		public void TestFive()
 		{
 		}
+		[Test]
+		public void TestSix()
+		{
+		}
 	}
 }
