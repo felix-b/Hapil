@@ -33,5 +33,9 @@ namespace Hapil.Samples.Logging.UnitTests
 		public void TestSix()
 		{
 		}
+		[Test]
+		public void TestSeven()
+		{
+		}
 	}
 }
