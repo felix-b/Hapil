@@ -5,7 +5,11 @@ using System.Text;
 
 namespace Hapil.Samples.Logging
 {
-    public class Class1
+    public static class Dummy
     {
+		public static void DoSomething()
+	    {
+		    Console.WriteLine("Doing something");
+	    }
     }
 }

@@ -12,6 +12,7 @@ namespace Hapil.Samples.Logging.UnitTests
 		[Test]
 		public void TestOne()
 		{
+			Dummy.DoSomething();
 		}
 		[Test]
 		public void TestTwo()
