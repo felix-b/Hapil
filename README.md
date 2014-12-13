@@ -1,4 +1,4 @@
-Hapil [![Build status](https://ci.appveyor.com/api/projects/status/ir27ulb4151967o6/branch/fermium)](https://ci.appveyor.com/project/felix-b/hapil/branch/fermium)
+![Hapil](https://raw.githubusercontent.com/felix-b/Hapil/gh-pages/img/strawberry.gif) Hapil [![Build status](https://ci.appveyor.com/api/projects/status/ir27ulb4151967o6/branch/fermium)](https://ci.appveyor.com/project/felix-b/hapil/branch/fermium)
 ======
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming techniques for **.NET developers**:
 
