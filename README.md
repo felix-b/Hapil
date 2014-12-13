@@ -1,6 +1,5 @@
-Hapil
+Hapil [![Build status](https://ci.appveyor.com/api/projects/status/ir27ulb4151967o6/branch/fermium)](https://ci.appveyor.com/project/felix-b/hapil/branch/fermium)
 ======
-
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming techniques for **.NET developers**:
 
 * **CoI - Convention over Implementation**: let developers only author interfaces of application components, then  let the framework dynamically generate corresponding implementations, based on conventions associated with every specific kind of the component (e.g., data transfer objects, data access layer, configuration, logging, etc etc). The conventions are authored by the users of the library. **Hapil.Applied** is an additional library, which supplies a set of reusable out-of-the-box conventions.
