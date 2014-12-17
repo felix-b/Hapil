@@ -1,4 +1,8 @@
-﻿# Hapil, the CoI framework
+﻿---
+title: Welcome to Hapil framework
+layout: post
+---
+# Hapil, the CoI framework
 
 Hello and thank you for your interest in the **Hapil** library.
 
