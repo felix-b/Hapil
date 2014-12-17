@@ -1,3 +1,8 @@
+---
+title: HTML5 Boilerplate homepage
+layout: post
+---
+
 [HTML5 Boilerplate homepage](http://html5boilerplate.com)
 
 # HTML5 Boilerplate documentation:
