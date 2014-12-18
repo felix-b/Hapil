@@ -1,6 +1,5 @@
 ---
 title: Welcome to Hapil framework
-layout: post
 ---
 
 Hapil, the CoI Framework
@@ -28,26 +27,26 @@ Content Cell  | Content Cell
 
 **Three** - given an interface of a data transfer object:
 
-```csharp
+{% highlight csharp %}
 public interface ICustomer
 {
   int Id { get; set; }
   string FullName { get; set; }
   string EmailAddress { get; set; }
 }
-```
+{% endhighlight %}
 
 **Two** - plus an implementation convention:
 
-```csharp
+{% highlight csharp %}
 DeriveClassFrom<object>()
   .ImplementInterface<ICustomer>()
   .AllProperties().ImplementAutomatic();
-```
+{% endhighlight %}
 
 **One** - plus a decorator convention:
 
-```csharp
+{% highlight csharp %}
 public class DataContractDecorator : ClassDecoratorBase
 {
   public override void OnClassType(ClassType classType, ClassWriterBase writer)
@@ -59,8 +58,7 @@ public class DataContractDecorator : ClassDecoratorBase
     decorate().Attribute<DataMemberAttribute>();
   }
 }
-```
-
+{% endhighlight %}
 **GO!**
 
 ```csharp

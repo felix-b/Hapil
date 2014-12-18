@@ -1,6 +1,5 @@
 ---
 title: Welcome to Hapil framework
-layout: post
 ---
 
 Hapil, the CoI Framework
