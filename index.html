@@ -2,9 +2,9 @@
 <html>
 
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Happil : A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy." />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Happil : A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy.">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -16,14 +16,14 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/felix-b/Happil">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/felix-b/Hapil">View on GitHub</a>
 
           <h1 id="project_title">Happil</h1>
           <h2 id="project_tagline">A Reflection.Emit wrapper for dynamic implementation of interfaces and abstract classes, which just works and keeps its users happy.</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/felix-b/Happil/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/felix-b/Happil/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/felix-b/Hapil/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/felix-b/Hapil/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -32,7 +32,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h3>
-<a name="welcome-to-happil" class="anchor" href="#welcome-to-happil"><span class="octicon octicon-link"></span></a>Welcome to Happil</h3>
+<a id="welcome-to-happil" class="anchor" href="#welcome-to-happil" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to Happil</h3>
 
 <p>In this project we aim to create a wrapper library around .NET Reflection.Emit API. The library should precisely fit two use cases of run-time type generation, which we have in mind:</p>
 
@@ -41,13 +41,17 @@
 <strong>Implementation</strong>: Given a compiled interface or an abstract class, generate its fully functional implementation at run-time.</li>
 <li>
 <strong>Interception</strong>: Decorate objects at run-time for the handling of cross-cutting concerns.</li>
-</ul><p>We also have two important qualities in mind:</p>
+</ul>
+
+<p>We also have two important qualities in mind:</p>
 
 <ul>
 <li>Being <strong>easy</strong>: provide happy path for the two use cases; make it hard to create an invalid program.</li>
 <li>Being <strong>lightweight</strong>: generated programs should contain no inherent overhead and consume as little CPU cycles and memory as possible, even in large applications having thousands of interfaces to implement or intercept.</li>
-</ul><h3>
-<a name="alternatives-to-happil" class="anchor" href="#alternatives-to-happil"><span class="octicon octicon-link"></span></a>Alternatives to Happil</h3>
+</ul>
+
+<h3>
+<a id="alternatives-to-happil" class="anchor" href="#alternatives-to-happil" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alternatives to Happil</h3>
 
 <p>The motivation to launch this project comes from our experience trying to get things done with existing alternatives, namely:</p>
 
@@ -59,6 +63,69 @@
 <li>
 <strong>FluentIL</strong> is a cute library which wraps the Reflection.Emit API. But again, the API it provides is too a low level, and it again makes it harder to achieve the two use cases.</li>
 </ul>
+
+<h2>
+<a id="show-me-the-money" class="anchor" href="#show-me-the-money" aria-hidden="true"><span class="octicon octicon-link"></span></a>Show Me The Money</h2>
+
+<p><strong>Three</strong> - given an interface of a data transfer object:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">interface</span> <span class="pl-en">ICustomer</span>
+{
+  <span class="pl-st">int</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+  <span class="pl-st">string</span> <span class="pl-en">FullName</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+  <span class="pl-st">string</span> <span class="pl-en">EmailAddress</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+}</pre></div>
+
+<p><strong>Two</strong> - plus an implementation convention:</p>
+
+<div class="highlight highlight-csharp"><pre>DeriveClassFrom&lt;<span class="pl-st">object</span>&gt;()
+  .ImplementInterface&lt;ICustomer&gt;()
+  .AllProperties().ImplementAutomatic();</pre></div>
+
+<p><strong>One</strong> - plus a decorator convention:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">DataContractDecorator</span> : <span class="pl-st">ClassDecoratorBase</span>
+{
+  <span class="pl-s">public</span> <span class="pl-s">override</span> <span class="pl-st">void</span> <span class="pl-en">OnClassType</span>(<span class="pl-st">ClassType</span> <span class="pl-vpf">classType</span>, <span class="pl-st">ClassWriterBase</span> <span class="pl-vpf">writer</span>)
+  {
+    writer.Attribute&lt;DataContractAttribute&gt;(values =&gt; values.Named(a =&gt; a.Namespace, <span class="pl-s1"><span class="pl-pds">"</span>http://mydto/customer<span class="pl-pds">"</span></span>));
+  }
+  <span class="pl-s">public</span> <span class="pl-s">override</span> <span class="pl-st">void</span> <span class="pl-en">OnProperty</span>(<span class="pl-st">PropertyMember</span> <span class="pl-vpf">member</span>, Func&lt;PropertyDecorationBuilder&gt; decorate)
+  {
+    decorate().Attribute&lt;DataMemberAttribute&gt;();
+  }
+}</pre></div>
+
+<p><strong>GO!</strong></p>
+
+<div class="highlight highlight-csharp"><pre>[DataContract(Namespace = <span class="pl-s1"><span class="pl-pds">"</span>http://mydto/customer<span class="pl-pds">"</span></span>)]
+<span class="pl-s">public</span> <span class="pl-s">sealed</span> <span class="pl-s">class</span> <span class="pl-en">CustomerDto</span> : <span class="pl-st">ICustomer</span>
+{
+    <span class="pl-s">private</span> <span class="pl-st">int</span> m_Id;
+    <span class="pl-s">private</span> <span class="pl-st">string</span> m_FullName;
+    <span class="pl-s">private</span> <span class="pl-st">string</span> m_EmailAddress;
+
+    [DataMember]
+    <span class="pl-s">public</span> <span class="pl-st">int</span> Id
+    {
+        <span class="pl-k">get</span> { <span class="pl-k">return</span> <span class="pl-c1">this</span>.m_Id; }
+        <span class="pl-k">set</span> { <span class="pl-c1">this</span>.m_Id = <span class="pl-k">value</span>; }
+    }
+
+    [DataMember]
+    <span class="pl-s">public</span> <span class="pl-st">string</span> FullName
+    {
+        <span class="pl-k">get</span> { <span class="pl-k">return</span> <span class="pl-c1">this</span>.m_FullName; }
+        <span class="pl-k">set</span> { <span class="pl-c1">this</span>.m_FullName = <span class="pl-k">value</span>; }
+    }
+
+    [DataMember]
+    <span class="pl-s">public</span> <span class="pl-st">string</span> EmailAddress
+    {
+        <span class="pl-k">get</span> { <span class="pl-k">return</span> <span class="pl-c1">this</span>.m_EmailAddress; }
+        <span class="pl-k">set</span> { <span class="pl-c1">this</span>.m_EmailAddress = <span class="pl-k">value</span>; }
+    }
+}</pre></div>
       </section>
     </div>
 
