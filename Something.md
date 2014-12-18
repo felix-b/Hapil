@@ -20,4 +20,3 @@ The principle states that:
 * One should not give up a good design just because it requires repetitive implementation of user-defined contracts; there is now **Hapil** to rescue.
 
 ## Show Me The Money
-
