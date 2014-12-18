@@ -1,4 +1,4 @@
-﻿---
+---
 title: Welcome to Hapil framework
 layout: post
 ---
@@ -9,7 +9,7 @@ Hello and thank you for your interest in the **Hapil** library.
 
 ## What is Hapil
 
-Hapil is a back-end framework for the [Convention over Implementation](ConventionOverImplementation) principle (or shortly, **```CoI```**).
+Hapil is a back-end framework for the [Convention over Implementation](ConventionOverImplementation) principle
 
 The principle states that:
 

@@ -1,4 +1,4 @@
-﻿---
+---
 title: Welcome to Hapil framework
 layout: post
 ---
