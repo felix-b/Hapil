@@ -1,4 +1,4 @@
-# Hapil, the CoI framework
+Hapil, the CoI Framework
 
 Hello and thank you for your interest in the **Hapil** library.
 
