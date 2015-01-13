@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hapil", "Hapil\Hapil.csproj", "{25E37CC2-7E18-4592-8102-DFBAA4DDD2A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hapil.UnitTests", "Hapil.UnitTests\Hapil.UnitTests.csproj", "{078FD18B-06C6-4F9D-8238-3704BA7387B5}"
@@ -16,6 +18,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hapil.Applied", "Hapil.Applied", "{EB2599FB-50A0-4F3E-AF14-993D4AC43CC4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hapil.Testing", "Hapil.Testing", "{9AC123B3-C15B-45B7-BE01-8426356943AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1259A5F3-1EA3-48EC-8BB5-9F28F3886520}"
+	ProjectSection(SolutionItems) = preProject
+		FelixB.Hapil.nuspec = FelixB.Hapil.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
