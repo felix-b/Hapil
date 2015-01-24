@@ -15,41 +15,41 @@ namespace Hapil.Writers
 	{
 		public ITemplatePropertySelector AllProperties(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.SelectIf(where));
+			return new DeclaredPropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.SelectIf(where));
 		}
 		public ITemplatePropertySelector ReadOnlyProperties(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.Where(p => p.CanRead && !p.CanWrite).SelectIf(where));
+			return new DeclaredPropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.Where(p => p.CanRead && !p.CanWrite).SelectIf(where));
 		}
 		public ITemplatePropertySelector ReadWriteProperties(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.Where(p => p.CanRead && p.CanWrite).SelectIf(where));
+			return new DeclaredPropertySelector<NA, NA, TypeTemplate.TProperty>(this, m_Members.ImplementableProperties.Where(p => p.CanRead && p.CanWrite).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IPropertySelector<TProperty> Property<TProperty>(Expression<Func<TBase, TProperty>> property)
 		{
-			return new PropertySelector<NA, NA, TProperty>(this, Helpers.ResolvePropertyFromLambda(property));
+			return new DeclaredPropertySelector<NA, NA, TProperty>(this, Helpers.ResolvePropertyFromLambda(property));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IPropertySelector<TProperty> Properties<TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<NA, NA, TProperty>(
+			return new DeclaredPropertySelector<NA, NA, TProperty>(
 				this,
 				m_Members.ImplementableProperties.OfSignature(typeof(TProperty)).SelectIf(where));
 		}
 		public IPropertySelector<TIndex, TProperty> This<TIndex, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<TIndex, NA, TProperty>(
+			return new DeclaredPropertySelector<TIndex, NA, TProperty>(
 				this,
 				m_Members.ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex)).SelectIf(where));
 		}
 		public IPropertySelector<TIndex1, TIndex2, TProperty> This<TIndex1, TIndex2, TProperty>(Func<PropertyInfo, bool> where = null)
 		{
-			return new PropertySelector<TIndex1, TIndex2, TProperty>(
+			return new DeclaredPropertySelector<TIndex1, TIndex2, TProperty>(
 				this,
 				m_Members.ImplementableProperties.OfSignature(typeof(TProperty), typeof(TIndex1), typeof(TIndex2)).SelectIf(where));
 		}
@@ -110,7 +110,7 @@ namespace Hapil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class PropertySelector<TIndex1, TIndex2, TProperty> : 
+		private abstract class PropertySelector<TIndex1, TIndex2, TProperty> : 
 			IPropertySelectorBase,
 			ITemplatePropertySelector,
 			IPropertySelector<TProperty>,
@@ -123,14 +123,7 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public PropertySelector(ImplementationClassWriter<TBase> classWriter, IEnumerable<PropertyInfo> selectedProperties)
-				: this(classWriter, selectedProperties.ToArray())
-			{
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public PropertySelector(ImplementationClassWriter<TBase> classWriter, params PropertyInfo[] selectedProperties)
+            public PropertySelector(ImplementationClassWriter<TBase> classWriter, params PropertyInfo[] selectedProperties)
 			{
 				m_OwnerClass = classWriter.OwnerClass;
 				m_ClassWriter = classWriter;
@@ -290,7 +283,7 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
+			protected ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
 				Func<PropertyMember, TWriter> writerFactory, 
 				FieldMember backingField = null)
 				where TWriter : PropertyWriterBase
@@ -300,25 +293,69 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
-				Func<PropertyMember, AttributeWriter> attributes,
-				Func<PropertyMember, TWriter> writerFactory,
-				FieldMember backingField = null)
-				where TWriter : PropertyWriterBase
-			{
-				var propertiesToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedProperties);
+		    protected abstract ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
+		        Func<PropertyMember, AttributeWriter> attributes,
+		        Func<PropertyMember, TWriter> writerFactory,
+		        FieldMember backingField = null) where TWriter : PropertyWriterBase;
 
-				foreach ( var property in propertiesToImplement )
-				{
-					var propertyMember = new PropertyMember(m_OwnerClass, property, backingField);
-					m_OwnerClass.AddMember(propertyMember);
-					
-					var writer = writerFactory(propertyMember);
-					writer.AddAttributes(attributes);
-				}
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            protected ClassType OwnerClass
+            {
+                get { return m_OwnerClass; }
+            }
 
-				return m_ClassWriter;
-			}
-		}
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected ImplementationClassWriter<TBase> ClassWriter
+            {
+                get { return m_ClassWriter; }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected PropertyInfo[] SelectedProperties
+            {
+                get { return m_SelectedProperties; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class DeclaredPropertySelector<TIndex1, TIndex2, TProperty> : PropertySelector<TIndex1, TIndex2, TProperty>
+	    {
+            public DeclaredPropertySelector(ImplementationClassWriter<TBase> classWriter, IEnumerable<PropertyInfo> selectedProperties)
+                : base(classWriter, selectedProperties.ToArray())
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public DeclaredPropertySelector(ImplementationClassWriter<TBase> classWriter, params PropertyInfo[] selectedProperties)
+                : base(classWriter, selectedProperties)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected override ImplementationClassWriter<TBase> DefinePropertyImplementations<TWriter>(
+                Func<PropertyMember, AttributeWriter> attributes,
+                Func<PropertyMember, TWriter> writerFactory,
+                FieldMember backingField = null)
+            {
+                var propertiesToImplement = base.OwnerClass.TakeNotImplementedMembers(base.SelectedProperties);
+
+                foreach ( var property in propertiesToImplement )
+                {
+                    var propertyMember = new PropertyMember(base.OwnerClass, property, backingField);
+                    base.OwnerClass.AddMember(propertyMember);
+
+                    var writer = writerFactory(propertyMember);
+                    writer.AddAttributes(attributes);
+                }
+
+                return base.ClassWriter;
+            }
+        }
 	}
 }

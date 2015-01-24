@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Hapil.Members
 {
-	public class VirtualMethodFactory : MethodFactoryBase
+	public class DeclaredMethodFactory : MethodFactoryBase
 	{
 		private readonly MethodInfo m_Declaration;
 		private readonly MethodBuilder m_MethodBuilder;
@@ -17,7 +17,7 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public VirtualMethodFactory(ClassType type, MethodInfo declaration)
+		public DeclaredMethodFactory(ClassType type, MethodInfo declaration)
 		{
 			m_Declaration = declaration;
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(

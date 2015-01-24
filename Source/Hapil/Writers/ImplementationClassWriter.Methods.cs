@@ -14,241 +14,241 @@ namespace Hapil.Writers
 	{
 		public ITemplateMethodSelector AllMethods(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, TypeMemberCache.Of<TBase>().ImplementableMethods.SelectIf(where));
+			return new DeclaredMethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, TypeMemberCache.Of<TBase>().ImplementableMethods.SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IVoidMethodSelector Method(Expression<Func<TBase, Action>> method)
 		{
-			return new MethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1> Method<TA1>(Expression<Func<TBase, Action<TA1>>> method)
 		{
-			return new MethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2> Method<TA1, TA2>(Expression<Func<TBase, Action<TA1, TA2>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3> Method<TA1, TA2, TA3>(Expression<Func<TBase, Action<TA1, TA2, TA3>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4> Method<TA1, TA2, TA3, TA4>(Expression<Func<TBase, Action<TA1, TA2, TA3, TA4>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5> Method<TA1, TA2, TA3, TA4, TA5>(Expression<Func<TBase, Action<TA1, TA2, TA3, TA4, TA5>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6> Method<TA1, TA2, TA3, TA4, TA5, TA6>(Expression<Func<TBase, Action<TA1, TA2, TA3, TA4, TA5, TA6>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(Expression<Func<TBase, Action<TA1, TA2, TA3, TA4, TA5, TA6, TA7>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(Expression<Func<TBase, Action<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>>> method)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IVoidMethodSelector Method(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1> Method<TA1>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2> Method<TA1, TA2>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3> Method<TA1, TA2, TA3>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4> Method<TA1, TA2, TA3, TA4>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5> Method<TA1, TA2, TA3, TA4, TA5>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6> Method<TA1, TA2, TA3, TA4, TA5, TA6>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, methods);
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, methods);
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, methods);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IFunctionMethodSelector<TReturn> Method<TReturn>(Expression<Func<TBase, Func<TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TReturn> Method<TA1, TReturn>(Expression<Func<TBase, Func<TA1, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TReturn> Method<TA1, TA2, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TReturn> Method<TA1, TA2, TA3, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn> Method<TA1, TA2, TA3, TA4, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TA4, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn> Method<TA1, TA2, TA3, TA4, TA5, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TA4, TA5, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn> Method<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn> Method<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>(Expression<Func<TBase, Func<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>>> method)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, Helpers.ResolveMethodFromLambda(method));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, Helpers.ResolveMethodFromLambda(method));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IFunctionMethodSelector<TReturn> Function<TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TReturn> Function<TA1, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TReturn> Function<TA1, TA2, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TReturn> Function<TA1, TA2, TA3, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn> Function<TA1, TA2, TA3, TA4, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn> Function<TA1, TA2, TA3, TA4, TA5, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn> Function<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn> Function<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, methods);
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn> Function<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>(params MethodInfo[] methods)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, methods);
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, methods);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IVoidMethodSelector VoidMethods(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1> VoidMethods<TA1>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2> VoidMethods<TA1, TA2>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3> VoidMethods<TA1, TA2, TA3>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4> VoidMethods<TA1, TA2, TA3, TA4>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5> VoidMethods<TA1, TA2, TA3, TA4, TA5>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6> VoidMethods<TA1, TA2, TA3, TA4, TA5, TA6>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7> VoidMethods<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7)).SelectIf(where));
 		}
 		public IVoidMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> VoidMethods<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8)).SelectIf(where));
+			return new DeclaredMethodSelector<NA, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, m_Members.ImplementableMethods.OfSignature(typeof(void), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IFunctionMethodSelector<TReturn> NonVoidMethods<TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TReturn> NonVoidMethods<TA1, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TReturn> NonVoidMethods<TA1, TA2, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TReturn> NonVoidMethods<TA1, TA2, TA3, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn> NonVoidMethods<TA1, TA2, TA3, TA4, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TReturn> NonVoidMethods<TA1, TA2, TA3, TA4, TA5, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, NA, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TReturn> NonVoidMethods<TA1, TA2, TA3, TA4, TA5, TA6, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, NA, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn> NonVoidMethods<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, NA>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7)).SelectIf(where));
 		}
 		public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn> NonVoidMethods<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8, TReturn>(Func<MethodInfo, bool> where = null)
 		{
-			return new MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8)).SelectIf(where));
+			return new DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(this, m_Members.ImplementableMethods.OfSignature(typeof(TReturn), typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8)).SelectIf(where));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ namespace Hapil.Writers
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> :
+		private abstract class MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> :
 			IMethodSelectorBase,
 			ITemplateMethodSelector,
 			IVoidMethodSelector,
@@ -398,14 +398,7 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public MethodSelector(ImplementationClassWriter<TBase> classWriter, IEnumerable<MethodInfo> selectedMethods)
-				: this(classWriter, selectedMethods.ToArray())
-			{
-			}
-
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-			public MethodSelector(ImplementationClassWriter<TBase> classWriter, params MethodInfo[] selectedMethods)
+			protected MethodSelector(ImplementationClassWriter<TBase> classWriter, params MethodInfo[] selectedMethods)
 			{
 				m_OwnerClass = classWriter.OwnerClass;
 				m_ClassWriter = classWriter;
@@ -755,7 +748,7 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(Func<MethodMember, TWriter> writerFactory)
+			protected ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(Func<MethodMember, TWriter> writerFactory)
 				where TWriter : MethodWriterBase
 			{
 				return DefineMethodImplementations<TWriter>(attributeWriterFactory: null, writerFactory: writerFactory);
@@ -763,26 +756,79 @@ namespace Hapil.Writers
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			private ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(
+		    protected abstract ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(
+		        Func<MethodMember, AttributeWriter> attributeWriterFactory,
+		        Func<MethodMember, TWriter> writerFactory) where TWriter : MethodWriterBase;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            protected ClassType OwnerClass
+            {
+                get
+                {
+                    return m_OwnerClass;
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected ImplementationClassWriter<TBase> ClassWriter
+            {
+                get
+                {
+                    return m_ClassWriter;
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected MethodInfo[] SelectedMethods
+            {
+                get
+                {
+                    return m_SelectedMethods;
+                }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private class DeclaredMethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8> :
+	        MethodSelector<TReturn, TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>
+	    {
+	        public DeclaredMethodSelector(ImplementationClassWriter<TBase> classWriter, IEnumerable<MethodInfo> selectedMethods)
+	            : base(classWriter, selectedMethods.ToArray())
+	        {
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public DeclaredMethodSelector(ImplementationClassWriter<TBase> classWriter, params MethodInfo[] selectedMethods)
+	            : base(classWriter, selectedMethods)
+	        {
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            protected override ImplementationClassWriter<TBase> DefineMethodImplementations<TWriter>(
 				Func<MethodMember, AttributeWriter> attributeWriterFactory,
 				Func<MethodMember, TWriter> writerFactory) 
-				where TWriter : MethodWriterBase
 			{
-				var methodsToImplement = m_OwnerClass.TakeNotImplementedMembers(m_SelectedMethods);
+                var methodsToImplement = base.OwnerClass.TakeNotImplementedMembers(base.SelectedMethods);
 
 				foreach ( var method in methodsToImplement )
 				{
-					var methodFactory = new VirtualMethodFactory(m_OwnerClass, method);
-					var methodMember = new MethodMember(m_OwnerClass, methodFactory);
-					
-					m_OwnerClass.AddMember(methodMember);
+                    var methodFactory = new DeclaredMethodFactory(base.OwnerClass, method);
+                    var methodMember = new MethodMember(base.OwnerClass, methodFactory);
+
+                    base.OwnerClass.AddMember(methodMember);
 					
 					var writer = writerFactory(methodMember);
 					writer.AddAttributes(attributeWriterFactory);
 				}
 
-				return m_ClassWriter;
+                return base.ClassWriter;
 			}
-		}
+	    }
 	}
 }

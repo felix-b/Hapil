@@ -50,6 +50,7 @@
     <Compile Include="CompositeConvention.cs" />
     <Compile Include="ConventionObjectFactory.cs" />
     <Compile Include="Members\NestedClassType.cs" />
+    <Compile Include="Members\NewMethodFactory.cs" />
     <Compile Include="ObjectFactoryContext.cs" />
     <Compile Include="ImplementationConvention.cs" />
     <Compile Include="IObjectFactoryConvention.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="Members\PropertyMember.cs" />
     <Compile Include="Members\RealConstructorMethodFactory.cs" />
     <Compile Include="Members\TypeMemberCache.cs" />
-    <Compile Include="Members\VirtualMethodFactory.cs" />
+    <Compile Include="Members\DeclaredMethodFactory.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="Operands\Argument.cs" />
     <Compile Include="Operands\Constant.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Writers\AutomaticPropertyWriter.cs" />
     <Compile Include="Writers\ConstructorWriter.cs" />
     <Compile Include="Writers\DecoratingConstructorWriter.cs" />
+    <Compile Include="Writers\ImplementationClassWriter.NewMembers.cs" />
     <Compile Include="Writers\PropagatingEventWriter.cs" />
     <Compile Include="Writers\PropagatingPropertyWriter.cs" />
     <Compile Include="Writers\DecoratingClassWriter.cs" />

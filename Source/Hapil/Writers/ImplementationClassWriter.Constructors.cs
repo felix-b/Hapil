@@ -341,5 +341,5 @@ namespace Hapil.Writers
 
 			return fieldMembers;
 		}
-	}
+    }
 }

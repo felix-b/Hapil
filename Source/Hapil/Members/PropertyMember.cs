@@ -10,7 +10,10 @@ namespace Hapil.Members
 {
 	public class PropertyMember : MemberBase
 	{
-		private readonly PropertyInfo m_Declaration;
+        private readonly string m_PropertyName;
+        private readonly Type m_PropertyType;
+        private readonly Type[] m_IndexParameterTypes;
+        private readonly PropertyInfo m_Declaration;
 		private readonly PropertyBuilder m_PropertyBuilder;
 		private readonly List<PropertyWriterBase> m_Writers;
 		private readonly MethodMember m_GetterMethod;
@@ -22,19 +25,23 @@ namespace Hapil.Members
 		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField = null)
 			: base(ownerClass, declaration.Name)
 		{
-			m_Writers = new List<PropertyWriterBase>();
+            m_PropertyName = declaration.Name;
+            m_PropertyType = declaration.PropertyType;
+            m_IndexParameterTypes = declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray();
+            
+            m_Writers = new List<PropertyWriterBase>();
 			m_Declaration = declaration;
 			m_PropertyBuilder = ownerClass.TypeBuilder.DefineProperty(
 				ownerClass.TakeMemberName(declaration.Name, mustUseThisName: true),
 				declaration.Attributes,
 				declaration.PropertyType,
-				declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray());
+                m_IndexParameterTypes);
 
 			var getterDeclaration = declaration.GetGetMethod();
 
 			if ( getterDeclaration != null )
 			{
-				m_GetterMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, getterDeclaration));
+				m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration));
 				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 			}
 
@@ -42,14 +49,42 @@ namespace Hapil.Members
 
 			if ( setterDeclaration != null )
 			{
-				m_SetterMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, setterDeclaration));
+				m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration));
 				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
 			}
 
 			m_BackingField = backingField;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public PropertyMember(ClassType ownerClass, string propertyName, Type propertyType, FieldMember backingField = null, Type[] indexerTypes = null)
+            : base(ownerClass, propertyName)
+        {
+            m_PropertyName = propertyName;
+            m_PropertyType = propertyType;
+            m_IndexParameterTypes = (indexerTypes ?? Type.EmptyTypes);
+
+            m_Writers = new List<PropertyWriterBase>();
+            m_Declaration = null;
+            m_PropertyBuilder = ownerClass.TypeBuilder.DefineProperty(
+                ownerClass.TakeMemberName(propertyName, mustUseThisName: true),
+                PropertyAttributes.None,
+                propertyType,
+                m_IndexParameterTypes);
+
+            var getterSignature = new MethodSignature(isStatic: false, isPublic: true, returnType: propertyType);
+            m_GetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "get_" + propertyName, getterSignature));
+            m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
+
+            var setterSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: new[] { propertyType });
+            m_SetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "set_" + propertyName, setterSignature));
+            m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
+
+            m_BackingField = backingField;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//TODO: refactor to remove code duplication with same method in writer class
 		internal void AddAttributes(Func<PropertyMember, AttributeWriter> attributeWriterFactory)
@@ -116,7 +151,7 @@ namespace Hapil.Members
 			{
 				if ( m_BackingField == null )
 				{
-					m_BackingField = new FieldMember(OwnerClass, "m_" + m_Declaration.Name, m_Declaration.PropertyType);
+					m_BackingField = new FieldMember(OwnerClass, "m_" + m_PropertyName, m_PropertyType);
 					OwnerClass.AddMember(m_BackingField);
 				}
 				
@@ -180,7 +215,7 @@ namespace Hapil.Members
 		{
 			get
 			{
-				return m_Declaration.PropertyType;
+				return m_PropertyType;
 			}
 		}
 
@@ -188,21 +223,19 @@ namespace Hapil.Members
 
 		internal override IDisposable CreateTypeTemplateScope()
 		{
-			var indexParameters = m_Declaration.GetIndexParameters();
-
-			switch ( indexParameters.Length )
+			switch ( m_IndexParameterTypes.Length )
 			{
 				case 0:
-					return TypeTemplate.CreateScope<TypeTemplate.TProperty>(m_Declaration.PropertyType);
+					return TypeTemplate.CreateScope<TypeTemplate.TProperty>(m_PropertyType);
 				case 1:
 					return TypeTemplate.CreateScope(
-						typeof(TypeTemplate.TProperty), m_Declaration.PropertyType,
-						typeof(TypeTemplate.TIndex1), indexParameters[0].ParameterType);
+						typeof(TypeTemplate.TProperty), m_PropertyType,
+						typeof(TypeTemplate.TIndex1), m_IndexParameterTypes[0]);
 				case 2:
 					return TypeTemplate.CreateScope(
-						typeof(TypeTemplate.TProperty), m_Declaration.PropertyType,
-						typeof(TypeTemplate.TIndex1), indexParameters[0].ParameterType,
-						typeof(TypeTemplate.TIndex2), indexParameters[1].ParameterType);
+						typeof(TypeTemplate.TProperty), m_PropertyType,
+                        typeof(TypeTemplate.TIndex1), m_IndexParameterTypes[0],
+                        typeof(TypeTemplate.TIndex2), m_IndexParameterTypes[1]);
 				default:
 					throw new NotSupportedException("Properties with more than 2 indexer parameters are not supported.");
 			}

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AncestorRepository.cs" />
+    <Compile Include="ArbitraryMemberTests.cs" />
     <Compile Include="Assumptions\CompiledExamples.cs" />
     <Compile Include="Assumptions\CSharpTests.cs" />
     <Compile Include="AttributeTests.cs" />

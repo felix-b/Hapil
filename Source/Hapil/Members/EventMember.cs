@@ -42,10 +42,10 @@ namespace Hapil.Members
 				declaration.Attributes,
 				declaration.EventHandlerType);
 
-			m_AddMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, declaration.GetAddMethod()));
+			m_AddMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetAddMethod()));
 			m_EventBuilder.SetAddOnMethod((MethodBuilder)m_AddMethod.MethodFactory.Builder);
 
-			m_RemoveMethod = new MethodMember(ownerClass, new VirtualMethodFactory(ownerClass, declaration.GetRemoveMethod()));
+			m_RemoveMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetRemoveMethod()));
 			m_EventBuilder.SetRemoveOnMethod((MethodBuilder)m_RemoveMethod.MethodFactory.Builder);
 		}
 
