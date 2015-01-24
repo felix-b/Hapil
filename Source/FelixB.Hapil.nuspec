@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>FelixB.Hapil</id>
-        <version>0.9.1</version>
+        <version>0.9.1.1</version>
         <title>Hapil</title>
         <authors>Felix Berman</authors>
         <licenseUrl>https://github.com/felix-b/Hapil/blob/master/LICENSE</licenseUrl>
@@ -14,7 +14,7 @@
 - Aspect-Oriented Programming, through decoration
 - [planned] Subject-Oriented Programming, via mix-ins
 - [planned] Duck Typing</description>
-        <summary>A .NET dynamic type library, which serves a back-end for the Convention-over-Implementation paradigm</summary>
+        <summary>A .NET dynamic type library, which serves a back-end implementor of the Convention-over-Implementation approach</summary>
         <copyright>Copyright © 2013 Felix Berman</copyright>
         <tags>CoI IL MSIL Dynamic AOP Aspect Mix-in Duck</tags>
     </metadata>
