@@ -5,8 +5,8 @@ Bismuth [closed]
 Cesium [closed]
 Dubnium [closed]
 Europium [closed]
-Fermium [CURRENT]
-Gold
+Fermium [closed]
+Gold [CURRENT]
 Helium
 Iron
 Jodine
