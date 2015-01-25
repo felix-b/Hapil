@@ -62,22 +62,22 @@ namespace Hapil.Members
             : base(ownerClass, propertyName)
         {
             m_PropertyName = propertyName;
-            m_PropertyType = propertyType;
-            m_IndexParameterTypes = (indexerTypes ?? Type.EmptyTypes);
+            m_PropertyType = TypeTemplate.Resolve(propertyType);
+            m_IndexParameterTypes = (indexerTypes ?? Type.EmptyTypes).Select(t => TypeTemplate.Resolve(t)).ToArray();
 
             m_Writers = new List<PropertyWriterBase>();
             m_Declaration = null;
             m_PropertyBuilder = ownerClass.TypeBuilder.DefineProperty(
                 ownerClass.TakeMemberName(propertyName, mustUseThisName: true),
                 PropertyAttributes.None,
-                propertyType,
+                m_PropertyType,
                 m_IndexParameterTypes);
 
-            var getterSignature = new MethodSignature(isStatic: false, isPublic: true, returnType: propertyType);
+            var getterSignature = new MethodSignature(isStatic: false, isPublic: true, returnType: m_PropertyType);
             m_GetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "get_" + propertyName, getterSignature));
             m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 
-            var setterSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: new[] { propertyType });
+            var setterSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: new[] { m_PropertyType });
             m_SetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "set_" + propertyName, setterSignature));
             m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
 

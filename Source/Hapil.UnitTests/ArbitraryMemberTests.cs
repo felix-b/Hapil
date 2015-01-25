@@ -135,5 +135,6 @@ namespace Hapil.UnitTests
             Assert.That(myIntValue, Is.EqualTo(123));
             Assert.That(myStringValue, Is.EqualTo("ABC"));
         }
+
     }
 }

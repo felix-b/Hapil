@@ -291,7 +291,7 @@ namespace Hapil
 			}
 			else if ( !toType.IsValueType || toType.IsNullableValueType() )
 			{
-				if ( !toType.IsAssignableFrom(fromType) )
+				if ( toType.GetType().Name.Contains("Builder") || !toType.IsAssignableFrom(fromType) )
 				{
 					il.Emit(OpCodes.Castclass, toType);
 				}
