@@ -15,7 +15,7 @@ namespace Hapil.Members
 		private const TypeAttributes DefaultTypeAtributes =
 			TypeAttributes.Public |
 			TypeAttributes.Class |
-			TypeAttributes.Sealed |
+		    //TypeAttributes.Sealed |
 			TypeAttributes.AutoClass |
 			TypeAttributes.AnsiClass;
 

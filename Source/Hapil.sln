@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1259A5F3-1EA3-48EC-8BB5-9F28F3886520}"
 	ProjectSection(SolutionItems) = preProject
 		FelixB.Hapil.nuspec = FelixB.Hapil.nuspec
+		..\Hapil.snk = ..\Hapil.snk
 	EndProjectSection
 EndProject
 Global
