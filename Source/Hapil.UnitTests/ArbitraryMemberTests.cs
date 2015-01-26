@@ -136,5 +136,149 @@ namespace Hapil.UnitTests
             Assert.That(myStringValue, Is.EqualTo("ABC"));
         }
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanAddNewPropertiesByTemaplte()
+        {
+            //-- Arrange
+
+            var propertiesToAdd = new Dictionary<string, Type> {
+                { "MyInt", typeof(int) },
+                { "MyString", typeof(string) }
+            };
+
+            var classWriter = DeriveClassFrom<AncestorRepository.LoggingBase>();
+            classWriter.DefaultConstructor();
+
+            //-- Act
+
+            propertiesToAdd.ForEach(kvp => {
+                using ( TT.CreateScope<TT.TProperty>(actualType: kvp.Value) )
+                {
+                    classWriter.NewVirtualWritableProperty<TT.TProperty>(propertyName: kvp.Key).Implement(
+                        getter: p => p.Get(m => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog, m.Const(p.OwnerProperty.Name + ".Get()"));
+                            m.Return(p.BackingField);
+                        }),
+                        setter: p => p.Set((m, value) => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog,
+                                m.Const(p.OwnerProperty.Name + ".Set(value=") +
+                                value.FuncToString() +
+                                m.Const(")"));
+                            p.BackingField.Assign(value);
+                        })
+                    );
+                }
+            });
+            
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            //-- Assert
+
+            obj.MyInt = 123;
+            obj.MyString = "ABC";
+
+            var myIntValue = obj.MyInt;
+            var myStringValue = obj.MyString;
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] {
+                "MyInt.Set(value=123)",
+                "MyString.Set(value=ABC)", 
+                "MyInt.Get()",
+                "MyString.Get()"
+            }));
+
+            Assert.That(myIntValue, Is.EqualTo(123));
+            Assert.That(myStringValue, Is.EqualTo("ABC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test, Ignore("Failing - WIP")]
+        public void CanAddNewCollectionPropertiesByItemTemaplate()
+        {
+            //-- Arrange
+
+            var propertiesToAdd = new Dictionary<string, Type> {
+                { "MyIntList", typeof(int) },
+                { "MyStringList", typeof(string) }
+            };
+
+            var classWriter = DeriveClassFrom<AncestorRepository.LoggingBase>();
+            classWriter.DefaultConstructor();
+
+            //-- Act
+
+            propertiesToAdd.ForEach(kvp => {
+                using ( TT.CreateScope<TT.TItem>(actualType: kvp.Value) )
+                {
+                    classWriter.NewVirtualWritableProperty<List<TT.TItem>>(propertyName: kvp.Key).Implement(
+                        getter: p => p.Get(m => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog, m.Const(p.OwnerProperty.Name + ".Get()"));
+                            m.Return(p.BackingField);
+                        }),
+                        setter: p => p.Set((m, value) => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog,
+                                m.Const(p.OwnerProperty.Name + ".Set(value=") +
+                                m.Iif(value != null, m.Const("[") + value.Count().FuncToString() + m.Const(" items]"), m.Const("null")) +
+                                m.Const(")"));
+                            p.BackingField.Assign(value);
+                        })
+                    );
+                }
+            });
+
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            //-- Assert
+
+            obj.MyIntList = null;
+            obj.MyIntList = new List<int> { 1, 3, 5 };
+            obj.MyStringList = new List<string> { "A", "B" };
+
+            var myIntList = obj.MyIntList;
+            var myStringList = obj.MyStringList;
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] {
+                "MyIntList.Set(value=null)",
+                "MyIntList.Set(value=[3 items])",
+                "MyStringList.Set(value=[2 items])", 
+                "MyIntList.Get()",
+                "MyStringList.Get()"
+            }));
+
+            Assert.That(myIntList, Is.EqualTo(new[] { 1, 2, 3 }));
+            Assert.That(myStringList, Is.EqualTo(new[] { "A", "B" }));
+        }
     }
 }
+
+#if false
+
+            //-- Arrange
+
+            var propertiesToAdd = new Dictionary<string, Type> {
+                { "MyInt", typeof(int), },
+                { "MyString", typeof(string) }
+            };
+
+            var classWriter = DeriveClassFrom<AncestorRepository.LoggingBase>();
+            classWriter.DefaultConstructor();
+
+            var propertyFields = new Dictionary<string, Field<TT.TProperty>>();
+
+            //-- Act
+
+            propertiesToAdd.ForEach(kvp => {
+                using ( TT.CreateScope<TT.TItem, TT.TProperty>(kvp.Value, typeof(List<>).MakeGenericType(kvp.Value)) )
+                {
+                    using ( TT.CreateScope<TT.TItem>(kvp.Value) )
+                    {
+                        classWriter.NewVirtualWritableProperty<TT.TProperty>()
+                    }
+                }
+            });
+
+
+#endif

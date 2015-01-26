@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Hapil
 {
-	internal static class EnumerableExtensions
+	public static class EnumerableExtensions
 	{
 		public static IEnumerable<T> SelectIf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
 		{

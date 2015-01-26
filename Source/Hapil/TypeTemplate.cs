@@ -113,7 +113,16 @@ namespace Hapil
 			return new Scope(typeof(TTemplate), actualType);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static IDisposable CreateScope<TTemplate1, TTemplate2>(Type actualType1, Type actualType2)
+            where TTemplate1 : TemplateTypeBase<TTemplate1>
+            where TTemplate2 : TemplateTypeBase<TTemplate2>
+        {
+            return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal static IDisposable CreateScope(params Type[] templateActualTypePairs)
 		{
