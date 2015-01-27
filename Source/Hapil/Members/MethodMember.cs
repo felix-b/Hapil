@@ -17,7 +17,8 @@ namespace Hapil.Members
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly List<ILocal> m_Locals;
 		private readonly TransparentMethodWriter m_TransparentWriter;
-		private StatementBlock m_Statements;
+        private IDisposable m_EffectiveTypeTemplates;
+        private StatementBlock m_Statements;
 		private MethodFactoryBase m_MethodFactory;
 		private Type[] m_CachedTemplateTypePairs = null;
 		private bool m_LocalsDeclared = false;
@@ -40,6 +41,7 @@ namespace Hapil.Members
 			m_Statements = new StatementBlock();
 			m_Locals = new List<ILocal>();
 			m_TransparentWriter = new TransparentMethodWriter(this);
+		    m_EffectiveTypeTemplates = TypeTemplate.Save();
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -285,41 +287,47 @@ namespace Hapil.Members
 
 		internal override void Write()
 		{
-			var writersArray = m_Writers.ToArray();
+            using ( TypeTemplate.Restore(m_EffectiveTypeTemplates) )
+		    {
+		        var writersArray = m_Writers.ToArray();
 
-			using ( new StatementScope(OwnerClass, m_TransparentWriter, m_Statements) )
-			{
-				foreach ( var writer in writersArray )
-				{
-					writer.Flush();
-				}
-			}
+		        using ( new StatementScope(OwnerClass, m_TransparentWriter, m_Statements) )
+		        {
+		            foreach ( var writer in writersArray )
+		            {
+		                writer.Flush();
+		            }
+		        }
 
-			new AnonymousMethodWriter(this).Flush();
-		}
+		        new AnonymousMethodWriter(this).Flush();
+            }
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal override void Compile()
 		{
-			var il = m_MethodFactory.GetILGenerator();
+		    using ( TypeTemplate.Restore(m_EffectiveTypeTemplates) )
+		    {
+		        var il = m_MethodFactory.GetILGenerator();
 
-			foreach ( var local in m_Locals )
-			{
-				local.Declare(il);
-			}
+		        foreach ( var local in m_Locals )
+		        {
+		            local.Declare(il);
+		        }
 
-			m_LocalsDeclared = true;
+		        m_LocalsDeclared = true;
 
-			foreach ( var statement in m_Statements )
-			{
-				statement.Emit(il);
-			}
+		        foreach ( var statement in m_Statements )
+		        {
+		            statement.Emit(il);
+		        }
 
-			if ( Signature.IsVoid )
-			{
-				il.Emit(OpCodes.Ret);
-			}
+		        if ( Signature.IsVoid )
+		        {
+		            il.Emit(OpCodes.Ret);
+		        }
+		    }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Operands;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -1171,6 +1173,31 @@ namespace Hapil.UnitTests
 
 			Assert.That(result, Is.EqualTo(new[] { "", "A", "BB" }));
 		}
+
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestTemplateElementType()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TItem>(typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .NewVirtualFunction<IEnumerable<TT.TItem>, TT.TItem>("FindMax", "source").Implement((m, coll) => m.Return(coll.Max()));
+            }
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = obj.FindMax(new[] { "A", "B", "C", "B", "A" });
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("C"));
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

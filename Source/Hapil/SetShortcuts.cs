@@ -111,7 +111,11 @@ namespace Hapil
 
 		private static ReflectionCache GetReflectionCache<T>()
 		{
-			return s_ReflectionCacheByItemType.GetOrAdd(typeof(T), new ReflectionCache<T>());
+            var resolvedType = TypeTemplate.Resolve<T>();
+
+            return s_ReflectionCacheByItemType.GetOrAdd(
+                resolvedType,
+                t => (ReflectionCache)Activator.CreateInstance(typeof(ReflectionCache<>).MakeGenericType(t)));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------

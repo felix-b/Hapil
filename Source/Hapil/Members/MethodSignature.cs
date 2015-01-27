@@ -42,7 +42,7 @@ namespace Hapil.Members
 
 		public MethodSignature(bool isStatic, bool isPublic, Type[] argumentTypes = null, string[] argumentNames = null, Type returnType = null)
 		{
-			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes);
+			var safeArgumentTypes = (argumentTypes ?? Type.EmptyTypes).Select(TypeTemplate.Resolve).ToArray();
 
 			ArgumentName = (argumentNames ?? safeArgumentTypes.Select((type, index) => "arg" + index).ToArray());
 			ArgumentType = new Type[safeArgumentTypes.Length];
@@ -59,7 +59,7 @@ namespace Hapil.Members
 			}
 
 			ArgumentCount = safeArgumentTypes.Length;
-			ReturnType = returnType;
+			ReturnType = TypeTemplate.Resolve(returnType);
 			IsVoid = (returnType == null || returnType == typeof(void));
 			IsStatic = isStatic;
 			IsPublic = isPublic;

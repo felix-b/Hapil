@@ -6,6 +6,7 @@ using System.Text;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
 using Hapil;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -308,5 +309,36 @@ namespace Hapil.UnitTests
 
 			CollectionAssert.AreEquivalent(new[] { "AAA", "BBB", "CCC", "DDD", "ZZZ" }, result);
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestTemplateElementType()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TItem>(typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .NewVirtualFunction<ISet<TT.TItem>, TT.TItem>("RemoveMin", "set").Implement((m, set) => {
+                        var minValue = m.Local<TT.TItem>(initialValue: set.Min());
+                        set.ExceptWith(m.NewArray<TT.TItem>(values: minValue));
+                        m.Return(minValue);
+                    });
+            }
+
+            var testSet = new HashSet<string>(new[] { "A", "B", "C" });
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = obj.RemoveMin(testSet);
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("A"));
+            Assert.That(testSet, Is.EqualTo(new[] { "B", "C" }));
+        }
+    }
 }

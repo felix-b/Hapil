@@ -195,7 +195,7 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Test, Ignore("Failing - WIP")]
+        [Test]
         public void CanAddNewCollectionPropertiesByItemTemaplate()
         {
             //-- Arrange
@@ -248,7 +248,7 @@ namespace Hapil.UnitTests
                 "MyStringList.Get()"
             }));
 
-            Assert.That(myIntList, Is.EqualTo(new[] { 1, 2, 3 }));
+            Assert.That(myIntList, Is.EqualTo(new[] { 1, 3, 5 }));
             Assert.That(myStringList, Is.EqualTo(new[] { "A", "B" }));
         }
     }

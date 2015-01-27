@@ -109,8 +109,13 @@ namespace Hapil
 
 		private static ReflectionCache GetReflectionCache<TKey, TValue>()
 		{
-			var cacheKey = new Tuple<Type, Type>(typeof(TKey), typeof(TValue));
-			return s_ReflectionCacheByKeyValueType.GetOrAdd(cacheKey, new ReflectionCache<TKey, TValue>());
+            var resolvedKeyType = TypeTemplate.Resolve<TKey>();
+            var resolvedValueType = TypeTemplate.Resolve<TValue>();
+            var cacheKey = new Tuple<Type, Type>(resolvedKeyType, resolvedValueType);
+
+            return s_ReflectionCacheByKeyValueType.GetOrAdd(
+                cacheKey,
+                key => (ReflectionCache)Activator.CreateInstance(typeof(ReflectionCache<,>).MakeGenericType(key.Item1, key.Item2)));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

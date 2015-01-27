@@ -21,7 +21,7 @@ namespace Hapil
 				typeof(TBase), typeof(TInterface), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
 				typeof(TReturn), typeof(TProperty),
 				typeof(TArgument), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
-				typeof(TIndex1), typeof(TIndex2), typeof(TItem),
+                typeof(TIndex1), typeof(TIndex2), typeof(TItem), typeof(TKey), typeof(TValue),
 				typeof(TEventHandler), typeof(TEventArgs),
 				typeof(TField),
 				typeof(TClosure)
@@ -67,7 +67,7 @@ namespace Hapil
 
 		public static Type Resolve(Type type)
 		{
-			if ( IsTemplateType(type) )
+			if ( type != null && IsTemplateType(type) )
 			{
 				return Scope.ValidateCurrent().Resolve(type);
 			}
@@ -154,7 +154,22 @@ namespace Hapil
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal static IDisposable Save()
+        {
+            return Scope.Save();
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal static IDisposable Restore(IDisposable saved)
+	    {
+            Scope.Restore((Scope)saved);
+            return saved;
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static void ValidateTemplateType(Type templateType)
 		{
@@ -200,7 +215,9 @@ namespace Hapil
 		public class TIndex1 : TemplateTypeBase<TIndex1> { }
 		public class TIndex2 : TemplateTypeBase<TIndex2> { }
 		public class TItem : TemplateTypeBase<TItem> { }
-		public class TEventHandler : TemplateTypeBase<TEventHandler> { }
+        public class TKey : TemplateTypeBase<TKey> { }
+        public class TValue : TemplateTypeBase<TValue> { }
+        public class TEventHandler : TemplateTypeBase<TEventHandler> { }
 		public class TEventArgs : TemplateTypeBase<TEventArgs> { }
 		public class TField : TemplateTypeBase<TField> { }
 		public class TClosure : TemplateTypeBase<TClosure> { }
@@ -209,10 +226,10 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private class Scope : IDisposable
+        private class Scope : IDisposable
 		{
-			private readonly Scope m_Outer;
-			private readonly Dictionary<Type, Type> m_ActualTypesByTemplates;
+            private readonly Dictionary<Type, Type> m_ActualTypesByTemplates;
+            private Scope m_Outer;
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -233,6 +250,13 @@ namespace Hapil
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Scope(Dictionary<Type, Type> actualTypesByTemplates)
+            {
+                m_ActualTypesByTemplates = actualTypesByTemplates;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			#region IDisposable Members
 
@@ -287,7 +311,7 @@ namespace Hapil
 				}
 			}
 
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			private Type TryResolveGenericType(Type type)
 			{
@@ -330,6 +354,34 @@ namespace Hapil
 
 				return currentScope;
 			}
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public static Scope Save()
+            {
+                var effectiveTemplates = new Dictionary<Type, Type>();
+
+                for ( var scope = s_Current ; scope != null ; scope = scope.m_Outer )
+                {
+                    foreach ( var template in scope.m_ActualTypesByTemplates )
+                    {
+                        effectiveTemplates[template.Key] = template.Value;
+                    }
+                }
+
+                return new Scope(effectiveTemplates);
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public static void Restore(Scope saved)
+            {
+                if ( saved != null )
+                {
+                    saved.m_Outer = s_Current;
+                    s_Current = saved;
+                }
+            }
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 

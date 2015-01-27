@@ -765,7 +765,11 @@ namespace Hapil
 
 		private static ReflectionCache GetReflectionCache<TSource>()
 		{
-			return s_ReflectionCacheByItemType.GetOrAdd(typeof(TSource), new ReflectionCache<TSource>());
+            var resolvedType = TypeTemplate.Resolve<TSource>();
+
+            return s_ReflectionCacheByItemType.GetOrAdd(
+                resolvedType,
+                t => (ReflectionCache)Activator.CreateInstance(typeof(ReflectionCache<>).MakeGenericType(t)));
 		}
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -877,7 +881,9 @@ namespace Hapil
 				LastWithPredicate = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.Last(item => true));
 				LastOrDefault = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.LastOrDefault());
 				LastOrDefaultWithPredicate = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.LastOrDefault(item => true));
-				Reverse = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>>>>(source => source.Reverse());
+                Min = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.Min());
+                Max = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.Max());
+                Reverse = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>>>>(source => source.Reverse());
 				SequenceEqual = GetMethodInfo<Expression<Func<IEnumerable<TSource>, IEnumerable<TSource>, bool>>>((left, right) => left.SequenceEqual(right));
 				Single = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.Single());
 				SingleWithPredicate = GetMethodInfo<Expression<Func<IEnumerable<TSource>, TSource>>>(source => source.Single(item => true));
@@ -943,36 +949,26 @@ namespace Hapil
 			{
 				if ( typeof(TSource) == typeof(Int32) )
 				{
-					Min = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Min());
-					Max = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Max());
 					Average = GetMethodInfo<Expression<Func<IEnumerable<Int32>,	Double>>>(source => source.Average());
 					Sum = GetMethodInfo<Expression<Func<IEnumerable<Int32>, Int32>>>(source => source.Sum());
 				}
 				else if ( typeof(TSource) == typeof(Int64) )
 				{
-					Min = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Min());
-					Max = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Max());
 					Average = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Double>>>(source => source.Average());
 					Sum = GetMethodInfo<Expression<Func<IEnumerable<Int64>, Int64>>>(source => source.Sum());
 				}
 				else if ( typeof(TSource) == typeof(Single) )
 				{
-					Min = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Min());
-					Max = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Max());
 					Average = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Average());
 					Sum = GetMethodInfo<Expression<Func<IEnumerable<Single>, Single>>>(source => source.Sum());
 				}
 				else if ( typeof(TSource) == typeof(Decimal) )
 				{
-					Min = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Min());
-					Max = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Max());
 					Average = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Average());
 					Sum = GetMethodInfo<Expression<Func<IEnumerable<Decimal>, Decimal>>>(source => source.Sum());
 				}
 				else if ( typeof(TSource) == typeof(Double) )
 				{
-					Min = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Min());
-					Max = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Max());
 					Average = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Average());
 					Sum = GetMethodInfo<Expression<Func<IEnumerable<Double>, Double>>>(source => source.Sum());
 				}

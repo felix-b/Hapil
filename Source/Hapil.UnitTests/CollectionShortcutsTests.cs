@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Hapil.Operands;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -392,5 +395,29 @@ namespace Hapil.UnitTests
 
 			Assert.That(result, Is.EqualTo(3));
 		}
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestItemTypeTemplate()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TItem>(typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .NewVirtualFunction<ICollection<TT.TItem>, int>("Count", "coll").Implement((m, coll) => m.Return(coll.Count()));
+            }
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = obj.Count(new[] { "A", "B", "C" });
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo(3));
+        }
+    }
 }

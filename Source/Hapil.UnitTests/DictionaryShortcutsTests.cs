@@ -5,6 +5,7 @@ using System.Text;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
 using Hapil;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -294,5 +295,33 @@ namespace Hapil.UnitTests
 
 			Assert.That(result, Is.EqualTo(new[] { "ABC", "DEF", "GHI" }));
 		}
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestTemplateKeyValueTypes()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TKey, TT.TValue>(typeof(int), typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .NewVirtualFunction<IDictionary<TT.TKey, TT.TValue>, TT.TValue>("GetValueForMaxKey", "source").Implement((m, dict) => 
+                        m.Return(dict.Item(dict.Keys().Max()))
+                    );
+            }
+
+            var dictionary = new Dictionary<int, string> { { 123, "ABC" }, { 456, "DEF" }, { 101, "AA" } };
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = obj.GetValueForMaxKey(dictionary);
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("DEF"));
+        }
+    }
 }
