@@ -15,17 +15,18 @@ namespace Hapil.Writers
 	{
 		private readonly Type m_BaseType;
 		private readonly TypeMemberCache m_Members;
+        private readonly bool m_IsExplicitInterfaceImplementation;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ImplementationClassWriter(ClassType ownerClass)
-			: this(ownerClass, typeof(TBase))
+        public ImplementationClassWriter(ClassType ownerClass, bool isExplicitInterfaceImplementation = false)
+			: this(ownerClass, typeof(TBase), isExplicitInterfaceImplementation)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ImplementationClassWriter(ClassType ownerClass, Type baseType)
+        public ImplementationClassWriter(ClassType ownerClass, Type baseType, bool isExplicitInterfaceImplementation = false)
 			: base(ownerClass)
 		{
 			m_BaseType = TypeTemplate.Resolve(baseType);
@@ -36,10 +37,12 @@ namespace Hapil.Writers
 			}
 
 			m_Members = TypeMemberCache.Of(m_BaseType);
-			//TODO: validate base type
+            m_IsExplicitInterfaceImplementation = isExplicitInterfaceImplementation;
+
+            //TODO: validate base type
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ImplementationClassWriter<TBase> Attribute<TAttribute>(Action<AttributeArgumentWriter<TAttribute>> values = null)
 			where TAttribute : Attribute
@@ -49,7 +52,14 @@ namespace Hapil.Writers
 			return this;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public bool IsExplicitInterfaceImplementation
+        {
+            get { return m_IsExplicitInterfaceImplementation; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal protected override void Flush()
 		{
@@ -60,5 +70,5 @@ namespace Hapil.Writers
 		private class NA
 		{
 		}
-	}
+    }
 }

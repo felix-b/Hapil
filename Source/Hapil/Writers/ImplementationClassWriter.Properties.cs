@@ -347,7 +347,7 @@ namespace Hapil.Writers
 
                 foreach ( var property in propertiesToImplement )
                 {
-                    var propertyMember = new PropertyMember(base.OwnerClass, property, backingField);
+                    var propertyMember = new PropertyMember(base.OwnerClass, property, backingField, base.ClassWriter.IsExplicitInterfaceImplementation);
                     base.OwnerClass.AddMember(propertyMember);
 
                     var writer = writerFactory(propertyMember);

@@ -818,7 +818,7 @@ namespace Hapil.Writers
 
 				foreach ( var method in methodsToImplement )
 				{
-                    var methodFactory = new DeclaredMethodFactory(base.OwnerClass, method);
+                    var methodFactory = new DeclaredMethodFactory(base.OwnerClass, method, base.ClassWriter.IsExplicitInterfaceImplementation);
                     var methodMember = new MethodMember(base.OwnerClass, methodFactory);
 
                     base.OwnerClass.AddMember(methodMember);

@@ -60,10 +60,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AncestorRepository.cs" />
-    <Compile Include="ArbitraryMemberTests.cs" />
     <Compile Include="Assumptions\CompiledExamples.cs" />
     <Compile Include="Assumptions\CSharpTests.cs" />
+    <Compile Include="Assumptions\EmittedTypeTests.cs" />
     <Compile Include="AttributeTests.cs" />
+    <Compile Include="CircularDependencyTests.cs" />
     <Compile Include="ClosureTests.cs" />
     <Compile Include="CollectionShortcutsTests.cs" />
     <Compile Include="CompositeConventionTests.cs" />

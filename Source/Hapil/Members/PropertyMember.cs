@@ -22,17 +22,21 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField = null)
+		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField, bool isExplicitInterfaceImplementation)
 			: base(ownerClass, declaration.Name)
 		{
-            m_PropertyName = declaration.Name;
+            m_PropertyName = (
+                isExplicitInterfaceImplementation && declaration.DeclaringType != null ?
+                declaration.DeclaringType.Name + "." + declaration.Name :
+                declaration.Name);
+
             m_PropertyType = declaration.PropertyType;
             m_IndexParameterTypes = declaration.GetIndexParameters().Select(p => p.ParameterType).ToArray();
             
             m_Writers = new List<PropertyWriterBase>();
 			m_Declaration = declaration;
 			m_PropertyBuilder = ownerClass.TypeBuilder.DefineProperty(
-				ownerClass.TakeMemberName(declaration.Name, mustUseThisName: true),
+                ownerClass.TakeMemberName(m_PropertyName, mustUseThisName: true),
 				declaration.Attributes,
 				declaration.PropertyType,
                 m_IndexParameterTypes);
@@ -41,7 +45,7 @@ namespace Hapil.Members
 
 			if ( getterDeclaration != null )
 			{
-				m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration));
+                m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration, isExplicitInterfaceImplementation));
 				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 			}
 
@@ -49,7 +53,7 @@ namespace Hapil.Members
 
 			if ( setterDeclaration != null )
 			{
-				m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration));
+                m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration, isExplicitInterfaceImplementation));
 				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
 			}
 

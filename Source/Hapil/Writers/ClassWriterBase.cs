@@ -80,7 +80,21 @@ namespace Hapil.Writers
 			return new ImplementationClassWriter<object>(OwnerClass, interfaceType);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public ImplementationClassWriter<T> ImplementInterfaceExplicitly<T>()
+        {
+            return new ImplementationClassWriter<T>(OwnerClass, isExplicitInterfaceImplementation: true);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public ImplementationClassWriter<object> ImplementInterfaceExplicitly(Type interfaceType)
+        {
+            return new ImplementationClassWriter<object>(OwnerClass, interfaceType, isExplicitInterfaceImplementation: true);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public ClassWriterBase DecorateWith<TDecorator>() where TDecorator : DecorationConvention, new()
 		{

@@ -7,6 +7,7 @@ using Hapil.Expressions;
 using Hapil.Operands;
 using Moq;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -733,5 +734,337 @@ namespace Hapil.UnitTests
 			// this must not fail:
 			var obj = CreateClassInstanceAs<AncestorRepository.IFewEvents>().UsingDefaultConstructor();
 		}
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NewMethods_ImplementOneByOne()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.LoggingBase>()
+                .DefaultConstructor()
+                .NewVirtualVoidMethod("MyMethodOne").Implement(w => 
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, w.Const("MyMethodOne()"))
+                )
+                .NewVirtualVoidMethod<string>("MyMethodTwo", "myS1").Implement((w, s) => 
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, w.Const("MyMethodTwo(") + s + w.Const(")"))
+                )
+                .NewVirtualVoidMethod<int, string>("MyMethodThree", "num1", "str1").Implement((w, n, s) => 
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, 
+                        w.Const("MyMethodThree(") + n.FuncToString() + w.Const(",") + s + w.Const(")"))
+                )
+                .NewVirtualFunction<int>("MyFuncOne").Implement(w => {
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, w.Const("MyFuncOne()"));
+                    w.Return(123);
+                })
+                .NewVirtualFunction<string, int>("MyFuncTwo", "myS1").Implement((w, s) => {
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, w.Const("MyFuncTwo(") + s + w.Const(")"));
+                    w.Return(456);
+                })
+                .NewVirtualFunction<int, string, int>("MyFuncThree", "num1", "str1").Implement((w, n, s) => {
+                    w.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog,
+                        w.Const("MyFuncThree(") + n.FuncToString() + w.Const(",") + s + w.Const(")"));
+                    w.Return(789);
+                });
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            obj.MyMethodOne();
+            obj.MyMethodTwo("ABC");
+            obj.MyMethodThree(-1000, "DEF");
+
+            var funcOneResult = obj.MyFuncOne();
+            var funcTwoResult = obj.MyFuncTwo("ABC");
+            var funcThreeResult = obj.MyFuncThree(-1000, "DEF");
+
+            //-- Assert
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] {
+                "MyMethodOne()", "MyMethodTwo(ABC)", "MyMethodThree(-1000,DEF)",
+                "MyFuncOne()", "MyFuncTwo(ABC)", "MyFuncThree(-1000,DEF)"
+            }));
+
+            Assert.That(funcOneResult, Is.EqualTo(123));
+            Assert.That(funcTwoResult, Is.EqualTo(456));
+            Assert.That(funcThreeResult, Is.EqualTo(789));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NewProperties_ImplementOneByOne()
+        {
+            //-- Arrange
+
+            Field<string> myStringField;
+
+            DeriveClassFrom<AncestorRepository.LoggingBase>()
+                .DefaultConstructor()
+                .Field<string>("m_MyString", out myStringField)
+                .NewVirtualWritableProperty<int>("MyInt").ImplementAutomatic()
+                .NewVirtualWritableProperty<string>("MyString").Implement(
+                    p => p.Get(m => {
+                        m.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, m.Const("MyString.Get()"));
+                        m.Return(myStringField);
+                    }),
+                    p => p.Set((m, value) => {
+                        m.This<AncestorRepository.LoggingBase>().Void(x => x.AddLog, m.Const("MyString.Set(") + value + m.Const(")"));
+                        myStringField.Assign(value);
+                    }));
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            obj.MyInt = 123;
+            obj.MyString = "ABC";
+
+            var myIntValue = obj.MyInt;
+            var myStringValue = obj.MyString;
+
+            //-- Assert
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] { "MyString.Set(ABC)", "MyString.Get()" }));
+
+            Assert.That(myIntValue, Is.EqualTo(123));
+            Assert.That(myStringValue, Is.EqualTo("ABC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NewProperties_ImplementByTemaplte()
+        {
+            //-- Arrange
+
+            var propertiesToAdd = new Dictionary<string, Type> {
+                { "MyInt", typeof(int) },
+                { "MyString", typeof(string) }
+            };
+
+            var classWriter = DeriveClassFrom<AncestorRepository.LoggingBase>();
+            classWriter.DefaultConstructor();
+
+            //-- Act
+
+            propertiesToAdd.ForEach(kvp => {
+                using ( TT.CreateScope<TT.TProperty>(actualType: kvp.Value) )
+                {
+                    classWriter.NewVirtualWritableProperty<TT.TProperty>(propertyName: kvp.Key).Implement(
+                        getter: p => p.Get(m => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog, m.Const(p.OwnerProperty.Name + ".Get()"));
+                            m.Return(p.BackingField);
+                        }),
+                        setter: p => p.Set((m, value) => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog,
+                                m.Const(p.OwnerProperty.Name + ".Set(value=") +
+                                value.FuncToString() +
+                                m.Const(")"));
+                            p.BackingField.Assign(value);
+                        })
+                    );
+                }
+            });
+            
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            //-- Assert
+
+            obj.MyInt = 123;
+            obj.MyString = "ABC";
+
+            var myIntValue = obj.MyInt;
+            var myStringValue = obj.MyString;
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] {
+                "MyInt.Set(value=123)",
+                "MyString.Set(value=ABC)", 
+                "MyInt.Get()",
+                "MyString.Get()"
+            }));
+
+            Assert.That(myIntValue, Is.EqualTo(123));
+            Assert.That(myStringValue, Is.EqualTo("ABC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NewCollectionProperties_ImplementByTemaplate()
+        {
+            //-- Arrange
+
+            var propertiesToAdd = new Dictionary<string, Type> {
+                { "MyIntList", typeof(int) },
+                { "MyStringList", typeof(string) }
+            };
+
+            var classWriter = DeriveClassFrom<AncestorRepository.LoggingBase>();
+            classWriter.DefaultConstructor();
+
+            //-- Act
+
+            propertiesToAdd.ForEach(kvp => {
+                using ( TT.CreateScope<TT.TItem>(actualType: kvp.Value) )
+                {
+                    classWriter.NewVirtualWritableProperty<List<TT.TItem>>(propertyName: kvp.Key).Implement(
+                        getter: p => p.Get(m => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog, m.Const(p.OwnerProperty.Name + ".Get()"));
+                            m.Return(p.BackingField);
+                        }),
+                        setter: p => p.Set((m, value) => {
+                            m.This<AncestorRepository.LoggingBase>().Void<string>(_ => _.AddLog,
+                                m.Const(p.OwnerProperty.Name + ".Set(value=") +
+                                m.Iif(value != null, m.Const("[") + value.Count().FuncToString() + m.Const(" items]"), m.Const("null")) +
+                                m.Const(")"));
+                            p.BackingField.Assign(value);
+                        })
+                    );
+                }
+            });
+
+            dynamic obj = CreateClassInstanceAs<AncestorRepository.LoggingBase>().UsingDefaultConstructor();
+
+            //-- Assert
+
+            obj.MyIntList = null;
+            obj.MyIntList = new List<int> { 1, 3, 5 };
+            obj.MyStringList = new List<string> { "A", "B" };
+
+            var myIntList = obj.MyIntList;
+            var myStringList = obj.MyStringList;
+
+            Assert.That(obj.TakeLog(), Is.EqualTo(new[] {
+                "MyIntList.Set(value=null)",
+                "MyIntList.Set(value=[3 items])",
+                "MyStringList.Set(value=[2 items])", 
+                "MyIntList.Get()",
+                "MyStringList.Get()"
+            }));
+
+            Assert.That(myIntList, Is.EqualTo(new[] { 1, 3, 5 }));
+            Assert.That(myStringList, Is.EqualTo(new[] { "A", "B" }));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void ExplicitInterfaceMethods_ImplementOneByOne()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.LoggingBase>()
+                .DefaultConstructor()
+                .ImplementInterfaceExplicitly<AncestorRepository.IOneFuncLeft>()
+                .Method<string>(intf => intf.One).Implement(m => {
+                    m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOneFuncLeft.One"));
+                    m.Return("AAA");
+                })
+                .ImplementInterfaceExplicitly<AncestorRepository.IOneFuncRight>()
+                .Method<string>(intf => intf.One).Implement(m => {
+                    m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOneFuncRight.One"));
+                    m.Return("BBB");
+                })
+                .NewVirtualFunction<string>("One").Implement(m => {
+                    m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("this.One"));
+                    m.Return("CCC");
+                });
+
+            //-- Act
+
+            object obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            AncestorRepository.IOneFuncLeft asLeft = (AncestorRepository.IOneFuncLeft)obj;
+            AncestorRepository.IOneFuncRight asRight = (AncestorRepository.IOneFuncRight)obj;
+            dynamic asObj = obj;
+
+            var resultLeft = asLeft.One();
+            var resultRight = asRight.One();
+            var resultObj = asObj.One();
+
+            //-- Assert
+
+            Assert.That(asObj.TakeLog(), Is.EqualTo(new[] {
+                "IOneFuncLeft.One",
+                "IOneFuncRight.One",
+                "this.One"
+            }));
+
+            Assert.That(resultLeft, Is.EqualTo("AAA"));
+            Assert.That(resultRight, Is.EqualTo("BBB"));
+            Assert.That(resultObj, Is.EqualTo("CCC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void ExplicitInterfaceProperties_ImplementOneByOne()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.LoggingBase>()
+                .DefaultConstructor()
+                .ImplementInterfaceExplicitly<AncestorRepository.IOnePropertyLeft>()
+                .Property<string>(intf => intf.One).Implement(
+                    getter: p => p.Get(m => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOnePropertyLeft.One.Get()"));
+                        m.Return(p.BackingField);
+                    }),
+                    setter: p => p.Set((m, value) => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOnePropertyLeft.One.Set(") + value + m.Const(")"));
+                        p.BackingField.Assign(value);
+                    }))
+                .ImplementInterfaceExplicitly<AncestorRepository.IOnePropertyRight>()
+                .Property<string>(intf => intf.One).Implement(
+                    getter: p => p.Get(m => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOnePropertyRight.One.Get()"));
+                        m.Return(p.BackingField);
+                    }),
+                    setter: p => p.Set((m, value) => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("IOnePropertyRight.One.Set(") + value + m.Const(")"));
+                        p.BackingField.Assign(value);
+                    }))
+                .NewVirtualWritableProperty<string>("One").Implement(
+                    getter: p => p.Get(m => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("this.One.Get()"));
+                        m.Return(p.BackingField);
+                    }),
+                    setter: p => p.Set((m, value) => {
+                        m.This<AncestorRepository.LoggingBase>().Void<string>(b => b.AddLog, m.Const("this.One.Set(") + value + m.Const(")"));
+                        p.BackingField.Assign(value);
+                    }));
+
+            //-- Act
+
+            object obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            AncestorRepository.IOnePropertyLeft asLeft = (AncestorRepository.IOnePropertyLeft)obj;
+            AncestorRepository.IOnePropertyRight asRight = (AncestorRepository.IOnePropertyRight)obj;
+            dynamic asObj = obj;
+
+            asLeft.One = "LLL";
+            asRight.One = "RRR";
+            asObj.One = "OOO";
+
+            var resultLeft = asLeft.One;
+            var resultRight = asRight.One;
+            var resultObj = asObj.One;
+
+            //-- Assert
+
+            Assert.That(asObj.TakeLog(), Is.EqualTo(new[] {
+                "IOnePropertyLeft.One.Set(LLL)",
+                "IOnePropertyRight.One.Set(RRR)",
+                "this.One.Set(OOO)",
+                "IOnePropertyLeft.One.Get()",
+                "IOnePropertyRight.One.Get()",
+                "this.One.Get()"
+            }));
+
+            Assert.That(resultLeft, Is.EqualTo("LLL"));
+            Assert.That(resultRight, Is.EqualTo("RRR"));
+            Assert.That(resultObj, Is.EqualTo("OOO"));
+        }
+    }
 }
