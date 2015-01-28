@@ -7,24 +7,64 @@ using System.Threading.Tasks;
 using Hapil.Testing.NUnit;
 using Hapil.Writers;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
     [TestFixture]
     public class CircularDependencyTests : NUnitEmittedTypesTestBase
     {
-        [Test, Ignore("WIP")]
+        [Test, Ignore("WIP - fails")]
         public void CanCreateMutuallyDependentTypes()
         {
-            
+            //-- Arrange
+
+            var factory = new TestEntityFactory(base.Module);
+
+            //-- Act
+
+            var product1 = factory.New<IProduct>();
+            var order1 = factory.New<IOrder>();
+            var orderLine1 = factory.New<IOrderLine>();
+            //product1.Id = 111;
+            //product1.Name = "AAA";
+            //product1.Price = 100;
+
+            //var product2 = factory.New<IProduct>();
+            //product2.Id = 222;
+            //product2.Name = "BBB";
+            //product2.Price = 200;
+
+            //var order1 = factory.New<IOrder>();
+            //order1.
+            //var order1Lines = new[] { factory.CreateInstanceOf<IOrderLine>(), factory.CreateInstanceOf<IOrderLine>() };
+
+
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private class CircularDtoConvention : ImplementationConvention
+        private class TestEntityFactory : ConventionObjectFactory
         {
-            public CircularDtoConvention()
-                : base(Will.InspectDeclaration | Will.ImplementPrimaryInterface)
+            public TestEntityFactory(DynamicModule module)
+                : base(module, new TestCircularDtoConvention())
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public TEntity New<TEntity>()
+            {
+                return CreateInstanceOf<TEntity>().UsingDefaultConstructor();
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class TestCircularDtoConvention : ImplementationConvention
+        {
+            public TestCircularDtoConvention()
+                : base(Will.ImplementPrimaryInterface)
             {
             }
 
@@ -34,36 +74,120 @@ namespace Hapil.UnitTests
 
             protected override void OnImplementPrimaryInterface(ImplementationClassWriter<TypeTemplate.TInterface> writer)
             {
+                writer.AllProperties(IsScalarProperty).ImplementAutomatic();
+
+                var initializers = new List<Action<ConstructorWriter>>();
+                var explicitImpl = writer.ImplementInterfaceExplicitly<TypeTemplate.TInterface>();
                 
+                explicitImpl.AllProperties(IsSingleNavigationProperty).ForEach(p => ImplementSingleNavigationProperty(explicitImpl, p, initializers));
+                explicitImpl.AllProperties(IsNavigationCollectionProperty).ForEach(p => ImplementNavigationCollectionProperty(explicitImpl, p, initializers));
+
+                writer.Constructor(cw => initializers.ForEach(init => init(cw)));
             }
 
             #endregion
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-        }
-
-        //-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-        [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
-        public class EntityAttribute : Attribute
-        {
-            public static bool IsEntity(Type t)
+            private void ImplementSingleNavigationProperty(
+                ImplementationClassWriter<TypeTemplate.TInterface> explicitImplementation, 
+                PropertyInfo property,
+                List<Action<ConstructorWriter>> initializers)
             {
-                return (t.GetCustomAttribute<EntityAttribute>() != null);
+                var entityTypeKey = new TypeKey(primaryInterface: property.PropertyType);
+                var entityType = base.Context.Factory.GetOrBuildType(entityTypeKey).DynamicType;
+
+                using ( TT.CreateScope<TT.TValue>(entityType) )
+                {
+                    var backingField = explicitImplementation.Field<TT.TValue>("_" + property.Name.ToCamelCase());
+                    explicitImplementation.NewVirtualWritableProperty<TT.TValue>(property.Name).ImplementAutomatic(backingField);
+
+                    explicitImplementation.Property(property).Implement(
+                        getter: p => p.Get(m => m.Return(backingField.CastTo<TT.TProperty>())),
+                        setter: p => p.Set((m, value) => backingField.Assign(value.CastTo<TT.TValue>()))
+                    );
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            private void ImplementNavigationCollectionProperty(
+                ImplementationClassWriter<TypeTemplate.TInterface> explicitImplementation, 
+                PropertyInfo property,
+                List<Action<ConstructorWriter>> initializers)
+            {
+                Type entityContractType;
+                property.PropertyType.IsCollectionType(out entityContractType);
+
+                var entityTypeKey = new TypeKey(primaryInterface: entityContractType);
+                var entityType = base.Context.Factory.GetOrBuildType(entityTypeKey).DynamicType;
+
+                using ( TT.CreateScope<TT.TValue, TT.TItem>(entityType, entityContractType) )
+                {
+                    var backingField = explicitImplementation.Field<ICollection<TT.TValue>>("_" + property.Name.ToCamelCase());
+                    var adapterField = explicitImplementation.Field<TestCollectionAdapter<TT.TValue, TT.TItem>>("_" + property.Name.ToCamelCase() + "Adapter");
+
+                    initializers.Add(new Action<ConstructorWriter>(cw => {
+                        backingField.Assign(cw.New<List<TT.TValue>>());
+                        adapterField.Assign(cw.New<TestCollectionAdapter<TT.TValue, TT.TItem>>(backingField));
+                    }));
+
+                    explicitImplementation.NewVirtualWritableProperty<ICollection<TT.TValue>>(property.Name).Implement(
+                        getter: p => p.Get(m => m.Return(p.BackingField)),
+                        setter: p => p.Set((m, value) => {
+                            adapterField.Assign(m.New<TestCollectionAdapter<TT.TValue, TT.TItem>>(value));
+                            backingField.Assign(value);
+                        }));
+
+                    explicitImplementation.Property(property).Implement(
+                        getter: p => p.Get(m => m.Return(adapterField.CastTo<TT.TProperty>()))
+                    );
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            private bool IsScalarProperty(PropertyInfo property)
+            {
+                return (!property.PropertyType.IsCollectionType() && !TestEntityAttribute.IsEntity(property.PropertyType));
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            private bool IsSingleNavigationProperty(PropertyInfo property)
+            {
+                return (!property.PropertyType.IsCollectionType() && TestEntityAttribute.IsEntity(property.PropertyType));
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            private bool IsNavigationCollectionProperty(PropertyInfo property)
+            {
+                Type itemType;
+                return (property.PropertyType.IsCollectionType(out itemType) && TestEntityAttribute.IsEntity(itemType));
             }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private class CollectionAdapter<TFrom, TTo> : ICollection<TTo> where TFrom : TTo
+        [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
+        public class TestEntityAttribute : Attribute
+        {
+            public static bool IsEntity(Type t)
+            {
+                return (t.GetCustomAttribute<TestEntityAttribute>() != null);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class TestCollectionAdapter<TFrom, TTo> : ICollection<TTo>
         {
             private readonly ICollection<TFrom> m_InnerCollection;
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            public CollectionAdapter(ICollection<TFrom> innerCollection)
+            public TestCollectionAdapter(ICollection<TFrom> innerCollection)
             {
                 m_InnerCollection = innerCollection;
             }
@@ -72,80 +196,92 @@ namespace Hapil.UnitTests
 
             public void Add(TTo item)
             {
-                throw new NotImplementedException();
+                m_InnerCollection.Add((TFrom)(object)item);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public void Clear()
             {
-                throw new NotImplementedException();
+                m_InnerCollection.Clear();
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public bool Contains(TTo item)
             {
-                throw new NotImplementedException();
+                return m_InnerCollection.Contains((TFrom)(object)item);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public void CopyTo(TTo[] array, int arrayIndex)
             {
-                throw new NotImplementedException();
+                var items = new TFrom[m_InnerCollection.Count];
+                m_InnerCollection.CopyTo(items, 0);
+
+                for ( int i = 0 ; i < items.Length ; i++ )
+                {
+                    array[i + arrayIndex] = (TTo)(object)items[i];
+                }
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public int Count
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    return m_InnerCollection.Count;
+                }
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public bool IsReadOnly
             {
-                get { throw new NotImplementedException(); }
+                get
+                {
+                    return m_InnerCollection.IsReadOnly;
+                }
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public bool Remove(TTo item)
             {
-                throw new NotImplementedException();
+                return m_InnerCollection.Remove((TFrom)(object)item);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public IEnumerator<TTo> GetEnumerator()
             {
-                throw new NotImplementedException();
+                return (IEnumerator<TTo>)m_InnerCollection.GetEnumerator();
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
             {
-                throw new NotImplementedException();
+                return m_InnerCollection.GetEnumerator();
             }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Entity]
+        [TestEntity]
         public interface IProduct
         {
             int Id { get; set; }
             string Name { get; set; }
             decimal Price { get; set; }
-            ICollection<IOrderLine> OrderLines { get; set; }
+            ICollection<IOrderLine> OrderLines { get; }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Entity]
+        [TestEntity]
         public interface IOrderLine
         {
             int Id { get; set; }
@@ -156,12 +292,12 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        [Entity]
+        [TestEntity]
         public interface IOrder
         {
             int Id { get; set; }
             DateTime PlacedOn { get; set; }
-            ICollection<IOrderLine> OrderLines { get; set; }
+            ICollection<IOrderLine> OrderLines { get; }
         }
     }
 }

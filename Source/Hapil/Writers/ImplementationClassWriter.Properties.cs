@@ -32,6 +32,10 @@ namespace Hapil.Writers
 		{
 			return new DeclaredPropertySelector<NA, NA, TProperty>(this, Helpers.ResolvePropertyFromLambda(property));
 		}
+        public ITemplatePropertySelector Property(params PropertyInfo[] declarations)
+        {
+            return new DeclaredPropertySelector<NA, NA, TypeTemplate.TProperty>(this, declarations);
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -71,6 +71,15 @@ namespace Hapil
 			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    internal ClassType DefineNewClassType(TypeKey key, string fullName)
+	    {
+	        var classType = m_Module.DefineClass(key, fullName);
+            m_BuiltTypes.AddOrUpdate(key, k => new TypeEntry(classType), (k1, e1) => new TypeEntry(classType));
+	        return classType;
+	    }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private TypeEntry BuildNewTypeEntry(TypeKey key)
