@@ -73,23 +73,69 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-	    internal ClassType DefineNewClassType(TypeKey key, string fullName)
-	    {
-	        var classType = m_Module.DefineClass(key, fullName);
-            m_BuiltTypes.AddOrUpdate(key, k => new TypeEntry(classType), (k1, e1) => new TypeEntry(classType));
-	        return classType;
-	    }
+        internal void NotifyClassTypeBeingBuilt(ClassType classType)
+        {
+            var typesBeingBuilt = s_TypesBeingBuilt;
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+            if ( typesBeingBuilt != null )
+            {
+                typesBeingBuilt.Add(classType.Key, classType);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal Type FindDynamicType(TypeKey key)
+        {
+            ClassType typeInProgress;
+            var typesBeingBuilt = s_TypesBeingBuilt;
+
+            if ( typesBeingBuilt != null && typesBeingBuilt.TryGetValue(key, out typeInProgress) )
+            {
+                return typeInProgress.TypeBuilder;
+            }
+            else
+            {
+                return GetOrBuildType(key).DynamicType;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private TypeEntry BuildNewTypeEntry(TypeKey key)
 		{
-			using ( key.CreateTypeTemplateScope() )
-			{
-				var classType = DefineNewClass(key);
-				return new TypeEntry(classType);
-			}
+		    var ownTypesBeingBuilt = (s_TypesBeingBuilt == null);
+
+		    if ( ownTypesBeingBuilt )
+		    {
+		        s_TypesBeingBuilt = new Dictionary<TypeKey, ClassType>();
+		    }
+
+		    try
+		    {
+		        using ( key.CreateTypeTemplateScope() )
+		        {
+		            var classType = DefineNewClass(key);
+		            return new TypeEntry(classType);
+		        }
+		    }
+		    finally
+		    {
+		        if ( ownTypesBeingBuilt )
+		        {
+		            s_TypesBeingBuilt = null;
+		        }
+		        else
+		        {
+                    s_TypesBeingBuilt.Remove(key);
+		        }
+		    }
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [ThreadStatic]
+	    private static Dictionary<TypeKey, ClassType> s_TypesBeingBuilt;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

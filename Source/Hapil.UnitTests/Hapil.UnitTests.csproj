@@ -75,6 +75,7 @@
     <Compile Include="ExceptionRepository.cs" />
     <Compile Include="Expressions\BinaryOperatorTests.cs" />
     <Compile Include="Expressions\ExpressionTreeTests.cs" />
+    <Compile Include="MetadataTypeKeyTests.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="ClosureTestFixtureBase.cs" />
     <Compile Include="Operands\AnonymousDelegateOperandTests.cs" />

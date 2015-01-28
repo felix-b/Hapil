@@ -129,7 +129,7 @@ namespace Hapil
 			if ( m_ClassType == null )
 			{
                 m_ClassType = m_Factory.Module.DefineClass(m_TypeKey, m_ClassFullName);
-                //m_ClassType = m_Factory.DefineNewClassType(m_TypeKey, m_ClassFullName);
+                m_Factory.NotifyClassTypeBeingBuilt(m_ClassType);
 			}
 		}
 

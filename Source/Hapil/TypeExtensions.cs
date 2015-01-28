@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace Hapil
@@ -245,7 +247,23 @@ namespace Hapil
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static ConstructorInfo GetRuntimeOrBuilderConstructor(this Type type, Type[] argumentTypes)
+        {
+            if ( type.GetType().Name.Contains("Builder") )
+            {
+                var genericType = type.GetGenericTypeDefinition();
+                var genericConstructor = genericType.GetConstructors().First();//(argumentTypes);
+                return TypeBuilder.GetConstructor(type, genericConstructor);
+            }
+            else
+            {
+                return type.GetConstructor(argumentTypes);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static void AppendFriendlyName(Type type, StringBuilder output)
 		{

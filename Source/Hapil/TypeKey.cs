@@ -28,7 +28,7 @@ namespace Hapil
 
 		#region IEquatable<TypeKey> Members
 
-		public bool Equals(TypeKey other)
+		public virtual bool Equals(TypeKey other)
 		{
 			if ( m_BaseType != other.m_BaseType )
 			{

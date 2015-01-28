@@ -14,7 +14,7 @@ namespace Hapil.UnitTests
     [TestFixture]
     public class CircularDependencyTests : NUnitEmittedTypesTestBase
     {
-        [Test, Ignore("WIP - fails")]
+        [Test]
         public void CanCreateMutuallyDependentTypes()
         {
             //-- Arrange
@@ -24,22 +24,48 @@ namespace Hapil.UnitTests
             //-- Act
 
             var product1 = factory.New<IProduct>();
+            var product2 = factory.New<IProduct>();
             var order1 = factory.New<IOrder>();
             var orderLine1 = factory.New<IOrderLine>();
-            //product1.Id = 111;
-            //product1.Name = "AAA";
-            //product1.Price = 100;
+            var orderLine2 = factory.New<IOrderLine>();
 
-            //var product2 = factory.New<IProduct>();
-            //product2.Id = 222;
-            //product2.Name = "BBB";
-            //product2.Price = 200;
+            product1.Id = 111;
+            product1.Name = "AAA";
+            product1.Price = 100;
+            product2.Id = 222;
+            product2.Name = "BBB";
+            product2.Price = 200;
 
-            //var order1 = factory.New<IOrder>();
-            //order1.
-            //var order1Lines = new[] { factory.CreateInstanceOf<IOrderLine>(), factory.CreateInstanceOf<IOrderLine>() };
+            orderLine1.Order = order1;
+            orderLine1.Product = product1;
+            orderLine1.Quantity = 1;
 
+            orderLine2.Order = order1;
+            orderLine2.Product = product2;
+            orderLine2.Quantity = 2;
 
+            product1.OrderLines.Add(orderLine1);
+            product2.OrderLines.Add(orderLine2);
+
+            //-- Assert
+
+            var query = 
+                from prod in new[] { product1, product2 }
+                from line in prod.OrderLines
+                group line by prod
+                into g
+                select new {
+                    Id = g.Key.Id,
+                    Name = g.Key.Name,
+                    SoldValue = g.Sum(ol => ol.Product.Price * ol.Quantity)
+                };
+
+            var results = query.Select(r => string.Format("{0}:{1}={2}", r.Id, r.Name, r.SoldValue)).ToArray();
+
+            Assert.That(results, Is.EqualTo(new[] {
+                "111:AAA=100",
+                "222:BBB=400"
+            }));
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,7 +121,7 @@ namespace Hapil.UnitTests
                 List<Action<ConstructorWriter>> initializers)
             {
                 var entityTypeKey = new TypeKey(primaryInterface: property.PropertyType);
-                var entityType = base.Context.Factory.GetOrBuildType(entityTypeKey).DynamicType;
+                var entityType = base.Context.Factory.FindDynamicType(entityTypeKey);
 
                 using ( TT.CreateScope<TT.TValue>(entityType) )
                 {
@@ -120,7 +146,7 @@ namespace Hapil.UnitTests
                 property.PropertyType.IsCollectionType(out entityContractType);
 
                 var entityTypeKey = new TypeKey(primaryInterface: entityContractType);
-                var entityType = base.Context.Factory.GetOrBuildType(entityTypeKey).DynamicType;
+                var entityType = base.Context.Factory.FindDynamicType(entityTypeKey);
 
                 using ( TT.CreateScope<TT.TValue, TT.TItem>(entityType, entityContractType) )
                 {
@@ -128,8 +154,11 @@ namespace Hapil.UnitTests
                     var adapterField = explicitImplementation.Field<TestCollectionAdapter<TT.TValue, TT.TItem>>("_" + property.Name.ToCamelCase() + "Adapter");
 
                     initializers.Add(new Action<ConstructorWriter>(cw => {
-                        backingField.Assign(cw.New<List<TT.TValue>>());
-                        adapterField.Assign(cw.New<TestCollectionAdapter<TT.TValue, TT.TItem>>(backingField));
+                        using ( TT.CreateScope<TT.TValue, TT.TItem>(entityType, entityContractType) )
+                        {
+                            backingField.Assign(cw.New<List<TT.TValue>>());
+                            adapterField.Assign(cw.New<TestCollectionAdapter<TT.TValue, TT.TItem>>(backingField));
+                        }
                     }));
 
                     explicitImplementation.NewVirtualWritableProperty<ICollection<TT.TValue>>(property.Name).Implement(
@@ -181,7 +210,7 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private class TestCollectionAdapter<TFrom, TTo> : ICollection<TTo>
+        public class TestCollectionAdapter<TFrom, TTo> : ICollection<TTo>
         {
             private readonly ICollection<TFrom> m_InnerCollection;
 

@@ -21,7 +21,7 @@ namespace Hapil.Expressions
 			m_ConstructorArguments = constructorArguments;
 
 			var argumentTypes = constructorArguments.Select(arg => arg.OperandType).ToArray();
-			m_Constructor = m_ObjectType.GetConstructor(argumentTypes); //TODO: use MemberTypeCache for this
+			m_Constructor = m_ObjectType.GetRuntimeOrBuilderConstructor(argumentTypes); //TODO: use MemberTypeCache for this
 
 			if ( m_Constructor == null )
 			{
