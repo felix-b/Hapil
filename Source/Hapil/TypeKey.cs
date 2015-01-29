@@ -197,6 +197,16 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+	    internal protected virtual TypeKey Mutate(Type newBaseType = null, Type newPrimaryInterface = null, Type[] newSecondaryInterfaces = null)
+	    {
+	        return new TypeKey(
+	            baseType: newBaseType ?? m_BaseType,
+	            primaryInterface: newPrimaryInterface ?? m_PrimaryInterface,
+	            secondaryInterfaces: newSecondaryInterfaces ?? m_SecondaryInterfacesArray);
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		private int CalculateHashCode()
 		{
 			var hashCode = m_BaseType.GetHashCode();

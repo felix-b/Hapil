@@ -21,7 +21,24 @@ namespace Hapil
 			m_BuiltTypes = new ConcurrentDictionary<TypeKey, TypeEntry>();
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public Type FindDynamicType(TypeKey key)
+        {
+            ClassType typeInProgress;
+            var typesBeingBuilt = s_TypesBeingBuilt;
+
+            if ( typesBeingBuilt != null && typesBeingBuilt.TryGetValue(key, out typeInProgress) )
+            {
+                return typeInProgress.TypeBuilder;
+            }
+            else
+            {
+                return GetOrBuildType(key).DynamicType;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public DynamicModule Module
 		{
@@ -80,23 +97,6 @@ namespace Hapil
             if ( typesBeingBuilt != null )
             {
                 typesBeingBuilt.Add(classType.Key, classType);
-            }
-        }
-
-        //-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-        internal Type FindDynamicType(TypeKey key)
-        {
-            ClassType typeInProgress;
-            var typesBeingBuilt = s_TypesBeingBuilt;
-
-            if ( typesBeingBuilt != null && typesBeingBuilt.TryGetValue(key, out typeInProgress) )
-            {
-                return typeInProgress.TypeBuilder;
-            }
-            else
-            {
-                return GetOrBuildType(key).DynamicType;
             }
         }
 

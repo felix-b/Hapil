@@ -90,10 +90,7 @@ namespace Hapil
 			set
 			{
 				ValidateClassTypeNotYetDefined();
-				m_TypeKey = new TypeKey(
-					baseType: value,
-					primaryInterface: m_TypeKey.PrimaryInterface,
-					secondaryInterfaces: m_TypeKey.SecondaryInterfaces);
+				m_TypeKey = m_TypeKey.Mutate(newBaseType: value);
 			}
 		}
 

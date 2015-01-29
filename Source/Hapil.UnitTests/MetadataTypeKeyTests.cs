@@ -95,7 +95,8 @@ namespace Hapil.UnitTests
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            public TestEntityTypeKey(string entityName)
+            public TestEntityTypeKey(string entityName, Type baseType = null)
+                : base(baseType: baseType)
             {
                 m_EntityName = entityName;
             }
@@ -129,6 +130,13 @@ namespace Hapil.UnitTests
             {
                 get { return m_EntityName; }
             }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected internal override TypeKey Mutate(Type newBaseType = null, Type newPrimaryInterface = null, Type[] newSecondaryInterfaces = null)
+            {
+                return new TestEntityTypeKey(m_EntityName, newBaseType);
+            }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -150,6 +158,7 @@ namespace Hapil.UnitTests
             protected override void OnInspectDeclaration(ObjectFactoryContext context)
             {
                 var entityKey = (TestEntityTypeKey)context.TypeKey;
+                context.BaseType = typeof(TestEntityObjectBase);
                 context.ClassFullName = context.Module.SimpleName + ".EntityObjects." + entityKey.EntityName;
             }
 
@@ -331,6 +340,13 @@ namespace Hapil.UnitTests
                     }
                 }
             };
+        }
+
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class TestEntityObjectBase
+        {
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
