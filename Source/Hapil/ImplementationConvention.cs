@@ -25,7 +25,7 @@ namespace Hapil
 
 		bool IObjectFactoryConvention.ShouldApply(ObjectFactoryContext context)
 		{
-            s_FactoryContext = context;
+            PushFactoryContext(context);
 
 		    try
 		    {
@@ -33,7 +33,7 @@ namespace Hapil
 		    }
 		    finally
 		    {
-                s_FactoryContext = null;
+                PopFactoryContext();
 		    }
 		}
 
@@ -41,7 +41,7 @@ namespace Hapil
 
 		void IObjectFactoryConvention.Apply(ObjectFactoryContext context)
 		{
-		    s_FactoryContext = context;
+            PushFactoryContext(context);
 
 		    try
 		    {
@@ -49,8 +49,8 @@ namespace Hapil
 		    }
             finally
 		    {
-                s_FactoryContext = null;
-		    }
+                PopFactoryContext();
+            }
 		}
 
 	    #endregion
@@ -109,7 +109,19 @@ namespace Hapil
 
 	    protected ObjectFactoryContext Context
 	    {
-	        get { return s_FactoryContext; }
+	        get
+	        {
+	            var stack = s_FactoryContextStack;
+
+	            if ( stack != null )
+	            {
+	                return s_FactoryContextStack.Peek();
+	            }
+	            else
+	            {
+	                return null;
+	            }
+	        }
 	    }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -199,8 +211,42 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+	    private static void PushFactoryContext(ObjectFactoryContext context)
+	    {
+	        var stack = s_FactoryContextStack;
+
+	        if ( stack == null )
+	        {
+	            stack = new Stack<ObjectFactoryContext>();
+	            s_FactoryContextStack = stack;
+	        }
+
+            stack.Push(context);
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static void PopFactoryContext()
+        {
+            var stack = s_FactoryContextStack;
+
+            if ( stack == null )
+            {
+                throw new InvalidOperationException("No factory context currently exist");
+            }
+
+            stack.Pop();
+
+            if ( stack.Count == 0 )
+            {
+                s_FactoryContextStack = null;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         [ThreadStatic]
-	    private static ObjectFactoryContext s_FactoryContext;
+	    private static Stack<ObjectFactoryContext> s_FactoryContextStack;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

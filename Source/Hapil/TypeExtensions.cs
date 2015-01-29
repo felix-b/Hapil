@@ -254,7 +254,7 @@ namespace Hapil
             if ( type.GetType().Name.Contains("Builder") )
             {
                 var genericType = type.GetGenericTypeDefinition();
-                var genericConstructor = genericType.GetConstructors().First();//(argumentTypes);
+                var genericConstructor = genericType.GetConstructors().First(ci => ci.GetParameters().Length == argumentTypes.Length);
                 return TypeBuilder.GetConstructor(type, genericConstructor);
             }
             else

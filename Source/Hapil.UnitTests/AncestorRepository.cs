@@ -153,7 +153,24 @@ namespace Hapil.UnitTests
 			object AnObject { get; set; }
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IMoreReadWriteProperties
+        {
+            int AnotherInt { get; set; }
+            string AnotherString { get; set; }
+            object AnotherObject { get; set; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IReadWritePropertiesContainer
+        {
+            IFewReadWriteProperties Few { get; set; }
+            IMoreReadWriteProperties More { get; set; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public interface IReadOnlyAndReadWriteProperties
 		{

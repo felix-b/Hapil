@@ -216,6 +216,13 @@ namespace Hapil.UnitTests
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
+            public TestCollectionAdapter()
+            {
+                throw new InvalidOperationException("Wrong constructor, man!");
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
             public TestCollectionAdapter(ICollection<TFrom> innerCollection)
             {
                 m_InnerCollection = innerCollection;
