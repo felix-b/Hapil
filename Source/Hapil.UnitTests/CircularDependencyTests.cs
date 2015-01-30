@@ -223,6 +223,13 @@ namespace Hapil.UnitTests
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
+            public TestCollectionAdapter(DayOfWeek day)
+            {
+                throw new InvalidOperationException("Wrong constructor, man!");
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
             public TestCollectionAdapter(ICollection<TFrom> innerCollection)
             {
                 m_InnerCollection = innerCollection;

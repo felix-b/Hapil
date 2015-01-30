@@ -254,13 +254,57 @@ namespace Hapil
             if ( type.GetType().Name.Contains("Builder") )
             {
                 var genericType = type.GetGenericTypeDefinition();
-                var genericConstructor = genericType.GetConstructors().First(ci => ci.GetParameters().Length == argumentTypes.Length);
+                var genericConstructor = genericType.GetConstructors().First(ci => MatchMethodParameters(ci.GetParameters(), argumentTypes));
                 return TypeBuilder.GetConstructor(type, genericConstructor);
             }
             else
             {
                 return type.GetConstructor(argumentTypes);
             }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private static bool MatchMethodParameters(ParameterInfo[] parameters, Type[] argumentTypes)
+	    {
+	        if ( parameters.Length != argumentTypes.Length )
+	        {
+	            return false;
+	        }
+
+	        for ( int i = 0 ; i < parameters.Length ; i++ )
+	        {
+	            if ( !MatchParameterType(parameters[i].ParameterType, argumentTypes[i]) )
+	            {
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static bool MatchParameterType(Type parameterType, Type argumentType)
+        {
+            if ( parameterType.IsAssignableFrom(argumentType) )
+            {
+                return true;
+            }
+            else if ( parameterType.IsGenericType != argumentType.IsGenericType )
+            {
+                return false;
+            }
+            else if ( parameterType.Name != argumentType.Name )
+            {
+                return false;
+            }
+            else if ( parameterType.IsGenericType && parameterType.GetGenericArguments().Length != argumentType.GetGenericArguments().Length )
+            {
+                return false;
+            }
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
