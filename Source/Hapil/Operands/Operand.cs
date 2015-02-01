@@ -200,7 +200,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Void<TArg1>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
+        public void VoidWhere<TArg1>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
 		{
 			var method = this.Members.SelectVoids<TArg1>(methodSelector).Single();
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1));
@@ -216,7 +216,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Void<TArg1, TArg2>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
+        public void VoidWhere<TArg1, TArg2>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
 		{
 			var method = this.Members.SelectVoids<TArg1, TArg2>(methodSelector).Single();
 			StatementScope.Current.AddStatement(new CallStatement(this, method, arg1, arg2));
@@ -236,7 +236,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Void<TArg1, TArg2, TArg3>(
+		public void VoidWhere<TArg1, TArg2, TArg3>(
 			Func<MethodInfo, bool> methodSelector,
 			IOperand<TArg1> arg1,
 			IOperand<TArg2> arg2,
@@ -256,7 +256,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TReturn> Func<TReturn>(Func<MethodInfo, bool> methodSelector)
+        public Operand<TReturn> FuncWhere<TReturn>(Func<MethodInfo, bool> methodSelector)
 		{
 			var method = this.Members.SelectFuncs<TReturn>(methodSelector).Single();
 			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method), this);
@@ -281,7 +281,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TReturn> Func<TArg1, TReturn>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
+        public Operand<TReturn> FuncWhere<TArg1, TReturn>(Func<MethodInfo, bool> methodSelector, IOperand<TArg1> arg1)
 		{
 			var method = this.Members.SelectFuncs<TArg1, TReturn>(methodSelector).Single();
 			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arg1), this);
@@ -308,7 +308,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TReturn> Func<TArg1, TArg2, TReturn>(
+        public Operand<TReturn> FuncWhere<TArg1, TArg2, TReturn>(
 			Func<MethodInfo, bool> methodSelector,
 			IOperand<TArg1> arg1,
 			IOperand<TArg2> arg2)
@@ -333,7 +333,7 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TReturn> Func<TArg1, TArg2, TArg3, TReturn>(
+        public Operand<TReturn> FuncWhere<TArg1, TArg2, TArg3, TReturn>(
 			Func<MethodInfo, bool> methodSelector,
 			IOperand<TArg1> arg1,
 			IOperand<TArg2> arg2,
