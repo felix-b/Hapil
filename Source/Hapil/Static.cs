@@ -312,8 +312,26 @@ namespace Hapil
 
 		private static MethodInfo GetValidStaticMethod(Delegate memberDelegate)
 		{
-			return ValidateStaticMethod(memberDelegate.Method, parameterName: "member");
+            return ValidateStaticMethod(ResolveGenericMethod(memberDelegate.Method), parameterName: "member");
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    
+        private static MethodInfo ResolveGenericMethod(MethodInfo method)
+	    {
+            if ( method.IsGenericMethod && !method.IsGenericMethodDefinition )
+            {
+                var genericArguments = method.GetGenericArguments();
+                
+                if ( genericArguments.Any(TypeTemplate.IsTemplateType) )
+                {
+                    var resolvedGenericArguments = genericArguments.Select(TypeTemplate.Resolve).ToArray();
+                    return method.GetGenericMethodDefinition().MakeGenericMethod(resolvedGenericArguments);
+                }
+            }
+
+            return method;
+	    }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
