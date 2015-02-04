@@ -15,18 +15,24 @@ namespace Hapil.Writers
 	{
 		private readonly Type m_BaseType;
 		private readonly TypeMemberCache m_Members;
-        private readonly bool m_IsExplicitInterfaceImplementation;
+        private readonly InterfaceImplementationKind m_ImplementationKind;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public ImplementationClassWriter(ClassType ownerClass, bool isExplicitInterfaceImplementation = false)
-			: this(ownerClass, typeof(TBase), isExplicitInterfaceImplementation)
+        public ImplementationClassWriter(
+            ClassType ownerClass, 
+            InterfaceImplementationKind implementationKind = 
+            InterfaceImplementationKind.ImplicitNonVirtual)
+            : this(ownerClass, typeof(TBase), implementationKind)
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public ImplementationClassWriter(ClassType ownerClass, Type baseType, bool isExplicitInterfaceImplementation = false)
+        public ImplementationClassWriter(
+            ClassType ownerClass, 
+            Type baseType, 
+            InterfaceImplementationKind implementationKind = InterfaceImplementationKind.ImplicitNonVirtual)
 			: base(ownerClass)
 		{
 			m_BaseType = TypeTemplate.Resolve(baseType);
@@ -37,7 +43,7 @@ namespace Hapil.Writers
 			}
 
 			m_Members = TypeMemberCache.Of(m_BaseType);
-            m_IsExplicitInterfaceImplementation = isExplicitInterfaceImplementation;
+            m_ImplementationKind = implementationKind;
 
             //TODO: validate base type
 		}
@@ -54,9 +60,9 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public bool IsExplicitInterfaceImplementation
+        public InterfaceImplementationKind ImplementationKind
         {
-            get { return m_IsExplicitInterfaceImplementation; }
+            get { return m_ImplementationKind; }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

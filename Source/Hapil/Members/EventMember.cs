@@ -30,7 +30,7 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public EventMember(ClassType ownerClass, EventInfo declaration, bool isExplicitInterfaceImplementation)
+        public EventMember(ClassType ownerClass, EventInfo declaration, InterfaceImplementationKind implementationKind)
 			: base(ownerClass, declaration.Name)
 		{
 			m_Writers = new List<EventWriterBase>();
@@ -42,10 +42,10 @@ namespace Hapil.Members
 				declaration.Attributes,
 				declaration.EventHandlerType);
 
-			m_AddMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetAddMethod(), isExplicitInterfaceImplementation));
+            m_AddMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetAddMethod(), implementationKind));
 			m_EventBuilder.SetAddOnMethod((MethodBuilder)m_AddMethod.MethodFactory.Builder);
 
-            m_RemoveMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetRemoveMethod(), isExplicitInterfaceImplementation));
+            m_RemoveMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, declaration.GetRemoveMethod(), implementationKind));
 			m_EventBuilder.SetRemoveOnMethod((MethodBuilder)m_RemoveMethod.MethodFactory.Builder);
 		}
 

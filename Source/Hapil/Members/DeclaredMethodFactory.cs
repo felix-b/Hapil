@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Writers;
 
 namespace Hapil.Members
 {
@@ -17,17 +18,17 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public DeclaredMethodFactory(ClassType type, MethodInfo declaration, bool isExplicitInterfaceImplementation)
+		public DeclaredMethodFactory(ClassType type, MethodInfo declaration, InterfaceImplementationKind implementationKind)
 		{
 		    var proposedName = (
-                isExplicitInterfaceImplementation && declaration.DeclaringType != null
+                implementationKind == InterfaceImplementationKind.Explicit && declaration.DeclaringType != null
 		        ? declaration.DeclaringType + "." + declaration.Name
 		        : declaration.Name);
 
 			m_Declaration = declaration;
 			m_MethodBuilder = type.TypeBuilder.DefineMethod(
                 type.TakeMemberName(proposedName, mustUseThisName: true),
-                GetMethodAttributesFor(declaration, isExplicitInterfaceImplementation),
+                GetMethodAttributesFor(declaration, implementationKind),
 				declaration.ReturnType,
 				declaration.GetParameters().Select(p => p.ParameterType).ToArray());
 
@@ -152,20 +153,21 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration, bool isExplicitInterfaceImplementation)
+        private static MethodAttributes GetMethodAttributesFor(MethodInfo declaration, InterfaceImplementationKind implementationKind)
 		{
-			var attributes = 
-				MethodAttributes.Final |
-				MethodAttributes.HideBySig |
-				MethodAttributes.Virtual;
+			var attributes = MethodAttributes.Virtual | MethodAttributes.HideBySig;
 
-            if ( isExplicitInterfaceImplementation )
+            switch ( implementationKind )
             {
-                attributes |= MethodAttributes.Private;
-            }
-            else
-            {
-                attributes |= MethodAttributes.Public;
+                case InterfaceImplementationKind.Explicit:
+                    attributes |= (MethodAttributes.Final | MethodAttributes.Private);
+                    break;
+                case InterfaceImplementationKind.ImplicitVirtual:
+                    attributes |= (MethodAttributes.Public);
+                    break;
+                case InterfaceImplementationKind.ImplicitNonVirtual:
+                    attributes |= (MethodAttributes.Final | MethodAttributes.Public);
+                    break;
             }
 
             if ( declaration != null && declaration.DeclaringType != null && declaration.DeclaringType.IsInterface )

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Hapil.Testing.NUnit;
 using Hapil.Expressions;
@@ -12,7 +13,7 @@ using TT = Hapil.TypeTemplate;
 namespace Hapil.UnitTests
 {
 	[TestFixture]
-	public class SignatureTests : NUnitEmittedTypesTestBase
+    public class SignatureTests : NUnitEmittedTypesTestBase
 	{
 		[Test]
 		public void InterfaceMethods_OnyByOne()
@@ -1066,5 +1067,73 @@ namespace Hapil.UnitTests
             Assert.That(resultRight, Is.EqualTo("RRR"));
             Assert.That(resultObj, Is.EqualTo("OOO"));
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void InterfaceProperties_ImplementAll_AsVirtualMembers()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterfaceVirtual<AncestorRepository.IFewReadWriteProperties>()
+                .AllProperties().ImplementAutomatic();
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.IFewReadWriteProperties>().UsingDefaultConstructor();
+
+            obj.AnInt = 321;
+            obj.AString = "DEF";
+
+            var anObjectValue = new object();
+            obj.AnObject = anObjectValue;
+
+            //-- Assert
+
+            Assert.That(obj.AnInt, Is.EqualTo(321));
+            Assert.That(obj.AString, Is.EqualTo("DEF"));
+            Assert.That(obj.AnObject, Is.SameAs(anObjectValue));
+
+            var propertyInfos = obj.GetType().GetProperties();
+
+            Assert.That(propertyInfos.All(p => p.GetAccessors().All(m => m.IsVirtual)), "IsVirtual");
+            Assert.That(propertyInfos.All(p => p.GetAccessors().All(m => !m.IsFinal)), "!IsFinal");
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void InterfaceMethods_ImplementAll_AsVirtualMembers()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterfaceVirtual<AncestorRepository.IMoreMethods>()
+                .AllMethods().ImplementEmpty();
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.IMoreMethods>().UsingDefaultConstructor();
+
+            //-- Assert
+
+            obj.One();
+            obj.Three(0);
+            obj.Seven(TimeSpan.Zero, null, 0);
+
+            Assert.That(obj.Eleven(), Is.EqualTo(0));
+            Assert.That(obj.Twelwe(), Is.Null);
+            Assert.That(obj.Fifteen(TimeSpan.Zero, null), Is.EqualTo(0));
+            Assert.That(obj.Sixteen(0, TimeSpan.Zero), Is.Null);
+            Assert.That(obj.Eighteen(null, 0, TimeSpan.Zero), Is.Null);
+
+            var methodInfos = obj.GetType().GetMethods().Where(m => !m.IsStatic && m.DeclaringType != typeof(object)).ToArray();
+
+            Assert.That(methodInfos.All(m => m.IsVirtual), "IsVirtual");
+            Assert.That(methodInfos.All(m => !m.IsFinal), "!IsFinal");
+       }
     }
 }

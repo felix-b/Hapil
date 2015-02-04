@@ -194,6 +194,7 @@
     <Compile Include="Writers\ConstructorWriter.cs" />
     <Compile Include="Writers\DecoratingConstructorWriter.cs" />
     <Compile Include="Writers\ImplementationClassWriter.NewMembers.cs" />
+    <Compile Include="Writers\InterfaceImplementationKind.cs" />
     <Compile Include="Writers\PropagatingEventWriter.cs" />
     <Compile Include="Writers\PropagatingPropertyWriter.cs" />
     <Compile Include="Writers\DecoratingClassWriter.cs" />

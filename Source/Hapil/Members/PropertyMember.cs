@@ -22,11 +22,11 @@ namespace Hapil.Members
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField, bool isExplicitInterfaceImplementation)
+		public PropertyMember(ClassType ownerClass, PropertyInfo declaration, FieldMember backingField, InterfaceImplementationKind implementationKind)
 			: base(ownerClass, declaration.Name)
 		{
             m_PropertyName = (
-                isExplicitInterfaceImplementation && declaration.DeclaringType != null ?
+                implementationKind == InterfaceImplementationKind.Explicit && declaration.DeclaringType != null ?
                 declaration.DeclaringType.Name + "." + declaration.Name :
                 declaration.Name);
 
@@ -45,7 +45,7 @@ namespace Hapil.Members
 
 			if ( getterDeclaration != null )
 			{
-                m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration, isExplicitInterfaceImplementation));
+                m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration, implementationKind));
 				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 			}
 
@@ -53,7 +53,7 @@ namespace Hapil.Members
 
 			if ( setterDeclaration != null )
 			{
-                m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration, isExplicitInterfaceImplementation));
+                m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration, implementationKind));
 				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
 			}
 

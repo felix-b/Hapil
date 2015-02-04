@@ -82,16 +82,30 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public ImplementationClassWriter<T> ImplementInterfaceVirtual<T>()
+        {
+            return new ImplementationClassWriter<T>(OwnerClass, InterfaceImplementationKind.ImplicitVirtual);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public ImplementationClassWriter<object> ImplementInterfaceVirtual(Type interfaceType)
+        {
+            return new ImplementationClassWriter<object>(OwnerClass, interfaceType, InterfaceImplementationKind.ImplicitVirtual);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public ImplementationClassWriter<T> ImplementInterfaceExplicitly<T>()
         {
-            return new ImplementationClassWriter<T>(OwnerClass, isExplicitInterfaceImplementation: true);
+            return new ImplementationClassWriter<T>(OwnerClass, InterfaceImplementationKind.Explicit);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public ImplementationClassWriter<object> ImplementInterfaceExplicitly(Type interfaceType)
         {
-            return new ImplementationClassWriter<object>(OwnerClass, interfaceType, isExplicitInterfaceImplementation: true);
+            return new ImplementationClassWriter<object>(OwnerClass, interfaceType, InterfaceImplementationKind.Explicit);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

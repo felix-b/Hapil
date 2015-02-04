@@ -148,7 +148,7 @@ namespace Hapil.Writers
 
 				foreach ( var singleEvent in eventsToImplement )
 				{
-					var eventMember = new EventMember(m_OwnerClass, singleEvent, m_ClassWriter.IsExplicitInterfaceImplementation);
+					var eventMember = new EventMember(m_OwnerClass, singleEvent, m_ClassWriter.ImplementationKind);
 					m_OwnerClass.AddMember(eventMember);
 					
 					var writer = writerFactory(eventMember);
