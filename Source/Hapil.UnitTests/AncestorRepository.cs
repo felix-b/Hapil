@@ -594,5 +594,12 @@ namespace Hapil.UnitTests
             public abstract TAbstract AsAbstract { get; set; }
             public abstract TConcrete AsConcrete { get; set; }
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IHaveType
+        {
+            Type TheType { get; }
+        }
     }
 }

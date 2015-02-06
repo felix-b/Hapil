@@ -2,170 +2,196 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
 namespace Hapil.Operands
 {
-	public class Constant<T> : Operand<T>
-	{
-		private readonly T m_Value;
+    public class Constant<T> : Operand<T>
+    {
+        private readonly T m_Value;
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Constant(T value)
-		{
-			m_Value = value;
-		}
+        public Constant(T value)
+        {
+            m_Value = value;
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override string ToString()
-		{
-			bool isNull = object.ReferenceEquals(null, m_Value);
+        public override string ToString()
+        {
+            bool isNull = object.ReferenceEquals(null, m_Value);
 
-			if ( m_Value is Type )
-			{
-				return string.Format("Type[{0}]", isNull ? "null" : (m_Value as Type).FriendlyName());
-			}
-			else
-			{
-				return string.Format("Const[{0}]", isNull ? "null" : m_Value.ToString());
-			}
-		}
+            if ( m_Value is Type )
+            {
+                return string.Format("Type[{0}]", isNull ? "null" : (m_Value as Type).FriendlyName());
+            }
+            else
+            {
+                return string.Format("Const[{0}]", isNull ? "null" : m_Value.ToString());
+            }
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public T Value
-		{
-			get
-			{
-				return m_Value;
-			}
-		}
+        public T Value
+        {
+            get
+            {
+                return m_Value;
+            }
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override OperandKind Kind
-		{
-			get
-			{
-				return OperandKind.Constant;
-			}
-		}
+        public override OperandKind Kind
+        {
+            get
+            {
+                return OperandKind.Constant;
+            }
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitTarget(ILGenerator il)
-		{
-			// constants have no target
-		}
+        protected override void OnEmitTarget(ILGenerator il)
+        {
+            // constants have no target
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitLoad(ILGenerator il)
-		{
-			var actualValue = ResolveActualValue();
+        protected override void OnEmitLoad(ILGenerator il)
+        {
+            var actualValue = ResolveActualValue();
 
-			if ( !TryEmitConvertibleValue(il, actualValue as IConvertible) )
-			{
-				if ( !TryEmitStaticDelegateValue(il, actualValue as Delegate) )
-				{
-					if ( !TryEmitNullValue(il, actualValue) )
-					{
-						throw Helpers.CreateConstantNotSupportedException(OperandType);
-					}
-				}
-			}
-		}
+            if ( !TryEmitConvertibleValue(il, actualValue as IConvertible) )
+            {
+                if ( !TryEmitStaticDelegateValue(il, actualValue as Delegate) )
+                {
+                    if ( !TryEmitRuntimeTypeValue(il, actualValue as Type) )
+                    {
+                        if ( !TryEmitNullValue(il, actualValue) )
+                        {
+                            throw Helpers.CreateConstantNotSupportedException(OperandType);
+                        }
+                    }
+                }
+            }
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitStore(ILGenerator il)
-		{
-			throw new NotSupportedException("Constants are not assignable.");
-		}
+        protected override void OnEmitStore(ILGenerator il)
+        {
+            throw new NotSupportedException("Constants are not assignable.");
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		protected override void OnEmitAddress(ILGenerator il)
-		{
-			throw new NotSupportedException("Constants are not assignable.");
-		}
+        protected override void OnEmitAddress(ILGenerator il)
+        {
+            throw new NotSupportedException("Constants are not assignable.");
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private object ResolveActualValue()
-		{
-			return TypeTemplate.ResolveValue(m_Value);
-		}
+        private object ResolveActualValue()
+        {
+            return TypeTemplate.ResolveValue(m_Value);
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool TryEmitConvertibleValue(ILGenerator il, IConvertible convertible)
-		{
-			if ( convertible != null )
-			{
-				Helpers.EmitConvertible(il, convertible);
+        private bool TryEmitConvertibleValue(ILGenerator il, IConvertible convertible)
+        {
+            if ( convertible != null )
+            {
+                Helpers.EmitConvertible(il, convertible);
 
-				var valueType = convertible.GetType();
+                var valueType = convertible.GetType();
 
-				if ( valueType.IsValueType && OperandType == typeof(object) )
-				{
-					il.Emit(OpCodes.Box, valueType);
-				}
+                if ( valueType.IsValueType && OperandType == typeof(object) )
+                {
+                    il.Emit(OpCodes.Box, valueType);
+                }
 
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool TryEmitStaticDelegateValue(ILGenerator il, Delegate @delegate)
-		{
-			if ( @delegate != null )
-			{
-				if ( !@delegate.Method.IsStatic )
-				{
-					throw new NotSupportedException("Constants of delegate types can only point to static methods.");
-				}
+        private bool TryEmitRuntimeTypeValue(ILGenerator il, Type type)
+        {
+            if ( type != null )
+            {
+                il.Emit(OpCodes.Ldtoken, type);
+                il.Emit(OpCodes.Call, s_TypeGetTypeFromHandleMethod);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-				il.Emit(OpCodes.Ldnull);
-				il.Emit(OpCodes.Ldftn, @delegate.Method);
-				il.Emit(OpCodes.Newobj, DelegateShortcuts.GetDelegateConstructor(@delegate.GetType()));
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+        private bool TryEmitStaticDelegateValue(ILGenerator il, Delegate @delegate)
+        {
+            if ( @delegate != null )
+            {
+                if ( !@delegate.Method.IsStatic )
+                {
+                    throw new NotSupportedException("Constants of delegate types can only point to static methods.");
+                }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+                il.Emit(OpCodes.Ldnull);
+                il.Emit(OpCodes.Ldftn, @delegate.Method);
+                il.Emit(OpCodes.Newobj, DelegateShortcuts.GetDelegateConstructor(@delegate.GetType()));
 
-		private bool TryEmitNullValue(ILGenerator il, object value)
-		{
-			if ( object.ReferenceEquals(null, value) )
-			{
-				il.Emit(OpCodes.Ldnull);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//public static implicit operator T(HapilConstant<T> operand)
-		//{
-		//	return operand.m_Value;
-		//}
-	}
+        private bool TryEmitNullValue(ILGenerator il, object value)
+        {
+            if ( object.ReferenceEquals(null, value) )
+            {
+                il.Emit(OpCodes.Ldnull);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static readonly MethodInfo s_TypeGetTypeFromHandleMethod = typeof(Type).GetMethod(
+            "GetTypeFromHandle",
+            BindingFlags.Public | BindingFlags.Static);
+
+        ////-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        //public static implicit operator T(HapilConstant<T> operand)
+        //{
+        //	return operand.m_Value;
+        //}
+    }
 }

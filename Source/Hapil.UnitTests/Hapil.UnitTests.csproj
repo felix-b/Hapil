@@ -80,6 +80,7 @@
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="ClosureTestFixtureBase.cs" />
     <Compile Include="Operands\AnonymousDelegateOperandTests.cs" />
+    <Compile Include="Operands\ConstantOperandTests.cs" />
     <Compile Include="Operands\DelegateTests.cs" />
     <Compile Include="Expressions\NewObjectExpressionTests.cs" />
     <Compile Include="Expressions\NewStructExpressionTests.cs" />
