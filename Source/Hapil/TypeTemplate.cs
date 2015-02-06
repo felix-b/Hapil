@@ -24,7 +24,9 @@ namespace Hapil
                 typeof(TIndex1), typeof(TIndex2), typeof(TItem), typeof(TKey), typeof(TValue),
 				typeof(TEventHandler), typeof(TEventArgs),
 				typeof(TField),
-				typeof(TClosure)
+				typeof(TClosure),
+                typeof(TContract), typeof(TImpl), typeof(TContract2), typeof(TImpl2),
+                typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2)
 			});
 
 			s_ArgumentTemplateTypes = new[] {
@@ -181,46 +183,54 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public abstract class TemplateTypeBase<T> where T : TemplateTypeBase<T>
+        // ReSharper disable InconsistentNaming
+
+		public interface TemplateTypeBase<T> where T : TemplateTypeBase<T>
 		{
-			public static Type ActualType
-			{
-				get
-				{
-					return Scope.ValidateCurrent().Resolve(typeof(T));
-				}
-			}
+            //public static Type ActualType
+            //{
+            //    get
+            //    {
+            //        return Scope.ValidateCurrent().Resolve(typeof(T));
+            //    }
+            //}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		// ReSharper disable InconsistentNaming
-
-		public class TBase : TemplateTypeBase<TBase> { }
-		public class TInterface : TemplateTypeBase<TInterface> { }
-		public class TPrimary : TemplateTypeBase<TPrimary> { }
-		public class TSecondary1 : TemplateTypeBase<TSecondary1> { }
-		public class TSecondary2 : TemplateTypeBase<TSecondary2> { }
-		public class TReturn : TemplateTypeBase<TReturn> { }
-		public class TProperty : TemplateTypeBase<TProperty> { }
-		public class TArgument : TemplateTypeBase<TArgument> { }
-		public class TArg1 : TemplateTypeBase<TArg1> { }
-		public class TArg2 : TemplateTypeBase<TArg2> { }
-		public class TArg3 : TemplateTypeBase<TArg3> { }
-		public class TArg4 : TemplateTypeBase<TArg4> { }
-		public class TArg5 : TemplateTypeBase<TArg5> { }
-		public class TArg6 : TemplateTypeBase<TArg6> { }
-		public class TArg7 : TemplateTypeBase<TArg7> { }
-		public class TArg8 : TemplateTypeBase<TArg8> { }
-		public class TIndex1 : TemplateTypeBase<TIndex1> { }
-		public class TIndex2 : TemplateTypeBase<TIndex2> { }
-		public class TItem : TemplateTypeBase<TItem> { }
-        public class TKey : TemplateTypeBase<TKey> { }
-        public class TValue : TemplateTypeBase<TValue> { }
-        public class TEventHandler : TemplateTypeBase<TEventHandler> { }
-		public class TEventArgs : TemplateTypeBase<TEventArgs> { }
-		public class TField : TemplateTypeBase<TField> { }
-		public class TClosure : TemplateTypeBase<TClosure> { }
+        public interface TBase : TemplateTypeBase<TBase> { }
+        public interface TInterface : TemplateTypeBase<TInterface> { }
+        public interface TPrimary : TemplateTypeBase<TPrimary> { }
+        public interface TSecondary1 : TemplateTypeBase<TSecondary1> { }
+        public interface TSecondary2 : TemplateTypeBase<TSecondary2> { }
+        public interface TReturn : TemplateTypeBase<TReturn> { }
+        public interface TProperty : TemplateTypeBase<TProperty> { }
+        public interface TArgument : TemplateTypeBase<TArgument> { }
+        public interface TArg1 : TemplateTypeBase<TArg1> { }
+        public interface TArg2 : TemplateTypeBase<TArg2> { }
+        public interface TArg3 : TemplateTypeBase<TArg3> { }
+        public interface TArg4 : TemplateTypeBase<TArg4> { }
+        public interface TArg5 : TemplateTypeBase<TArg5> { }
+        public interface TArg6 : TemplateTypeBase<TArg6> { }
+        public interface TArg7 : TemplateTypeBase<TArg7> { }
+        public interface TArg8 : TemplateTypeBase<TArg8> { }
+        public interface TIndex1 : TemplateTypeBase<TIndex1> { }
+        public interface TIndex2 : TemplateTypeBase<TIndex2> { }
+        public interface TItem : TemplateTypeBase<TItem> { }
+        public interface TKey : TemplateTypeBase<TKey> { }
+        public interface TValue : TemplateTypeBase<TValue> { }
+        public interface TEventHandler : TemplateTypeBase<TEventHandler> { }
+        public interface TEventArgs : TemplateTypeBase<TEventArgs> { }
+        public interface TField : TemplateTypeBase<TField> { }
+        public interface TClosure : TemplateTypeBase<TClosure> { }
+        public interface TContract : TemplateTypeBase<TContract> { }
+        public interface TImpl : TContract, TemplateTypeBase<TImpl> { }
+        public interface TContract2 : TemplateTypeBase<TContract2> { }
+        public interface TImpl2 : TContract2, TemplateTypeBase<TImpl2> { }
+        public interface TAbstract : TemplateTypeBase<TAbstract> { }
+        public interface TConcrete : TAbstract, TemplateTypeBase<TConcrete> { }
+        public interface TAbstract2 : TemplateTypeBase<TAbstract2> { }
+        public interface TConcrete2 : TAbstract2, TemplateTypeBase<TConcrete2> { }
 
 		// ReSharper restore InconsistentNaming
 

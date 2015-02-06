@@ -584,5 +584,15 @@ namespace Hapil.UnitTests
         {
             string One { get; set; }
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class GenericBaseWithConstraints<TAbstract, TConcrete>
+            where TAbstract : class
+            where TConcrete : class, TAbstract
+        {
+            public abstract TAbstract AsAbstract { get; set; }
+            public abstract TConcrete AsConcrete { get; set; }
+        }
     }
 }

@@ -8,6 +8,8 @@ using Hapil.Operands;
 using NUnit.Framework;
 using Repo = Hapil.UnitTests.AncestorRepository;
 using TT = Hapil.TypeTemplate;
+using System.IO;
+using System.Reflection;
 
 namespace Hapil.UnitTests
 {
@@ -223,7 +225,74 @@ namespace Hapil.UnitTests
 			Assert.That(constructorInfo.GetParameters().Length, Is.EqualTo(2));
 			Assert.That(constructorInfo.GetParameters()[0].ParameterType, Is.EqualTo(typeof(Repo.BaseOne)));
 			Assert.That(constructorInfo.GetParameters()[1].ParameterType, Is.EqualTo(typeof(Repo.IOneProperty)));
-
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanUseTemplateTypesWithInheritanceConstraints()
+        {
+            var type1 = typeof(AncestorRepository.GenericBaseWithConstraints<TT.TContract, TT.TImpl>);
+            var type2 = typeof(AncestorRepository.GenericBaseWithConstraints<TT.TContract2, TT.TImpl2>);
+            var type3 = typeof(AncestorRepository.GenericBaseWithConstraints<TT.TAbstract, TT.TConcrete>);
+            var type4 = typeof(AncestorRepository.GenericBaseWithConstraints<TT.TAbstract2, TT.TConcrete2>);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanDeriveFromGenericBaseWithInheritanceConstraints()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TAbstract, TT.TConcrete>(typeof(Stream), typeof(MemoryStream)) )
+            {
+                var classWriter = DeriveClassFrom<AncestorRepository.GenericBaseWithConstraints<TT.TAbstract, TT.TConcrete>>();
+                
+                classWriter.Property(x => x.AsConcrete).ImplementAutomatic();
+
+                var concreteProperty = classWriter.Property(x => x.AsConcrete).Single();
+                var concreteField = classWriter.OwnerClass.GetPropertyBackingField(concreteProperty).AsOperand<TT.TConcrete>();
+
+                classWriter.Property(x => x.AsAbstract).Implement(
+                    p => p.Get(m => m.Return(concreteField)),
+                    p => p.Set((m, value) => concreteField.Assign(value.CastTo<TT.TConcrete>())));
+
+                classWriter.Constructor<TT.TConcrete>((m, arg) => concreteField.Assign(arg));
+            }
+
+            var memoryStream0 = new MemoryStream();
+            var memoryStream1 = new MemoryStream();
+            var memoryStream2 = new MemoryStream();
+
+            //-- Act
+
+            var obj = 
+                CreateClassInstanceAs<AncestorRepository.GenericBaseWithConstraints<Stream, MemoryStream>>().UsingConstructor(memoryStream0);
+
+            var abstract0 = obj.AsAbstract;
+            var concrete0 = obj.AsConcrete;
+
+            obj.AsAbstract = memoryStream1;
+
+            var abstract1 = obj.AsAbstract;
+            var concrete1 = obj.AsConcrete;
+
+            obj.AsConcrete = memoryStream2;
+
+            var abstract2 = obj.AsAbstract;
+            var concrete2 = obj.AsConcrete;
+
+            //-- Assert
+
+            Assert.That(abstract0, Is.SameAs(memoryStream0));
+            Assert.That(concrete0, Is.SameAs(memoryStream0));
+            
+            Assert.That(abstract1, Is.SameAs(memoryStream1));
+            Assert.That(concrete1, Is.SameAs(memoryStream1));
+            
+            Assert.That(abstract2, Is.SameAs(memoryStream2));
+            Assert.That(concrete2, Is.SameAs(memoryStream2));
+        }
+    }
 }
