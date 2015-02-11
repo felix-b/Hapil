@@ -241,6 +241,40 @@ namespace Hapil.UnitTests
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void CanUseTemplateTypesWithStructConstraint()
+        {
+            var type1 = typeof(AncestorRepository.GenericBaseWithStructConstraint<TT.TStruct>);
+            var type2 = typeof(AncestorRepository.GenericBaseWithStructConstraint<TT.TStruct2>);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanImplementGenericAncestorWithStructConstraint()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TStruct>(typeof(Int32)) )
+            {
+                DeriveClassFrom<AncestorRepository.GenericBaseWithStructConstraint<TT.TStruct>>()
+                    .DefaultConstructor()
+                    .Method<TT.TStruct, string>(cls => cls.FormatValue)
+                    .Implement((m, value) => m.Return(m.Const("{0}={1}").Format(value.Func<Type>(x => x.GetType).Prop(x => x.Name), value)));
+            }
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.GenericBaseWithStructConstraint<int>>().UsingDefaultConstructor();
+            var formattedValue = obj.FormatValue(123);
+
+            //-- Assert
+
+            Assert.That(formattedValue, Is.EqualTo("Int32=123"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
         public void CanDeriveFromGenericBaseWithInheritanceConstraints()
         {
             //-- Arrange

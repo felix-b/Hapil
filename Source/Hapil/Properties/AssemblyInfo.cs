@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.2.6")]
-[assembly: AssemblyFileVersion("0.9.2.6")]
+[assembly: AssemblyVersion("0.9.2.7")]
+[assembly: AssemblyFileVersion("0.9.2.7")]
 
 [assembly: InternalsVisibleTo("Hapil.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010089f789dd2cc2cfdb654442e89c58ac9694b70b6d8968ab811ed2579d3bef29d18ce9969ec6db1d4f6ee6d8bd4a78f0485cee0ed52820026e46638b49fcc26f171acc1e751e1e212498ed4d1d207ec9c0a106ea657abef76acf854f284f367e79aa97ec117fe806e0beb19cb044a74abc7444d2d74dde8e079117f9a6ef8a21f2")]

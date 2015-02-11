@@ -597,6 +597,14 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public abstract class GenericBaseWithStructConstraint<T> 
+            where T : struct
+        {
+            public abstract string FormatValue(T value);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public interface IHaveType
         {
             Type TheType { get; }

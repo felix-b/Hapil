@@ -26,7 +26,8 @@ namespace Hapil
 				typeof(TField),
 				typeof(TClosure),
                 typeof(TContract), typeof(TImpl), typeof(TContract2), typeof(TImpl2),
-                typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2)
+                typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2),
+                typeof(TStruct), typeof(TStruct2)
 			});
 
 			s_ArgumentTemplateTypes = new[] {
@@ -231,6 +232,8 @@ namespace Hapil
         public interface TConcrete : TAbstract, TemplateTypeBase<TConcrete> { }
         public interface TAbstract2 : TemplateTypeBase<TAbstract2> { }
         public interface TConcrete2 : TAbstract2, TemplateTypeBase<TConcrete2> { }
+        public struct TStruct : TemplateTypeBase<TStruct> { }
+        public struct TStruct2 : TemplateTypeBase<TStruct2> { }
 
 		// ReSharper restore InconsistentNaming
 
