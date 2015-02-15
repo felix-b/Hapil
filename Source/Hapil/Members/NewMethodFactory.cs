@@ -154,11 +154,22 @@ namespace Hapil.Members
 
         private static MethodAttributes GetMethodAttributesFor(MethodSignature signature)
         {
-            return (
-                MethodAttributes.HideBySig |
-                MethodAttributes.Public |
-                MethodAttributes.Virtual |
-                MethodAttributes.NewSlot);
+            if ( signature.IsStatic )
+            {
+                return (
+                    MethodAttributes.HideBySig | 
+                    MethodAttributes.Public | 
+                    MethodAttributes.Static | 
+                    MethodAttributes.ReuseSlot);
+            }
+            else
+            {
+                return (
+                    MethodAttributes.HideBySig | 
+                    MethodAttributes.Public | 
+                    MethodAttributes.Virtual | 
+                    MethodAttributes.NewSlot);
+            }
         }
     }
 }

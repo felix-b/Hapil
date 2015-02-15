@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Hapil.Expressions;
+using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Statements;
 
@@ -128,7 +129,14 @@ namespace Hapil
 			StatementScope.Current.AddStatement(new CallStatement(null, method, arguments));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Void(MethodMember method, params IOperand[] arguments)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(null, method.MethodFactory.Builder, arguments));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static Operand<TReturn> Func<TReturn>(Func<TReturn> member)
 		{
@@ -265,7 +273,15 @@ namespace Hapil
 			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> Func<TReturn>(MethodMember method, params IOperand[] arguments)
+        {
+            var @operator = new UnaryOperators.OperatorCall<object>(method.MethodFactory.Builder, arguments);
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
 			Expression<Func<TArg1, TArg2, TArg3, TReturn>> member,

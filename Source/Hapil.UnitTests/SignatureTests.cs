@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Hapil.Members;
 using Hapil.Testing.NUnit;
 using Hapil.Expressions;
 using Hapil.Operands;
@@ -1134,6 +1136,35 @@ namespace Hapil.UnitTests
 
             Assert.That(methodInfos.All(m => m.IsVirtual), "IsVirtual");
             Assert.That(methodInfos.All(m => !m.IsFinal), "!IsFinal");
-       }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NewStaticMethod_CallFromConstructor()
+        {
+            //-- Arrange
+
+            MethodMember bytesToStreamFunc = null;
+
+            DeriveClassFrom<AncestorRepository.BaseWithConstructorParameter>()
+                .NewStaticFunction<byte[], Stream>("BytesToStream").Implement((m, bytes) => {
+                    bytesToStreamFunc = m.OwnerMethod;
+                    m.Return(m.New<MemoryStream>(bytes));
+                })
+                .Constructor<byte[]>((cw, bytes) => {
+                    cw.Base(Static.Func<Stream>(bytesToStreamFunc, bytes));
+                });
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.BaseWithConstructorParameter>().UsingConstructor(new byte[] { 11, 22, 33 });
+
+            //-- Assert
+
+            var memoryStream = (MemoryStream)obj.Stream;
+
+            Assert.That(memoryStream.ToArray(), Is.EqualTo(new byte[] { 11, 22, 33 }));
+        }
     }
 }

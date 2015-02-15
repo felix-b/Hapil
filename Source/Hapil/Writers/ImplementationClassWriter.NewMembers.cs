@@ -70,6 +70,36 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public IFunctionMethodSelector<TReturn> NewStaticFunction<TReturn>(string name)
+        {
+            return new NewMethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: Type.EmptyTypes,
+                argumentNames: new string[0],
+                returnType: typeof(TReturn)));
+        }
+        public IFunctionMethodSelector<TA1, TReturn> NewStaticFunction<TA1, TReturn>(string name, string arg1 = "arg1")
+        {
+            return new NewMethodSelector<TReturn, TA1, NA, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1) },
+                argumentNames: new[] { arg1 },
+                returnType: typeof(TReturn)));
+        }
+        public IFunctionMethodSelector<TA1, TA2, TReturn> NewStaticFunction<TA1, TA2, TReturn>(string name, string arg1 = "arg1", string arg2 = "arg2")
+        {
+            return new NewMethodSelector<TReturn, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2) },
+                argumentNames: new[] { arg1, arg2 },
+                returnType: typeof(TReturn)));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public IPropertySelector<TProperty> NewVirtualWritableProperty<TProperty>(string propertyName)
         {
             return new NewPropertySelector<NA, NA, TProperty>(this, propertyName, typeof(TProperty));

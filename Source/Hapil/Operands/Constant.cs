@@ -72,7 +72,7 @@ namespace Hapil.Operands
             {
                 if ( !TryEmitStaticDelegateValue(il, actualValue as Delegate) )
                 {
-                    if ( !TryEmitRuntimeTypeValue(il, actualValue as Type) )
+                    if ( !TryEmitMetadataTokenValue(il, actualValue as Type, actualValue as MethodInfo, actualValue as FieldInfo) )
                     {
                         if ( !TryEmitNullValue(il, actualValue) )
                         {
@@ -129,18 +129,30 @@ namespace Hapil.Operands
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private bool TryEmitRuntimeTypeValue(ILGenerator il, Type type)
+        private bool TryEmitMetadataTokenValue(ILGenerator il, Type type, MethodInfo method, FieldInfo field)
         {
             if ( type != null )
             {
                 il.Emit(OpCodes.Ldtoken, type);
                 il.Emit(OpCodes.Call, s_TypeGetTypeFromHandleMethod);
-                return true;
+            }
+            else if ( method != null )
+            {
+                il.Emit(OpCodes.Ldtoken, method);
+                il.Emit(OpCodes.Call, s_MethodBaseGetMethodFromHandleMethod);
+                il.Emit(OpCodes.Castclass, typeof(MethodInfo));
+            }
+            else if ( field != null )
+            {
+                il.Emit(OpCodes.Ldtoken, field);
+                il.Emit(OpCodes.Call, s_FieldInfoGetFieldFromHandleMethod);
             }
             else
             {
                 return false;
             }
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -186,6 +198,24 @@ namespace Hapil.Operands
         private static readonly MethodInfo s_TypeGetTypeFromHandleMethod = typeof(Type).GetMethod(
             "GetTypeFromHandle",
             BindingFlags.Public | BindingFlags.Static);
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static readonly MethodInfo s_MethodBaseGetMethodFromHandleMethod = typeof(MethodBase).GetMethod(
+            "GetMethodFromHandle",
+            BindingFlags.Public | BindingFlags.Static,
+            null,
+            new Type[] { typeof(RuntimeMethodHandle) }, 
+            null);
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static readonly MethodInfo s_FieldInfoGetFieldFromHandleMethod = typeof(FieldInfo).GetMethod(
+            "GetFieldFromHandle",
+            BindingFlags.Public | BindingFlags.Static,
+            null,
+            new Type[] { typeof(RuntimeFieldHandle) },
+            null);
 
         ////-----------------------------------------------------------------------------------------------------------------------------------------------------
 

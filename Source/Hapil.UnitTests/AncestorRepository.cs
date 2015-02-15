@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Hapil.UnitTests
@@ -84,7 +86,28 @@ namespace Hapil.UnitTests
 			public abstract int TakeNextCounter();
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseWithConstructorParameter
+        {
+            private readonly Stream m_Stream;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected BaseWithConstructorParameter(Stream stream)
+            {
+                m_Stream = stream;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Stream Stream
+            {
+                get { return m_Stream; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public interface ITester
 		{
@@ -605,9 +628,11 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public interface IHaveType
+        public interface IHaveMetadataToken
         {
-            Type TheType { get; }
+            Type TypeFromToken { get; }
+            MethodInfo MethodFromToken { get; }
+            FieldInfo FieldFromToken { get; }
         }
     }
 }
