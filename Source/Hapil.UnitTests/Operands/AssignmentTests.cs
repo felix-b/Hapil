@@ -101,6 +101,68 @@ namespace Hapil.UnitTests.Operands
 				Is.EqualTo("VirtualVoidMethod():void{[this.Field[f1] = [this.Field[f2] + Const[123]]];}"));
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanAssignPublicFieldOfStruct()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.ITester>()
+                .Method<string>(intf => intf.TestFunc).Implement(m => {
+                    var structLocal = m.Local<TestStruct>(initialValue: m.New<TestStruct>());
+                    structLocal.Field(x => x.Value).Assign(123);
+                    m.Return(structLocal.FuncToString());
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.ITester>().UsingDefaultConstructor();
+            var result = tester.TestFunc();
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("123"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public struct TestStruct
+        {
+            public int Value;
+
+            public override string ToString()
+            {
+                return Value.ToString();
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class StructFieldAssignmentCompiledExample : AncestorRepository.ITester
+        {
+            #region ITester Members
+
+            public void TestAction()
+            {
+                throw new NotImplementedException();
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public string TestFunc()
+            {
+                var s = new TestStruct();
+                s.Value = 123;
+                return s.ToString();
+            }
+
+            #endregion
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class TestClassOne1 : AncestorRepository.BaseOne
