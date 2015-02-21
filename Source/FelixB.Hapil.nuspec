@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>FelixB.Hapil</id>
-        <version>0.9.2.9</version>
+        <version>0.9.3.0</version>
         <title>Hapil</title>
         <authors>Felix Berman</authors>
         <licenseUrl>https://github.com/felix-b/Hapil/blob/master/LICENSE</licenseUrl>
@@ -23,8 +23,6 @@
         <file src="Bin\Hapil.Applied.pdb" target="lib\net45\Hapil.Applied.pdb" />
         <file src="Bin\Hapil.dll" target="lib\net45\Hapil.dll" />
         <file src="Bin\Hapil.pdb" target="lib\net45\Hapil.pdb" />
-        <file src="Bin\Hapil.Testing.NUnit.dll" target="lib\net45\Hapil.Testing.NUnit.dll" />
-        <file src="Bin\Hapil.Testing.NUnit.pdb" target="lib\net45\Hapil.Testing.NUnit.pdb" />
         <file src="..\LICENSE" target="lib\net45\LICENSE" />
     </files>
 </package>
