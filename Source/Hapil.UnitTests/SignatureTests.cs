@@ -1166,5 +1166,36 @@ namespace Hapil.UnitTests
 
             Assert.That(memoryStream.ToArray(), Is.EqualTo(new byte[] { 11, 22, 33 }));
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+	    public void MembersOfBaseTypeInheritedInMultiplePaths_ImplementedOnce()
+	    {
+            //-- Arrange
+            
+            DeriveClassFrom<AncestorRepository.DataRepoBase>()
+                .ImplementInterface<AncestorRepository.IConcreteDataRepo1>()
+                .Property(x => x.Objects1).Implement(getter: p => p.Get(m => m.Return(m.NewArray<object>(length: m.Const(0)))))
+                .DefaultConstructor()
+                .ImplementBase<AncestorRepository.DataRepoBase>()
+                .Method<Type[]>(x => x.GetTypesInRepo).Implement(m => m.Return(m.NewArray<Type>(values: m.Const(typeof(object)))))
+                .Property(x => x.IsAutoCommit).Implement(p => p.Get(m => m.Return(true)))
+                .AllMethods(m => m.DeclaringType != typeof(object)).Throw<NotImplementedException>();
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+
+            var typesInRepo1 = ((AncestorRepository.DataRepoBase)obj).GetTypesInRepo();
+            var typesInRepo2 = ((AncestorRepository.IConcreteDataRepo1)obj).GetTypesInRepo();
+            var typesInRepo3 = ((AncestorRepository.IDataRepo)obj).GetTypesInRepo();
+
+            //-- Assert
+
+            Assert.That(typesInRepo1, Is.EqualTo(new[] { typeof(object) }));
+            Assert.That(typesInRepo2, Is.EqualTo(new[] { typeof(object) }));
+            Assert.That(typesInRepo3, Is.EqualTo(new[] { typeof(object) }));
+        }
     }
 }

@@ -457,7 +457,10 @@ namespace Hapil.UnitTests
 				throw new NotImplementedException();
 			}
 		}
-		public class FirstLetterGroup
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+        
+        public class FirstLetterGroup
 		{
 			public string FirstLetter { get; set; }
 			public string[] Values { get; set; }
@@ -633,6 +636,29 @@ namespace Hapil.UnitTests
             Type TypeFromToken { get; }
             MethodInfo MethodFromToken { get; }
             FieldInfo FieldFromToken { get; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public interface IDataRepo
+	    {
+	        Type[] GetTypesInRepo();
+            bool IsAutoCommit { get; }
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class DataRepoBase : IDataRepo
+        {
+            public abstract Type[] GetTypesInRepo();
+            public abstract bool IsAutoCommit { get; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IConcreteDataRepo1 : IDataRepo
+        {
+            IEnumerable<object> Objects1 { get; }
         }
     }
 }

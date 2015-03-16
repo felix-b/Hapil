@@ -31,7 +31,7 @@ namespace Hapil.Members
 			var implementableBindingFlags = (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
 			m_Fields = m_TypeHierarchy.SelectMany(t => t.GetFields(implementableBindingFlags)).ToArray();
-			m_Methods = m_TypeHierarchy.SelectMany(t => t.GetMethods(implementableBindingFlags)).ToArray();
+		    m_Methods = m_TypeHierarchy.SelectMany(t => t.GetMethods(implementableBindingFlags)).ToArray();
 			m_Properties = m_TypeHierarchy.SelectMany(t => t.GetProperties(implementableBindingFlags)).ToArray();
 			m_Events = m_TypeHierarchy.SelectMany(t => t.GetEvents(implementableBindingFlags)).ToArray();
 			m_Members = m_Methods.Cast<MemberInfo>().Concat(m_Properties).Concat(m_Events).ToArray();
@@ -217,6 +217,63 @@ namespace Hapil.Members
 			get { return m_ImplementableMembers; }
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private bool IsImplementableMethod(MethodInfo method)
+	    {
+	        return IsImplementableMethod(method, allowSpecialNames: false);
+	    }
+
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private bool IsImplementableMethod(MethodInfo method, bool allowSpecialNames)
+        {
+            if ( m_ReflectedType.IsClass && method.DeclaringType.IsInterface )
+            {
+                return !InterfaceMethodHasImplementation(method);
+            }
+            else
+            {
+                return (
+                    (allowSpecialNames || !method.IsSpecialName) && 
+                    (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual));
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private bool IsImplementableProperty(PropertyInfo property)
+        {
+            var getter = property.GetGetMethod();
+
+            if ( getter != null )
+            {
+                return IsImplementableMethod(getter, allowSpecialNames: true);
+            }
+
+            var setter = property.GetSetMethod();
+
+            if ( setter != null )
+            {
+                return IsImplementableMethod(setter, allowSpecialNames: true);
+            }
+
+            return false;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private bool InterfaceMethodHasImplementation(MethodInfo method)
+        {
+            if ( method.DeclaringType.IsAssignableFrom(m_ReflectedType) )
+            {
+                var map = m_ReflectedType.GetInterfaceMap(method.DeclaringType);
+                return map.InterfaceMethods.Contains(method);
+            }
+
+            return false;
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static readonly ConcurrentDictionary<Type, TypeMemberCache> s_TypeMembersByReflectedType = 
@@ -236,39 +293,6 @@ namespace Hapil.Members
 			return s_TypeMembersByReflectedType.GetOrAdd(
 				TypeTemplate.Resolve(reflectedType), 
 				key => new TypeMemberCache(key));
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private static bool IsImplementableMethod(MethodInfo method)
-		{
-			return (!method.IsSpecialName && (method.DeclaringType.IsInterface || method.IsAbstract || method.IsVirtual));
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		private static bool IsImplementableProperty(PropertyInfo property)
-		{
-			if ( property.DeclaringType.IsInterface )
-			{
-				return true;
-			}
-
-			var getter = property.GetGetMethod();
-
-			if ( getter != null && (getter.IsAbstract || getter.IsVirtual) )
-			{
-				return true;
-			}
-
-			var setter = property.GetSetMethod();
-
-			if ( setter != null && (setter.IsAbstract || setter.IsVirtual) )
-			{
-				return true;
-			}
-
-			return false;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
