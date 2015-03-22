@@ -107,6 +107,12 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        protected virtual void OnFinalizeImplementation(ImplementationClassWriter<TypeTemplate.TBase> writer)
+        {
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 	    protected ObjectFactoryContext Context
 	    {
 	        get
@@ -157,6 +163,11 @@ namespace Hapil
             if ( m_Will.HasFlag(Will.ImplementAnyBaseType) )
             {
                 ImplementAnyBase(context);
+            }
+
+            if ( m_Will.HasFlag(Will.FinalizeImplementation) )
+            {
+                OnFinalizeImplementation(context.CreateImplementationWriter<TypeTemplate.TBase>());
             }
         }
 
@@ -258,7 +269,8 @@ namespace Hapil
 			ImplementPrimaryInterface = 0x04,
 			ImplementAnySecondaryInterface = 0x08,
 			ImplementAnyInterface = 0x10,
-			ImplementAnyBaseType = 0x20 
+			ImplementAnyBaseType = 0x20,
+            FinalizeImplementation = 0x40
 		}
 	}
 }
