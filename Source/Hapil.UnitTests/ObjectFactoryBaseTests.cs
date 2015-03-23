@@ -113,7 +113,42 @@ namespace Hapil.UnitTests
 			Assert.That(one1.GetType(), Is.Not.SameAs(two1.GetType()));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void OnClassTypeCreatedIsCalledOncePerNewType()
+        {
+            //-- Arrange
+
+            var log = new List<ObjectFactoryBase.TypeEntry>();
+            var factory = new MarkerInterfaceFactory(m_Module, (k, e) => log.Add(e));
+
+            //-- Act
+
+            var one1 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceOne>();
+            var logOne1 = log.ToArray();
+            var one2 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceOne>();
+            var logOne2 = log.ToArray();
+
+            log.Clear();
+
+            var two1 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceTwo>();
+            var logTwo1 = log.ToArray();
+            var two2 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceTwo>();
+            var logTwo2 = log.ToArray();
+
+            //-- Assert
+
+            Assert.That(logOne1.Length, Is.EqualTo(1));
+            Assert.That(typeof(AncestorRepository.IMakerInterfaceOne).IsAssignableFrom(logOne1[0].DynamicType));
+            Assert.That(logOne2, Is.EqualTo(logOne1));
+
+            Assert.That(logTwo1.Length, Is.EqualTo(1));
+            Assert.That(typeof(AncestorRepository.IMakerInterfaceTwo).IsAssignableFrom(logTwo1[0].DynamicType));
+            Assert.That(logTwo2, Is.EqualTo(logTwo1));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class EmptyObjectFactory : ObjectFactoryBase
 		{
@@ -141,12 +176,17 @@ namespace Hapil.UnitTests
 
 		private class MarkerInterfaceFactory : ObjectFactoryBase
 		{
-			public MarkerInterfaceFactory(DynamicModule module)
-				: base(module)
-			{
-			}
+		    private readonly Action<TypeKey, TypeEntry> m_OnClassTypeCreated;
 
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		    public MarkerInterfaceFactory(DynamicModule module, Action<TypeKey, TypeEntry> onClassTypeCreated = null)
+				: base(module)
+		    {
+		        m_OnClassTypeCreated = onClassTypeCreated;
+		    }
+
+		    //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			public TMarker CreateMarkerObject<TMarker>()
 			{
@@ -162,6 +202,16 @@ namespace Hapil.UnitTests
 					.DefaultConstructor()
 					.ImplementBase<TypeTemplate.TPrimary>();
 			}
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+		    protected override void OnClassTypeCreated(TypeKey key, TypeEntry type)
+		    {
+		        if ( m_OnClassTypeCreated != null )
+		        {
+		            m_OnClassTypeCreated(key, type);
+		        }
+		    }
 		}
 	}
 }

@@ -90,6 +90,12 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        protected virtual void OnClassTypeCreated(TypeKey key, TypeEntry type)
+	    {
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         internal void NotifyClassTypeBeingBuilt(ClassType classType)
         {
             var typesBeingBuilt = s_TypesBeingBuilt;
@@ -116,7 +122,11 @@ namespace Hapil
 		        using ( key.CreateTypeTemplateScope() )
 		        {
 		            var classType = DefineNewClass(key);
-		            return new TypeEntry(classType);
+		            var entry = new TypeEntry(classType);
+
+                    OnClassTypeCreated(key, entry);
+		            
+                    return entry;
 		        }
 		    }
 		    finally
