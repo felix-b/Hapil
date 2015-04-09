@@ -223,7 +223,109 @@ namespace Hapil.UnitTests
 				}));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void DecoratorBuilder_Methods_InputArguments()
+        {
+            //-- Arrange
+
+            Field<List<string>> logField;
+
+            var implementor = DeriveClassFrom<object>()
+                .Field<List<string>>("m_Log", out logField)
+                .Constructor<List<string>>((w, log) => logField.Assign(log))
+                .ImplementInterface<AncestorRepository.IMoreMethods>()
+                .AllMethods(where: m => m.IsVoid()).Implement(m => { })
+                .AllMethods(where: m => m.ReturnType == typeof(int)).Implement(m => 
+                    m.Return(m.Const<int>(123).CastTo<TypeTemplate.TReturn>())
+                )
+                .AllMethods(where: m => m.ReturnType == typeof(string)).Implement(m => 
+                    m.Return(m.Const<string>("ABC").CastTo<TypeTemplate.TReturn>())
+                )
+                .AllMethods().Throw<NotImplementedException>();
+
+            implementor.DecorateWith(new LoggingDecorator(logPrefix: "", includeArguments: true));
+
+            //-- Act
+
+            var actionLog = new List<string>();
+            var obj = CreateClassInstanceAs<AncestorRepository.IMoreMethods>().UsingConstructor(actionLog);
+
+            obj.Five(n: 555, s: "TTT");
+            var result16 = obj.Sixteen(n: 333, t: TimeSpan.FromSeconds(30));
+
+            //-- Assert
+
+            Assert.That(result16, Is.EqualTo("ABC"));
+            Assert.That(
+                actionLog,
+                Is.EqualTo(new[] {
+					"BEFORE:Five", 
+                        "INARGS{", "INARG:n=555", "INARG:s=TTT", "}INARGS", 
+                        "OUTARGS{", "}OUTARGS", 
+                        "RETVOID:Five", 
+                        "SUCCESS:Five", 
+                    "AFTER:Five", 
+					"BEFORE:Sixteen", 
+                        "INARGS{", "INARG:n=333", "INARG:t=00:00:30", "}INARGS", 
+                        "OUTARGS{", "}OUTARGS", 
+                        "RETVAL:Sixteen=ABC", 
+                        "SUCCESS:Sixteen", 
+                    "AFTER:Sixteen"
+				}));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void DecoratorBuilder_Methods_OutputArguments()
+        {
+            //-- Arrange
+
+            Field<List<string>> logField;
+
+            var implementor = DeriveClassFrom<object>()
+                .Field<List<string>>("m_Log", out logField)
+                .Constructor<List<string>>((w, log) => logField.Assign(log))
+                .ImplementInterface<AncestorRepository.IFewMethodsWithRefOutArgs>()
+                .Method<string, string, string>(x => (s1, s2) => x.One(ref s1, out s2)).Implement((m, s1, s2) => {
+                    s1.Assign("XX");
+                    s2.Assign("YY");
+                    m.Return("ZZ");
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            implementor.DecorateWith(new LoggingDecorator(logPrefix: "", includeArguments: true));
+
+            //-- Act
+
+            var actionLog = new List<string>();
+            var obj = CreateClassInstanceAs<AncestorRepository.IFewMethodsWithRefOutArgs>().UsingConstructor(actionLog);
+
+            string argS1 = "AA";
+            string argS2;
+            var result = obj.One(ref argS1, out argS2);
+
+            //-- Assert
+
+            Assert.That(argS1, Is.EqualTo("XX"));
+            Assert.That(argS2, Is.EqualTo("YY"));
+            Assert.That(result, Is.EqualTo("ZZ"));
+
+            Assert.That(
+                actionLog,
+                Is.EqualTo(new[] {
+					"BEFORE:One", 
+                        "INARGS{", "INARG:s1=AA", "}INARGS", 
+                        "OUTARGS{", "OUTARG:s1=XX", "OUTARG:s2=YY", "}OUTARGS", 
+                        "RETVAL:One=ZZ", 
+                        "SUCCESS:One", 
+                    "AFTER:One", 
+				}));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void DecoratorBuilder_Methods_TwoLevelNesting()
@@ -684,17 +786,19 @@ namespace Hapil.UnitTests
 		private class LoggingDecorator : DecorationConvention
 		{
 			private readonly string m_LogPrefix;
-			private Field<List<string>> m_Log;
+            private readonly bool m_IncludeArguments;
+            private Field<List<string>> m_Log;
 
-			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public LoggingDecorator(string logPrefix) 
+			public LoggingDecorator(string logPrefix, bool includeArguments = false) 
 				: base(Will.DecorateMethods | Will.DecorateProperties | Will.DecorateEvents | Will.DecorateFields)
 			{
-				m_LogPrefix = logPrefix;
-			}
+			    m_LogPrefix = logPrefix;
+                m_IncludeArguments = includeArguments;
+            }
 
-			//-----------------------------------------------------------------------------------------------------------------------------------------------------
+		    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 			protected override void OnClass(ClassType classType, DecoratingClassWriter writer)
 			{
@@ -709,13 +813,50 @@ namespace Hapil.UnitTests
 					.OnBefore(w => 
 						m_Log.Add(w.Const(m_LogPrefix + "BEFORE:" + member.Name))
 					)
-					.OnReturnValue((w, retVal) => 
+                    .OnInspectingInputArguments(w => {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "INARGS{"));
+                        }
+                    })
+                    .OnInputArgument((w, arg) =>
+                    {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "INARG:" + arg.Name + "=") + arg.Func<string>(x => x.ToString));
+                        }
+                    })
+                    .OnInspectedInputArguments(w => {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "}INARGS"));
+                        }
+                    })
+                    .OnReturnValue((w, retVal) => 
 						m_Log.Add(w.Const(m_LogPrefix + "RETVAL:" + member.Name + "=") + retVal.Func<string>(x => x.ToString))
 					)
 					.OnReturnVoid(w => 
 						m_Log.Add(w.Const(m_LogPrefix + "RETVOID:" + member.Name))
 					)
-					.OnException<ExceptionRepository.TestExceptionOne>((w, e) => {
+                    .OnInspectingOutputArguments(w => {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "OUTARGS{"));
+                        }
+                    })
+                    .OnOutputArgument((w, arg) => {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "OUTARG:" + arg.Name + "=") + arg.Func<string>(x => x.ToString));
+                        }
+                    })
+                    .OnInspectedOutputArguments(w => {
+                        if ( m_IncludeArguments )
+                        {
+                            m_Log.Add(w.Const(m_LogPrefix + "}OUTARGS"));
+                        }
+                    })
+                    .OnException<ExceptionRepository.TestExceptionOne>((w, e) => {
 						m_Log.Add(w.Const(m_LogPrefix + "EXCEPTION-ONE:" + member.Name + "=") + e.Prop(x => x.Message));
 						w.Throw();
 					})

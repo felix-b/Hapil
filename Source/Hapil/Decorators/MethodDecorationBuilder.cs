@@ -10,11 +10,15 @@ namespace Hapil.Decorators
 	{
 		private readonly DecoratingMethodWriter m_OwnerWriter;
 		private LinkedList<Action<MethodWriterBase>> m_OnBefore;
-		private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnInputArgument;
-		private LinkedList<Action<MethodWriterBase>> m_OnReturnVoid;
+        private LinkedList<Action<MethodWriterBase>> m_OnInspectingInputArguments;
+        private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnInputArgument;
+        private LinkedList<Action<MethodWriterBase>> m_OnInspectedInputArguments;
+        private LinkedList<Action<MethodWriterBase>> m_OnReturnVoid;
 		private LinkedList<Action<MethodWriterBase, Local<TypeTemplate.TReturn>>> m_OnReturnValue;
-		private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnOutputArgument;
-		private LinkedList<Action<MethodWriterBase>> m_OnSuccess;
+        private LinkedList<Action<MethodWriterBase>> m_OnInspectingOutputArguments;
+        private LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>> m_OnOutputArgument;
+        private LinkedList<Action<MethodWriterBase>> m_OnInspectedOutputArguments;
+        private LinkedList<Action<MethodWriterBase>> m_OnSuccess;
 		private readonly Dictionary<Type, LinkedList<Action<MethodWriterBase, IHapilCatchSyntax>>> m_OnCatchExceptions;
 		private LinkedList<Action<MethodWriterBase>> m_OnFailure;
 		private LinkedList<Action<MethodWriterBase>> m_OnAfter;
@@ -53,7 +57,22 @@ namespace Hapil.Decorators
 			return this;
 		}
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public MethodDecorationBuilder OnInspectingInputArguments(Action<MethodWriterBase> decoration)
+        {
+            if ( m_OnInspectingInputArguments == null )
+            {
+                m_OnInspectingInputArguments = new LinkedList<Action<MethodWriterBase>>();
+            }
+
+            m_OnInspectingInputArguments.AddFirst(decoration);
+            m_IsEmpty = false;
+
+            return this;
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodDecorationBuilder OnInputArgument(Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> decoration)
 		{
@@ -62,13 +81,28 @@ namespace Hapil.Decorators
 				m_OnInputArgument = new LinkedList<Action<MethodWriterBase, Argument<TypeTemplate.TArgument>>>();
 			}
 
-			m_OnInputArgument.AddLast(decoration);
+			m_OnInputArgument.AddFirst(decoration);
 			m_IsEmpty = false;
 
 			return this;
 		}
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public MethodDecorationBuilder OnInspectedInputArguments(Action<MethodWriterBase> decoration)
+        {
+            if ( m_OnInspectedInputArguments == null )
+            {
+                m_OnInspectedInputArguments = new LinkedList<Action<MethodWriterBase>>();
+            }
+
+            m_OnInspectedInputArguments.AddFirst(decoration);
+            m_IsEmpty = false;
+
+            return this;
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodDecorationBuilder OnReturnVoid(Action<MethodWriterBase> decoration)
 		{
@@ -98,7 +132,22 @@ namespace Hapil.Decorators
 			return this;
 		}
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public MethodDecorationBuilder OnInspectingOutputArguments(Action<MethodWriterBase> decoration)
+        {
+            if ( m_OnInspectingOutputArguments == null )
+            {
+                m_OnInspectingOutputArguments = new LinkedList<Action<MethodWriterBase>>();
+            }
+
+            m_OnInspectingOutputArguments.AddLast(decoration);
+            m_IsEmpty = false;
+
+            return this;
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodDecorationBuilder OnOutputArgument(Action<MethodWriterBase, Argument<TypeTemplate.TArgument>> decoration)
 		{
@@ -113,7 +162,22 @@ namespace Hapil.Decorators
 			return this;
 		}
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public MethodDecorationBuilder OnInspectedOutputArguments(Action<MethodWriterBase> decoration)
+        {
+            if ( m_OnInspectedOutputArguments == null )
+            {
+                m_OnInspectedOutputArguments = new LinkedList<Action<MethodWriterBase>>();
+            }
+
+            m_OnInspectedOutputArguments.AddLast(decoration);
+            m_IsEmpty = false;
+
+            return this;
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public MethodDecorationBuilder OnSuccess(Action<MethodWriterBase> decoration)
 		{
@@ -199,8 +263,8 @@ namespace Hapil.Decorators
 						successLocal.Assign(true);
 					}
 
-					InspectReturnValue(returnValueExpression);
-					InspectOutputArguments();
+                    InspectOutputArguments();
+                    InspectReturnValue(returnValueExpression);
 				});
 
 			foreach ( var exceptionHandler in m_OnCatchExceptions.Values )
@@ -235,6 +299,11 @@ namespace Hapil.Decorators
 
 		private void InspectInputArguments()
 		{
+		    if ( m_OnInspectingInputArguments != null )
+		    {
+                m_OnInspectingInputArguments.ForEach(f => f(m_OwnerWriter));
+		    }
+
 			if ( m_OnInputArgument != null )
 			{
 				m_OwnerWriter.ForEachArgument(arg => {
@@ -244,7 +313,12 @@ namespace Hapil.Decorators
 					}
 				});
 			}
-		}
+        
+            if ( m_OnInspectedInputArguments != null )
+            {
+                m_OnInspectedInputArguments.ForEach(f => f(m_OwnerWriter));
+            }
+        }
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -284,6 +358,11 @@ namespace Hapil.Decorators
 
 		private void InspectOutputArguments()
 		{
+            if ( m_OnInspectingOutputArguments != null )
+            {
+                m_OnInspectingOutputArguments.ForEach(f => f(m_OwnerWriter));
+            }
+
 			if ( m_OnOutputArgument != null )
 			{
 				m_OwnerWriter.ForEachArgument(arg => {
@@ -293,6 +372,11 @@ namespace Hapil.Decorators
 					}
 				});
 			}
-		}
+         
+            if ( m_OnInspectedOutputArguments != null )
+            {
+                m_OnInspectedOutputArguments.ForEach(f => f(m_OwnerWriter));
+            }
+        }
 	}
 }
