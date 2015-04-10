@@ -308,9 +308,9 @@ namespace Hapil.Members
 
 		internal void Compile()
 		{
-			foreach ( var writer in m_Writers )
+            for ( int writerIndex = 0 ; writerIndex < m_Writers.Count ; writerIndex++ )
 			{
-				writer.Flush();
+                m_Writers[writerIndex].Flush();
 			}
 
 			var dependencyFieldsArray = m_DependencyFields.ToArray();

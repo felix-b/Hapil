@@ -89,12 +89,19 @@ namespace Hapil
 		{
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        protected virtual void OnFinalizeDecoration(ClassType classType, DecoratingClassWriter classWriter)
+        {
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal void VisitClass(ClassType classType, DecoratingClassWriter classWriter)
 		{
 			OnClass(classType, classWriter);
 			classType.ForEachMember<MemberBase>(VisitMember);
+            OnFinalizeDecoration(classType, classWriter);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

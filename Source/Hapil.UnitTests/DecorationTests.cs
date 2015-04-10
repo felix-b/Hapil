@@ -755,7 +755,65 @@ namespace Hapil.UnitTests
 			}));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+	    public void DecoraitonCycle_OnClassAndOnFinalizeDecoration()
+	    {
+            //-- Arrange
+
+            var implementor = DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.IFewMethods>()
+                .AllMethods().ImplementEmpty();
+
+	        var cycleLogger = new DecorationCycleLogger();
+
+            //-- Act
+
+            implementor.DecorateWith(cycleLogger);
+            CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingDefaultConstructor();
+	        
+            //-- Assert
+
+	        var log = cycleLogger.GetLog();
+
+            Assert.That(log.First(), Is.EqualTo("OnClass"));
+            Assert.That(log.Last(), Is.EqualTo("OnFinalizeDecoration"));
+            Assert.That(log.Skip(1).TakeWhile(s => s.StartsWith("OnMethod:")).Count(), Is.GreaterThan(0));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void DecoraitonUseCase_StaticStrings()
+        {
+            //-- Arrange
+
+            var implementor = DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.IFewMethods>()
+                .AllMethods().ImplementEmpty();
+
+            var staticStrings = new StaticStringsDecorator();
+            var optimizedLogger = new StaticStringsOptimizedLoggingDecorator(staticStrings);
+            var log = new List<string>();
+
+            //-- Act
+
+            implementor.DecorateWith(staticStrings);
+            implementor.DecorateWith(optimizedLogger);
+            
+            var obj = CreateClassInstanceAs<AncestorRepository.IFewMethods>().UsingConstructor(log);
+
+            obj.One();
+
+            //-- Assert
+
+            Assert.That(log, Is.EqualTo(new[] { "ENTERING:One", "EXITED:One" }));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static void ManuallyImplementLoggingDecorator(
 			ImplementationClassWriter<AncestorRepository.IFewMethods> implementor,
@@ -781,7 +839,166 @@ namespace Hapil.UnitTests
 			}));
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private class DecorationCycleLogger : DecorationConvention
+	    {
+            private readonly List<string> m_Log = new List<string>();
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            public DecorationCycleLogger()
+	            : base(Will.DecorateClass | Will.DecorateMethods)
+	        {
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnClass(ClassType classType, DecoratingClassWriter classWriter)
+	        {
+                m_Log.Add("OnClass");
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+	        {
+                m_Log.Add("OnMethod:" + member.Name);
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnFinalizeDecoration(ClassType classType, DecoratingClassWriter classWriter)
+	        {
+                m_Log.Add("OnFinalizeDecoration");
+            }
+        
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public string[] GetLog()
+	        {
+	            return m_Log.ToArray();
+	        }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private class StaticStringsDecorator : DecorationConvention
+	    {
+	        private readonly Dictionary<string, Field<string>> m_StaticStringFields;
+	        private DecoratingClassWriter m_ClassWriter;
+	        private bool m_StaticConstructorImplemented;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public StaticStringsDecorator() : base(Will.DecorateClass | Will.DecorateConstructors)
+	        {
+                m_StaticStringFields = new Dictionary<string, Field<string>>();
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public IOperand<string> GetStaticStringOperand(string s)
+	        {
+	            Field<string> field;
+
+	            if ( !m_StaticStringFields.TryGetValue(s, out field) )
+	            {
+	                var fieldNameSuffix = new string(s.Where(IsValidFieldNameChar).ToArray());
+	                field = m_ClassWriter.StaticField<string>("s_String_" + fieldNameSuffix);
+                    m_StaticStringFields.Add(s, field);
+	            }
+
+	            return field;
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            protected override void OnClass(ClassType classType, DecoratingClassWriter classWriter)
+	        {
+                m_ClassWriter = classWriter;
+	        }
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnStaticConstructor(MethodMember member, Func<ConstructorDecorationBuilder> decorate)
+	        {
+	            if ( !m_StaticConstructorImplemented )
+	            {
+	                AssignStaticStringFields();
+	                m_StaticConstructorImplemented = true;
+	            }
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnFinalizeDecoration(ClassType classType, DecoratingClassWriter classWriter)
+	        {
+                if ( !m_StaticConstructorImplemented )
+                {
+                    classWriter.ImplementBase<object>().StaticConstructor(cw => {
+                        AssignStaticStringFields();
+                    });
+
+                    m_StaticConstructorImplemented = true;
+                }
+            }
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        private void AssignStaticStringFields()
+	        {
+	            foreach ( var staticStringField in m_StaticStringFields )
+	            {
+	                staticStringField.Value.Assign(staticStringField.Key);
+	            }
+	        }
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        private static bool IsValidFieldNameChar(char c)
+	        {
+	            return ( 
+                    (c >= '0' && c <= '9') || 
+                    (c >= 'a' && c <= 'z') || 
+                    (c >= 'A' && c <= 'Z') || 
+                    c == '_' );
+	        }
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private class StaticStringsOptimizedLoggingDecorator : DecorationConvention
+	    {
+	        private readonly StaticStringsDecorator m_StaticStrings;
+	        private Field<List<string>> m_LogField;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public StaticStringsOptimizedLoggingDecorator(StaticStringsDecorator staticStrings)
+                : base(Will.DecorateClass | Will.DecorateMethods)
+	        {
+	            m_StaticStrings = staticStrings;
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            protected override void OnClass(ClassType classType, DecoratingClassWriter classWriter)
+            {
+                m_LogField = classWriter.DependencyField<List<string>>("m_Log");
+            }
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        protected override void OnMethod(MethodMember member, Func<MethodDecorationBuilder> decorate)
+	        {
+	            decorate()
+	                .OnBefore(w => m_LogField.Add(m_StaticStrings.GetStaticStringOperand("ENTERING:" + member.Name)))
+	                .OnAfter(w => m_LogField.Add(m_StaticStrings.GetStaticStringOperand("EXITED:" + member.Name)));
+	        }
+	    }
+
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class LoggingDecorator : DecorationConvention
 		{
@@ -819,8 +1036,7 @@ namespace Hapil.UnitTests
                             m_Log.Add(w.Const(m_LogPrefix + "INARGS{"));
                         }
                     })
-                    .OnInputArgument((w, arg) =>
-                    {
+                    .OnInputArgument((w, arg) => {
                         if ( m_IncludeArguments )
                         {
                             m_Log.Add(w.Const(m_LogPrefix + "INARG:" + arg.Name + "=") + arg.Func<string>(x => x.ToString));
