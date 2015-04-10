@@ -47,7 +47,7 @@ namespace Hapil.Operands
 
 		public virtual Operand<TCast> CastTo<TCast>()
 		{
-			if ( this is ITransformType && TypeTemplate.Resolve<TCast>() == m_OperandType )
+			if ( this is ITransformType && TypeTemplate.Resolve<TCast>().IsEquivalentType(m_OperandType) )
 			{
 				return ((ITransformType)this).TransformToType<TCast>();
 			}
@@ -69,7 +69,7 @@ namespace Hapil.Operands
 				throw new ArgumentException("The cast type must be a reference type or a nullable value type.");
 			}
 
-			if ( this is ITransformType && TypeTemplate.Resolve<TCast>() == m_OperandType )
+			if ( this is ITransformType && TypeTemplate.Resolve<TCast>().IsEquivalentType(m_OperandType) )
 			{
 				return ((ITransformType)this).TransformToType<TCast>();
 			}

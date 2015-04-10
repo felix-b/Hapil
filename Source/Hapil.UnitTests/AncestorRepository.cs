@@ -414,7 +414,8 @@ namespace Hapil.UnitTests
 			int? CastToNullableInt(object input);
 			object CastToObject(int input);
 			object CastNullableToObject(int? input);
-		}
+            int CastByRefToValue(ref int input);
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

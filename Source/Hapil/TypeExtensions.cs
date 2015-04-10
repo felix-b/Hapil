@@ -214,6 +214,28 @@ namespace Hapil
 			}
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public static bool IsEquivalentType(this Type type, Type other)
+	    {
+	        if ( type == other )
+	        {
+	            return true;
+	        }
+
+	        if ( type.IsByRef && !other.IsByRef && type.GetElementType() == other )
+	        {
+	            return true;
+	        }
+        
+            if ( other.IsByRef && !type.IsByRef && other.GetElementType() == type )
+            {
+                return true;
+            }
+
+	        return false;
+	    }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static Type[] GetTypeHierarchy(this Type type)

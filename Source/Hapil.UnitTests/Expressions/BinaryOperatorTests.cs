@@ -956,6 +956,34 @@ namespace Hapil.UnitTests.Expressions
 			Assert.That(outputObject2, Is.Null);
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestCastOrThrow_ByRefValueTypeToValueType()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.ICastTester>()
+                .Method<int, int>(x => num => x.CastByRefToValue(ref num)).Implement((m, num) => {
+                    m.ForEachArgument(arg => m.Return(arg.CastTo<int>()));
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+
+            var inputValue = 123;
+            var outputValue = tester.CastByRefToValue(ref inputValue);
+
+            //-- Assert
+
+            Assert.That(outputValue, Is.EqualTo(123));
+        }
+
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
