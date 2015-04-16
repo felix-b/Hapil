@@ -110,6 +110,7 @@
     <Compile Include="Statements\TryStatementTests.cs" />
     <Compile Include="Statements\UsingStatementTests.cs" />
     <Compile Include="Statements\WhileStatementTests.cs" />
+    <Compile Include="StaticTests.cs" />
     <Compile Include="StringShortcutsTests.cs" />
     <Compile Include="TargetRepository.cs" />
     <Compile Include="TypeExtensionTests.cs" />

@@ -283,19 +283,139 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
-			Expression<Func<TArg1, TArg2, TArg3, TReturn>> member,
-			IOperand<TArg1> arg1,
-			IOperand<TArg2> arg2,
-			IOperand<TArg3> arg3)
+		public static Operand<TReturn> GenericFunc<TReturn>(
+			Expression<Func<TReturn>> member)
 		{
 			var method = Helpers.ResolveMethodFromLambda(member);
-			var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
+			var @operator = new UnaryOperators.OperatorCall<object>(method);
 
 			return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TReturn>(
+            Expression<Func<TArg1, TReturn>> member,
+            IOperand<TArg1> arg1)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TReturn>(
+            Expression<Func<TArg1, TArg2, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TArg4, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TArg4, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TArg4, TArg5, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TReturn> GenericFunc<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TReturn>(
+            Expression<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TReturn>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7,
+            IOperand<TArg8> arg8)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            var @operator = new UnaryOperators.OperatorCall<object>(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+
+            return new UnaryExpressionOperand<object, TReturn>(@operator, operand: null);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MutableOperand<TProp> Prop<TProp>(Expression<Func<TProp>> propertyOrField)
 		{
