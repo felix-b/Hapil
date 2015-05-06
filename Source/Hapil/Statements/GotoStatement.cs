@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -21,7 +22,7 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			il.Emit(OpCodes.Br, m_LabelStatement.Label);
 		}
@@ -42,5 +43,5 @@ namespace Hapil.Statements
 				return m_LabelStatement.HomeScope;
 			}
 		}
-	}
+    }
 }

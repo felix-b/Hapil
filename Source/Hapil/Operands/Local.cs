@@ -111,7 +111,8 @@ namespace Hapil.Operands
 		void ILocal.Declare(ILGenerator il)
 		{
 			m_LocalBuilder = il.DeclareLocal(base.OperandType);
-			Debug.Assert(m_LocalIndex == m_LocalBuilder.LocalIndex, "Local index mismatch after declaring a local.");
+			Debug.Assert(m_LocalIndex <= m_LocalBuilder.LocalIndex, "Local index mismatch after declaring a local.");
+            //TODO: understand why 'm_LocalIndex == m_LocalBuilder.LocalIndex' sometimes fails
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

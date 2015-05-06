@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Expressions;
 
@@ -32,11 +33,11 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			foreach ( var statement in m_BodyBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 		}
 
@@ -92,7 +93,7 @@ namespace Hapil.Statements
 					m_InnerWhile = (WhileStatement)writer.While(enumerator.Func<bool>(e => e.MoveNext));
 					m_InnerWhile.Do(loop => {
 						m_Element.Assign(enumerator.Prop(e => e.Current));
-						body(this, m_Element);
+                        body(m_InnerWhile, m_Element);
 					});
 				});
 			}

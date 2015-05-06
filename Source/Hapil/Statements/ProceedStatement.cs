@@ -40,11 +40,11 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			foreach ( var statement in m_DecoratedStatements )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			//il.MarkLabel(m_LeaveLabel);

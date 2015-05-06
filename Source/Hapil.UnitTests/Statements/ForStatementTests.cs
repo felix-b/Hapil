@@ -26,6 +26,7 @@ namespace Hapil.UnitTests.Statements
 					m.For(0, count).Do((loop, i) => {
 						Static.Prop(() => OutputList1).Add(i);
 					});
+                    m.Return(m.Const(0));
 				});
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
@@ -53,6 +54,7 @@ namespace Hapil.UnitTests.Statements
 					m.For(count, 0, increment: -1).Do((loop, i) => {
 						Static.Prop(() => OutputList1).Add(i);
 					});
+                    m.Return(m.Const(0));
 				});
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
@@ -81,7 +83,8 @@ namespace Hapil.UnitTests.Statements
 						Static.Prop(() => OutputList1).Add(i);
 						m.If(i == 5).Then(loop.Break);
 					});
-				});
+                    m.Return(m.Const(0));
+                });
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
 
@@ -115,7 +118,8 @@ namespace Hapil.UnitTests.Statements
 						m.If(i == 2).Then(loop.Continue);
 						Static.Prop(() => OutputList1).Add(i);
 					});
-				});
+                    m.Return(m.Const(0));
+                });
 
 			var tester = CreateClassInstanceAs<AncestorRepository.StatementTester>().UsingDefaultConstructor();
 			OutputList1 = new List<int>();

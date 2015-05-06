@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Expressions;
 
@@ -29,7 +30,7 @@ namespace Hapil.Statements
 
 		#region StatementBase Overrides
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			m_LoopStartLabel = il.DefineLabel();
 			m_LoopEndLabel = il.DefineLabel();
@@ -43,7 +44,7 @@ namespace Hapil.Statements
 
 			foreach ( var statement in m_BodyBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			il.Emit(OpCodes.Br, m_LoopStartLabel);

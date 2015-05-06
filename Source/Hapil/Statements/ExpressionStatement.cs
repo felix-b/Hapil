@@ -22,7 +22,7 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			m_Expression.ShouldLeaveValueOnStack = false;
 			m_Expression.EmitTarget(il);

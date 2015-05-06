@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -37,15 +38,15 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			if ( m_ConditionIsAlwaysTrue )
 			{
-				EmitThenBlock(il);
+				EmitThenBlock(il, ownerMethod);
 			}
 			else
 			{
-				EmitFullStatement(il);
+                EmitFullStatement(il, ownerMethod);
 			}
 		}
 
@@ -121,18 +122,18 @@ namespace Hapil.Statements
 		#endregion
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-		
-		private void EmitThenBlock(ILGenerator il)
+
+        private void EmitThenBlock(ILGenerator il, MethodMember ownerMethod)
 		{
 			foreach ( var statement in m_ThenBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 		}
 	
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void EmitFullStatement(ILGenerator il)
+        private void EmitFullStatement(ILGenerator il, MethodMember ownerMethod)
 		{
 			var afterIfBlock = il.DefineLabel();
 			var afterElseBlock = (m_ElseBlock.Count > 0 ? il.DefineLabel() : new Label());
@@ -144,7 +145,7 @@ namespace Hapil.Statements
 
 			foreach ( var statement in m_ThenBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			if ( m_ElseBlock.Count > 0 )
@@ -158,7 +159,7 @@ namespace Hapil.Statements
 			{
 				foreach ( var statement in m_ElseBlock )
 				{
-					statement.Emit(il);
+					statement.Emit(il, ownerMethod);
 				}
 
 				il.MarkLabel(afterElseBlock);

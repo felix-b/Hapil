@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -36,7 +37,7 @@ namespace Hapil.Statements
 
 		#region IHapilStatement Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			if ( m_Message != null )
 			{

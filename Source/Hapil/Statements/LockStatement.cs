@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
+using Hapil.Members;
 using Hapil.Operands;
 
 // ReSharper disable ConvertToLambdaExpression
@@ -31,11 +32,11 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			foreach ( var statement in m_BodyBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 		}
 

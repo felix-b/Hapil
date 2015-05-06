@@ -79,7 +79,6 @@ namespace Hapil.Writers
 			{
 				var constant = Helpers.CreateConstant(actualType, actualType.GetDefaultValue());
 				return constant.CastTo<T>();
-				//new ConstantOperand<T>(default(T));
 			}
 			else
 			{

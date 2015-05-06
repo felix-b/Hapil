@@ -83,7 +83,7 @@ namespace Hapil.UnitTests.Statements
 						output.Add(num);
 						m.If(num == 10).Then(loop.Break);
 					});
-				});
+                });
 
 			var inputEnumerable = new int[] { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
 			var outputList = new List<int>();

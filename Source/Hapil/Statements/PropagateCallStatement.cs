@@ -26,7 +26,7 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			var arguments = new IOperand[m_OwnerMethod.Signature.ArgumentCount];
 			m_OwnerMethod.TransparentWriter.ForEachArgument((arg, index) => arguments[index] = arg);

@@ -13,9 +13,9 @@ namespace Hapil.Statements
 	/// </summary>
 	internal class ReturnStatement : StatementBase, ILeaveStatement
 	{
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
-			il.Emit(OpCodes.Ret);
+			il.Emit(OpCodes.Br, ownerMethod.GetMethodReturnLabel());
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace Hapil.Statements
 				return StatementScope.Current.Root;
 			}
 		}
-	}
+    }
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,12 +65,17 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public override void Emit(ILGenerator il)
-		{
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
+        {
+            var returnValueLocal = ownerMethod.GetReturnValueLocal<T>();
+            var returnLabel = ownerMethod.GetMethodReturnLabel();
+
 			m_Operand.EmitTarget(il);
 			m_Operand.EmitLoad(il);
+            
+            returnValueLocal.EmitStore(il);
 
-			il.Emit(OpCodes.Ret);
+			il.Emit(OpCodes.Br, returnLabel);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,5 +101,19 @@ namespace Hapil.Statements
 				return StatementScope.Current.Root;
 			}
 		}
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public bool WillLeaveMethod
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public Label? LeaveLabel { get; set; }
+    }
 }

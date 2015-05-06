@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Hapil.Expressions;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -29,7 +30,7 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			m_EndLabel = il.DefineLabel();
 			m_DefaultLabel = (m_Default != null ? il.DefineLabel() : m_EndLabel);
@@ -39,9 +40,9 @@ namespace Hapil.Statements
 				block.Label = il.DefineLabel();
 			}
 
-			if ( !CanEmitJumpTable() || !TryEmitJumpTable(il) )
+            if ( !CanEmitJumpTable() || !TryEmitJumpTable(il, ownerMethod) )
 			{
-				EmitWithoutJumpTable(il);
+                EmitWithoutJumpTable(il, ownerMethod);
 			}
 
 			il.MarkLabel(m_EndLabel);
@@ -108,7 +109,7 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private bool TryEmitJumpTable(ILGenerator il)
+        private bool TryEmitJumpTable(ILGenerator il, MethodMember ownerMethod)
 		{
 			var caseBlocks = m_CasesByValue.Values.ToArray();
 			long adjustment;
@@ -130,7 +131,7 @@ namespace Hapil.Statements
 			if ( m_Default != null )
 			{
 				il.MarkLabel(m_DefaultLabel);
-				m_Default.Emit(il, m_EndLabel);
+				m_Default.Emit(il, m_EndLabel, ownerMethod);
 			}
 			else
 			{
@@ -140,7 +141,7 @@ namespace Hapil.Statements
 			for ( int i = 0 ; i < caseBlocks.Length ; i++ )
 			{
 				il.MarkLabel(caseBlocks[i].Label);
-				caseBlocks[i].Emit(il, m_EndLabel);
+				caseBlocks[i].Emit(il, m_EndLabel, ownerMethod);
 			}
 
 			return true;
@@ -196,7 +197,7 @@ namespace Hapil.Statements
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private void EmitWithoutJumpTable(ILGenerator il)
+        private void EmitWithoutJumpTable(ILGenerator il, MethodMember ownerMethod)
 		{
 			foreach ( var block in m_CasesByValue.Values )
 			{
@@ -209,7 +210,7 @@ namespace Hapil.Statements
 
 			if ( m_Default != null )
 			{
-				m_Default.Emit(il, m_EndLabel);
+				m_Default.Emit(il, m_EndLabel, ownerMethod);
 			}
 			else
 			{
@@ -219,7 +220,7 @@ namespace Hapil.Statements
 			foreach ( var block in m_CasesByValue.Values )
 			{
 				il.MarkLabel(block.Label);
-				block.Emit(il, m_EndLabel);
+				block.Emit(il, m_EndLabel, ownerMethod);
 			}
 		}
 
@@ -264,11 +265,11 @@ namespace Hapil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void Emit(ILGenerator il, Label endLabel)
+			public void Emit(ILGenerator il, Label endLabel, MethodMember ownerMethod)
 			{
 				foreach ( var statement in m_Body )
 				{
-					statement.Emit(il);
+                    statement.Emit(il, ownerMethod);
 				}
 
 				il.Emit(OpCodes.Br, endLabel);

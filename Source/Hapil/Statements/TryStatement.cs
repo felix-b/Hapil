@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -36,19 +37,19 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+		public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			m_EndLeaveBlocksLabel = il.DefineLabel();
 			m_EndExceptionBlockLabel = il.BeginExceptionBlock();
 
 			foreach ( var statement in m_TryBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			foreach ( var catchBlock in m_CatchBlocks )
 			{
-				catchBlock.Emit(il);
+				catchBlock.Emit(il, ownerMethod);
 			}
 
 			if ( m_FinallyBlock.Count > 0 || m_CatchBlocks.Count == 0 )
@@ -57,7 +58,7 @@ namespace Hapil.Statements
 
 				foreach ( var statement in m_FinallyBlock )
 				{
-					statement.Emit(il);
+                    statement.Emit(il, ownerMethod);
 				}
 			}
 
@@ -69,7 +70,7 @@ namespace Hapil.Statements
 
 				foreach ( var leaveBlock in m_LeaveBlocks )
 				{
-					leaveBlock.Emit(il);
+					leaveBlock.Emit(il, ownerMethod);
 				}
 
 				il.MarkLabel(m_EndLeaveBlocksLabel);
@@ -134,7 +135,7 @@ namespace Hapil.Statements
 
 		private abstract class CatchBlock
 		{
-			public abstract void Emit(ILGenerator il);
+            public abstract void Emit(ILGenerator il, MethodMember ownerMethod);
 			public abstract void AcceptVisitor(OperandVisitorBase visitor);
 		}
 
@@ -159,14 +160,14 @@ namespace Hapil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public override void Emit(ILGenerator il)
+			public override void Emit(ILGenerator il, MethodMember ownerMethod)
 			{
 				il.BeginCatchBlock(typeof(TException));
 				m_ExceptionObject.EmitStore(il);
 
 				foreach ( var statement in Statements )
 				{
-					statement.Emit(il);
+					statement.Emit(il, ownerMethod);
 				}
 			}
 
@@ -208,10 +209,10 @@ namespace Hapil.Statements
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public void Emit(ILGenerator il)
+            public void Emit(ILGenerator il, MethodMember ownerMethod)
 			{
 				il.MarkLabel(LeaveLabel);
-				m_LeaveStatement.Emit(il);
+				m_LeaveStatement.Emit(il, ownerMethod);
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -243,7 +244,7 @@ namespace Hapil.Statements
 
 			#region StatementBase Members
 
-			public override void Emit(ILGenerator il)
+			public override void Emit(ILGenerator il, MethodMember ownerMethod)
 			{
 				m_Destination.LeaveLabel = il.DefineLabel();
 				il.Emit(OpCodes.Leave, m_Destination.LeaveLabel);

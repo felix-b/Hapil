@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Hapil.Expressions;
+using Hapil.Members;
 using Hapil.Operands;
 
 namespace Hapil.Statements
@@ -37,7 +38,7 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			Helpers.EmitCall(il, m_Target, m_Method, m_Arguments);
 		}

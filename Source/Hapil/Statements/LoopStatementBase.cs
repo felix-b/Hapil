@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Expressions;
 
@@ -65,7 +66,7 @@ namespace Hapil.Statements
 
 			#region StatementBase Members
 
-			public override void Emit(ILGenerator il)
+            public override void Emit(ILGenerator il, MethodMember ownerMethod)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopStartLabel);
 			}
@@ -91,7 +92,22 @@ namespace Hapil.Statements
 				}
 			}
 
-			#endregion
+
+            //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public bool WillLeaveMethod
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Label? LeaveLabel { get; set; }
+            
+            #endregion
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -111,7 +127,7 @@ namespace Hapil.Statements
 
 			#region StatementBase Members
 
-			public override void Emit(ILGenerator il)
+            public override void Emit(ILGenerator il, MethodMember ownerMethod)
 			{
 				il.Emit(OpCodes.Br, m_OwnerLoop.LoopEndLabel);
 			}
@@ -137,7 +153,22 @@ namespace Hapil.Statements
 				}
 			}
 
-			#endregion
+
+            //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public bool WillLeaveMethod
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Label? LeaveLabel { get; set; }
+            
+            #endregion
 		}
 	}
 }

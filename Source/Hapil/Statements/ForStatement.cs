@@ -41,7 +41,7 @@ namespace Hapil.Statements
 
 		#region StatementBase Members
 
-		public override void Emit(ILGenerator il)
+        public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
 			m_LoopNextLabel = il.DefineLabel();
 			m_LoopEndLabel = il.DefineLabel();
@@ -49,7 +49,7 @@ namespace Hapil.Statements
 
 			foreach ( var statement in m_PreconditionBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			il.MarkLabel(conditionLabel);
@@ -61,14 +61,14 @@ namespace Hapil.Statements
 
 			foreach ( var statement in m_BodyBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			il.MarkLabel(m_LoopNextLabel);
 
 			foreach ( var statement in m_NextBlock )
 			{
-				statement.Emit(il);
+				statement.Emit(il, ownerMethod);
 			}
 
 			il.Emit(OpCodes.Br, conditionLabel);

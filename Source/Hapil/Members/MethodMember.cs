@@ -17,6 +17,8 @@ namespace Hapil.Members
 		private readonly List<MethodWriterBase> m_Writers;
 		private readonly List<ILocal> m_Locals;
 		private readonly TransparentMethodWriter m_TransparentWriter;
+	    private ITransformType m_ReturnValueLocal;
+        private Label? m_ReturnLabel;
         private IDisposable m_EffectiveTypeTemplates;
         private StatementBlock m_Statements;
 		private MethodFactoryBase m_MethodFactory;
@@ -151,25 +153,6 @@ namespace Hapil.Members
 			}
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//public MethodMember HostMethod
-		//{
-		//	get
-		//	{
-		//		var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
-
-		//		if ( anonymousMethodFactory != null )
-		//		{
-		//			return anonymousMethodFactory.HostMethod;
-		//		}
-		//		else
-		//		{
-		//			return null;
-		//		}
-		//	}
-		//}
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal void SetBody(StatementBlock body)
@@ -212,6 +195,18 @@ namespace Hapil.Members
 			}
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal Operand<T> GetReturnValueLocal<T>()
+        {
+            if ( m_ReturnValueLocal == null )
+            {
+                m_ReturnValueLocal = new Local<T>(this);
+            }
+
+            return m_ReturnValueLocal.TransformToType<T>();
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal Label AddLabel()
@@ -219,7 +214,19 @@ namespace Hapil.Members
 			return m_MethodFactory.GetILGenerator().DefineLabel();
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal Label GetMethodReturnLabel()
+        {
+            if ( !m_ReturnLabel.HasValue )
+            {
+                m_ReturnLabel = AddLabel();
+            }
+
+            return m_ReturnLabel.Value;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal void AcceptVisitor(OperandVisitorBase visitor)
 		{
@@ -236,40 +243,6 @@ namespace Hapil.Members
 			identification = visitor;
 			return identification.AnonymousMethodsFound;
 		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//internal void MakeInstanceMethod()
-		//{
-		//	var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
-
-		//	if ( anonymousMethodFactory == null )
-		//	{
-		//		throw new InvalidOperationException("Method modifiers are mutable only for anonymous methods.");
-		//	}
-
-		//	anonymousMethodFactory.ChangeMethodAttributes(isStatic: false);
-		//}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		//internal void HoistInClosure(ClosureDefinition closure)
-		//{
-		//	var anonymousMethodFactory = (m_MethodFactory as AnonymousMethodFactory);
-
-		//	if ( anonymousMethodFactory == null )
-		//	{
-		//		throw new InvalidOperationException("Only anonymous method can be moved to a closure class.");
-		//	}
-
-		//	base.OwnerClass.MoveMember(this, destination: closure.ClosureClass);
-		//	base.OwnerClass = closure.ClosureClass;
-
-		//	anonymousMethodFactory.MethodMovedToClosure(closure.ClosureClass);
-
-		//	m_Writers.Clear();
-		//	m_Closure = closure;
-		//}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -320,17 +293,14 @@ namespace Hapil.Members
 
 		        foreach ( var statement in m_Statements )
 		        {
-		            statement.Emit(il);
+		            statement.Emit(il, this);
 		        }
 
-		        if ( Signature.IsVoid )
-		        {
-		            il.Emit(OpCodes.Ret);
-		        }
+		        EmitMethodReturn(il);
 		    }
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal protected MethodFactoryBase MethodFactory
 		{
@@ -383,5 +353,34 @@ namespace Hapil.Members
 				return m_Closure;
 			}
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private void EmitMethodReturn(ILGenerator il)
+	    {
+	        if ( m_ReturnLabel.HasValue )
+	        {
+	            il.MarkLabel(m_ReturnLabel.Value);
+	        }
+
+	        if ( !Signature.IsVoid )
+	        {
+	            var returnValue = (m_ReturnValueLocal as IOperand);
+
+                //if ( returnValue == null )
+                //{
+                //    throw new CodeGenerationException(string.Format(
+                //        "Return statement is missing in method '{0}.{1}'.", 
+                //        this.Name, this.OwnerClass.TypeBuilder.Name));
+                //}
+
+	            if ( returnValue != null )
+	            {
+	                returnValue.EmitLoad(il);
+	            }
+	        }
+
+	        il.Emit(OpCodes.Ret);
+	    }
 	}
 }

@@ -256,5 +256,22 @@ namespace Hapil.UnitTests.Expressions
 
 			Assert.That(tester.TimeValue, Is.EqualTo(TimeSpan.FromHours(3)));
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public object CompiledExample1()
+	    {
+            TimeSpan timeSpan = new TimeSpan(3, 0, 0);
+            return timeSpan;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public TimeSpan CompiledExample2(ref TimeSpan t1, out TimeSpan t2)
+        {
+            t2 = t1 + t1;
+            t1 = default(TimeSpan);
+            return t2;
+        }
+    }
 }
