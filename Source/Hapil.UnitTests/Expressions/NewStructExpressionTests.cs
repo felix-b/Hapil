@@ -273,5 +273,12 @@ namespace Hapil.UnitTests.Expressions
             t1 = default(TimeSpan);
             return t2;
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public object CompiledExample3()
+        {
+            return new TimeSpan(3, 0, 0);
+        }
     }
 }

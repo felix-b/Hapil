@@ -110,11 +110,19 @@ namespace Hapil.Expressions
 			Local<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_StatementScope.AddLocal<TStruct>() : null);
 			var effectiveTarget = (m_Target ?? tempLocal);
 
-			if ( effectiveTarget != null )
+            if ( effectiveTarget != null )
 			{
 				if ( m_Constructor != null )
 				{
-					Helpers.EmitCall(il, effectiveTarget, m_Constructor, m_ConstructorArguments);
+                    foreach (var argument in m_ConstructorArguments)
+                    {
+                        argument.EmitTarget(il);
+                        argument.EmitLoad(il);
+                    }
+
+                    il.Emit(OpCodes.Newobj, m_Constructor);
+
+                    //Helpers.EmitCall(il, effectiveTarget, m_Constructor, m_ConstructorArguments);
 				}
 				else
 				{
