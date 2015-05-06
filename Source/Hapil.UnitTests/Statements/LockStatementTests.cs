@@ -64,6 +64,7 @@ namespace Hapil.UnitTests.Statements
 					});
 
 					lockReleased.Func<bool>(x => x.Set);
+                    m.Return(0);
 				});
 
 			//-- Act
@@ -108,7 +109,7 @@ namespace Hapil.UnitTests.Statements
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void TestLockAttemptTimedOut()
+		public void  TestLockAttemptTimedOut()
 		{
 			//-- Arrange
 
@@ -123,6 +124,8 @@ namespace Hapil.UnitTests.Statements
 					.Catch<Exception>(e => {
 						Static.Prop(() => OutputException).Assign(e);
 					});
+
+                    m.Return(0);
 				});
 
 			//-- Act
@@ -154,5 +157,5 @@ namespace Hapil.UnitTests.Statements
 		public static ManualResetEvent ReadyToUnlockEvent { get; set; }
 		public static ManualResetEvent LockReleasedEvent { get; set; }
 		public static Exception OutputException { get; set; }
-	}
+    }
 }

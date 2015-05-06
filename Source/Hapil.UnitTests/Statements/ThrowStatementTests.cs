@@ -71,6 +71,7 @@ namespace Hapil.UnitTests.Statements
 						Static.Prop(() => OutputException).Assign(e);
 						m.Throw();
 					});
+                    m.Return(0);
 				});
 
 			Exception caughtException = null;
