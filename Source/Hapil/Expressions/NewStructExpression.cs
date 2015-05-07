@@ -107,46 +107,31 @@ namespace Hapil.Expressions
 
 		protected override void OnEmitLoad(ILGenerator il)
 		{
-			Local<TStruct> tempLocal = (m_Target == null && m_Constructor == null ? m_StatementScope.AddLocal<TStruct>() : null);
-			var effectiveTarget = (m_Target ?? tempLocal);
+		    var targetStruct = GetEffectiveTarget();
 
-            if ( effectiveTarget != null )
+		    if ( targetStruct != null )
 			{
 				if ( m_Constructor != null )
 				{
-                    foreach (var argument in m_ConstructorArguments)
-                    {
-                        argument.EmitTarget(il);
-                        argument.EmitLoad(il);
-                    }
-
-                    il.Emit(OpCodes.Newobj, m_Constructor);
-
-                    //Helpers.EmitCall(il, effectiveTarget, m_Constructor, m_ConstructorArguments);
+                    targetStruct.EmitTarget(il);
+                    EmitCallToConstructor(il);
+				    targetStruct.EmitStore(il);
 				}
 				else
 				{
-					effectiveTarget.EmitTarget(il);
-					effectiveTarget.EmitAddress(il);
-
+					targetStruct.EmitTargetAndAddress(il);
 					il.Emit(OpCodes.Initobj, m_StructType);
 				}
 
 				if ( ShouldLeaveValueOnStack )
 				{
-					effectiveTarget.EmitTarget(il);
-					effectiveTarget.EmitLoad(il);
+					targetStruct.EmitTarget(il);
+					targetStruct.EmitLoad(il);
 				}
 			}
 			else
 			{
-				foreach ( var argument in m_ConstructorArguments )
-				{
-					argument.EmitTarget(il);
-					argument.EmitLoad(il);
-				}
-
-				il.Emit(OpCodes.Newobj, m_Constructor);
+                EmitCallToConstructor(il);
 
 				if ( !ShouldLeaveValueOnStack )
 				{
@@ -155,7 +140,7 @@ namespace Hapil.Expressions
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override void OnEmitStore(ILGenerator il)
 		{
@@ -168,5 +153,32 @@ namespace Hapil.Expressions
 		{
 			throw new NotSupportedException();
 		}
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+        
+        private IOperand GetEffectiveTarget()
+        {
+            if (m_Target == null && m_Constructor == null)
+            {
+                return m_StatementScope.AddLocal<TStruct>();
+            }
+            else
+            {
+                return m_Target;
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private void EmitCallToConstructor(ILGenerator il)
+        {
+            foreach (var argument in m_ConstructorArguments)
+            {
+                argument.EmitTarget(il);
+                argument.EmitLoad(il);
+            }
+
+            il.Emit(OpCodes.Newobj, m_Constructor);
+        }
+    }
 }

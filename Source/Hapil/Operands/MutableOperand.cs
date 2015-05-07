@@ -41,18 +41,18 @@ namespace Hapil.Operands
 
 		public Operand<T> Assign(IOperand<T> value)
 		{
-            //if ( OperandType.IsValueType && value is IValueTypeInitializer && this is ICanEmitAddress )
-            //{
-            //    ((IValueTypeInitializer)value).Target = this;
-            //    return (Operand<T>)value;
-            //}
-            //else
-            //{
+            if ( OperandType.IsValueType && value is IValueTypeInitializer && this is ICanEmitAddress )
+            {
+                ((IValueTypeInitializer)value).Target = this;
+                return (Operand<T>)value;
+            }
+            else
+            {
 				return new BinaryExpressionOperand<T, T>(
 					@operator: new BinaryOperators.OperatorAssign<T>(),
 					left: this,
 					right: value.OrNullConstant());
-			//}
+			}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

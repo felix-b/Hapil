@@ -16,7 +16,15 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal static void EmitTarget(this IOperand operand, ILGenerator il)
+        public static bool IsByRefArgument(this IOperand operand)
+        {
+            var argument = (operand as IArgument);
+            return (argument != null && argument.IsByRef);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        internal static void EmitTarget(this IOperand operand, ILGenerator il)
 		{
 			if ( operand != null )
 			{
@@ -52,18 +60,21 @@ namespace Hapil
 			((IOperandEmitter)operand).EmitAddress(il);
 		}
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//internal static HapilClass GetOwnerClass(this IOperand operand)
-		//{
-		//	return ((IOperandInternals)operand).OwnerClass;
-		//}
+        internal static void EmitTargetAndAddress(this IOperand operand, ILGenerator il)
+        {
+            var emitter = (operand as IOperandEmitter);
 
-		////-----------------------------------------------------------------------------------------------------------------------------------------------------
+            if ( emitter != null )
+            {
+                if ( !operand.IsByRefArgument() )
+                {
+                    emitter.EmitTarget(il);
+                }
 
-		//internal static HapilMethod GetOwnerMethod(this IOperand operand)
-		//{
-		//	return ((IOperandInternals)operand).OwnerMethod;
-		//}
+                emitter.EmitAddress(il);
+            }
+        }
 	}
 }

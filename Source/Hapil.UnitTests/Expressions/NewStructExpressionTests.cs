@@ -6,6 +6,7 @@ using Hapil.Testing.NUnit;
 using Hapil.Expressions;
 using Hapil.Operands;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests.Expressions
 {
@@ -159,7 +160,63 @@ namespace Hapil.UnitTests.Expressions
 			Assert.That(tester.TimeValue, Is.EqualTo(TimeSpan.FromHours(3)));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanInitializeValueTypeByRefArgumentWithDefaultConstructor()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.StructCreationTester2>()
+                .DefaultConstructor()
+                .Method<TimeSpan>(cls => t => cls.DoTest(out t)).Implement((m, value) => {
+                    value.Assign(m.Default<TimeSpan>());
+                    m.This<AncestorRepository.StructCreationTester2>().Prop(x => x.TimeValue).Assign(value);
+                });
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.StructCreationTester2>().UsingDefaultConstructor();
+            TimeSpan outputValue;
+            
+            tester.TimeValue = TimeSpan.MinValue;
+            tester.DoTest(out outputValue);
+
+            //-- Assert
+
+            Assert.That(tester.TimeValue, Is.EqualTo(TimeSpan.Zero));
+            Assert.That(outputValue, Is.EqualTo(TimeSpan.Zero));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanInitializeValueTypeByRefArgumentWithNonDefaultConstructor()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.StructCreationTester2>()
+                .DefaultConstructor()
+                .Method<TimeSpan>(cls => t => cls.DoTest(out t)).Implement((m, value) => {
+                    value.Assign(m.New<TimeSpan>(m.Const(3), m.Const(0), m.Const(0)));
+                    m.This<AncestorRepository.StructCreationTester2>().Prop(x => x.TimeValue).Assign(value);
+                });
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.StructCreationTester2>().UsingDefaultConstructor();
+            TimeSpan outputValue;
+
+            tester.TimeValue = TimeSpan.MinValue;
+            tester.DoTest(out outputValue);
+
+            //-- Assert
+
+            Assert.That(tester.TimeValue, Is.EqualTo(TimeSpan.FromHours(3)));
+            Assert.That(outputValue, Is.EqualTo(TimeSpan.FromHours(3)));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void CanInitializeValueTypeLocalWithDefaultConstructor()
@@ -209,7 +266,34 @@ namespace Hapil.UnitTests.Expressions
 			Assert.That(result, Is.EqualTo(TimeSpan.FromHours(3)));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanInitializeTemplatedValueTypePropertyWithDefaultConstructor()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TValue>(typeof(TimeSpan)) )
+            {
+                DeriveClassFrom<AncestorRepository.StructCreationTester>()
+                    .DefaultConstructor()
+                    .AllMethods(where: m => m.DeclaringType != typeof(object)).Implement(m => {
+                        m.This<AncestorRepository.StructCreationTester>().Prop(x => x.TimeValue).Assign(m.New<TT.TValue>().CastTo<TimeSpan>());
+                    });
+            }
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.StructCreationTester>().UsingDefaultConstructor();
+            tester.TimeValue = TimeSpan.MinValue;
+            tester.DoTest(TimeSpan.MaxValue);
+
+            //-- Assert
+
+            Assert.That(tester.TimeValue, Is.EqualTo(TimeSpan.Zero));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void CanInitializeValueTypePropertyWithDefaultConstructor()
