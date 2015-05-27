@@ -76,7 +76,7 @@ namespace Hapil
 		protected override ClassType DefineNewClass(TypeKey key)
 		{
 			var context = new ObjectFactoryContext(this, key);
-			var conventions = GetConventions(context);
+			var conventions = BuildConventionPipeline(context);
 
 			foreach ( var convention in conventions )
 			{
@@ -94,21 +94,21 @@ namespace Hapil
 			return context.ClassType;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private IObjectFactoryConvention[] GetConventions(ObjectFactoryContext context)
-		{
-			if ( m_ConventionSingletonInstances != null )
-			{
-				return m_ConventionSingletonInstances;
-			}
-			else
-			{
-				return m_TransientConventionFactory(context).ToArray();
-			}
-		}
+	    protected virtual IObjectFactoryConvention[] BuildConventionPipeline(ObjectFactoryContext context)
+	    {
+	        if ( m_ConventionSingletonInstances != null )
+	        {
+	            return m_ConventionSingletonInstances;
+	        }
+	        else
+	        {
+	            return m_TransientConventionFactory(context).ToArray();
+	        }
+	    }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public delegate IEnumerable<IObjectFactoryConvention> TransientConventionFactoryCallback(ObjectFactoryContext context);
 	}
