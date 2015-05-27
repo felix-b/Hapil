@@ -1170,6 +1170,57 @@ namespace Hapil.UnitTests
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void MultipleInstanceConstructors_CallThis()
+        {
+            //-- Arrange
+
+            Field<string> field1;
+            Field<string> field2;
+            Field<string> field3;
+
+            DeriveClassFrom<object>()
+                .Field<string>("m_Field1", out field1)
+                .Field<string>("m_Field2", out field2)
+                .Field<string>("m_Field3", out field3)
+                .Constructor(cw => {
+                    field1.Assign("X");
+                    field2.Assign("Y");
+                    field3.Assign("Z");
+                })
+                .Constructor<string>((cw, s1) => {
+                    cw.This();
+                    field1.Assign(s1);
+                })
+                .Constructor<string, string>((cw, s1, s2) => {
+                    cw.This(s1);
+                    field2.Assign(s2);
+                })
+                .Constructor<string, string, string>((cw, s1, s2, s3) => {
+                    cw.This(s1, s2);
+                    field3.Assign(s3);
+                })
+                .Method<string>(cls => cls.ToString).Implement(m => {
+                    m.Return(field1 + field2 + field3);     
+                });
+
+            //-- Act
+
+            var obj0 = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var obj1 = CreateClassInstanceAs<object>().UsingConstructor("A", constructorIndex: 1);
+            var obj2 = CreateClassInstanceAs<object>().UsingConstructor("A", "B", constructorIndex: 2);
+            var obj3 = CreateClassInstanceAs<object>().UsingConstructor("A", "B", "C", constructorIndex: 3);
+
+            //-- Assert
+
+            Assert.That(obj0.ToString(), Is.EqualTo("XYZ"));
+            Assert.That(obj1.ToString(), Is.EqualTo("AYZ"));
+            Assert.That(obj2.ToString(), Is.EqualTo("ABZ"));
+            Assert.That(obj3.ToString(), Is.EqualTo("ABC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
 	    public void MembersOfBaseTypeInheritedInMultiplePaths_ImplementedOnce()
 	    {
             //-- Arrange

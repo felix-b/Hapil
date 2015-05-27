@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using Hapil.Expressions;
 using Hapil.Members;
@@ -93,40 +94,67 @@ namespace Hapil.Writers
 
 		public void This()
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor();
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1>(IOperand<TA1> arg1)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2>(IOperand<TA1> arg1, IOperand<TA2> arg2)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3, TA4>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3, arg4),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3, TA4, TA5>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3, arg4, arg5),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3, TA4, TA5, TA6>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3, arg4, arg5, arg6),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6, IOperand<TA7> arg7)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3, arg4, arg5, arg6, arg7),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 		public void This<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6, IOperand<TA7> arg7, IOperand<TA8> arg8)
 		{
-			throw new NotImplementedException();
-		}
+            var thisConstructor = FindThisConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8));
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(thisConstructor, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 		
@@ -179,5 +207,23 @@ namespace Hapil.Writers
 
 			throw new InvalidOperationException("Base constructor not found.");
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private ConstructorInfo FindThisConstructor(params Type[] argumentTypes)
+        {
+            var constructor = OwnerClass
+                .GetAllMembers()
+                .OfType<ConstructorMember>()
+                .Where(ctor => ctor != m_OwnerConstructor)
+                .FirstOrDefault(ctor => ctor.MethodFactory.Signature.HasArgumentTypes(argumentTypes));
+
+            if ( constructor != null )
+            {
+                return (ConstructorBuilder)constructor.MethodFactory.Builder;
+            }
+
+            throw new InvalidOperationException("Specified 'this' constructor not found.");
+        }
+    }
 }

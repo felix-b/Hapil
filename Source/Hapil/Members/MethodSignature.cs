@@ -103,6 +103,26 @@ namespace Hapil.Members
 				returnType: this.ReturnType);
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public bool HasArgumentTypes(params Type[] argumentTypesToMatch)
+	    {
+	        if ( argumentTypesToMatch.Length != ArgumentType.Length )
+	        {
+	            return false;
+	        }
+
+	        for ( int i = 0 ; i < argumentTypesToMatch.Length ; i++ )
+	        {
+	            if ( ArgumentType[i] != TypeTemplate.Resolve(argumentTypesToMatch[i]) )
+	            {
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		#region Overrides of Object
