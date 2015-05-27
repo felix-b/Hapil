@@ -25,6 +25,7 @@ namespace Hapil
 				typeof(TEventHandler), typeof(TEventArgs),
 				typeof(TField),
 				typeof(TClosure),
+				typeof(TDependency), typeof(TService), typeof(TServiceImpl),
                 typeof(TContract), typeof(TImpl), typeof(TContract2), typeof(TImpl2),
                 typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2),
                 typeof(TStruct), typeof(TStruct2)
@@ -127,6 +128,16 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public static IDisposable CreateScope<TTemplate1, TTemplate2, TTemplate3>(Type actualType1, Type actualType2, Type actualType3)
+            where TTemplate1 : TemplateTypeBase<TTemplate1>
+            where TTemplate2 : TemplateTypeBase<TTemplate2>
+            where TTemplate3 : TemplateTypeBase<TTemplate3>
+        {
+            return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2, typeof(TTemplate3), actualType3);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		internal static IDisposable CreateScope(params Type[] templateActualTypePairs)
 		{
 			return new Scope(templateActualTypePairs);
@@ -224,6 +235,9 @@ namespace Hapil
         public interface TEventArgs : TemplateTypeBase<TEventArgs> { }
         public interface TField : TemplateTypeBase<TField> { }
         public interface TClosure : TemplateTypeBase<TClosure> { }
+        public interface TDependency : TemplateTypeBase<TDependency> { }
+        public interface TService : TemplateTypeBase<TService> { }
+        public interface TServiceImpl : TService, TemplateTypeBase<TServiceImpl> { }
         public interface TContract : TemplateTypeBase<TContract> { }
         public interface TImpl : TContract, TemplateTypeBase<TImpl> { }
         public interface TContract2 : TemplateTypeBase<TContract2> { }
