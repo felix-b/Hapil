@@ -1,7 +1,9 @@
 ![Hapil](https://raw.githubusercontent.com/felix-b/Hapil/gh-pages/img/strawberry.gif) Hapil 
 ======
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ir27ulb4151967o6/branch/fermium)](https://ci.appveyor.com/project/felix-b/hapil/branch/fermium)
+[![Build status](https://ci.appveyor.com/api/projects/status/ir27ulb4151967o6/branch/gold)](https://ci.appveyor.com/project/felix-b/hapil)
+
+[![NuGet Version](http://img.shields.io/nuget/v/FelixB.Hapil.svg?style=flat)](https://www.nuget.org/packages/FelixB.Hapil/)
 
 Hi there! Here a **.NET library** is being built, aimed to **support and facilitate** the following programming techniques for **.NET developers**:
 
