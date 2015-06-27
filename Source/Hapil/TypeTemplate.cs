@@ -28,6 +28,7 @@ namespace Hapil
 				typeof(TDependency), typeof(TService), typeof(TServiceImpl),
                 typeof(TContract), typeof(TImpl), typeof(TContract2), typeof(TImpl2),
                 typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2),
+                typeof(TRequest), typeof(TRequestImpl), typeof(TReply), typeof(TReplyImpl),
                 typeof(TStruct), typeof(TStruct2)
 			});
 
@@ -246,6 +247,10 @@ namespace Hapil
         public interface TConcrete : TAbstract, TemplateTypeBase<TConcrete> { }
         public interface TAbstract2 : TemplateTypeBase<TAbstract2> { }
         public interface TConcrete2 : TAbstract2, TemplateTypeBase<TConcrete2> { }
+        public interface TRequest : TemplateTypeBase<TRequest> { }
+        public interface TRequestImpl : TRequest, TemplateTypeBase<TRequestImpl> { }
+        public interface TReply : TemplateTypeBase<TReply> { }
+        public interface TReplyImpl : TReply, TemplateTypeBase<TReplyImpl> { }
         public struct TStruct : TemplateTypeBase<TStruct> { }
         public struct TStruct2 : TemplateTypeBase<TStruct2> { }
 
