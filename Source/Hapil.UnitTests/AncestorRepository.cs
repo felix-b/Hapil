@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
@@ -167,7 +168,19 @@ namespace Hapil.UnitTests
 			void One(string s, int n);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IReadOnlyPropertiesWithDefaults
+        {
+            [DefaultValue(123)]
+            int AnInt { get; }
+            [DefaultValue("ABC")]
+            string AString { get; }
+            [DefaultValue(DayOfWeek.Monday)]
+            object AnObject { get; }
+        }
+        
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public interface IFewReadWriteProperties
 		{

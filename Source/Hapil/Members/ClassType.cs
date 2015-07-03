@@ -89,7 +89,21 @@ namespace Hapil.Members
 			return ((PropertyMember)member).BackingField;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public void SetPropertyBackingField(PropertyInfo declaration, FieldMember field)
+        {
+            MemberBase member;
+
+            if ( !m_MembersByDeclarations.TryGetValue(declaration, out member) )
+            {
+                throw new ArgumentException(string.Format("Property '{0}' was not implemented by this class.", declaration.Name));
+            }
+
+            ((PropertyMember)member).BackingField = field;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public IEnumerable<MemberBase> GetAllMembers()
 		{

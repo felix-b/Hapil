@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>FelixB.Hapil.Testing.NUnit</id>
-        <version>0.9.7</version>
+        <version>0.9.8</version>
         <title>Hapil.Testing.NUnit</title>
         <authors>Felix Berman</authors>
         <licenseUrl>https://github.com/felix-b/Hapil/blob/master/LICENSE</licenseUrl>
@@ -18,10 +18,10 @@
           Hapil provides a base test class for unit testing code generators built with Hapil. Hapil.Testing.NUnit adapts the base test class to NUnit testing framework.
         </description>
         <summary>Hapil is a .NET dynamic type generator library, which serves a back-end for the Convention-over-Implementation approach</summary>
-        <copyright>Copyright © 2013 Felix Berman</copyright>
+        <copyright>Copyright © 2013-2015 Felix Berman</copyright>
         <tags>CoI IL MSIL Dynamic AOP Aspect Mix-in Duck</tags>
       <dependencies>
-        <dependency id="FelixB.Hapil" version="0.9.7" />
+        <dependency id="FelixB.Hapil" version="0.9.8" />
       </dependencies>
     </metadata>
     <files>
