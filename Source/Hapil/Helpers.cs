@@ -285,7 +285,11 @@ namespace Hapil
 
 		public static void EmitCast(ILGenerator il, Type fromType, Type toType)
 		{
-			if ( fromType.IsValueType )
+            if (fromType == typeof(object) && toType.IsValueType && !toType.IsNullableValueType() )
+            {
+                il.Emit(OpCodes.Unbox_Any, toType);
+            }
+            else if ( fromType.IsValueType )
 			{
 				EmitValueTypeConversion(il, fromType, toType);
 			}

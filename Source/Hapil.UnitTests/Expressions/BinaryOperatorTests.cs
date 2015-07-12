@@ -928,7 +928,33 @@ namespace Hapil.UnitTests.Expressions
 			Assert.That(outputObject1, Is.EqualTo(123));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void TestCastOrThrow_ObjectToValueType()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.ICastTester>()
+                .Method<object, int>(intf => intf.CastToInt).Implement((m, obj) =>  {
+                    m.Return(obj.CastTo<int>());
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.ICastTester>().UsingDefaultConstructor();
+            object input = 123;
+            int output = tester.CastToInt(input);
+
+            //-- Assert
+
+            Assert.That(output, Is.EqualTo(123));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void TestCastOrThrow_NullableValueTypeToObject()
