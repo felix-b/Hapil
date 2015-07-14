@@ -10,28 +10,12 @@ namespace Hapil
 	/// </summary>
 	public static class TypeTemplate
 	{
-		private static readonly HashSet<Type> s_AllTemplateTypes;
 		private static readonly Type[] s_ArgumentTemplateTypes;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		static TypeTemplate()
 		{
-			s_AllTemplateTypes = new HashSet<Type>(new[] {
-				typeof(TBase), typeof(TInterface), typeof(TPrimary), typeof(TSecondary1), typeof(TSecondary2),
-				typeof(TReturn), typeof(TProperty),
-				typeof(TArgument), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8), 
-                typeof(TIndex1), typeof(TIndex2), typeof(TItem), typeof(TKey), typeof(TValue),
-				typeof(TEventHandler), typeof(TEventArgs),
-				typeof(TField),
-				typeof(TClosure),
-				typeof(TDependency), typeof(TService), typeof(TServiceImpl),
-                typeof(TContract), typeof(TImpl), typeof(TContract2), typeof(TImpl2),
-                typeof(TAbstract), typeof(TConcrete), typeof(TAbstract2), typeof(TConcrete2),
-                typeof(TRequest), typeof(TRequestImpl), typeof(TReply), typeof(TReplyImpl),
-                typeof(TStruct), typeof(TStruct2)
-			});
-
 			s_ArgumentTemplateTypes = new[] {
 				typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4), typeof(TArg5), typeof(TArg6), typeof(TArg7), typeof(TArg8)
 			};
@@ -43,7 +27,7 @@ namespace Hapil
 		{
 			if ( type.IsGenericType )
 			{
-				if ( type.GetGenericTypeDefinition() != typeof(TemplateTypeBase<>) )
+				if ( type.GetGenericTypeDefinition() != typeof(ITemplateType<>) )
 				{
 					return type.GetGenericArguments().Any(IsTemplateType);
 				}
@@ -54,7 +38,7 @@ namespace Hapil
 			}
 			else
 			{
-				return s_AllTemplateTypes.Contains(type);
+				return typeof(ITemplateType).IsAssignableFrom(type);
 			}
 		}
 
@@ -113,7 +97,7 @@ namespace Hapil
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static IDisposable CreateScope<TTemplate>(Type actualType)
-			where TTemplate : TemplateTypeBase<TTemplate>
+			where TTemplate : ITemplateType<TTemplate>
 		{
 			return new Scope(typeof(TTemplate), actualType);
 		}
@@ -121,8 +105,8 @@ namespace Hapil
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static IDisposable CreateScope<TTemplate1, TTemplate2>(Type actualType1, Type actualType2)
-            where TTemplate1 : TemplateTypeBase<TTemplate1>
-            where TTemplate2 : TemplateTypeBase<TTemplate2>
+            where TTemplate1 : ITemplateType<TTemplate1>
+            where TTemplate2 : ITemplateType<TTemplate2>
         {
             return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2);
         }
@@ -130,9 +114,9 @@ namespace Hapil
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static IDisposable CreateScope<TTemplate1, TTemplate2, TTemplate3>(Type actualType1, Type actualType2, Type actualType3)
-            where TTemplate1 : TemplateTypeBase<TTemplate1>
-            where TTemplate2 : TemplateTypeBase<TTemplate2>
-            where TTemplate3 : TemplateTypeBase<TTemplate3>
+            where TTemplate1 : ITemplateType<TTemplate1>
+            where TTemplate2 : ITemplateType<TTemplate2>
+            where TTemplate3 : ITemplateType<TTemplate3>
         {
             return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2, typeof(TTemplate3), actualType3);
         }
@@ -188,7 +172,7 @@ namespace Hapil
 
 		private static void ValidateTemplateType(Type templateType)
 		{
-			if ( !s_AllTemplateTypes.Contains(templateType) )
+            if ( !typeof(ITemplateType).IsAssignableFrom(templateType) )
 			{
 				throw new ArgumentException(string.Format("Type '{0}' is not a valid template type.", templateType.FullName));
 			}
@@ -196,63 +180,63 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        // ReSharper disable InconsistentNaming
+	    public interface ITemplateType
+	    {
+	    }
 
-		public interface TemplateTypeBase<T> where T : TemplateTypeBase<T>
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface ITemplateType<T> : ITemplateType 
+            where T : ITemplateType<T>
 		{
-            //public static Type ActualType
-            //{
-            //    get
-            //    {
-            //        return Scope.ValidateCurrent().Resolve(typeof(T));
-            //    }
-            //}
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public interface TBase : TemplateTypeBase<TBase> { }
-        public interface TInterface : TemplateTypeBase<TInterface> { }
-        public interface TPrimary : TemplateTypeBase<TPrimary> { }
-        public interface TSecondary1 : TemplateTypeBase<TSecondary1> { }
-        public interface TSecondary2 : TemplateTypeBase<TSecondary2> { }
-        public interface TReturn : TemplateTypeBase<TReturn> { }
-        public interface TProperty : TemplateTypeBase<TProperty> { }
-        public interface TArgument : TemplateTypeBase<TArgument> { }
-        public interface TArg1 : TemplateTypeBase<TArg1> { }
-        public interface TArg2 : TemplateTypeBase<TArg2> { }
-        public interface TArg3 : TemplateTypeBase<TArg3> { }
-        public interface TArg4 : TemplateTypeBase<TArg4> { }
-        public interface TArg5 : TemplateTypeBase<TArg5> { }
-        public interface TArg6 : TemplateTypeBase<TArg6> { }
-        public interface TArg7 : TemplateTypeBase<TArg7> { }
-        public interface TArg8 : TemplateTypeBase<TArg8> { }
-        public interface TIndex1 : TemplateTypeBase<TIndex1> { }
-        public interface TIndex2 : TemplateTypeBase<TIndex2> { }
-        public interface TItem : TemplateTypeBase<TItem> { }
-        public interface TKey : TemplateTypeBase<TKey> { }
-        public interface TValue : TemplateTypeBase<TValue> { }
-        public interface TEventHandler : TemplateTypeBase<TEventHandler> { }
-        public interface TEventArgs : TemplateTypeBase<TEventArgs> { }
-        public interface TField : TemplateTypeBase<TField> { }
-        public interface TClosure : TemplateTypeBase<TClosure> { }
-        public interface TDependency : TemplateTypeBase<TDependency> { }
-        public interface TService : TemplateTypeBase<TService> { }
-        public interface TServiceImpl : TService, TemplateTypeBase<TServiceImpl> { }
-        public interface TContract : TemplateTypeBase<TContract> { }
-        public interface TImpl : TContract, TemplateTypeBase<TImpl> { }
-        public interface TContract2 : TemplateTypeBase<TContract2> { }
-        public interface TImpl2 : TContract2, TemplateTypeBase<TImpl2> { }
-        public interface TAbstract : TemplateTypeBase<TAbstract> { }
-        public interface TConcrete : TAbstract, TemplateTypeBase<TConcrete> { }
-        public interface TAbstract2 : TemplateTypeBase<TAbstract2> { }
-        public interface TConcrete2 : TAbstract2, TemplateTypeBase<TConcrete2> { }
-        public interface TRequest : TemplateTypeBase<TRequest> { }
-        public interface TRequestImpl : TRequest, TemplateTypeBase<TRequestImpl> { }
-        public interface TReply : TemplateTypeBase<TReply> { }
-        public interface TReplyImpl : TReply, TemplateTypeBase<TReplyImpl> { }
-        public struct TStruct : TemplateTypeBase<TStruct> { }
-        public struct TStruct2 : TemplateTypeBase<TStruct2> { }
+        // ReSharper disable InconsistentNaming
+
+        public interface TBase : ITemplateType<TBase> { }
+        public interface TInterface : ITemplateType<TInterface> { }
+        public interface TPrimary : ITemplateType<TPrimary> { }
+        public interface TSecondary1 : ITemplateType<TSecondary1> { }
+        public interface TSecondary2 : ITemplateType<TSecondary2> { }
+        public interface TReturn : ITemplateType<TReturn> { }
+        public interface TProperty : ITemplateType<TProperty> { }
+        public interface TArgument : ITemplateType<TArgument> { }
+        public interface TArg1 : ITemplateType<TArg1> { }
+        public interface TArg2 : ITemplateType<TArg2> { }
+        public interface TArg3 : ITemplateType<TArg3> { }
+        public interface TArg4 : ITemplateType<TArg4> { }
+        public interface TArg5 : ITemplateType<TArg5> { }
+        public interface TArg6 : ITemplateType<TArg6> { }
+        public interface TArg7 : ITemplateType<TArg7> { }
+        public interface TArg8 : ITemplateType<TArg8> { }
+        public interface TIndex1 : ITemplateType<TIndex1> { }
+        public interface TIndex2 : ITemplateType<TIndex2> { }
+        public interface TItem : ITemplateType<TItem> { }
+        public interface TKey : ITemplateType<TKey> { }
+        public interface TValue : ITemplateType<TValue> { }
+        public interface TEventHandler : ITemplateType<TEventHandler> { }
+        public interface TEventArgs : ITemplateType<TEventArgs> { }
+        public interface TField : ITemplateType<TField> { }
+        public interface TClosure : ITemplateType<TClosure> { }
+        public interface TDependency : ITemplateType<TDependency> { }
+        public interface TService : ITemplateType<TService> { }
+        public interface TServiceImpl : TService, ITemplateType<TServiceImpl> { }
+        public interface TContract : ITemplateType<TContract> { }
+        public interface TImpl : TContract, ITemplateType<TImpl> { }
+        public interface TContract2 : ITemplateType<TContract2> { }
+        public interface TImpl2 : TContract2, ITemplateType<TImpl2> { }
+        public interface TAbstract : ITemplateType<TAbstract> { }
+        public interface TConcrete : TAbstract, ITemplateType<TConcrete> { }
+        public interface TAbstract2 : ITemplateType<TAbstract2> { }
+        public interface TConcrete2 : TAbstract2, ITemplateType<TConcrete2> { }
+        public interface TRequest : ITemplateType<TRequest> { }
+        public interface TRequestImpl : TRequest, ITemplateType<TRequestImpl> { }
+        public interface TReply : ITemplateType<TReply> { }
+        public interface TReplyImpl : TReply, ITemplateType<TReplyImpl> { }
+        public struct TStruct : ITemplateType<TStruct> { }
+        public struct TStruct2 : ITemplateType<TStruct2> { }
 
 		// ReSharper restore InconsistentNaming
 
