@@ -7,6 +7,7 @@ using System.Text;
 using Hapil.Expressions;
 using Hapil.Members;
 using Hapil.Operands;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.Writers
 {
@@ -35,56 +36,56 @@ namespace Hapil.Writers
 		}
 		public void Base<TA1>(IOperand<TA1> arg1)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1));
+            var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2>(IOperand<TA1> arg1, IOperand<TA2> arg2)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2));
+            var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3, TA4>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)), TT.TryResolve(typeof(TA4)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3, TA4, TA5>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)), TT.TryResolve(typeof(TA4)), TT.TryResolve(typeof(TA5)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4, arg5),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3, TA4, TA5, TA6>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)), TT.TryResolve(typeof(TA4)), TT.TryResolve(typeof(TA5)), TT.TryResolve(typeof(TA6)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4, arg5, arg6),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3, TA4, TA5, TA6, TA7>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6, IOperand<TA7> arg7)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)), TT.TryResolve(typeof(TA4)), TT.TryResolve(typeof(TA5)), TT.TryResolve(typeof(TA6)), TT.TryResolve(typeof(TA7)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4, arg5, arg6, arg7),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
 		public void Base<TA1, TA2, TA3, TA4, TA5, TA6, TA7, TA8>(IOperand<TA1> arg1, IOperand<TA2> arg2, IOperand<TA3> arg3, IOperand<TA4> arg4, IOperand<TA5> arg5, IOperand<TA6> arg6, IOperand<TA7> arg7, IOperand<TA8> arg8)
 		{
-			var baseConstructor = FindBaseConstructor(typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4), typeof(TA5), typeof(TA6), typeof(TA7), typeof(TA8));
+			var baseConstructor = FindBaseConstructor(TT.TryResolve(typeof(TA1)), TT.TryResolve(typeof(TA2)), TT.TryResolve(typeof(TA3)), TT.TryResolve(typeof(TA4)), TT.TryResolve(typeof(TA5)), TT.TryResolve(typeof(TA6)), TT.TryResolve(typeof(TA7)), TT.TryResolve(typeof(TA8)));
 			new UnaryExpressionOperand<object, object>(
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8),
 				@operand: new ThisOperand<object>(OwnerClass));
