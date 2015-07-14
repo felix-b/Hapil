@@ -328,5 +328,75 @@ namespace Hapil.UnitTests
             Assert.That(abstract2, Is.SameAs(memoryStream2));
             Assert.That(concrete2, Is.SameAs(memoryStream2));
         }
-    }
+        
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanUseCustomTemplateTypes()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<CustomTT.TCustom>(typeof(CustomOne)) )
+            {
+                DeriveClassFrom<CustomContainerBase<CustomTT.TCustom>>().Constructor<CustomTT.TCustom>((cw, custom) => cw.Base(custom));
+            }
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<CustomContainerBase<CustomOne>>().UsingConstructor(new CustomOne());
+            var customString = obj.ToString();
+
+            //-- Assert
+
+            Assert.That(customString, Is.EqualTo("CS1"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public interface ICustom
+	    {
+	        string GetCustomString();
+	    }
+	    public abstract class CustomContainerBase<T> 
+            where T : class, ICustom, new()
+	    {
+	        private readonly T _custom ;
+            protected CustomContainerBase(T custom)
+            {
+                _custom = custom;
+            }
+	        public override string ToString()
+	        {
+	            return _custom.GetCustomString();
+	        }
+	    }
+	    public class CustomOne : ICustom
+	    {
+            public string GetCustomString()
+	        {
+	            return "CS1";
+	        }
+	    }
+        public class CustomTwo : ICustom
+        {
+            public string GetCustomString()
+            {
+                return "CS2";
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static class CustomTT
+	    {
+	        // ReSharper disable once InconsistentNaming
+	        public class TCustom : ICustom, TypeTemplate.ITemplateType<TCustom>
+	        {
+                public string GetCustomString()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+	    }
+	}
 }
