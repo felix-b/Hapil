@@ -10,6 +10,7 @@ using Repo = Hapil.UnitTests.AncestorRepository;
 using TT = Hapil.TypeTemplate;
 using System.IO;
 using System.Reflection;
+using Hapil.Members;
 
 namespace Hapil.UnitTests
 {
@@ -349,6 +350,60 @@ namespace Hapil.UnitTests
             //-- Assert
 
             Assert.That(customString, Is.EqualTo("CS1"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanUseThisOeprandOfTemplateType()
+        {
+            //-- Arrange
+
+            var fiveMethod = TypeMemberCache.Of<AncestorRepository.IFewMethods>().SelectFuncs<int, string>(where: f => f.Name == "Five").Single();
+
+            using ( TT.CreateScope<TT.TService, TT.TRequest, TT.TReply>(typeof(AncestorRepository.IFewMethods), typeof(int), typeof(string)) )
+            {
+                DeriveClassFrom<FewMethods>()
+                    .DefaultConstructor()
+                    .NewVirtualFunction<TT.TRequest, TT.TReply>("CallServiceMethod").Implement((w, request) => {
+                        w.Return(w.This<TT.TService>().Func<TT.TRequest, TT.TReply>(fiveMethod, request));
+                    });
+            }
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = obj.CallServiceMethod(123);
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("$123$"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public class FewMethods : AncestorRepository.IFewMethods
+	    {
+            public void One()
+            {
+                throw new NotImplementedException();
+            }
+            public void Two(int n)
+            {
+                throw new NotImplementedException();
+            }
+            public int Three()
+            {
+                throw new NotImplementedException();
+            }
+            public int Four(string s)
+            {
+                throw new NotImplementedException();
+            }
+            public string Five(int n)
+            {
+                return "$" + n + "$";
+            }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

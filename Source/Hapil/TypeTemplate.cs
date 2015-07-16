@@ -36,10 +36,14 @@ namespace Hapil
 					return false;
 				}
 			}
-			else
+			else if ( type != typeof(ITemplateType) )
 			{
-				return typeof(ITemplateType).IsAssignableFrom(type);
+			    return typeof(ITemplateType).IsAssignableFrom(type);
 			}
+            else
+            {
+                return false;
+            }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -119,6 +123,21 @@ namespace Hapil
             where TTemplate3 : ITemplateType<TTemplate3>
         {
             return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2, typeof(TTemplate3), actualType3);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static IDisposable CreateScope<TTemplate1, TTemplate2, TTemplate3, TTemplate4>(
+            Type actualType1, 
+            Type actualType2, 
+            Type actualType3, 
+            Type actualType4)
+            where TTemplate1 : ITemplateType<TTemplate1>
+            where TTemplate2 : ITemplateType<TTemplate2>
+            where TTemplate3 : ITemplateType<TTemplate3>
+            where TTemplate4 : ITemplateType<TTemplate4>
+        {
+            return new Scope(typeof(TTemplate1), actualType1, typeof(TTemplate2), actualType2, typeof(TTemplate3), actualType3, typeof(TTemplate4), actualType4);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
