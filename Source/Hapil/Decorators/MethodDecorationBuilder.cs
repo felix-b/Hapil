@@ -243,51 +243,21 @@ namespace Hapil.Decorators
 
 		//-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal void ApplyDecoration()
-		{
-			var successLocal = (m_OnFailure != null ? m_OwnerWriter.Local<bool>(initialValueConst: false) : null);
+        internal void ApplyDecoration()
+        {
+            if ( IsTryCatchRequired() )
+            {
+                ApplyDecorationWithTryCatch();
+            }
+            else
+            {
+                ApplyDecorationWithoutTryCatch();
+            }
+        }
 
-			if ( m_OnBefore != null )
-			{
-				m_OnBefore.ForEach(f => f(m_OwnerWriter));
-			}
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			InspectInputArguments();
-
-			var tryBlock = m_OwnerWriter.Try(
-				() => {
-					var returnValueExpression = m_OwnerWriter.Proceed<TypeTemplate.TReturn>();
-
-					if ( m_OnFailure != null )
-					{
-						successLocal.Assign(true);
-					}
-
-                    InspectOutputArguments();
-                    InspectReturnValue(returnValueExpression);
-				});
-
-			foreach ( var exceptionHandler in m_OnCatchExceptions.Values )
-			{
-				exceptionHandler.ForEach(f => f(m_OwnerWriter, tryBlock));
-			}
-
-			tryBlock.Finally(() => {
-				if ( m_OnFailure != null )
-				{
-					m_OwnerWriter.If(!successLocal).Then(() => m_OnFailure.ForEach(f => f(m_OwnerWriter)));
-				}
-
-				if ( m_OnAfter != null )
-				{
-					m_OnAfter.ForEach(f => f(m_OwnerWriter));
-				}
-			});
-		}
-
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal bool IsEmpty
+        internal bool IsEmpty
 		{
 			get
 			{
@@ -295,7 +265,77 @@ namespace Hapil.Decorators
 			}
 		}
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private bool IsTryCatchRequired()
+	    {
+	        return (
+                (m_OnFailure != null && m_OnFailure.Count > 0) ||
+                (m_OnAfter != null && m_OnAfter.Count > 0) ||
+                (m_OnCatchExceptions != null && m_OnCatchExceptions.Count > 0));
+	    }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private void ApplyDecorationWithTryCatch()
+        {
+            var successLocal = (m_OnFailure != null ? m_OwnerWriter.Local<bool>(initialValueConst: false) : null);
+
+            if ( m_OnBefore != null )
+            {
+                m_OnBefore.ForEach(f => f(m_OwnerWriter));
+            }
+
+            InspectInputArguments();
+
+            var tryBlock = m_OwnerWriter.Try(() => {
+                var returnValueExpression = m_OwnerWriter.Proceed<TypeTemplate.TReturn>();
+
+                if ( m_OnFailure != null )
+                {
+                    successLocal.Assign(true);
+                }
+
+                InspectOutputArguments();
+                InspectReturnValue(returnValueExpression);
+            });
+
+            foreach ( var exceptionHandler in m_OnCatchExceptions.Values )
+            {
+                exceptionHandler.ForEach(f => f(m_OwnerWriter, tryBlock));
+            }
+
+            tryBlock.Finally(() => {
+                if ( m_OnFailure != null )
+                {
+                    m_OwnerWriter.If(!successLocal).Then(() => m_OnFailure.ForEach(f => f(m_OwnerWriter)));
+                }
+
+                if ( m_OnAfter != null )
+                {
+                    m_OnAfter.ForEach(f => f(m_OwnerWriter));
+                }
+            });
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private void ApplyDecorationWithoutTryCatch()
+        {
+            if ( m_OnBefore != null )
+            {
+                m_OnBefore.ForEach(f => f(m_OwnerWriter));
+            }
+
+            InspectInputArguments();
+
+            var returnValueExpression = m_OwnerWriter.Proceed<TypeTemplate.TReturn>();
+
+            InspectOutputArguments();
+            InspectReturnValue(returnValueExpression);
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private void InspectInputArguments()
 		{
