@@ -652,8 +652,8 @@ namespace Hapil.UnitTests
 			//-- Arrange
 
 			var implementor = DeriveClassFrom<object>()
-				.DefaultConstructor()
-				.ImplementInterface<AncestorRepository.IFewMethods>()
+                .Constructor(cw => { })
+                .ImplementInterface<AncestorRepository.IFewMethods>()
 				.AllMethods().ImplementEmpty();
 
 			implementor.DecorateWith(new PropagatingDecorator());
@@ -718,7 +718,7 @@ namespace Hapil.UnitTests
 			//-- Arrange
 
 			var implementor = DeriveClassFrom<object>()
-				.DefaultConstructor()
+				.Constructor(cw => { })
 				.ImplementInterface<AncestorRepository.IFewMethods>()
 				.AllMethods().ImplementEmpty();
 
@@ -758,6 +758,47 @@ namespace Hapil.UnitTests
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void ConstructorInjection_DefaultConstructorExepmted()
+        {
+            //-- Arrange
+
+            var classType = DeriveClassFrom<object>();
+            var serviceField = classType.DependencyField<object>("m_Service");
+            var ctorNameField = classType.Field<string>("m_CtorName");
+
+            classType
+                .DefaultConstructor(cw => { // signature fixed; no constructor injection here
+                    ctorNameField.Assign("ctor#1");
+                })
+                .Constructor(cw => { // signature will change to receive injection arguments
+                    ctorNameField.Assign("ctor#2");
+                })
+                .NewVirtualFunction<string>("GetState").Implement(m => {
+                    m.If(serviceField == m.Const<object>(null)).Then(() => {
+                        m.Return(ctorNameField + ":NO-SERVICE");        
+                    })
+                    .Else(() => {
+                        m.Return(ctorNameField + ":HAS-SERVICE");
+                    });
+                });
+
+            //-- Act
+
+            dynamic obj1 = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            string state1 = obj1.GetState();
+
+            dynamic obj2 = CreateClassInstanceAs<object>().UsingConstructor(new object(), constructorIndex: 1);
+            string state2 = obj2.GetState();
+
+            //-- Assert
+
+            Assert.That(state1, Is.EqualTo("ctor#1:NO-SERVICE"));
+            Assert.That(state2, Is.EqualTo("ctor#2:HAS-SERVICE"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
 	    public void DecoraitonCycle_OnClassAndOnFinalizeDecoration()
 	    {
             //-- Arrange
@@ -791,7 +832,7 @@ namespace Hapil.UnitTests
             //-- Arrange
 
             var implementor = DeriveClassFrom<object>()
-                .DefaultConstructor()
+                .Constructor(cw => { })
                 .ImplementInterface<AncestorRepository.IFewMethods>()
                 .AllMethods().ImplementEmpty();
 
