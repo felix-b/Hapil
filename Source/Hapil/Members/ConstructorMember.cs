@@ -11,6 +11,7 @@ namespace Hapil.Members
 	public class ConstructorMember : MethodMember
 	{
 		private readonly Dictionary<FieldMember, int> m_DependencyFieldArgumentIndex;
+	    private bool m_MustPreserveSignature = false;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -19,6 +20,13 @@ namespace Hapil.Members
 		{
 			m_DependencyFieldArgumentIndex = new Dictionary<FieldMember, int>();
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public void PreserveSignature()
+	    {
+	        m_MustPreserveSignature = true;
+	    }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,7 +67,7 @@ namespace Hapil.Members
 			HashSet<FieldMember> unmappedFields = null;
 			MethodSignature finalSignature;
 
-			if ( dependencyFields.Length > 0 )
+            if ( dependencyFields.Length > 0 && !m_MustPreserveSignature )
 			{
 				unmappedFields = new HashSet<FieldMember>(dependencyFields);
 				MapDependencyFieldsToArguments(unmappedFields);

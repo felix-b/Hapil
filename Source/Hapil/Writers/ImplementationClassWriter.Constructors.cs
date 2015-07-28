@@ -13,13 +13,29 @@ namespace Hapil.Writers
 {
 	public partial class ImplementationClassWriter<TBase> : ClassWriterBase
 	{
-		public ImplementationClassWriter<TBase> DefaultConstructor(Func<MethodMember, AttributeWriter> attributes = null)
+        public ImplementationClassWriter<TBase> DefaultConstructor(Func<MethodMember, AttributeWriter> attributes = null)
 		{
-			var constructor = DefineConstructor(ConstructorMethodFactory.DefaultConstructor(OwnerClass));
-			var writer = new DefaultConstructorWriter(constructor);
-			writer.AddAttributes(attributes);
-			return this;
+            var constructor = DefineConstructor(ConstructorMethodFactory.DefaultConstructor(OwnerClass));
+            constructor.PreserveSignature();
+            var writer = new DefaultConstructorWriter(constructor);
+            writer.AddAttributes(attributes);
+            return this;
 		}
+        public ImplementationClassWriter<TBase> DefaultConstructor(Action<ConstructorWriter> body)
+        {
+            var constructor = DefineConstructor(ConstructorMethodFactory.InstanceConstructor(OwnerClass, Type.EmptyTypes));
+            constructor.PreserveSignature();
+            var writer = new ConstructorWriter(constructor, body);
+            return this;
+        }
+        public ImplementationClassWriter<TBase> DefaultConstructor(Func<MethodMember, AttributeWriter> attributes, Action<ConstructorWriter> body)
+        {
+            var constructor = DefineConstructor(ConstructorMethodFactory.InstanceConstructor(OwnerClass, Type.EmptyTypes));
+            constructor.PreserveSignature();
+            var writer = new ConstructorWriter(constructor, body);
+            writer.AddAttributes(attributes);
+            return this;
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
