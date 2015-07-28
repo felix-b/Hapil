@@ -55,6 +55,7 @@
     <Compile Include="CollectionShortcuts.cs" />
     <Compile Include="CompositeConvention.cs" />
     <Compile Include="ConventionObjectFactory.cs" />
+    <Compile Include="EnumShortcuts.cs" />
     <Compile Include="Members\NestedClassType.cs" />
     <Compile Include="Members\NewMethodFactory.cs" />
     <Compile Include="ObjectFactoryContext.cs" />
