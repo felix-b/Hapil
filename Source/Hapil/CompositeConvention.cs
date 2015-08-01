@@ -21,14 +21,14 @@ namespace Hapil
 
 		#region IObjectFactoryConvention Members
 
-		public bool ShouldApply(ObjectFactoryContext context)
+		public virtual bool ShouldApply(ObjectFactoryContext context)
 		{
 			return m_ContainedConventions.Any(c => c.ShouldApply(context));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Apply(ObjectFactoryContext context)
+		public virtual void Apply(ObjectFactoryContext context)
 		{
 			foreach ( var convention in m_ContainedConventions )
 			{
