@@ -70,6 +70,33 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public IVoidMethodSelector NewStaticVoidMethod(string name)
+        {
+            return new NewMethodSelector<NA, NA, NA, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: Type.EmptyTypes,
+                argumentNames: new string[0]));
+        }
+        public IVoidMethodSelector<TA1> NewStaticVoidMethod<TA1>(string name, string arg1 = "arg1")
+        {
+            return new NewMethodSelector<NA, TA1, NA, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1) },
+                argumentNames: new[] { arg1 }));
+        }
+        public IVoidMethodSelector<TA1, TA2> NewStaticVoidMethod<TA1, TA2>(string name, string arg1 = "arg1", string arg2 = "arg2")
+        {
+            return new NewMethodSelector<NA, TA1, TA2, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: true,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2) },
+                argumentNames: new[] { arg1, arg2 }));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public IFunctionMethodSelector<TReturn> NewStaticFunction<TReturn>(string name)
         {
             return new NewMethodSelector<TReturn, NA, NA, NA, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
