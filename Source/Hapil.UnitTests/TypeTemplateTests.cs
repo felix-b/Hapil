@@ -382,6 +382,172 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        [Test]
+        public void CanResolveArrayTypes()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TItem>(typeof(DayOfWeek)) )
+            {
+                //-- Act
+
+                var resolved1 = TT.Resolve<TT.TItem[]>();
+                var resolved2 = TT.Resolve<IList<TT.TItem[]>>();
+                var resolved3 = TT.Resolve<IList<TT.TItem>[]>();
+
+                //-- Assert
+                
+                Assert.That(resolved1, Is.EqualTo(typeof(DayOfWeek[])));
+                Assert.That(resolved2, Is.EqualTo(typeof(IList<DayOfWeek[]>)));
+                Assert.That(resolved3, Is.EqualTo(typeof(IList<DayOfWeek>[])));
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanOverrideTemplateTypeInNestedScope()
+        {
+            //-- arrange
+
+            Type resolved1;
+            Type resolved2;
+            Type resolved3;
+
+            //-- act
+
+            using ( TT.CreateScope<TT.TValue>(typeof(int)) )
+            {
+                resolved1 = TT.Resolve<TT.TValue>();
+
+                using ( TT.CreateScope<TT.TValue>(typeof(string)) )
+                {
+                    resolved2 = TT.Resolve<TT.TValue>();
+                }
+
+                resolved3 = TT.Resolve<TT.TValue>();
+            }
+
+            //-- assert
+
+            Assert.That(resolved1, Is.EqualTo(typeof(int)));
+            Assert.That(resolved2, Is.EqualTo(typeof(string)));
+            Assert.That(resolved3, Is.EqualTo(typeof(int)));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    [Test]
+	    public void CanSaveAndRestoreOverriddenTemplateTypesInNestedScope()
+	    {
+	        //-- arrange
+
+	        IDisposable saved1, saved2, saved3;
+
+	        using ( TT.CreateScope<TT.TValue>(typeof(int)) )
+	        {
+	            saved1 = TT.Save();
+
+	            using ( TT.CreateScope<TT.TValue>(typeof(string)) )
+	            {
+	                saved2 = TT.Save();
+	            }
+
+	            saved3 = TT.Save();
+	        }
+
+	        //-- act
+
+	        Type resolved1, resolved2, resolved3;
+
+	        using ( TT.Restore(saved1) )
+	        {
+	            resolved1 = TT.Resolve<TT.TValue>();
+	        }
+
+	        using ( TT.Restore(saved2) )
+	        {
+	            resolved2 = TT.Resolve<TT.TValue>();
+	        }
+
+	        using ( TT.Restore(saved3) )
+	        {
+	            resolved3 = TT.Resolve<TT.TValue>();
+	        }
+
+	        //-- assert
+
+	        Assert.That(resolved1, Is.EqualTo(typeof(int)));
+	        Assert.That(resolved2, Is.EqualTo(typeof(string)));
+	        Assert.That(resolved3, Is.EqualTo(typeof(int)));
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestCase(typeof(ICollection<int>), false)]
+        [TestCase(typeof(ICollection<TT.TItem>), true)]
+        //igonre: [TestCase(typeof(TT.TCollection<int>), true)]
+        [TestCase(typeof(TT.TCollection<TT.TItem>), true)]
+        [TestCase(typeof(ICollection<>), false)]
+        //[TestCase(typeof(TT.TCollection<>), true)]
+        public void CanIdentifyCollectionTemplateTypes(Type type, bool expectedOutcome)
+        {
+            Assert.That(TT.IsTemplateType(type), Is.EqualTo(expectedOutcome));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test, Ignore("TBD")]
+        public void CanResolveOpenGenericCollectionTemplateTypes()
+        {
+            //-- arrange
+
+            Type resolvedAbstract;
+            Type resolvedConcrete;
+
+            //-- act
+            
+            using ( TT.CreateScope<TT.TAbstract, TT.TConcrete>(typeof(Stream), typeof(MemoryStream)) )
+            {
+                using ( TT.CreateScope<TT.TCollection<TT.TAbstract>, TT.TCollection<TT.TConcrete>>(typeof(ICollection<>), typeof(HashSet<>)) )
+                {
+                    resolvedAbstract = TT.Resolve<TT.TCollection<TT.TAbstract>>();
+                    resolvedConcrete = TT.Resolve<TT.TCollection<TT.TConcrete>>();
+                }
+            }
+
+            //-- assert
+
+            Assert.That(resolvedAbstract, Is.EqualTo(typeof(ICollection<Stream>)));
+            Assert.That(resolvedConcrete, Is.EqualTo(typeof(HashSet<FileStream>)));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanResolveClosedGenericCollectionTemplateTypes()
+        {
+            //-- arrange
+
+            Type resolvedAbstract;
+            Type resolvedConcrete;
+
+            //-- act
+
+            using ( TT.CreateScope<TT.TCollection<TT.TAbstract>, TT.TCollection<TT.TConcrete>>(typeof(int[]), typeof(HashSet<string>)) )
+            {
+                resolvedAbstract = TT.Resolve<TT.TCollection<TT.TAbstract>>();
+                resolvedConcrete = TT.Resolve<TT.TCollection<TT.TConcrete>>();
+            }
+
+            //-- assert
+
+            Assert.That(resolvedAbstract, Is.EqualTo(typeof(int[])));
+            Assert.That(resolvedConcrete, Is.EqualTo(typeof(HashSet<string>)));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 	    public class FewMethods : AncestorRepository.IFewMethods
 	    {
             public void One()

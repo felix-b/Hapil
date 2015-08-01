@@ -25,26 +25,30 @@ namespace Hapil
 
 		public static bool IsTemplateType(Type type)
 		{
-			if ( type.IsGenericType )
-			{
-				if ( type.GetGenericTypeDefinition() != typeof(ITemplateType<>) )
-				{
-					return type.GetGenericArguments().Any(IsTemplateType);
-				}
-				else
-				{
-					return false;
-				}
+            if ( type.IsGenericType )
+            {
+                if ( type.GetGenericTypeDefinition() != typeof(ITemplateType<>) )
+                {
+                    return type.GetGenericArguments().Any(IsTemplateType);
+                }
+                else
+                {
+                    return false;
+                }
 			}
-			else if ( type != typeof(ITemplateType) )
-			{
-			    return typeof(ITemplateType).IsAssignableFrom(type);
-			}
+            else if ( type.IsArray )
+            {
+                return IsTemplateType(type.GetElementType());
+            }
+            else if ( type != typeof(ITemplateType) )
+            {
+                return typeof(ITemplateType).IsAssignableFrom(type);
+            }
             else
             {
                 return false;
             }
-		}
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -254,6 +258,11 @@ namespace Hapil
         public interface TRequestImpl : TRequest, ITemplateType<TRequestImpl> { }
         public interface TReply : ITemplateType<TReply> { }
         public interface TReplyImpl : TReply, ITemplateType<TReplyImpl> { }
+        public interface TCollection<T> : ICollection<T>, ITemplateType<TCollection<T>> { }
+        public interface TContractCollection<T> : ICollection<T>, ITemplateType<TContractCollection<T>> { }
+        public interface TImplCollection<T> : ICollection<T>, ITemplateType<TImplCollection<T>> { }
+        public interface TAbstractCollection<T> : ICollection<T>, ITemplateType<TAbstractCollection<T>> { }
+        public interface TConcreteCollection<T> : ICollection<T>, ITemplateType<TConcreteCollection<T>> { }
         public struct TStruct : ITemplateType<TStruct> { }
         public struct TStruct2 : ITemplateType<TStruct2> { }
 
@@ -325,31 +334,43 @@ namespace Hapil
 
 			public Type TryResolve(Type templateType)
 			{
-				if ( templateType.IsGenericType )
-				{
-					return TryResolveGenericType(templateType);
-				}
-
-				Type actualType;
-
-				if ( m_ActualTypesByTemplates.TryGetValue(templateType, out actualType) )
+                Type actualType;
+                
+                if ( m_ActualTypesByTemplates.TryGetValue(templateType, out actualType) )
 				{
 					return actualType;
 				}
-				else if ( m_Outer != null )
+
+			    if ( templateType.IsGenericType )
+			    {
+			        return TryResolveGenericType(templateType);
+			    }
+
+			    if ( templateType.IsArray )
+			    {
+			        return TryResolveArrayType(templateType);
+			    }
+
+			    if ( m_Outer != null )
 				{
 					return m_Outer.TryResolve(templateType);
 				}
-				else
-				{
-					return null;
-				}
+
+                return null;
 			}
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			private Type TryResolveGenericType(Type type)
 			{
+                //var definition = type.GetGenericTypeDefinition();
+                //var resolvedDefinition = (IsTemplateType(definition) ? TryResolve(definition) : definition);
+
+                //if ( resolvedDefinition == null )
+                //{
+                //    return null;
+                //}
+
 				var typeArguments = type.GetGenericArguments();
 
 				for ( int i = 0 ; i < typeArguments.Length ; i++ )
@@ -368,10 +389,26 @@ namespace Hapil
 
 				}
 
-				return type.GetGenericTypeDefinition().MakeGenericType(typeArguments);
+                return type.GetGenericTypeDefinition().MakeGenericType(typeArguments);
 			}
 
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            private Type TryResolveArrayType(Type type)
+            {
+                var resolvedElementType = TryResolve(type.GetElementType());
+
+                if ( resolvedElementType != null )
+                {
+                    return resolvedElementType.MakeArrayType();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 			[ThreadStatic]
 			private static Scope s_Current;
@@ -400,7 +437,10 @@ namespace Hapil
                 {
                     foreach ( var template in scope.m_ActualTypesByTemplates )
                     {
-                        effectiveTemplates[template.Key] = template.Value;
+                        if ( !effectiveTemplates.ContainsKey(template.Key) )
+                        {
+                            effectiveTemplates.Add(template.Key, template.Value);
+                        }
                     }
                 }
 
