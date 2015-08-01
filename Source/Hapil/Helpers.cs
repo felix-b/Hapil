@@ -389,7 +389,7 @@ namespace Hapil
 			// Ref		Val		Addressed Value	Ldarg			Ldind_ref/Ldobj		Ldarg				EmitTarget + EmitLoad
 			// Ref		Ref		Value			Ldarg			Ldind_ref/Ldobj		Ldarg							 EmitAddress
 
-			var methodParameters = (method is MethodBuilder || method is ConstructorBuilder ? null : method.GetParameters());
+			var methodParameters = (method.GetType().Name.Contains("Builder") ? null : method.GetParameters());
 
 			for ( int i = 0 ; i < arguments.Length ; i++ )
 			{
