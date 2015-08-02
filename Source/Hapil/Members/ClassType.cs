@@ -110,6 +110,20 @@ namespace Hapil.Members
 			return m_Members;
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public TMember GetMemberByName<TMember>(string memberName) where TMember : MemberBase
+        {
+            return (TMember)m_MembersByName[memberName];
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public TMember GetMemberByDeclaration<TMember>(MemberInfo declaration) where TMember : MemberBase
+        {
+            return (TMember)m_MembersByDeclarations[declaration];
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		/// <summary>
@@ -291,20 +305,6 @@ namespace Hapil.Members
 				
 				return newField;
 			}
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal TMember GetMemberByName<TMember>(string memberName) where TMember : MemberBase
-		{
-			return (TMember)m_MembersByName[memberName];
-		}
-
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-		internal TMember GetMemberByDeclaration<TMember>(MemberInfo declaration) where TMember : MemberBase
-		{
-			return (TMember)m_MembersByDeclarations[declaration];
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
