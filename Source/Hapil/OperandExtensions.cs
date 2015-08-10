@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using Hapil.Operands;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil
 {
@@ -20,6 +21,40 @@ namespace Hapil
         {
             var argument = (operand as IArgument);
             return (argument != null && argument.IsByRef);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public static Operand<bool> IsNull<T>(this Operand<T> operand) where T : class
+	    {
+	        if ( TT.IsTemplateType(typeof(T)) )
+	        {
+	            using ( TT.CreateScope(typeof(T), operand.OperandType) )
+	            {
+	                return (operand == new Constant<T>(null));
+	            }
+	        }
+	        else
+	        {
+                return (operand == new Constant<T>(null));
+            }
+	    }
+
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<bool> IsNotNull<T>(this Operand<T> operand) where T : class
+        {
+            if ( TT.IsTemplateType(typeof(T)) )
+            {
+                using ( TT.CreateScope(typeof(T), operand.OperandType) )
+                {
+                    return (operand != new Constant<T>(null));
+                }
+            }
+            else
+            {
+                return (operand != new Constant<T>(null));
+            }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

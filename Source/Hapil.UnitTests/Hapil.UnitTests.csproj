@@ -86,6 +86,7 @@
     <Compile Include="NestedFactoryTests.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="ClosureTestFixtureBase.cs" />
+    <Compile Include="OperandExtensionsTests.cs" />
     <Compile Include="Operands\AnonymousDelegateOperandTests.cs" />
     <Compile Include="Operands\ConstantOperandTests.cs" />
     <Compile Include="Operands\DelegateTests.cs" />
