@@ -41,7 +41,7 @@ namespace Hapil.Members
 				declaration.PropertyType,
                 m_IndexParameterTypes);
 
-			var getterDeclaration = declaration.GetGetMethod();
+			var getterDeclaration = declaration.GetGetMethod(nonPublic: true);
 
 			if ( getterDeclaration != null )
 			{
@@ -49,7 +49,7 @@ namespace Hapil.Members
 				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 			}
 
-			var setterDeclaration = declaration.GetSetMethod();
+            var setterDeclaration = declaration.GetSetMethod(nonPublic: true);
 
 			if ( setterDeclaration != null )
 			{

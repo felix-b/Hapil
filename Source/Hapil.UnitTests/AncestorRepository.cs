@@ -79,7 +79,15 @@ namespace Hapil.UnitTests
 			public abstract string SecondValue { get; set; }
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseTwoWithNonPublicAccessors
+        {
+            public abstract int FirstValue { get; protected set; }
+            public abstract string SecondValue { protected get; set; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public abstract class BaseThree
 		{

@@ -451,7 +451,42 @@ namespace Hapil.UnitTests
 			Assert.That(obj.SecondValue, Is.EqualTo("ABC"));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void BasePropertiesWithNonPublicAccessors_SelectAll()
+        {
+            //-- Arrange
+
+            var secondValueProperty = 
+                TypeMemberCache.Of<AncestorRepository.BaseTwoWithNonPublicAccessors>().Properties.Single(p => p.Name == "SecondValue");
+
+            DeriveClassFrom<AncestorRepository.BaseTwoWithNonPublicAccessors>()
+                .Constructor(cw => {
+                    cw.Base();
+                    cw.This<AncestorRepository.BaseTwoWithNonPublicAccessors>().Prop(x => x.FirstValue).Assign(cw.Const(123));
+                })
+                .AllProperties().ImplementAutomatic()
+                .Method<string>(x => x.ToString).Implement(w => {
+                    w.Return(
+                        w.This<AncestorRepository.BaseTwoWithNonPublicAccessors>().Prop(x => x.FirstValue).FuncToString() + 
+                        w.Const(",") +
+                        w.This<AncestorRepository.BaseTwoWithNonPublicAccessors>().Prop<string>(secondValueProperty));        
+                });
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.BaseTwoWithNonPublicAccessors>().UsingDefaultConstructor();
+            obj.SecondValue = "ABC";
+            var result = obj.ToString();
+
+            //-- Assert
+
+            Assert.That(obj.FirstValue, Is.EqualTo(123));
+            Assert.That(result, Is.EqualTo("123,ABC"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void BaseMethods_ImplementOneByOne()
