@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>FelixB.Hapil.Testing.NUnit</id>
-        <version>0.9.14</version>
+        <version>0.9.15</version>
         <title>Hapil.Testing.NUnit</title>
         <authors>Felix Berman</authors>
         <licenseUrl>https://github.com/felix-b/Hapil/blob/master/LICENSE</licenseUrl>
@@ -21,7 +21,7 @@
         <copyright>Copyright © 2013-2015 Felix Berman</copyright>
         <tags>CoI IL MSIL Dynamic AOP Aspect Mix-in Duck</tags>
       <dependencies>
-        <dependency id="FelixB.Hapil" version="0.9.14" />
+        <dependency id="FelixB.Hapil" version="0.9.15" />
       </dependencies>
     </metadata>
     <files>
