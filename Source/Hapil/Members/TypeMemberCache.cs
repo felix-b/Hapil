@@ -244,14 +244,14 @@ namespace Hapil.Members
 
         private bool IsImplementableProperty(PropertyInfo property)
         {
-            var getter = property.GetGetMethod();
+            var getter = property.GetMethod;
 
             if ( getter != null )
             {
                 return IsImplementableMethod(getter, allowSpecialNames: true);
             }
 
-            var setter = property.GetSetMethod();
+            var setter = property.SetMethod;
 
             if ( setter != null )
             {

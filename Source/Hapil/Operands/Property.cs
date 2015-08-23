@@ -26,8 +26,8 @@ namespace Hapil.Operands
 			m_Property = property;
 			m_IndexArguments = indexArguments;
 
-			m_Getter = m_Property.GetGetMethod(nonPublic: true);
-            m_Setter = m_Property.GetSetMethod(nonPublic: true);
+		    m_Getter = m_Property.GetMethod;//(nonPublic: true);
+		    m_Setter = m_Property.SetMethod;//(nonPublic: true);
 
 			var scope = StatementScope.Current;
 			scope.Consume(target);
