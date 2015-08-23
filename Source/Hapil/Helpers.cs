@@ -265,7 +265,7 @@ namespace Hapil
 					il.Emit(OpCodes.Ldc_I8, convertible.ToInt64(formatProvider));
 					break;
 				case TypeCode.UInt64:
-					il.Emit(OpCodes.Ldc_I8, convertible.ToUInt64(formatProvider));
+                    il.Emit(OpCodes.Ldc_I8, unchecked((long)convertible.ToUInt64(formatProvider)));
 					break;
 				case TypeCode.Single:
 					il.Emit(OpCodes.Ldc_R8, convertible.ToSingle(formatProvider));

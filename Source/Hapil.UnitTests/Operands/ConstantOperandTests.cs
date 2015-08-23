@@ -16,6 +16,65 @@ namespace Hapil.UnitTests.Operands
     public class ConstantOperandTests : NUnitEmittedTypesTestBase
     {
         [Test]
+        public void CanEmitConstantsOfAllIntegralTypes()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .NewVirtualFunction<sbyte>("GetSByte").Implement(w => {
+                    w.Return(w.Const<sbyte>(-123));
+                })
+                .NewVirtualFunction<byte>("GetByte").Implement(w => {
+                    w.Return(w.Const<byte>(123));
+                })
+                .NewVirtualFunction<short>("GetInt16").Implement(w => {
+                    w.Return(w.Const<short>(-12345));
+                })
+                .NewVirtualFunction<ushort>("GetUInt16").Implement(w => {
+                    w.Return(w.Const<ushort>(12345));
+                })
+                .NewVirtualFunction<int>("GetInt32").Implement(w => {
+                    w.Return(w.Const<int>(-123456789));
+                })
+                .NewVirtualFunction<uint>("GetUInt32").Implement(w => {
+                    w.Return(w.Const<uint>(123456789));
+                })
+                .NewVirtualFunction<long>("GetInt64").Implement(w => {
+                    w.Return(w.Const<long>(-1234567890123456789));
+                })
+                .NewVirtualFunction<ulong>("GetUInt64").Implement(w => {
+                    w.Return(w.Const<ulong>(0xffffffffffffffffL));
+                });
+
+            //-- Act
+
+            dynamic obj = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+
+            sbyte sbyteValue = obj.GetSByte();
+            byte byteValue = obj.GetByte();
+            short shortValue = obj.GetInt16();
+            ushort ushortValue = obj.GetUInt16();
+            int intValue = obj.GetInt32();
+            uint uintValue = obj.GetUInt32();
+            long longValue = obj.GetInt64();
+            ulong ulongValue = obj.GetUInt64();
+
+            //-- Assert
+
+            Assert.That(sbyteValue, Is.EqualTo(-123));
+            Assert.That(byteValue, Is.EqualTo(123));
+            Assert.That(shortValue, Is.EqualTo(-12345));
+            Assert.That(ushortValue, Is.EqualTo(12345));
+            Assert.That(intValue, Is.EqualTo(-123456789));
+            Assert.That(uintValue, Is.EqualTo(123456789));
+            Assert.That(longValue, Is.EqualTo(-1234567890123456789));
+            Assert.That(ulongValue, Is.EqualTo((ulong)0xffffffffffffffffL));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
         public void CanEmitTypeConstant()
         {
             //-- Arrange
