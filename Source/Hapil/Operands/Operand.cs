@@ -176,10 +176,10 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public void Void(MethodInfo method)
+		public void Void(MethodInfo method, params IOperand[] arguments)
 		{
 			ValidateMemberIsMethodOfType(method);
-			StatementScope.Current.AddStatement(new CallStatement(this, method));
+			StatementScope.Current.AddStatement(new CallStatement(this, method, arguments));
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,10 +264,10 @@ namespace Hapil.Operands
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public Operand<TReturn> Func<TReturn>(MethodInfo method)
+		public Operand<TReturn> Func<TReturn>(MethodInfo method, params IOperand[] arguments)
 		{
 			ValidateMemberIsMethodOfType(method);
-			return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method), this);
+            return new UnaryExpressionOperand<T, TReturn>(new UnaryOperators.OperatorCall<T>(method, arguments), this);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

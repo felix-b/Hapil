@@ -78,6 +78,7 @@
     <Compile Include="Operands\MethodOf.cs" />
     <Compile Include="Testing\EmittedTypesTestBase.cs" />
     <Compile Include="Testing\TestNameConvention.cs" />
+    <Compile Include="Toolbox\DefaultConstructorConvention.cs" />
     <Compile Include="Writers\AnonymousMethodWriter.cs" />
     <Compile Include="Operands\ArrayElementOperand.cs" />
     <Compile Include="Expressions\BinaryExpressionOperand.cs" />
