@@ -15,7 +15,8 @@ namespace Hapil.Operands
 		private readonly ClassType m_OwnerClass;
 		private readonly StatementBlock m_HomeScopeBlock;
 		private readonly StatementBlock m_Statements;
-		private MethodSignature m_Signature;
+        private readonly IDisposable m_EffectiveTypeTemplates;
+        private MethodSignature m_Signature;
 		private Local<TDelegate> m_CallSite = null;
 		private MethodMember m_Method = null;
 
@@ -26,6 +27,7 @@ namespace Hapil.Operands
 			m_OwnerClass = ownerClass;
 			m_HomeScopeBlock = StatementScope.Current.StatementBlock;
 			m_Statements = new StatementBlock();
+		    m_EffectiveTypeTemplates = TypeTemplate.Save();
 			m_Signature = new MethodSignature(
 				isStatic: true,
 				isPublic: false,
@@ -49,7 +51,7 @@ namespace Hapil.Operands
 				isStatic: isStatic,
 				isPublic: isPublic);
 
-			m_Method = new MethodMember(ownerClass, methodFactory, closure);
+			m_Method = new MethodMember(ownerClass, methodFactory, closure, m_EffectiveTypeTemplates);
 			m_Method.SetBody(m_Statements);
 			ownerClass.AddMember(m_Method);
 

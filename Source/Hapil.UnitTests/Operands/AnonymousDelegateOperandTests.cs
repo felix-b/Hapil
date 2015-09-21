@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hapil.Testing.NUnit;
 using Hapil.Operands;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 // ReSharper disable ConvertToLambdaExpression
 
@@ -636,7 +637,46 @@ namespace Hapil.UnitTests.Operands
 			Assert.That(result, Is.EqualTo("555#"));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void LambdaAsGenericDelegateWithTypeTemplates()
+        {
+            //-- Arrange
+
+            Field<List<string>> logField;
+            Field<DelegateTester> testerField;
+
+            DeriveClassFrom<object>()
+                .ImplementInterface<AncestorRepository.ITester>()
+                .PrimaryConstructor("Log", out logField, "Tester", out testerField)
+                .Method<object>(x => x.TestFunc).Implement(w => {
+                    using ( TT.CreateScope<TT.TValue>(typeof(string)) )
+                    { 
+                        var value = w.Local(initialValue: testerField.Func<Func<int, char, TT.TValue>, int, char, TT.TValue>(
+                            x => (f, n, c) => x.GenericFunc(f, n, c),
+                            w.Lambda<int, char, TT.TValue>((n, c) => n.FuncToString().CastTo<TT.TValue>()),
+                            w.Const(555),
+                            w.Const('#')));
+                        w.Return(value.CastTo<object>());
+                    }
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            var log = new List<string>();
+            var tester = new DelegateTester();
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.ITester>().UsingConstructor(log, tester);
+            var result = obj.TestFunc();
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("555"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public class DelegateTester
 		{

@@ -28,13 +28,13 @@ namespace Hapil.Members
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory)
-			: this(ownerClass, methodFactory, closure: null)
+            : this(ownerClass, methodFactory, closure: null, effectiveTypeTemplates: TypeTemplate.Save())
 		{
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory, ClosureDefinition closure)
+		internal MethodMember(ClassType ownerClass, MethodFactoryBase methodFactory, ClosureDefinition closure, IDisposable effectiveTypeTemplates)
 			: base(ownerClass, methodFactory.MemberName)
 		{
 			m_MethodFactory = methodFactory;
@@ -43,7 +43,7 @@ namespace Hapil.Members
 			m_Statements = new StatementBlock();
 			m_Locals = new List<ILocal>();
 			m_TransparentWriter = new TransparentMethodWriter(this);
-		    m_EffectiveTypeTemplates = TypeTemplate.Save();
+            m_EffectiveTypeTemplates = effectiveTypeTemplates;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
