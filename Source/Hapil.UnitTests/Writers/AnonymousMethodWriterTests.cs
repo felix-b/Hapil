@@ -167,7 +167,7 @@ namespace Hapil.UnitTests.Writers
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" +
 					"[Loc1 = NewObj[DoTest<Closure>]()];" +
-					"[Loc1.Field[<hoisted>Arg_source] = Arg1[source]];" +
+					"[Loc1.Field[<hoisted>Arg_source] = Arg1[arg0]];" +
 					"[Loc0 = [Enumerable::Select(Loc1.Field[<hoisted>Arg_source],Func<String,String>(Loc1.DoTest<AnonymousMethod>))]];" +
 					"Return[Loc0];" +
 				"}"
@@ -215,7 +215,7 @@ namespace Hapil.UnitTests.Writers
 			Assert.That(doTestMethod.GetMethodText(), Is.EqualTo(
 				"DoTest(IEnumerable<String>):IEnumerable<String>{" + 
 					"[Loc2 = NewObj[DoTest<Closure>]()];" +
-					"[Loc2.Field[<hoisted>Arg_source] = Arg1[source]];" + 
+					"[Loc2.Field[<hoisted>Arg_source] = Arg1[arg0]];" + 
 					"[Loc2.Field[<hoisted>This] = this];" + 
 					"[Loc2.Field[<hoisted>Loc0_String] = Const[prefix]];" + 
 					"[Loc1 = [Enumerable::Select(Loc2.Field[<hoisted>Arg_source],Func<String,String>(Loc2.DoTest<AnonymousMethod>))]];" +
@@ -426,7 +426,7 @@ namespace Hapil.UnitTests.Writers
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
 					"[Loc4 = NewObj[Five<Closure>]()];" +
-					"[Loc4.Field[<hoisted>Arg_n] = Arg1[n]];" +
+					"[Loc4.Field[<hoisted>Arg_n] = Arg1[arg0]];" +
 					"[Loc4.Field[<hoisted>Loc0_String] = Const[PFX]];" +
 					"[Loc1 = [new Int32[]Const[2]]];[Loc1[Const[0]] = Const[100]];[Loc1[Const[1]] = Const[101]];" +
 					"[Loc2 = Loc1];" +
@@ -649,7 +649,7 @@ namespace Hapil.UnitTests.Writers
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
 					"[Loc3 = NewObj[Five<Closure>]()];" +
-					"[Loc3.Field[<hoisted>Arg_n] = Arg1[n]];" +
+					"[Loc3.Field[<hoisted>Arg_n] = Arg1[arg0]];" +
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" +
 					"[Loc1 = Loc0];" +
@@ -728,7 +728,7 @@ namespace Hapil.UnitTests.Writers
 			Assert.That(methodFive.GetMethodText(), Is.EqualTo(
 				"Five(Int32):String{" +
 					"[Loc3 = NewObj[Five<Closure>]()];" +
-					"[Loc3.Field[<hoisted>Arg_n] = Arg1[n]];" +
+					"[Loc3.Field[<hoisted>Arg_n] = Arg1[arg0]];" +
 					"[Loc0 = [new Int32[]Const[4]]];" +
 					"[Loc0[Const[0]] = Const[100]];[Loc0[Const[1]] = Const[101]];[Loc0[Const[2]] = Const[102]];[Loc0[Const[3]] = Const[103]];" + 
 					"[Loc1 = Loc0];" +

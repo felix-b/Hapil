@@ -109,7 +109,7 @@ namespace Hapil.Operands
 		void IBindToMethod.BindToMethod(MethodMember method)
 		{
 			m_OwnerMethod = method;
-		}
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ namespace Hapil.Operands
 		{
 			get
 			{
-				return (m_OwnerMethod != null);
+			    return false;//(m_OwnerMethod != null);
 			}
 		}
 

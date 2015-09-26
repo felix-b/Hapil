@@ -490,7 +490,122 @@ namespace Hapil.UnitTests
 			Assert.That(result, Is.EqualTo("513;517;521;525"));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NestedStaticAnonymousMethodsWithNoClosure()
+        {
+            //-- Arrange
+
+            Field<Master> masterField;
+
+            DeriveClassFrom<object>()
+                .Field<Master>("m_Master", out masterField)
+                .Constructor(cw => {
+                    //Local<Func<object, string>> funcToStringLocal = cw.Local<Func<object, string>>();
+                    //funcToStringLocal.Assign(cw.Lambda<object, string>(o => o.Func<string>(x => x.ToString)));
+
+                    masterField.Assign(cw.New<Master>(
+                        //cw.Lambda<string, Detail>(s => cw.New<Detail>(s, funcToStringLocal))
+                        cw.Lambda<string, Detail>(s => cw.New<Detail>(s, cw.Lambda<object, string>(o => o.Func<string>(x => x.ToString))))
+                    ));
+                })
+                .NewVirtualFunction<string, object, string>("DoTest").Implement((w, str, obj) => {
+                    w.Return(masterField.Func<string, Detail>(x => x.CreateDetail, str).Func<object, string>(x => x.GetDisplayName, obj));
+                });
+
+            //-- Act
+
+            dynamic instance = CreateClassInstanceAs<object>().UsingDefaultConstructor();
+            var result = instance.DoTest("ABC", "DEF");
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("ABC:DEF"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NestedInstanceAnonymousMethodsWithNoClosure()
+        {
+            //-- Arrange
+
+            Field<Master> masterField;
+            Field<string> masterPrefixField;
+
+            DeriveClassFrom<object>()
+                .Field<Master>("m_Master", out masterField)
+                .Field<string>("m_MasterPrefix", out masterPrefixField)
+                .Constructor<string>((cw, masterPrefix) => {
+                    masterPrefixField.Assign(masterPrefix);
+
+                    //Local<Func<object, string>> funcToStringLocal = cw.Local<Func<object, string>>();
+                    //funcToStringLocal.Assign(cw.Lambda<object, string>(o => o.Func<string>(x => x.ToString)));
+
+                    masterField.Assign(cw.New<Master>(
+                        //cw.Lambda<string, Detail>(s => cw.New<Detail>(s, funcToStringLocal))
+                        cw.Lambda<string, Detail>(s => cw.New<Detail>(
+                            masterPrefixField + ":" + s, 
+                            cw.Lambda<object, string>(o => masterPrefixField + ":" + o.Func<string>(x => x.ToString))
+                        ))
+                    ));
+                })
+                .NewVirtualFunction<string, object, string>("DoTest").Implement((w, str, obj) => {
+                    w.Return(masterField.Func<string, Detail>(x => x.CreateDetail, str).Func<object, string>(x => x.GetDisplayName, obj));
+                });
+
+            //-- Act
+
+            dynamic instance = CreateClassInstanceAs<object>().UsingConstructor<string>("TEST");
+            var result = instance.DoTest("ABC", "DEF");
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("TEST:ABC:TEST:DEF"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NestedInstanceAndStaticAnonymousMethodsWithNoClosure()
+        {
+            //-- Arrange
+
+            Field<Master> masterField;
+            Field<string> masterPrefixField;
+
+            DeriveClassFrom<object>()
+                .Field<Master>("m_Master", out masterField)
+                .Field<string>("m_MasterPrefix", out masterPrefixField)
+                .Constructor<string>((cw, masterPrefix) =>
+                {
+                    masterPrefixField.Assign(masterPrefix);
+
+                    //Local<Func<object, string>> funcToStringLocal = cw.Local<Func<object, string>>();
+                    //funcToStringLocal.Assign(cw.Lambda<object, string>(o => o.Func<string>(x => x.ToString)));
+
+                    masterField.Assign(cw.New<Master>(
+                        //cw.Lambda<string, Detail>(s => cw.New<Detail>(s, funcToStringLocal))
+                        cw.Lambda<string, Detail>(s => cw.New<Detail>(masterPrefixField + ":" + s, cw.Lambda<object, string>(o => o.Func<string>(x => x.ToString))))
+                    ));
+                })
+                .NewVirtualFunction<string, object, string>("DoTest").Implement((w, str, obj) =>
+                {
+                    w.Return(masterField.Func<string, Detail>(x => x.CreateDetail, str).Func<object, string>(x => x.GetDisplayName, obj));
+                });
+
+            //-- Act
+
+            dynamic instance = CreateClassInstanceAs<object>().UsingConstructor<string>("TEST");
+            var result = instance.DoTest("ABC", "DEF");
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("TEST:ABC:DEF"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void AnonymousMethodsInsideLoopWithNoDelegateCaching()
@@ -654,10 +769,59 @@ namespace Hapil.UnitTests
 			CompiledExamples.ClosureExamples.Output.Clear();
 			Console.WriteLine();
 			Console.WriteLine("--------------------------");
-		}
+
+		    var master = new Master(s => new Detail(this.GetType().Name, obj => obj.ToString()));
+            
+            Console.WriteLine();
+            Console.WriteLine("--------------------------");
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static MethodBase AnonymousMethodInfo { get; set; }
-	}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class Master
+        {
+            private readonly Func<string, Detail> m_DetailFactory;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Master(Func<string, Detail> detailFactory)
+            {
+                m_DetailFactory = detailFactory;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public Detail CreateDetail(string key)
+            {
+                return m_DetailFactory(key);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public class Detail
+	    {
+            private readonly string m_DisplayNamePrefix;
+            private readonly Func<object, string> m_DisplayNameFunc;
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public Detail(string displayNamePrefix, Func<object, string> displayNameFunc)
+	        {
+	            m_DisplayNamePrefix = displayNamePrefix;
+	            m_DisplayNameFunc = displayNameFunc;
+	        }
+
+	        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public string GetDisplayName(object obj)
+	        {
+	            return m_DisplayNamePrefix + ":" + m_DisplayNameFunc(obj);
+	        }
+	    }
+    }
 }
