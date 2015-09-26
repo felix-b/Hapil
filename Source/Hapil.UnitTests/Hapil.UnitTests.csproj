@@ -122,6 +122,7 @@
     <Compile Include="TargetRepository.cs" />
     <Compile Include="TypeExtensionTests.cs" />
     <Compile Include="TypeKeyTests.cs" />
+    <Compile Include="TypeMemberCacheTests.cs" />
     <Compile Include="TypeTemplateTests.cs" />
     <Compile Include="Writers\AnonymousMethodWriterTests.cs" />
     <Compile Include="Writers\MethodWriterTests.cs" />

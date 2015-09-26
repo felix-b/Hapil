@@ -28,7 +28,7 @@ namespace Hapil.Members
 			m_ReflectedType = reflectedType;
 			m_TypeHierarchy = reflectedType.GetTypeHierarchy();
 
-			var implementableBindingFlags = (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			var implementableBindingFlags = (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
 
 			m_Fields = m_TypeHierarchy.SelectMany(t => t.GetFields(implementableBindingFlags)).ToArray();
 		    m_Methods = m_TypeHierarchy.SelectMany(t => t.GetMethods(implementableBindingFlags)).ToArray();
