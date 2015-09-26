@@ -824,7 +824,7 @@ namespace Hapil.Operands
 
 			if ( method.DeclaringType != typeof(object) )
 			{
-				var allBaseTypes = typeof(T).GetTypeHierarchy();
+                var allBaseTypes = TypeTemplate.Resolve<T>().GetTypeHierarchy();
 				var resolvedBaseTypes = allBaseTypes.Select(TypeTemplate.Resolve).ToArray();
 
 				if ( !resolvedBaseTypes.Contains(member.DeclaringType) )
