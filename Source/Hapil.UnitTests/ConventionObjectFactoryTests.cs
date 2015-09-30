@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -161,6 +162,34 @@ namespace Hapil.UnitTests
 			Assert.That(obj.AString, Is.EqualTo("ABC"));
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanCallCustomMethodOnBaseType()
+        {
+            //-- Arrange
+
+            var factory = new ConventionObjectFactory(
+                base.Module,
+                transientConventionsFactory: context => new IObjectFactoryConvention[] {
+					new ClassNameConvention(TestCaseClassName),
+                    new BaseTypeConvention(typeof(BaseWithCustomMethod)), 
+					new DefaultConstructorConvention(),
+					new CustomMethodConvention(typeof(BaseWithCustomMethod).GetMethod("TheCustomMethod")), 
+				});
+
+            //-- Act
+
+            var objAsBase = factory.CreateInstanceOf<BaseWithCustomMethod>().UsingDefaultConstructor();
+            dynamic objAsDynamic = objAsBase;
+            
+            objAsDynamic.InvokeCustomMethod();
+
+            //-- Assert
+
+            Assert.That(objAsBase.CustomMethodCallCount, Is.EqualTo(1));
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private class ClassNameConvention : ImplementationConvention
@@ -311,5 +340,53 @@ namespace Hapil.UnitTests
 		public class HasPropertiesAttribute : Attribute
 		{
 		}
+        
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class CustomMethodConvention : ImplementationConvention
+        {
+            private readonly MethodInfo m_CustomMethod;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public CustomMethodConvention(MethodInfo customMethod)
+                : base(Will.ImplementBaseClass)
+            {
+                if ( customMethod == null )
+                {
+                    throw new ArgumentNullException("customMethod");
+                }
+
+                m_CustomMethod = customMethod;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            #region Overrides of ImplementationConvention
+
+            protected override void OnImplementBaseClass(ImplementationClassWriter<TypeTemplate.TBase> writer)
+            {
+                writer.NewVirtualVoidMethod("InvokeCustomMethod").Implement(
+                    m => {
+                        m.This<TypeTemplate.TBase>().Void(m_CustomMethod);
+                    });
+            }
+
+            #endregion
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public class BaseWithCustomMethod
+	    {
+	        public void TheCustomMethod()
+	        {
+	            CustomMethodCallCount++;
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public int CustomMethodCallCount { get; private set; }
+	    }
 	}
 }

@@ -141,7 +141,7 @@ namespace Hapil
 
             if ( m_Will.HasFlag(Will.ImplementBaseClass) )
             {
-                OnImplementBaseClass(context.CreateImplementationWriter<TypeTemplate.TBase>());
+                ImplementBaseClass(context);
             }
 
             if ( m_Will.HasFlag(Will.ImplementPrimaryInterface) && context.TypeKey.PrimaryInterface != null &&
@@ -168,6 +168,16 @@ namespace Hapil
             if ( m_Will.HasFlag(Will.FinalizeImplementation) )
             {
                 OnFinalizeImplementation(context.CreateImplementationWriter<TypeTemplate.TBase>());
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private void ImplementBaseClass(ObjectFactoryContext context)
+        {
+            using ( TypeTemplate.CreateScope<TypeTemplate.TBase>(context.TypeKey.BaseType) )
+            {
+                OnImplementBaseClass(context.CreateImplementationWriter<TypeTemplate.TBase>());
             }
         }
 
