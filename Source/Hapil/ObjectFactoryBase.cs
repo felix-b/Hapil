@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Hapil.Members;
 using Hapil.Writers;
 
@@ -10,7 +11,7 @@ namespace Hapil
 {
 	public abstract class ObjectFactoryBase
 	{
-		private readonly DynamicModule m_Module;
+        private readonly DynamicModule m_Module;
 		private readonly ConcurrentDictionary<TypeKey, TypeEntry> m_BuiltTypes;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -85,7 +86,19 @@ namespace Hapil
 
 		protected internal TypeEntry GetOrBuildType(TypeKey key)
 		{
-			return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+		    if ( !Monitor.TryEnter(_s_globalSyncRoot, 10000) )
+		    {
+		        throw new TimeoutException("ObjectFacotryBase.GetOrBuildType timed out waiting for exclusive lock (10 sec).");
+		    }
+
+		    try
+		    {
+		        return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+		    }
+		    finally
+		    {
+		        Monitor.Exit(_s_globalSyncRoot);
+		    }
 		}
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -146,6 +159,10 @@ namespace Hapil
 
         [ThreadStatic]
 	    private static Dictionary<TypeKey, ClassType> s_TypesBeingBuilt;
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private static readonly object _s_globalSyncRoot = new object();
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
