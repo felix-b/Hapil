@@ -24,6 +24,13 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public Type FindDynamicType(Type contractType, params Type[] secondaryInterfaceTypes)
+        {
+            return FindDynamicType(CreateTypeKey(contractType, secondaryInterfaceTypes));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public Type FindDynamicType(TypeKey key)
         {
             ClassType typeInProgress;
@@ -37,6 +44,15 @@ namespace Hapil
             {
                 return GetOrBuildType(key).DynamicType;
             }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public virtual TypeKey CreateTypeKey(Type contractType, params Type[] secondaryInterfaceTypes)
+        {
+            return new TypeKey(
+                primaryInterface: contractType,
+                secondaryInterfaces: secondaryInterfaceTypes);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

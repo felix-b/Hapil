@@ -34,7 +34,7 @@ namespace Hapil
 
 		public IConstructors<TContract> CreateInstanceOf<TContract>()
 		{
-			var type = GetOrBuildType(new TypeKey(primaryInterface: typeof(TContract)));
+			var type = GetOrBuildType(CreateTypeKey(contractType: typeof(TContract)));
 			return new Constructors<TContract>(type);
 		}
 
@@ -42,9 +42,9 @@ namespace Hapil
 
 		public IConstructors<TContract> CreateInstanceOf<TContract, TSecondary>()
 		{
-			var type = GetOrBuildType(new TypeKey(
-				primaryInterface: typeof(TContract), 
-				secondaryInterfaces: typeof(TSecondary)));
+            var type = GetOrBuildType(CreateTypeKey(
+                contractType: typeof(TContract), 
+				secondaryInterfaceTypes: typeof(TSecondary)));
 			
 			return new Constructors<TContract>(type);
 		}
@@ -53,9 +53,9 @@ namespace Hapil
 
 		public IConstructors<TContract> CreateInstanceOf<TContract, TSecondary1, TSecondary2>()
 		{
-			var type = GetOrBuildType(new TypeKey(
-				primaryInterface: typeof(TContract), 
-				secondaryInterfaces: new[] { typeof(TSecondary1), typeof(TSecondary2) }));
+            var type = GetOrBuildType(CreateTypeKey(
+                contractType: typeof(TContract),
+                secondaryInterfaceTypes: new[] { typeof(TSecondary1), typeof(TSecondary2) }));
 
 			return new Constructors<TContract>(type);
 		}
@@ -64,14 +64,14 @@ namespace Hapil
 
 		public IConstructors<object> CreateInstanceOf(Type contractType, params Type[] secondaryInterfaceTypes)
 		{
-			var type = GetOrBuildType(new TypeKey(
-				primaryInterface: contractType,
-				secondaryInterfaces: secondaryInterfaceTypes));
+            var type = GetOrBuildType(CreateTypeKey(
+                contractType: contractType,
+                secondaryInterfaceTypes: secondaryInterfaceTypes));
 
 			return new Constructors<object>(type);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected override ClassType DefineNewClass(TypeKey key)
 		{
