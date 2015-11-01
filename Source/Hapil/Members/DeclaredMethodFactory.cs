@@ -160,13 +160,13 @@ namespace Hapil.Members
             switch ( implementationKind )
             {
                 case InterfaceImplementationKind.Explicit:
-                    attributes |= (MethodAttributes.Final | MethodAttributes.Private);
+                    attributes |= (MethodAttributes.Private);
                     break;
                 case InterfaceImplementationKind.ImplicitVirtual:
                     attributes |= (MethodAttributes.Public);
                     break;
                 case InterfaceImplementationKind.ImplicitNonVirtual:
-                    attributes |= (MethodAttributes.Final | MethodAttributes.Public);
+                    attributes |= (MethodAttributes.Public);
                     break;
             }
 
