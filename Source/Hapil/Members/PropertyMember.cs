@@ -45,16 +45,22 @@ namespace Hapil.Members
 
 			if ( getterDeclaration != null )
 			{
-                m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration, implementationKind));
-				m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
+			    using ( TypeTemplate.CreateScope<TypeTemplate.TProperty>(TypeTemplate.Resolve(declaration.PropertyType)) )
+			    {
+			        m_GetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, getterDeclaration, implementationKind));
+			        m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
+			    }
 			}
 
             var setterDeclaration = declaration.GetSetMethod(nonPublic: true);
 
 			if ( setterDeclaration != null )
 			{
-                m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration, implementationKind));
-				m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
+			    using ( TypeTemplate.CreateScope<TypeTemplate.TProperty>(TypeTemplate.Resolve(declaration.PropertyType)) )
+			    {
+			        m_SetterMethod = new MethodMember(ownerClass, new DeclaredMethodFactory(ownerClass, setterDeclaration, implementationKind));
+			        m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
+			    }
 			}
 
 			m_BackingField = backingField;
@@ -77,13 +83,16 @@ namespace Hapil.Members
                 m_PropertyType,
                 m_IndexParameterTypes);
 
-            var getterSignature = new MethodSignature(isStatic: false, isPublic: true, returnType: m_PropertyType);
-            m_GetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "get_" + propertyName, getterSignature));
-            m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
+            using ( TypeTemplate.CreateScope<TypeTemplate.TProperty>(TypeTemplate.Resolve(propertyType)) )
+            {
+                var getterSignature = new MethodSignature(isStatic: false, isPublic: true, returnType: m_PropertyType);
+                m_GetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "get_" + propertyName, getterSignature));
+                m_PropertyBuilder.SetGetMethod((MethodBuilder)m_GetterMethod.MethodFactory.Builder);
 
-            var setterSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: new[] { m_PropertyType });
-            m_SetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "set_" + propertyName, setterSignature));
-            m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
+                var setterSignature = new MethodSignature(isStatic: false, isPublic: true, argumentTypes: new[] { m_PropertyType });
+                m_SetterMethod = new MethodMember(ownerClass, new NewMethodFactory(ownerClass, "set_" + propertyName, setterSignature));
+                m_PropertyBuilder.SetSetMethod((MethodBuilder)m_SetterMethod.MethodFactory.Builder);
+            }
 
             m_BackingField = backingField;
         }
