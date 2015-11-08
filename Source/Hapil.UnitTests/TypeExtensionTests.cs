@@ -83,7 +83,7 @@ namespace Hapil.UnitTests
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
-		public void FriendlyName_GenericTypeNestedGenericTypes_ReturnInCSharpSyntax()
+		public void FriendlyName_NestedGenericTypeArguments_ReturnInCSharpSyntax()
 		{
 			//-- Arrange
 
@@ -98,7 +98,43 @@ namespace Hapil.UnitTests
 			Assert.That(friendlyName, Is.EqualTo("Dictionary<List<DayOfWeek>,List<Dictionary<Int32,String>>>"));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void FriendlyName_NonGenericTypeNestedInGenericType_ReturnInCSharpSyntax()
+        {
+            //-- Arrange
+
+            var type = typeof(AnOuterGenericType<string>.AnInnerType);
+
+            //-- Act
+
+            var friendlyName = type.FriendlyName();
+
+            //-- Assert
+
+            Assert.That(friendlyName, Is.EqualTo("TypeExtensionTests.AnOuterGenericType<String>.AnInnerType"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void FriendlyName_GenericTypeNestedInGenericType_ReturnInCSharpSyntax()
+        {
+            //-- Arrange
+
+            var type = typeof(AnOuterGenericType<string>.AGenericInnerType<int>);
+
+            //-- Act
+
+            var friendlyName = type.FriendlyName();
+
+            //-- Assert
+
+            Assert.That(friendlyName, Is.EqualTo("TypeExtensionTests.AnOuterGenericType<String>.AGenericInnerType<Int32>"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void UnderlyingType_RegularType_ReturnTypeAsIs()
@@ -199,5 +235,17 @@ namespace Hapil.UnitTests
 			Assert.That(isCollectionType, Is.False);
 			Assert.That(elementType, Is.Null);
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public class AnOuterGenericType<T>
+	    {
+	        public class AnInnerType
+	        {
+	        }
+            public class AGenericInnerType<S>
+            {
+            }
+        }
+    }
 }

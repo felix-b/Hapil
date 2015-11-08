@@ -294,6 +294,28 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public static Type GetClosedDeclaringType(this Type nestedType, out Type[] nestedTypeArguments)
+        {
+            if ( nestedType.DeclaringType != null && 
+                nestedType.DeclaringType.IsGenericType && 
+                nestedType.DeclaringType.IsGenericTypeDefinition && 
+                !nestedType.IsGenericTypeDefinition )
+            {
+                var declaringTypeArgumentCount = nestedType.DeclaringType.GetGenericArguments().Length;
+                var allTypeArguments = nestedType.GetGenericArguments();
+                
+                var declaringTypeArguments = allTypeArguments.Take(declaringTypeArgumentCount).ToArray();
+                nestedTypeArguments = allTypeArguments.Skip(declaringTypeArgumentCount).ToArray();
+                
+                return nestedType.DeclaringType.MakeGenericType(declaringTypeArguments);
+            }
+
+            nestedTypeArguments = null;
+            return nestedType.DeclaringType;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 	    private static bool MatchMethodParameters(ParameterInfo[] parameters, Type[] argumentTypes)
 	    {
 	        if ( parameters.Length != argumentTypes.Length )
@@ -340,15 +362,22 @@ namespace Hapil
 
 		private static void AppendFriendlyName(Type type, StringBuilder output)
 		{
-			if ( type.IsGenericType )
+		    Type[] nestedTypeArguments = null;
+
+		    if ( type.IsNested && type.DeclaringType != null )
+		    {
+                AppendFriendlyName(type.GetClosedDeclaringType(out nestedTypeArguments), output);
+		        output.Append(".");
+		    }
+
+			if ( type.IsGenericType && (nestedTypeArguments == null || nestedTypeArguments.Length > 0) )
 			{
-				var nameBuilder = new StringBuilder();
 				var backquoteIndex = type.Name.IndexOf('`');
 
-				output.Append(type.Name.Substring(0, backquoteIndex));
+				output.Append(backquoteIndex > 0 ? type.Name.Substring(0, backquoteIndex) : type.Name);
 				output.Append('<');
 
-				var typeArguments = type.GetGenericArguments();
+                var typeArguments = nestedTypeArguments ?? type.GetGenericArguments();
 
 				for ( int i = 0 ; i < typeArguments.Length ; i++ )
 				{
@@ -368,7 +397,7 @@ namespace Hapil
 			}
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		private static void GetAllBaseTypes(Type currentType, HashSet<Type> baseTypes)
 		{
