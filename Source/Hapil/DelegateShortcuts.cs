@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using Hapil.Expressions;
 using Hapil.Operands;
@@ -135,8 +136,18 @@ namespace Hapil
 		{
 			public ReflectionCache(Type delegateType)
 			{
-				Constructor = delegateType.GetConstructor(new[] { typeof(object), typeof(IntPtr) });
-				Invoke = delegateType.GetMethod("Invoke");
+				Constructor = delegateType.GetRuntimeOrBuilderConstructor(new[] { typeof(object), typeof(IntPtr) });
+
+			    if ( delegateType.IsGenericType && delegateType.GetType().Name.Contains("Builder") )
+			    {
+			        var genericDefinition = delegateType.GetGenericTypeDefinition();
+			        var genericDefinitionMethod = genericDefinition.GetMethod("Invoke");
+			        Invoke = TypeBuilder.GetMethod(delegateType, genericDefinitionMethod);
+			    }
+			    else
+			    {
+			        Invoke = delegateType.GetMethod("Invoke");
+			    }
 			}
 
 			//-------------------------------------------------------------------------------------------------------------------------------------------------
