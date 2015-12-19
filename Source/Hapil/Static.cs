@@ -283,6 +283,117 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public static void GenericVoid(Expression<Action> member)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1>(Expression<Action<TArg1>> member, IOperand<TArg1> arg1)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2>(Expression<Action<TArg1, TArg2>> member, IOperand<TArg1> arg1, IOperand<TArg2> arg2)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3>(
+            Expression<Action<TArg1, TArg2, TArg3>> member, 
+            IOperand<TArg1> arg1, 
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3, TArg4>(
+            Expression<Action<TArg1, TArg2, TArg3, TArg4>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3, TArg4, TArg5>(
+            Expression<Action<TArg1, TArg2, TArg3, TArg4, TArg5>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(
+            Expression<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>(
+            Expression<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void GenericVoid<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>(
+            Expression<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>> member,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7,
+            IOperand<TArg8> arg8)
+        {
+            var method = Helpers.ResolveMethodFromLambda(member);
+            StatementScope.Current.AddStatement(new CallStatement(null, method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 		public static Operand<TReturn> GenericFunc<TReturn>(
 			Expression<Func<TReturn>> member)
 		{
