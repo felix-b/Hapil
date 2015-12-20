@@ -37,6 +37,22 @@ namespace Hapil.Writers
                 argumentTypes: new[] { typeof(TA1), typeof(TA2) }, 
                 argumentNames: new[] { arg1, arg2 }));
         }
+        public IVoidMethodSelector<TA1, TA2, TA3> NewVirtualVoidMethod<TA1, TA2, TA3>(string name, string arg1 = "arg1", string arg2 = "arg2", string arg3 = "arg3")
+        {
+            return new NewMethodSelector<NA, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: false,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2), typeof(TA3) },
+                argumentNames: new[] { arg1, arg2, arg3 }));
+        }
+        public IVoidMethodSelector<TA1, TA2, TA3, TA4> NewVirtualVoidMethod<TA1, TA2, TA3, TA4>(string name, string arg1 = "arg1", string arg2 = "arg2", string arg3 = "arg3", string arg4 = "arg4")
+        {
+            return new NewMethodSelector<NA, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: false,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4) },
+                argumentNames: new[] { arg1, arg2, arg3, arg4 }));
+        }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,6 +81,24 @@ namespace Hapil.Writers
                 isPublic: true, 
                 argumentTypes: new[] { typeof(TA1), typeof(TA2) }, 
                 argumentNames: new[] { arg1, arg2 },
+                returnType: typeof(TReturn)));
+        }
+        public IFunctionMethodSelector<TA1, TA2, TA3, TReturn> NewVirtualFunction<TA1, TA2, TA3, TReturn>(string name, string arg1 = "arg1", string arg2 = "arg2", string arg3= "arg3")
+        {
+            return new NewMethodSelector<TReturn, TA1, TA2, TA3, NA, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: false,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2), typeof(TA3) },
+                argumentNames: new[] { arg1, arg2, arg3 },
+                returnType: typeof(TReturn)));
+        }
+        public IFunctionMethodSelector<TA1, TA2, TA3, TA4, TReturn> NewVirtualFunction<TA1, TA2, TA3, TA4, TReturn>(string name, string arg1 = "arg1", string arg2 = "arg2", string arg3 = "arg3", string arg4 = "arg4")
+        {
+            return new NewMethodSelector<TReturn, TA1, TA2, TA3, TA4, NA, NA, NA, NA>(this, name, new MethodSignature(
+                isStatic: false,
+                isPublic: true,
+                argumentTypes: new[] { typeof(TA1), typeof(TA2), typeof(TA3), typeof(TA4) },
+                argumentNames: new[] { arg1, arg2, arg3, arg4 },
                 returnType: typeof(TReturn)));
         }
 
