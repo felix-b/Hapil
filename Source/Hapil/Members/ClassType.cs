@@ -266,9 +266,10 @@ namespace Hapil.Members
 			if ( member.MemberDeclaration != null )
 			{
 				m_MembersByDeclarations.Add(member.MemberDeclaration, member);
-				m_MembersByName[member.Name] = member;
 			}
-		}
+        
+            m_MembersByName[member.Name] = member;
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
