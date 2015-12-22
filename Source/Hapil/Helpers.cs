@@ -35,7 +35,7 @@ namespace Hapil
 		{
 			if ( target != null )
 			{
-				EmitCallTarget(il, target);
+				EmitCallTarget(il, target, method);
 			}
 
 			EmitCallArguments(il, method, arguments);
@@ -352,7 +352,7 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		private static void EmitCallTarget(ILGenerator il, IOperand target)
+		private static void EmitCallTarget(ILGenerator il, IOperand target, MethodBase method)
 		{
 			target.EmitTarget(il);
 
@@ -361,7 +361,7 @@ namespace Hapil
 				if ( target is ICanEmitAddress )
 				{
 					target.EmitAddress(il);
-				}
+                }
 				else
 				{
 					target.EmitLoad(il);
@@ -369,9 +369,12 @@ namespace Hapil
 					var temp = il.DeclareLocal(target.OperandType);
 					il.Emit(OpCodes.Stloc, temp);
 					il.Emit(OpCodes.Ldloca, (short)temp.LocalIndex);
-				}
+                }
 
-				il.Emit(OpCodes.Constrained, target.OperandType);
+			    if ( method.DeclaringType == null || !method.DeclaringType.IsValueType )
+			    {
+			        il.Emit(OpCodes.Constrained, target.OperandType);
+			    }
 			}
 			else
 			{
