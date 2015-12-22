@@ -107,9 +107,16 @@ namespace Hapil.Operands
 		{
 			if ( m_Target != null )
 			{
-				m_Target.EmitTarget(il);
-				m_Target.EmitLoad(il);
-			}
+                if ( m_Target.OperandType.IsStructType() )
+                {
+                    m_Target.EmitAddress(il);
+                }
+                else
+                {
+                    m_Target.EmitTarget(il);
+                    m_Target.EmitLoad(il);
+                }
+            }
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

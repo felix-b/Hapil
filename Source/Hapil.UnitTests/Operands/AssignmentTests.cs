@@ -130,6 +130,52 @@ namespace Hapil.UnitTests.Operands
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        [Test]
+        public void CanReadPublicPropertyOfStruct()
+        {
+            var dt = DateTime.Now;
+            var st = dt.ToString("yyyy-MM-dd");
+
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.ITester>()
+                .Method<string>(intf => intf.TestFunc).Implement(m => {
+                    var sourceLocal = m.Local<DateTime>();
+                    sourceLocal.Assign(m.New<DateTime>(
+                        m.Const(2015), m.Const(10), m.Const(24), m.Const(10), m.Const(40), m.Const(50), m.Const(999), m.Const(DateTimeKind.Utc)
+                    ));
+
+                    var transformedLocal = m.Local<DateTime>();
+                    transformedLocal.Assign(
+                        m.New<DateTime>(
+                            sourceLocal.Prop(x => x.Year),
+                            sourceLocal.Prop(x => x.Month),
+                            sourceLocal.Prop(x => x.Day),
+                            sourceLocal.Prop(x => x.Hour),
+                            sourceLocal.Prop(x => x.Minute),
+                            sourceLocal.Prop(x => x.Second),
+                            sourceLocal.Prop(x => x.Millisecond),
+                            m.Const(DateTimeKind.Utc)
+                        )
+                    );
+                    m.Return(transformedLocal.Func<string, string>(x => x.ToString, m.Const("yyyy-MM-dd HH:mm:ss.fff")));
+                })
+                .AllMethods().Throw<NotImplementedException>();
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.ITester>().UsingDefaultConstructor();
+            var result = tester.TestFunc();
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo("2015-10-24 10:40:50.999"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public struct TestStruct
         {
             public int Value;
