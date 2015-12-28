@@ -75,6 +75,7 @@
     <Compile Include="ConventionObjectFactoryTests.cs" />
     <Compile Include="DecorationTests.cs" />
     <Compile Include="DictionaryShortcutsTests.cs" />
+    <Compile Include="DynamicMethodCompilerTests.cs" />
     <Compile Include="EnumerableShortcutsTests.cs" />
     <Compile Include="EnumShortcutsTests.cs" />
     <Compile Include="ExceptionRepository.cs" />
