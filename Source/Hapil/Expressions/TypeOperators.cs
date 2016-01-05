@@ -42,7 +42,13 @@ namespace Hapil.Expressions
 			const BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
 
 			m_Type = type;
-			ApplySpecialCases(type);
+
+            if ( type.GetType().Name.Contains("Builder") )
+            {
+                return;
+            }
+            
+            ApplySpecialCases(type);
 
 			m_OpEquality = m_OpEquality ?? type.GetMethod("op_Equality", flags);
 			m_OpInequality = m_OpInequality ?? type.GetMethod("op_Inequality", flags);
