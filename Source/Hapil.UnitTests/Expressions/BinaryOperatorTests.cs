@@ -7,7 +7,9 @@ using System.Text;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
 using InOut = Hapil.UnitTests.AncestorRepository.OperatorInputOutput;
+using TT = Hapil.TypeTemplate;
 using Hapil;
+using Hapil.Operands;
 
 namespace Hapil.UnitTests.Expressions
 {
@@ -1009,7 +1011,6 @@ namespace Hapil.UnitTests.Expressions
             Assert.That(outputValue, Is.EqualTo(123));
         }
 
-
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
@@ -1043,5 +1044,45 @@ namespace Hapil.UnitTests.Expressions
 			Assert.That(result3.StringValue, Is.EqualTo("DEF"));
 			Assert.That(result4.StringValue, Is.Null);
 		}
-	}
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanUseBinaryOperatorsWithTypeBuilder()
+        {
+            //-- Arrange
+
+            var writer = DeriveClassFrom<object>();
+
+            Field<HashSet<TT.TConcrete>> hashSetField;
+
+            using ( TT.CreateScope<TT.TConcrete>(writer.OwnerClass.TypeBuilder) )
+            {
+                writer
+                    .DefaultConstructor()
+                    .Field("m_HashSet", out hashSetField)
+                    .ImplementInterface<AncestorRepository.IOperatorTester>()
+                    .Method<InOut, InOut, InOut>(intf => intf.Binary).Implement((m, in1, in2) => {
+                        m.If(hashSetField.IsNull()).Then(() => {
+                            m.Return(in1);
+                        })
+                        .Else(() => {
+                            m.Return(in2);
+                        });
+                    })
+                    .AllMethods().Throw<NotImplementedException>();
+            }
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.IOperatorTester>().UsingDefaultConstructor();
+            var inOut1 = new InOut();
+            var inOut2 = new InOut();
+            var result = tester.Binary(inOut1, inOut2);
+
+            //-- Assert
+
+            Assert.That(result, Is.SameAs(inOut1));
+        }
+    }
 }
