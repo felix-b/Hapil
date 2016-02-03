@@ -395,7 +395,7 @@ namespace Hapil.Operands
 
 		public MutableOperand<TItem> Item<TIndex, TItem>(IOperand<TIndex> indexArg1)
 		{
-			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex) });
+			var indexerProperty = OperandType.GetProperty("Item", TypeTemplate.Resolve<TItem>(), new[] { TypeTemplate.Resolve<TIndex>() });
 
 			if ( indexerProperty == null )
 			{
@@ -412,7 +412,9 @@ namespace Hapil.Operands
 
 		public MutableOperand<TItem> Item<TIndex1, TIndex2, TItem>(IOperand<TIndex1> indexArg1, IOperand<TIndex2> indexArg2)
 		{
-			var indexerProperty = OperandType.GetProperty("Item", typeof(TItem), new[] { typeof(TIndex1), typeof(TIndex2) });
+            var indexerProperty = OperandType.GetProperty(
+                "Item", 
+                TypeTemplate.Resolve<TItem>(), new[] { TypeTemplate.Resolve<TIndex1>(), TypeTemplate.Resolve<TIndex2>() });
 
 			if ( indexerProperty == null )
 			{

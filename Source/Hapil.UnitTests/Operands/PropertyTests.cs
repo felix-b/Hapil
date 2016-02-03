@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests.Operands
 {
@@ -340,7 +341,39 @@ namespace Hapil.UnitTests.Operands
 			Assert.That(returnValue, Is.EqualTo(123));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanGetIndexerPropertyValueOfTemplateType()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TKey, TT.TValue>(typeof(int), typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+                    .Method<object, object>(intf => intf.CallTheTarget)
+                    .Implement((m, value) => {
+                        var indexersObj = m.Local(initialValue: value.CastTo<IReadOnlyList<TT.TValue>>());
+                        var indexerValue = m.Local<TT.TValue>(initialValue: indexersObj.Item<TT.TKey, TT.TValue>(m.Const(1).CastTo<TT.TKey>()));
+                        m.Return(indexerValue.CastTo<object>());
+                    });
+            }
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+
+            var data = new[] { "AAA", "BBB", "CCC" };
+            var returnValue = (string)obj.CallTheTarget(data);
+
+            //-- Assert
+
+            Assert.That(returnValue, Is.EqualTo("BBB"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void CanSetIndexerPropertyValue()
@@ -371,7 +404,41 @@ namespace Hapil.UnitTests.Operands
 			Assert.That(objWithIndexers["DEF"], Is.EqualTo(888));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanSetIndexerPropertyValueOfTemplateType()
+        {
+            //-- Arrange
+
+            using ( TT.CreateScope<TT.TKey, TT.TValue>(typeof(int), typeof(string)) )
+            {
+                DeriveClassFrom<object>()
+                    .DefaultConstructor()
+                    .ImplementInterface<AncestorRepository.ITargetObjectCaller>()
+                    .Method<object, object>(intf => intf.CallTheTarget)
+                    .Implement((m, value) => {
+                        var indexersObj = m.Local(initialValue: value.CastTo<IList<TT.TValue>>());
+                        indexersObj.Item<TT.TKey, TT.TValue>(m.Const(1).CastTo<TT.TKey>()).Assign(m.Const("YYY").CastTo<TT.TValue>());
+                        indexersObj.Item<TT.TKey, TT.TValue>(m.Const(2).CastTo<TT.TKey>()).Assign(m.Const("ZZZ").CastTo<TT.TValue>());
+                        m.Return(null);
+                    });
+            }
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.ITargetObjectCaller>().UsingDefaultConstructor();
+
+            var data = new[] { "AAA", "BBB", "CCC" };
+            obj.CallTheTarget(data);
+
+            //-- Assert
+
+            Assert.That(data[1], Is.EqualTo("YYY"));
+            Assert.That(data[2], Is.EqualTo("ZZZ"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void CanGetTwoDimensionalIndexerPropertyValue()
