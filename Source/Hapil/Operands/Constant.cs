@@ -138,9 +138,19 @@ namespace Hapil.Operands
             }
             else if ( method != null )
             {
-                il.Emit(OpCodes.Ldtoken, method);
-                il.Emit(OpCodes.Call, s_MethodBaseGetMethodFromHandleMethod);
-                il.Emit(OpCodes.Castclass, typeof(MethodInfo));
+                if ( method.DeclaringType != null && method.DeclaringType.IsGenericType )
+                {
+                    il.Emit(OpCodes.Ldtoken, method);
+                    il.Emit(OpCodes.Ldtoken, method.DeclaringType);
+                    il.Emit(OpCodes.Call, s_MethodBaseGetMethodFromHandleMethodWithDeclaringType);
+                    il.Emit(OpCodes.Castclass, typeof(MethodInfo));
+                }
+                else
+                {
+                    il.Emit(OpCodes.Ldtoken, method);
+                    il.Emit(OpCodes.Call, s_MethodBaseGetMethodFromHandleMethod);
+                    il.Emit(OpCodes.Castclass, typeof(MethodInfo));
+                }
             }
             else if ( field != null )
             {
@@ -206,6 +216,15 @@ namespace Hapil.Operands
             BindingFlags.Public | BindingFlags.Static,
             null,
             new Type[] { typeof(RuntimeMethodHandle) }, 
+            null);
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private static readonly MethodInfo s_MethodBaseGetMethodFromHandleMethodWithDeclaringType = typeof(MethodBase).GetMethod(
+            "GetMethodFromHandle",
+            BindingFlags.Public | BindingFlags.Static,
+            null,
+            new Type[] { typeof(RuntimeMethodHandle), typeof(RuntimeTypeHandle) },
             null);
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

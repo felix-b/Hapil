@@ -171,6 +171,33 @@ namespace Hapil.UnitTests.Operands
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void CanEmitMethodInfoConstantFromGenericDeclaringType()
+        {
+            //-- Arrange
+
+            var declaringType = typeof(TestGenericType<int, string, DateTime>);
+            var oneMethod = declaringType.GetMethod("One");
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.IHaveMetadataToken>()
+                .Property(x => x.MethodFromToken).Implement(p => p.Get(m => m.Return(m.Const(oneMethod))))
+                .AllProperties().Implement(p => p.Get(m => m.Throw<NotImplementedException>("Not implemented")));
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.IHaveMetadataToken>().UsingDefaultConstructor();
+            var returnedMethodInfo = obj.MethodFromToken;
+
+            //-- Assert
+
+            Assert.That(oneMethod, Is.Not.Null);
+            Assert.That(returnedMethodInfo, Is.SameAs(oneMethod));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
         public void CanEmitFieldInfoConstant()
         {
             //-- Arrange
@@ -224,5 +251,14 @@ namespace Hapil.UnitTests.Operands
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static int ACompiledField;
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class TestGenericType<T1, T2, T3>
+        {
+            public void One(T1 x, T2 y, T3 z)
+            {
+            }
+        }
     }
 }
