@@ -265,6 +265,11 @@ namespace Hapil.Members
 
         private bool InterfaceMethodHasImplementation(MethodInfo method)
         {
+            if ( m_ReflectedType.IsArray )
+            {
+                return true;
+            }
+
             if ( method.DeclaringType.IsAssignableFrom(m_ReflectedType) )
             {
                 var map = m_ReflectedType.GetInterfaceMap(method.DeclaringType);

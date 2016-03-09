@@ -46,5 +46,93 @@ namespace Hapil.UnitTests.Members
             Assert.That(implementedInterfaceProperty.Count(), Is.EqualTo(1));
             Assert.That(implementedInterfaceProperty.Single().DeclaringType, Is.EqualTo(typeof(AncestorRepository.DataRepoBase)));
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void InheritedMembersAreOnyListedOnce()
+        {
+            //-- arrange & act
+
+            var members = TypeMemberCache.Of<AbstractClassTwo>();
+
+            //-- assert
+
+            Assert.That(members.ImplementableMethods.Count(m => m.Name == "MethodOne"), Is.EqualTo(1));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanHandleMembersThatHaveCollectionTypes()
+        {
+            //-- arrange & act
+
+            var members = TypeMemberCache.Of<AClassWithCollections>();
+
+            //-- assert
+
+            Assert.That(members.ImplementableProperties.Select(p => p.Name), Is.EquivalentTo(new[] { "IntArray", "IntList", "IntStringDictionary" }));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanHandleCollectionTypes()
+        {
+            //-- act & assert
+
+            TypeMemberCache.Of<int[]>();
+            TypeMemberCache.Of<List<int>>();
+            TypeMemberCache.Of<Dictionary<int, string>>();
+            TypeMemberCache.Of<ICollection<int>>();
+            TypeMemberCache.Of<IList<int>>();
+            TypeMemberCache.Of<IDictionary<int, string>>();
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IInterfaceOne
+        {
+            void MethodOne();
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IInterfaceTwo : IInterfaceOne
+        {
+            void MethodTwo();
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class AbstractClassOne : IInterfaceOne
+        {
+            #region Implementation of IInterfaceOne
+
+            public abstract void MethodOne();
+
+            #endregion
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class AbstractClassTwo : AbstractClassOne, IInterfaceTwo
+        {
+            #region Implementation of IInterfaceTwo
+
+            public abstract void MethodTwo();
+
+            #endregion
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class AClassWithCollections
+        {
+            public virtual int[] IntArray { get; set; }
+            public virtual List<int> IntList { get; set; }
+            public virtual Dictionary<int, string> IntStringDictionary { get; set; }
+        }
     }
 }
