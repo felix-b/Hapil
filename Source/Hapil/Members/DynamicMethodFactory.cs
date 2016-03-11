@@ -40,7 +40,7 @@ namespace Hapil.Members
                 returnType ?? typeof(void),
                 argumentTypes,
                 module.ModuleBuilder,
-                skipVisibility: false);
+                skipVisibility: true);
 
             m_Parameters = resolvedArgumentTypes.Select((argType, argIndex) => m_DynamicMethod.DefineParameter(
                 argIndex + 1,

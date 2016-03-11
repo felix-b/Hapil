@@ -91,7 +91,7 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		internal ModuleBuilder ModuleBuilder
+		public ModuleBuilder ModuleBuilder
 		{
 			get
 			{
