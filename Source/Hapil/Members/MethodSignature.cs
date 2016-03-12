@@ -65,7 +65,24 @@ namespace Hapil.Members
 			IsPublic = isPublic;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private MethodSignature(MethodSignature source, bool? isStatic, bool? isPublic)
+        {
+            ArgumentName = source.ArgumentName;
+            ArgumentType = source.ArgumentType;
+            ArgumentUnderlyingType = source.ArgumentUnderlyingType;
+            ArgumentIsByRef = source.ArgumentIsByRef;
+            ArgumentIsOut = source.ArgumentIsOut;
+            ArgumentCount = source.ArgumentCount;
+            IsVoid = source.IsVoid;
+            ReturnType = source.ReturnType;
+
+            IsPublic = isPublic ?? source.IsPublic;
+            IsStatic = isStatic ?? source.IsStatic;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Type[] BuildTemplateTypePairs()
 		{
@@ -95,12 +112,7 @@ namespace Hapil.Members
 
 		public MethodSignature ChangeModifiers(bool? isPublic, bool? isStatic)
 		{
-			return new MethodSignature(
-				isStatic ?? this.IsStatic,
-				isPublic ?? this.IsPublic,
-				argumentTypes:this.ArgumentType,
-				argumentNames: this.ArgumentName,
-				returnType: this.ReturnType);
+		    return new MethodSignature(this, isStatic, isPublic);
 		}
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
