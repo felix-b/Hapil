@@ -131,6 +131,43 @@ namespace Hapil.UnitTests.Operands
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void CanAssignPublicFieldOfStructPassedByRef()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<object>()
+                .DefaultConstructor()
+                .ImplementInterface<AncestorRepository.IStructMutations>()
+                .Method<AncestorRepository.ACustomStruct, int, string, int>(intf => (obj, n, s) => intf.MutateStruct(ref obj, n, s))
+                    .Implement((m, obj, newInt, newString) => {
+                        var fields = typeof(AncestorRepository.ACustomStruct).GetFields();
+                        var intField = fields.Single(f => f.Name == "IntField");
+                        var stringField = fields.Single(f => f.Name == "StringField");
+                        var oldInt = m.Local(initialValue: obj.Field<int>(intField));
+                        obj.Field<int>(intField).Assign(newInt);
+                        obj.Field<string>(stringField).Assign(newString);
+                        m.Return(oldInt);
+                    });
+
+            //-- Act
+
+            var tester = CreateClassInstanceAs<AncestorRepository.IStructMutations>().UsingDefaultConstructor();
+            var theStruct = new AncestorRepository.ACustomStruct() {
+                IntField = 123,
+                StringField = "ABC"
+            };
+            var result = tester.MutateStruct(ref theStruct, 456, "DEF");
+
+            //-- Assert
+
+            Assert.That(result, Is.EqualTo(123));
+            Assert.That(theStruct.IntField, Is.EqualTo(456));
+            Assert.That(theStruct.StringField, Is.EqualTo("DEF"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
         public void CanReadPublicPropertyOfStruct()
         {
             var dt = DateTime.Now;

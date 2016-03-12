@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Hapil.Members;
 using Hapil.Testing.NUnit;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -83,8 +87,88 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        [Test]
+        public void CanCompileStaticFunctionForCustomDelegate()
+        {
+            //-- arrange
+
+            var compiler = new DynamicMethodCompiler(base.Module);
+
+            Mutation mutation = compiler.ForDelegate<Mutation>().CompileStaticFunction<KeyValuePair<int, string>, int, string, int>(
+                "IntStringKeyValuePairMutation",
+                (w, kvp, newKey, newValue) => {
+                    var kvpFields = typeof(KeyValuePair<int, string>).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    var kvpKeyField = kvpFields.Single(f => f.Name == "key");
+                    var kvpValueField = kvpFields.Single(f => f.Name == "value");
+                    var oldKey = w.Local(initialValue: kvp.Field<int>(kvpKeyField));
+                    kvp.Field<int>(kvpKeyField).Assign(newKey);
+                    kvp.Field<string>(kvpValueField).Assign(newValue);
+                    w.Return(oldKey);
+                }
+            );
+
+            //-- act
+
+            var keyValuePair = new KeyValuePair<int, string>(123, "ABC");
+            var originalKey = mutation(ref keyValuePair, 456, "DEF");
+
+            //-- assert
+
+            Assert.That(keyValuePair.Key, Is.EqualTo(456));
+            Assert.That(keyValuePair.Value, Is.EqualTo("DEF"));
+            Assert.That(originalKey, Is.EqualTo(123));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanCompileStaticFunctionForCustomGenericDelegateUsingTemplateTypes()
+        {
+            //-- arrange
+
+            var compiler = new DynamicMethodCompiler(base.Module);
+            Delegate mutationDelegate;
+
+            using (TT.CreateScope<TT.TKey, TT.TValue>(typeof(int), typeof(string)))
+            {
+                mutationDelegate = compiler
+                    .ForTemplatedDelegate<Mutation<TT.TKey, TT.TValue>>()
+                    .CompileStaticFunction<KeyValuePair<TT.TKey, TT.TValue>, TT.TKey, TT.TValue, TT.TKey>(
+                        "IntStringKeyValuePairMutation",
+                        (w, kvp, newKey, newValue) => {
+                            var kvpFields = TT.Resolve<KeyValuePair<TT.TKey, TT.TValue>>().GetFields(
+                                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                            var kvpKeyField = kvpFields.Single(f => f.Name == "key");
+                            var kvpValueField = kvpFields.Single(f => f.Name == "value");
+                            var oldKey = w.Local(initialValue: kvp.Field<TT.TKey>(kvpKeyField));
+                            kvp.Field<TT.TKey>(kvpKeyField).Assign(newKey);
+                            kvp.Field<TT.TValue>(kvpValueField).Assign(newValue);
+                            w.Return(oldKey);
+                        });
+            }
+
+            //-- act
+
+            var intStringKvpMutation = (Mutation<int, string>)mutationDelegate;
+            var keyValuePair = new KeyValuePair<int, string>(123, "ABC");
+            var originalKey = intStringKvpMutation(ref keyValuePair, 456, "DEF");
+
+            //-- assert
+
+            Assert.That(keyValuePair.Key, Is.EqualTo(456));
+            Assert.That(keyValuePair.Value, Is.EqualTo("DEF"));
+            Assert.That(originalKey, Is.EqualTo(123));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         private static PropertyInfo s_IntValuePropertyInfo = typeof(TestTarget).GetProperty("IntValue");
         private static PropertyInfo s_StringValuePropertyInfo = typeof(TestTarget).GetProperty("StringValue");
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public delegate int Mutation(ref KeyValuePair<int, string> entry, int newKey, string newValue);
+        public delegate K Mutation<K, V>(ref KeyValuePair<K, V> entry, K newKey, V newValue);
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 

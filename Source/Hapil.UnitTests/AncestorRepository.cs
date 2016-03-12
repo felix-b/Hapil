@@ -691,5 +691,20 @@ namespace Hapil.UnitTests
         {
             IEnumerable<object> Objects1 { get; }
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IStructMutations
+        {
+            int MutateStruct(ref ACustomStruct theStruct, int newIntValue, string newStringValue);
+        }
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public struct ACustomStruct
+	    {
+	        public int IntField;
+	        public string StringField;
+	    }
     }
 }
