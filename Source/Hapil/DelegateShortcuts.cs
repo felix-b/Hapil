@@ -62,7 +62,117 @@ namespace Hapil
 			StatementScope.Current.AddStatement(new CallStatement(action, GetReflectionCache<Action<TArg1, TArg2, TArg3>>().Invoke, arg1, arg2, arg3));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Invoke<TArg1, TArg2, TArg3, TArg4>(
+            this IOperand<Action<TArg1, TArg2, TArg3, TArg4>> action,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(
+                action, 
+                GetReflectionCache<Action<TArg1, TArg2, TArg3, TArg4>>().Invoke, 
+                arg1, 
+                arg2, 
+                arg3,
+                arg4));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Invoke<TArg1, TArg2, TArg3, TArg4, TArg5>(
+            this IOperand<Action<TArg1, TArg2, TArg3, TArg4, TArg5>> action,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(
+                action,
+                GetReflectionCache<Action<TArg1, TArg2, TArg3, TArg4, TArg5>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(
+            this IOperand<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>> action,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(
+                action,
+                GetReflectionCache<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>(
+            this IOperand<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>> action,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(
+                action,
+                GetReflectionCache<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+                arg7));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>(
+            this IOperand<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>> action,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7,
+            IOperand<TArg8> arg8)
+        {
+            StatementScope.Current.AddStatement(new CallStatement(
+                action,
+                GetReflectionCache<Action<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+                arg7,
+                arg8));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public static Operand<TResult> Invoke<TResult>(this IOperand<Func<TResult>> func)
 		{
@@ -109,7 +219,122 @@ namespace Hapil
 			return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TResult>, TResult>(@operator, func);
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TResult> Invoke<TArg1, TArg2, TArg3, TArg4, TResult>(
+            this IOperand<Func<TArg1, TArg2, TArg3, TArg4, TResult>> func,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4)
+        {
+            var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TArg4, TResult>>(
+                GetReflectionCache<Func<TArg1, TArg2, TArg3, TArg4, TResult>>().Invoke,
+                arg1, 
+                arg2, 
+                arg3,
+                arg4);
+
+            return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TArg4, TResult>, TResult>(@operator, func);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TResult> Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>(
+            this IOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>> func,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5)
+        {
+            var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>>(
+                GetReflectionCache<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5);
+
+            return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>, TResult>(@operator, func);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TResult> Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>(
+            this IOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>> func,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6)
+        {
+            var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>>(
+                GetReflectionCache<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6);
+
+            return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>, TResult>(@operator, func);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TResult> Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>(
+            this IOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>> func,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7)
+        {
+            var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>>(
+                GetReflectionCache<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+                arg7);
+
+            return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>, TResult>(@operator, func);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static Operand<TResult> Invoke<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>(
+            this IOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>> func,
+            IOperand<TArg1> arg1,
+            IOperand<TArg2> arg2,
+            IOperand<TArg3> arg3,
+            IOperand<TArg4> arg4,
+            IOperand<TArg5> arg5,
+            IOperand<TArg6> arg6,
+            IOperand<TArg7> arg7,
+            IOperand<TArg8> arg8)
+        {
+            var @operator = new UnaryOperators.OperatorCall<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>>(
+                GetReflectionCache<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>>().Invoke,
+                arg1,
+                arg2,
+                arg3,
+                arg4,
+                arg5,
+                arg6,
+                arg7,
+                arg8);
+
+            return new UnaryExpressionOperand<Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>, TResult>(@operator, func);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal static ConstructorInfo GetDelegateConstructor(Type delegateType)
 		{
