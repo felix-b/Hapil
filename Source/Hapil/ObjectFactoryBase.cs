@@ -102,19 +102,21 @@ namespace Hapil
 
 		protected internal TypeEntry GetOrBuildType(TypeKey key)
 		{
-		    if ( !Monitor.TryEnter(_s_globalSyncRoot, 10000) )
-		    {
-		        throw new TimeoutException("ObjectFacotryBase.GetOrBuildType timed out waiting for exclusive lock (10 sec).");
-		    }
+            return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+            
+            //if (!Monitor.TryEnter(_s_globalSyncRoot, 10000))
+            //{
+            //    throw new TimeoutException("ObjectFacotryBase.GetOrBuildType timed out waiting for exclusive lock (10 sec).");
+            //}
 
-		    try
-		    {
-		        return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
-		    }
-		    finally
-		    {
-		        Monitor.Exit(_s_globalSyncRoot);
-		    }
+            //try
+            //{
+            //    return m_BuiltTypes.GetOrAdd(key, valueFactory: BuildNewTypeEntry);
+            //}
+            //finally
+            //{
+            //    Monitor.Exit(_s_globalSyncRoot);
+            //}
 		}
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
