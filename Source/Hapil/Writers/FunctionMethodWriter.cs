@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Expressions;
 using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Statements;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.Writers
 {
@@ -42,7 +44,20 @@ namespace Hapil.Writers
 			AddReturnStatement(new Constant<TReturn>(constantValue));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public IOperand<TReturn> Base(params IOperand[] arguments)
+        {
+            var baseMethod = GetValidBaseMethod(arguments);
+
+            using (TT.CreateScope<TT.TBase>(baseMethod.DeclaringType))
+            {
+                var @operator = new UnaryOperators.OperatorCall<TT.TBase>(baseMethod, disableVirtual: true, arguments: arguments);
+                return new UnaryExpressionOperand<TT.TBase, TReturn>(@operator, This<TT.TBase>());
+            }
+        }
+        
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected internal override void Flush()
 		{

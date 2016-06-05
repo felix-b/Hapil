@@ -31,7 +31,14 @@ namespace Hapil
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public static void EmitCall(ILGenerator il, IOperand target, MethodBase method, params IOperand[] arguments)
+	    public static void EmitCall(ILGenerator il, IOperand target, MethodBase method, params IOperand[] arguments)
+	    {
+	        EmitCall(il, target, method, false, arguments);
+	    }
+
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public static void EmitCall(ILGenerator il, IOperand target, MethodBase method, bool disableVirtual, params IOperand[] arguments)
 		{
 			if ( target != null )
 			{
@@ -43,7 +50,7 @@ namespace Hapil
 			var methodInfo = (method as MethodInfo);
 			var constructorInfo = (method as ConstructorInfo);
 			var callOpcode = (
-				method.IsVirtual || method.DeclaringType.IsInterface || (target != null && target.OperandType.IsValueType) ? 
+				!disableVirtual && (method.IsVirtual || method.DeclaringType.IsInterface || (target != null && target.OperandType.IsValueType)) ? 
 				OpCodes.Callvirt : 
 				OpCodes.Call);
 

@@ -250,15 +250,24 @@ namespace Hapil.Expressions
 		public class OperatorCall<T> : IUnaryOperator<T>, IDontLeaveValueOnStack, IAcceptOperandVisitor
 		{
 			private readonly MethodBase m_Method;
-			private readonly IOperand[] m_Arguments;
+		    private readonly bool m_DisableVirtual;
+		    private readonly IOperand[] m_Arguments;
 			private bool m_ShouldLeaveValueOnStack;
 
-			//-------------------------------------------------------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-			public OperatorCall(MethodBase method, params IOperand[] arguments)
+		    public OperatorCall(MethodBase method, params IOperand[] arguments)
+                : this(method, false, arguments)
+		    {
+		    }
+
+		    //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+			public OperatorCall(MethodBase method, bool disableVirtual, params IOperand[] arguments)
 			{
 				m_Method = method;
-				m_Arguments = arguments;
+			    m_DisableVirtual = disableVirtual;
+			    m_Arguments = arguments;
 				m_ShouldLeaveValueOnStack = false;
 
 				foreach ( var arg in m_Arguments )
@@ -298,7 +307,7 @@ namespace Hapil.Expressions
 
 			public void Emit(ILGenerator il, IOperand<T> operand)
 			{
-				Helpers.EmitCall(il, operand, m_Method, m_Arguments);
+				Helpers.EmitCall(il, operand, m_Method, m_DisableVirtual, m_Arguments);
 
 				if ( !IsVoidCall() && !m_ShouldLeaveValueOnStack )
 				{

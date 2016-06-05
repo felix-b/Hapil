@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hapil.Expressions;
 using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Statements;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.Writers
 {
@@ -42,6 +44,13 @@ namespace Hapil.Writers
 		{
 			AddReturnStatement();
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public IOperand<TT.TReturn> Base(params IOperand[] arguments)
+        {
+            return InternalBase(arguments);
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

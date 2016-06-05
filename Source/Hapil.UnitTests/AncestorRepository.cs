@@ -97,6 +97,98 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public class BaseFour
+        {
+            private readonly List<string> m_Log;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public BaseFour(List<string> log)
+            {
+                m_Log = log;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual void VoidNoArgs()
+            {
+                m_Log.Add("BASE:VoidNoArgs()");
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual void VoidWithArgs(int num, string str)
+            {
+                m_Log.Add(string.Format("BASE:VoidWithArgs(num={0},str={1})", num, str));
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string FunctionNoArgs()
+            {
+                m_Log.Add("BASE:FunctionNoArgs()");
+                return "ABC";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string FunctionWithArgs(int num, string str)
+            {
+                m_Log.Add(string.Format("BASE:FunctionWithArgs(num={0},str={1})", num, str));
+                return "DEF";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string FunctionWithRefOutArgs(ref int num, out string str)
+            {
+                m_Log.Add(string.Format("BASE:FunctionWithRefOutArgs(num={0})", num));
+                
+                num = num * 2;
+                str = "ABCDEF";
+                return "GHI";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual int IntProperty
+            {
+                get
+                {
+                    m_Log.Add("BASE:IntProperty.GET");
+                    return 123;
+                }
+                set
+                {
+                    m_Log.Add(string.Format("BASE:IntProperty.SET(value={0})", value));
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string this[int key]
+            {
+                get
+                {
+                    m_Log.Add(string.Format("BASE:this.GET(key={0})", key));
+                    return "XYZ";
+                }
+                set
+                {
+                    m_Log.Add(string.Format("BASE:this.SET(key={0},value={1})", key, value));
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            public List<string> Log
+            {
+                get { return m_Log; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public abstract class BaseWithConstructorParameters
         {
             private readonly Stream m_Stream;

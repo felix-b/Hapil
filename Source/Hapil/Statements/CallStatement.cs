@@ -13,12 +13,20 @@ namespace Hapil.Statements
 	internal class CallStatement : StatementBase
 	{
 		private readonly MethodBase m_Method;
-		private readonly IOperand[] m_Arguments;
+	    private readonly bool m_DisableVirtual;
+	    private readonly IOperand[] m_Arguments;
 		private IOperand m_Target;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public CallStatement(IOperand target, MethodBase method, params IOperand[] arguments)
+	    public CallStatement(IOperand target, MethodBase method, params IOperand[] arguments)
+            : this(target, method, false, arguments)
+	    {
+	    }
+
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+		public CallStatement(IOperand target, MethodBase method, bool disableVirtual, params IOperand[] arguments)
 		{
 			var scope = StatementScope.Current;
 	
@@ -31,7 +39,8 @@ namespace Hapil.Statements
 
 			m_Target = target;
 			m_Method = method;
-			m_Arguments = arguments;
+		    m_DisableVirtual = disableVirtual;
+		    m_Arguments = arguments;
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,7 +49,7 @@ namespace Hapil.Statements
 
         public override void Emit(ILGenerator il, MethodMember ownerMethod)
 		{
-			Helpers.EmitCall(il, m_Target, m_Method, m_Arguments);
+			Helpers.EmitCall(il, m_Target, m_Method, m_DisableVirtual, m_Arguments);
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------

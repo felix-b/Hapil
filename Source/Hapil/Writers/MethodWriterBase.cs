@@ -10,6 +10,7 @@ using Hapil.Expressions;
 using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Statements;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.Writers
 {
@@ -479,7 +480,7 @@ namespace Hapil.Writers
 			return Delegate<TA1, TA2, TA3, TA4, TResult>((w, arg1, arg2, arg3, arg4) => w.Return(expression(arg1, arg2, arg3, arg4)));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public Operand<IntPtr> MethodOf(MethodInfo method)
 		{
@@ -609,7 +610,27 @@ namespace Hapil.Writers
 			return returnValueLocal;
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public void ProceedToBase()
+        {
+            var arguments = new IOperand[this.OwnerMethod.Signature.ArgumentCount];
+
+            this.ForEachArgument((arg, index) => {
+                arguments[index] = arg;
+            });
+
+            if (this.OwnerMethod.IsVoid)
+            {
+                InternalBase(arguments);
+            }
+            else
+            {
+                AddReturnStatement(InternalBase(arguments));
+            }
+        }
+        
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public void RawIL(Action<ILGenerator> script)
 		{
@@ -709,6 +730,40 @@ namespace Hapil.Writers
 			m_OwnerMethod.MethodFactory.SetAttribute(attribute);
 		}
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        protected MethodInfo GetValidBaseMethod(IOperand[] arguments)
+        {
+            var baseMethod = OwnerMethod.MethodDeclaration;
+
+            if (baseMethod == null || baseMethod.IsAbstract || baseMethod.DeclaringType == null || baseMethod.DeclaringType.IsInterface)
+            {
+                throw new InvalidOperationException("Current method has no base which can be invoked.");
+            }
+
+            if (arguments.Length != OwnerMethod.Signature.ArgumentCount)
+            {
+                throw new ArgumentException("Number of arguments does not match method signature.");
+            }
+
+            for (int i = 0 ; i < OwnerMethod.Signature.ArgumentCount ; i++)
+            {
+                var parameterType = GetValidatableType(OwnerMethod.Signature.ArgumentUnderlyingType[i]);
+                var argumentType = GetValidatableType(arguments[i].OperandType);
+
+                if (!parameterType.IsAssignableFrom(argumentType))
+                {
+                    throw new ArgumentException(string.Format(
+                        "Argument at index {0}: argument of type '{1}' cannot be assigned to parameter of type '{2}'.", 
+                        i, 
+                        argumentType.FriendlyName(),
+                        parameterType.FriendlyName()));
+                }
+            }
+
+            return baseMethod;
+        }
+
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal TStatement AddStatement<TStatement>(TStatement statement) where TStatement : StatementBase
@@ -745,6 +800,27 @@ namespace Hapil.Writers
 				StatementScope.Current.AddStatement(new ReturnStatement<TReturn>(returnValue));
 			}
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    protected internal IOperand<TT.TReturn> InternalBase(params IOperand[] arguments)
+        {
+            var baseMethod = GetValidBaseMethod(arguments);
+
+            using (TT.CreateScope<TT.TBase>(baseMethod.DeclaringType))
+            {
+                if (baseMethod.IsVoid())
+                {
+                    AddStatement(new CallStatement(This<TT.TBase>(), baseMethod, disableVirtual: true, arguments: arguments));
+                    return null;
+                }
+                else
+                {
+                    var @operator = new UnaryOperators.OperatorCall<TT.TBase>(baseMethod, disableVirtual: true, arguments: arguments);
+                    return new UnaryExpressionOperand<TT.TBase, TT.TReturn>(@operator, This<TT.TBase>());
+                }
+            }
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -792,6 +868,17 @@ namespace Hapil.Writers
 				}
 			}
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    private Type GetValidatableType(Type type)
+	    {
+	        var resolvedType = TypeTemplate.Resolve(type);
+            var nonRefType = (resolvedType.IsByRef ? resolvedType.GetElementType() : resolvedType);
+            var resolvedNonRefType = TypeTemplate.Resolve(nonRefType);
+
+            return resolvedNonRefType;
+	    }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 	
