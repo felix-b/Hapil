@@ -90,6 +90,12 @@ namespace Hapil.Writers
 				@operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8),
 				@operand: new ThisOperand<object>(OwnerClass));
 		}
+        public void Base(ConstructorInfo baseConstructor, params IOperand[] arguments)
+        {
+            new UnaryExpressionOperand<object, object>(
+                @operator: new UnaryOperators.OperatorCall<object>(baseConstructor, arguments),
+                @operand: new ThisOperand<object>(OwnerClass));
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 

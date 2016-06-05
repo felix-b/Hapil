@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -108,7 +109,41 @@ namespace Hapil.UnitTests.Members
 			Assert.That(output2, Is.EqualTo(new[] { ".CCTOR" }));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void CanCallBaseConstructorGeneralizedWay()
+        {
+            //-- Arrange
+
+            DeriveClassFrom<AncestorRepository.BaseWithConstructorParameters>()
+                .Constructor<MemoryStream>((cw, strm) => {
+                    var baseConstructor = typeof(AncestorRepository.BaseWithConstructorParameters)
+                        .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                        .Where(c => !c.IsPrivate)
+                        .OrderByDescending(c => c.GetParameters().Length)
+                        .First();
+                    var baseArguments = new IOperand[3];
+                    baseArguments[0] = strm;
+                    baseArguments[1] = cw.Const<long>(12345);
+                    baseArguments[2] = cw.Const<string>("ABCD");
+                    cw.Base(baseConstructor, baseArguments);
+                });
+
+            var inputStream = new MemoryStream();
+
+            //-- Act
+
+            var obj = CreateClassInstanceAs<AncestorRepository.BaseWithConstructorParameters>().UsingConstructor(inputStream);
+
+            //-- Assert
+
+            Assert.That(obj.Stream, Is.SameAs(inputStream));
+            Assert.That(obj.Index, Is.EqualTo(12345));
+            Assert.That(obj.Name, Is.EqualTo("ABCD"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void CanInitializeStaticFields()

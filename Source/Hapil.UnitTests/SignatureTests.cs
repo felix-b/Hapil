@@ -1182,7 +1182,7 @@ namespace Hapil.UnitTests
 
             MethodMember bytesToStreamFunc = null;
 
-            DeriveClassFrom<AncestorRepository.BaseWithConstructorParameter>()
+            DeriveClassFrom<AncestorRepository.BaseWithConstructorParameters>()
                 .NewStaticFunction<byte[], Stream>("BytesToStream").Implement((m, bytes) => {
                     bytesToStreamFunc = m.OwnerMethod;
                     m.Return(m.New<MemoryStream>(bytes));
@@ -1193,7 +1193,7 @@ namespace Hapil.UnitTests
 
             //-- Act
 
-            var obj = CreateClassInstanceAs<AncestorRepository.BaseWithConstructorParameter>().UsingConstructor(new byte[] { 11, 22, 33 });
+            var obj = CreateClassInstanceAs<AncestorRepository.BaseWithConstructorParameters>().UsingConstructor(new byte[] { 11, 22, 33 });
 
             //-- Assert
 

@@ -97,15 +97,26 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        public abstract class BaseWithConstructorParameter
+        public abstract class BaseWithConstructorParameters
         {
             private readonly Stream m_Stream;
+            private readonly long m_Index;
+            private readonly string m_Name;
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            protected BaseWithConstructorParameter(Stream stream)
+            protected BaseWithConstructorParameters(Stream stream)
             {
                 m_Stream = stream;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected BaseWithConstructorParameters(Stream stream, long index, string name)
+            {
+                m_Stream = stream;
+                m_Index = index;
+                m_Name = name;
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,6 +124,20 @@ namespace Hapil.UnitTests
             public Stream Stream
             {
                 get { return m_Stream; }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public long Index
+            {
+                get { return m_Index; }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public string Name
+            {
+                get { return m_Name; }
             }
         }
 
