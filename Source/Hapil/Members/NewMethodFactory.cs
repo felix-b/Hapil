@@ -152,6 +152,13 @@ namespace Hapil.Members
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public override MethodInfo InvokableBaseMethod
+        {
+            get { return null; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         private static MethodAttributes GetMethodAttributesFor(MethodSignature signature)
         {
             if ( signature.IsStatic )

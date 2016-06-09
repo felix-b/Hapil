@@ -188,6 +188,277 @@ namespace Hapil.UnitTests
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
+        
+        public class ConcreteFour : BaseFour
+	    {
+	        public ConcreteFour(List<string> log)
+	            : base(log)
+	        {
+	        }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	        public override string FunctionWithArgs(int num, string str)
+	        {
+                Log.Add(string.Format("CONCRETE:FunctionWithArgs(num={0},str={1})", num, str));
+                return "CONCRETE-DEF";
+            }
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class AbstractBaseFive
+        {
+            private readonly List<string> m_Log;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected AbstractBaseFive(List<string> log)
+            {
+                m_Log = log;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public abstract string FunctionWithArgs(int num, string str);
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            public List<string> Log
+            {
+                get { return m_Log; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class BaseFive : AbstractBaseFive
+        {
+            protected BaseFive(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string FunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASE:FunctionWithArgs(num={0},str={1})", num, str));
+                return "DEF";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string AnotherFunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASE:AnotherFunctionWithArgs(num={0},str={1})", num, str));
+                return "ANOTHER-DEF";
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class ConcreteFive : BaseFive
+        {
+            protected ConcreteFive(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string FunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("CONCRETE:FunctionWithArgs(num={0},str={1})", num, str));
+                return "CONCRETE-DEF";
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public interface IBaseSix
+	    {
+            string FunctionWithArgs(int num, string str);
+	    }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseBaseSix
+        {
+            private readonly List<string> m_Log;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected BaseBaseSix(List<string> log)
+            {
+                m_Log = log;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public abstract string FunctionWithArgs(int num, string str);
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string SecondFunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASEBASE:SecondFunctionWithArgs(num={0},str={1})", num, str));
+                return "BASEBASE-SECOND-RET";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string ThirdFunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASEBASE:ThirdFunctionWithArgs(num={0},str={1})", num, str));
+                return "BASEBASE-THIRD-RET";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public List<string> Log
+            {
+                get { return m_Log; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseSix : BaseBaseSix
+        {
+            protected BaseSix(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string ThirdFunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASE:ThirdFunctionWithArgs(num={0},str={1})", num, str));
+                return "BASE-THIRD-RET";
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string FourthFunctionWithArgs(int num, string str)
+            {
+                Log.Add(string.Format("BASE:FourthFunctionWithArgs(num={0},str={1})", num, str));
+                return "BASE-FOURTH-RET";
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IBaseSeven
+        {
+            string ThirdProperty { get; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public interface IBaseSevenEx
+        {
+            string ThirdProperty { get; set; }
+            string FourthProperty { get; set; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseBaseSeven
+        {
+            private readonly List<string> m_Log;
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            protected BaseBaseSeven(List<string> log)
+            {
+                m_Log = log;
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public abstract string FirstProperty { get; set; }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string SecondProperty 
+            {
+                get
+                {
+                    Log.Add("BASEBASE:SecondProperty.GET");
+                    return "BASEBASE-SECOND-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("BASEBASE:SecondProperty.SET(value={0})", value));
+                } 
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string ThirdProperty
+            {
+                get
+                {
+                    Log.Add("BASEBASE:ThirdProperty.GET");
+                    return "BASEBASE-THIRD-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("BASEBASE:ThirdProperty.SET(value={0})", value));
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public List<string> Log
+            {
+                get { return m_Log; }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public abstract class BaseSeven : BaseBaseSeven
+        {
+            protected BaseSeven(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string ThirdProperty
+            {
+                get
+                {
+                    Log.Add("BASE:ThirdProperty.GET");
+                    return "BASE-THIRD-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("BASE:ThirdProperty.SET(value={0})", value));
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public virtual string FourthProperty
+            {
+                get
+                {
+                    Log.Add("BASE:FourthProperty.GET");
+                    return "BASE-FOURTH-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("BASE:FourthProperty.SET(value={0})", value));
+                }
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public abstract class BaseWithConstructorParameters
         {

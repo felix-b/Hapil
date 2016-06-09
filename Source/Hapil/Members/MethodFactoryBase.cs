@@ -21,5 +21,6 @@ namespace Hapil.Members
 		public abstract ParameterBuilder ReturnParameter { get; }
 		public abstract string MemberName { get; }
 		public abstract MemberKind MemberKind { get; }
-	}
+        public abstract MethodInfo InvokableBaseMethod { get; }	
+    }
 }

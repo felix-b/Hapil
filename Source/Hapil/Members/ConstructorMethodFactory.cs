@@ -51,5 +51,12 @@ namespace Hapil.Members
 
 			return new RealConstructorMethodFactory(type, builder, signature);
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	    public override MethodInfo InvokableBaseMethod
+	    {
+            get { return null; }
+        }
 	}
 }

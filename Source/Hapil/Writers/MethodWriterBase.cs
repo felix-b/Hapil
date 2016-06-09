@@ -316,12 +316,12 @@ namespace Hapil.Writers
 			return AddStatement(new SwitchStatement<T>(value));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-		public ThisOperand<TBase> This<TBase>()
-		{
-			return new ThisOperand<TBase>(OwnerClass);
-		}
+        public ThisOperand<TBase> This<TBase>()
+        {
+            return new ThisOperand<TBase>(OwnerClass);
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -612,6 +612,32 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        public void ProceedToTarget(IOperand target)
+        {
+            var returnValueLocal = PropagateCall<TT.TReturn>(target);
+
+            if (!OwnerMethod.IsVoid)
+            {
+                AddReturnStatement(returnValueLocal);
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public void ProceedToBaseIfAny()
+        {
+            if ( OwnerMethod.HasInvokableBaseMethod )
+            {
+                ProceedToBase();
+            }
+            else if (!OwnerMethod.IsVoid)
+            {
+                AddReturnStatement(Default<TT.TReturn>());
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public void ProceedToBase()
         {
             var arguments = new IOperand[this.OwnerMethod.Signature.ArgumentCount];
@@ -622,7 +648,7 @@ namespace Hapil.Writers
 
             if (this.OwnerMethod.IsVoid)
             {
-                InternalBase(arguments);
+                 InternalBase(arguments);
             }
             else
             {
@@ -732,39 +758,39 @@ namespace Hapil.Writers
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        protected MethodInfo GetValidBaseMethod(IOperand[] arguments)
-        {
-            var baseMethod = OwnerMethod.MethodDeclaration;
+	    protected MethodInfo GetValidBaseMethod(IOperand[] arguments)
+	    {
+	        var baseMethod = OwnerMethod.MethodFactory.InvokableBaseMethod;
 
-            if (baseMethod == null || baseMethod.IsAbstract || baseMethod.DeclaringType == null || baseMethod.DeclaringType.IsInterface)
-            {
-                throw new InvalidOperationException("Current method has no base which can be invoked.");
-            }
+	        if ( baseMethod == null )
+	        {
+	            throw new InvalidOperationException("Current method has no base which can be invoked.");
+	        }
 
-            if (arguments.Length != OwnerMethod.Signature.ArgumentCount)
-            {
-                throw new ArgumentException("Number of arguments does not match method signature.");
-            }
+	        if ( arguments.Length != OwnerMethod.Signature.ArgumentCount )
+	        {
+	            throw new ArgumentException("Number of arguments does not match method signature.");
+	        }
 
-            for (int i = 0 ; i < OwnerMethod.Signature.ArgumentCount ; i++)
-            {
-                var parameterType = GetValidatableType(OwnerMethod.Signature.ArgumentUnderlyingType[i]);
-                var argumentType = GetValidatableType(arguments[i].OperandType);
+	        for ( int i = 0 ; i < OwnerMethod.Signature.ArgumentCount ; i++ )
+	        {
+	            var parameterType = GetValidatableType(OwnerMethod.Signature.ArgumentUnderlyingType[i]);
+	            var argumentType = GetValidatableType(arguments[i].OperandType);
 
-                if (!parameterType.IsAssignableFrom(argumentType))
-                {
-                    throw new ArgumentException(string.Format(
-                        "Argument at index {0}: argument of type '{1}' cannot be assigned to parameter of type '{2}'.", 
-                        i, 
-                        argumentType.FriendlyName(),
-                        parameterType.FriendlyName()));
-                }
-            }
+	            if ( !parameterType.IsAssignableFrom(argumentType) )
+	            {
+	                throw new ArgumentException(string.Format(
+	                    "Argument at index {0}: argument of type '{1}' cannot be assigned to parameter of type '{2}'.",
+	                    i,
+	                    argumentType.FriendlyName(),
+	                    parameterType.FriendlyName()));
+	            }
+	        }
 
-            return baseMethod;
-        }
+	        return baseMethod;
+	    }
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	    //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		internal TStatement AddStatement<TStatement>(TStatement statement) where TStatement : StatementBase
 		{

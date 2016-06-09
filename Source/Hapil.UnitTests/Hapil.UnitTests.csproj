@@ -84,6 +84,7 @@
     <Compile Include="Members\ClassTypeTests.cs" />
     <Compile Include="Members\TypeMemberCacheTests.cs" />
     <Compile Include="MetadataTypeKeyTests.cs" />
+    <Compile Include="OverrideTests.cs" />
     <Compile Include="NestedFactoryTests.cs" />
     <Compile Include="OperandExtensions.cs" />
     <Compile Include="ClosureTestFixtureBase.cs" />

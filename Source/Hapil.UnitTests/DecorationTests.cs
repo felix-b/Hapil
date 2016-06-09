@@ -12,6 +12,7 @@ using Hapil.Members;
 using Hapil.Operands;
 using Hapil.Writers;
 using NUnit.Framework;
+using TT = Hapil.TypeTemplate;
 
 namespace Hapil.UnitTests
 {
@@ -375,7 +376,52 @@ namespace Hapil.UnitTests
 				}));
 		}
 
-		//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void DecoratorBuilder_Methods_ProxyExplicitInterfaceImplementations()
+        {
+            //-- Arrange
+
+            Field<List<string>> logField;
+            Field<TestTargetSix> targetField;
+
+            var implementor = DeriveClassFrom<object>()
+                .Field<List<string>>("m_Log", out logField)
+                .Field<TestTargetSix>("m_Target", out targetField)
+                .Constructor<TestTargetSix, List<string>>((w, target, log) => {
+                    targetField.Assign(target);
+                    logField.Assign(log);
+                })
+                .ImplementInterfaceExplicitly<AncestorRepository.IBaseSix>()
+                    .AllMethods().ImplementPropagate(targetField);
+
+            implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+            var actionLog = new List<string>();
+            var targetInstance = new TestTargetSix(actionLog);
+
+            //-- Act
+
+            var proxy = CreateClassInstanceAs<AncestorRepository.IBaseSix>().UsingConstructor(targetInstance, actionLog);
+            var returnValue = proxy.FunctionWithArgs(num: 123, str: "ABC");
+
+            //-- Assert
+
+            Assert.That(
+                actionLog,
+                Is.EqualTo(new[] {
+					"BEFORE:Hapil.UnitTests.AncestorRepository+IBaseSix.FunctionWithArgs", 
+                    "TestTargetSix.IBaseSix.FunctionWithArgs",
+                    "RETVAL:Hapil.UnitTests.AncestorRepository+IBaseSix.FunctionWithArgs=BBB", 
+                    "SUCCESS:Hapil.UnitTests.AncestorRepository+IBaseSix.FunctionWithArgs", 
+                    "AFTER:Hapil.UnitTests.AncestorRepository+IBaseSix.FunctionWithArgs", 
+				}));
+
+            Assert.That(returnValue, Is.EqualTo("BBB"));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		[Test]
 		public void DecoratorBuilder_Properties()
@@ -417,6 +463,75 @@ namespace Hapil.UnitTests
 					"BEFORE-GET:AString", "AFTER-GET:AString=ABC", 
 				}));
 		}
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
+        public void DecoratorBuilder_Properties_ProxyExplicitInterfaceImplementations()
+        {
+            //-- Arrange
+
+            Field<List<string>> logField;
+            Field<TestTargetSeven> targetField;
+
+            var implementor = DeriveClassFrom<object>()
+                .Field<List<string>>("m_Log", out logField)
+                .Field<TestTargetSeven>("m_Target", out targetField)
+                .Constructor<TestTargetSeven, List<string>>((w, target, log) => {
+                    targetField.Assign(target);
+                    logField.Assign(log);
+                })
+                .ImplementInterfaceExplicitly<AncestorRepository.IBaseSeven>()
+                    .AllProperties().ImplementPropagate(targetField)
+                .ImplementInterfaceExplicitly<AncestorRepository.IBaseSevenEx>()
+                    .AllProperties().ImplementPropagate(targetField);
+
+            implementor.DecorateWith(new LoggingDecorator(logPrefix: ""));
+
+            var actionLog = new List<string>();
+            var targetInstance = new TestTargetSeven(actionLog);
+
+            //-- Act
+
+            var proxy = CreateClassInstanceAs<object>().UsingConstructor(targetInstance, actionLog);
+            
+            var property3 = ((AncestorRepository.IBaseSeven)proxy).ThirdProperty;
+            var property3ex = ((AncestorRepository.IBaseSevenEx)proxy).ThirdProperty;
+            var property4ex = ((AncestorRepository.IBaseSevenEx)proxy).FourthProperty;
+            ((AncestorRepository.IBaseSevenEx)proxy).ThirdProperty = "X333";
+            ((AncestorRepository.IBaseSevenEx)proxy).FourthProperty = "X444";
+
+            //-- Assert
+
+            Assert.That(property3, Is.EqualTo("TT7-THIRD-PROPERTY"));
+            Assert.That(property3ex, Is.EqualTo("TT7X-THIRD-PROPERTY"));
+            Assert.That(property4ex, Is.EqualTo("TT7X-FOURTH-PROPERTY"));
+
+            Assert.That(
+                actionLog,
+                Is.EqualTo(new[] {
+					"BEFORE-GET:IBaseSeven.ThirdProperty", 
+                        "TT7:ThirdProperty.GET",
+                    "AFTER-GET:IBaseSeven.ThirdProperty=TT7-THIRD-PROPERTY", 
+
+                    "BEFORE-GET:IBaseSevenEx.ThirdProperty", 
+                        "TT7X:ThirdProperty.GET",
+                    "AFTER-GET:IBaseSevenEx.ThirdProperty=TT7X-THIRD-PROPERTY", 
+
+                    "BEFORE-GET:IBaseSevenEx.FourthProperty", 
+                        "TT7X:FourthProperty.GET",
+                    "AFTER-GET:IBaseSevenEx.FourthProperty=TT7X-FOURTH-PROPERTY", 
+
+                    "BEFORE-SET:IBaseSevenEx.ThirdProperty=X333", 
+                        "TT7X:ThirdProperty.SET(value=X333)",
+                    "AFTER-SET:IBaseSevenEx.ThirdProperty", 
+
+                    "BEFORE-SET:IBaseSevenEx.FourthProperty=X444", 
+                        "TT7X:FourthProperty.SET(value=X444)",
+                    "AFTER-SET:IBaseSevenEx.FourthProperty", 
+				}));
+
+        }
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1492,5 +1607,86 @@ namespace Hapil.UnitTests
 
 			#endregion
 		}
-	}
+		
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class TestTargetSix : AncestorRepository.BaseSix, AncestorRepository.IBaseSix
+	    {
+            public TestTargetSix(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string FunctionWithArgs(int num, string str)
+            {
+                base.Log.Add("TestTargetSix.FunctionWithArgs");
+                return "AAA";
+            }
+        
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            string AncestorRepository.IBaseSix.FunctionWithArgs(int num, string str)
+            {
+                base.Log.Add("TestTargetSix.IBaseSix.FunctionWithArgs");
+                return "BBB";
+            }
+        }
+    
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class TestTargetSeven : AncestorRepository.BaseSeven, AncestorRepository.IBaseSeven, AncestorRepository.IBaseSevenEx
+        {
+            public TestTargetSeven(List<string> log)
+                : base(log)
+            {
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public override string FirstProperty { get; set; }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            string AncestorRepository.IBaseSeven.ThirdProperty
+            {
+                get
+                {
+                    Log.Add("TT7:ThirdProperty.GET");
+                    return "TT7-THIRD-PROPERTY";
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            string AncestorRepository.IBaseSevenEx.ThirdProperty
+            {
+                get
+                {
+                    Log.Add("TT7X:ThirdProperty.GET");
+                    return "TT7X-THIRD-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("TT7X:ThirdProperty.SET(value={0})", value));
+                }
+            }
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            string AncestorRepository.IBaseSevenEx.FourthProperty
+            {
+                get
+                {
+                    Log.Add("TT7X:FourthProperty.GET");
+                    return "TT7X-FOURTH-PROPERTY";
+                }
+                set
+                {
+                    Log.Add(string.Format("TT7X:FourthProperty.SET(value={0})", value));
+                }
+            }
+        }
+    }
 }
