@@ -12,14 +12,14 @@ namespace Hapil
 	public abstract class ObjectFactoryBase
 	{
         private readonly DynamicModule m_Module;
-		private readonly ConcurrentDictionary<TypeKey, TypeEntry> m_BuiltTypes;
+		private readonly AtomicDictionary<TypeKey, TypeEntry> m_BuiltTypes;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		protected ObjectFactoryBase(DynamicModule module)
 		{
 			m_Module = module;
-			m_BuiltTypes = new ConcurrentDictionary<TypeKey, TypeEntry>();
+            m_BuiltTypes = new AtomicDictionary<TypeKey, TypeEntry>();
 		}
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------

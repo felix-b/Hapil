@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Hapil.Members;
 using NUnit.Framework;
 
@@ -116,6 +118,55 @@ namespace Hapil.UnitTests
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         [Test]
+        public void DynamicTypeIsCreatedOnlyOnceDespiteConcurrentFirstUseRequests()
+        {
+            //-- Arrange
+
+            var ready = new ManualResetEvent(initialState: false);
+            var done = new ManualResetEvent(initialState: false);
+            var defineNewClassCount = 0;
+
+            var factory = new MarkerInterfaceFactory(
+                m_Module, 
+                onDefinedNewClass: key => {
+                    ready.Set();
+                    done.WaitOne();
+                    Interlocked.Increment(ref defineNewClassCount);
+                });
+
+            AncestorRepository.IMakerInterfaceOne obj1 = null;
+            AncestorRepository.IMakerInterfaceOne obj2 = null;
+
+            //-- Act
+
+            // first request is in progress and will wait for DONE event
+            var task1 = Task.Factory.StartNew(() => {
+                obj1 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceOne>();
+            });
+
+            ready.WaitOne();
+
+            // second request must wait until first one is completed, and use ready built type
+            var task2 = Task.Factory.StartNew(() => {
+                obj2 = factory.CreateMarkerObject<AncestorRepository.IMakerInterfaceOne>();
+            });
+            
+            Thread.Sleep(1000);
+            done.Set();
+
+            Task.WaitAll(task1, task2);
+
+            //-- Assert
+
+            Assert.That(defineNewClassCount, Is.EqualTo(1));
+
+            Assert.That(obj1, Is.Not.SameAs(obj2));
+            Assert.That(obj1.GetType(), Is.SameAs(obj2.GetType()));
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test]
         public void OnClassTypeCreatedIsCalledOncePerNewType()
         {
             //-- Arrange
@@ -177,13 +228,15 @@ namespace Hapil.UnitTests
 		private class MarkerInterfaceFactory : ObjectFactoryBase
 		{
 		    private readonly Action<TypeKey, TypeEntry> m_OnClassTypeCreated;
+		    private readonly Action<TypeKey> m_OnDefinedNewClass;
 
-            //-------------------------------------------------------------------------------------------------------------------------------------------------
+		    //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-		    public MarkerInterfaceFactory(DynamicModule module, Action<TypeKey, TypeEntry> onClassTypeCreated = null)
+		    public MarkerInterfaceFactory(DynamicModule module, Action<TypeKey, TypeEntry> onClassTypeCreated = null, Action<TypeKey> onDefinedNewClass = null)
 				: base(module)
 		    {
 		        m_OnClassTypeCreated = onClassTypeCreated;
+		        m_OnDefinedNewClass = onDefinedNewClass;
 		    }
 
 		    //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -198,9 +251,17 @@ namespace Hapil.UnitTests
 
 			protected override ClassType DefineNewClass(TypeKey key)
 			{
-				return DeriveClassFrom<object>(key)
-					.DefaultConstructor()
-					.ImplementBase<TypeTemplate.TPrimary>();
+				var newClass = DeriveClassFrom<object>(key);
+                
+                newClass.DefaultConstructor();
+                newClass.ImplementBase<TypeTemplate.TPrimary>();
+
+                if (m_OnDefinedNewClass != null)
+                {
+                    m_OnDefinedNewClass(key);
+                }
+
+                return newClass;
 			}
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------

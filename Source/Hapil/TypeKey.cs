@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hapil
 {
-	public class TypeKey
+	public class TypeKey : IEquatable<TypeKey>
 	{
 		private readonly Type m_BaseType;
 		private readonly Type m_PrimaryInterface;
