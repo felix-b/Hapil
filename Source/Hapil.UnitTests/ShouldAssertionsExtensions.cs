@@ -8,7 +8,7 @@ using FluentAssertions.Collections;
 
 namespace Hapil.UnitTests
 {
-    public static class ShouldAssertionsExtensions
+    internal static class ShouldAssertionsExtensions
     {
         public static void ShouldBeAtomicDictionaryEquivalentTo<TKey, TValue>(this AtomicDictionary<TKey, TValue> dictionaryUnderTest, IDictionary<TKey, TValue> expected)
         {

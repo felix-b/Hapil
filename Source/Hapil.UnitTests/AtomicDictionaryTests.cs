@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -1056,6 +1057,161 @@ namespace Hapil.UnitTests
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        [Test, Category("Benchmark")]
+        public void BenchmarkTest_AtomicDictionary()
+        {
+            Console.WriteLine("Process ID: {0}", Process.GetCurrentProcess().Id);
+
+            var fillCount = 10000000;
+            var feed = new BenchmarkFeed(fillCount);
+
+            TimeSpan fillTime;
+            TimeSpan runTime;
+            RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+
+            Console.WriteLine("AtomicDictionary ({0} items) - Fill: {1}, Run: {2}", fillCount, fillTime, runTime);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        [Test, Category("Benchmark")]
+        public void BenchmarkTest_ConcurrentDictionary()
+        {
+            Console.WriteLine("Process ID: {0}", Process.GetCurrentProcess().Id);
+
+            var fillCount = 10000000;
+            var feed = new BenchmarkFeed(fillCount);
+
+            TimeSpan fillTime;
+            TimeSpan runTime;
+            RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+
+            Console.WriteLine("ConcurrentDictionary ({0} items) - Fill: {1}, Run: {2}", fillCount, fillTime, runTime);
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public void RunAtomicDictionaryBenchmarkTestOnce(
+            BenchmarkFeed feed,
+            out TimeSpan fillTime,
+            out TimeSpan runTime)
+        {
+            var dictionary = new AtomicDictionary<string, TestValue>();
+
+            Action<object> addAction = (state) => {
+                var key = (string)state;
+                dictionary.TryAdd(key, new TestValue() {
+                    Key = key,
+                    Source = "Add"
+                });
+            };
+
+            Action<object> getAction = (state) => {
+                var key = (string)state;
+                TestValue value;
+                dictionary.TryGetValue(key, out value);
+            };
+
+            Action<object> getOrAddAction = (state) => {
+                var key = (string)state;
+                dictionary.GetOrAdd(key, valueFactory: k => new TestValue() {
+                    Key = k, 
+                    Source = "GetOrAdd"
+                });
+            };
+
+            Action<object> removeAction = (state) => {
+                var key = (string)state;
+                dictionary.Remove(key);
+            };
+
+            var fillClock = Stopwatch.StartNew();
+            
+            Parallel.ForEach(feed.KeysToAdd, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, addAction);
+            
+            fillTime = fillClock.Elapsed;
+            var runClock = Stopwatch.StartNew();
+            
+            var getTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToGet, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, getAction);
+            });
+            var getOrAddTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToGetOrAdd, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, getOrAddAction);
+            });
+            var remvoeTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToRemove, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, removeAction);
+            });
+            Task.WaitAll(getTask, getOrAddTask, remvoeTask);
+
+            //dictionary.PrintPartitionCounts();
+
+            runTime = runClock.Elapsed;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public void RunConcurrentDictionaryBenchmarkTestOnce(
+            BenchmarkFeed feed,
+            out TimeSpan fillTime,
+            out TimeSpan runTime)
+        {
+            var dictionary = new ConcurrentDictionary<string, TestValue>();
+
+            Action<object> addAction = (state) => {
+                var key = (string)state;
+                dictionary.TryAdd(key, new TestValue() {
+                    Key = key,
+                    Source = "Add"
+                });
+            };
+
+            Action<object> getAction = (state) => {
+                var key = (string)state;
+                TestValue value;
+                dictionary.TryGetValue(key, out value);
+            };
+
+            Action<object> getOrAddAction = (state) => {
+                var key = (string)state;
+                dictionary.GetOrAdd(key, valueFactory: k => new TestValue() {
+                    Key = k,
+                    Source = "GetOrAdd"
+                });
+            };
+
+            Action<object> removeAction = (state) => {
+                var key = (string)state;
+                TestValue value;
+                dictionary.TryRemove(key, out value);
+            };
+
+            var fillClock = Stopwatch.StartNew();
+
+            Parallel.ForEach(feed.KeysToAdd, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, addAction);
+
+            fillTime = fillClock.Elapsed;
+            var runClock = Stopwatch.StartNew();
+
+            var getTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToGet, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, getAction);
+            });
+            var getOrAddTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToGetOrAdd, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, getOrAddAction);
+            });
+            var remvoeTask = Task.Factory.StartNew(() => {
+                Parallel.ForEach(feed.KeysToRemove, new ParallelOptions() { MaxDegreeOfParallelism = 20 }, removeAction);
+            });
+            Task.WaitAll(getTask, getOrAddTask, remvoeTask);
+
+            runTime = runClock.Elapsed;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
         public class TestValueFactoryException : Exception
         {
             public TestValueFactoryException(string message)
@@ -1063,5 +1219,103 @@ namespace Hapil.UnitTests
             {
             }
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private class TestValue
+        {
+            public string Key { get; set; }
+            public string Source { get; set; }
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public class BenchmarkFeed
+        {
+            public readonly List<string> KeysToAdd = new List<string>();
+            public readonly List<string> KeysToGet = new List<string>();
+            public readonly List<string> KeysToGetOrAdd = new List<string>();
+            public readonly List<string> KeysToRemove = new List<string>();
+
+            //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+            public BenchmarkFeed(int fillCount)
+            {
+                for ( int i = 0 ; i < fillCount ; i++ )
+                {
+                    KeysToAdd.Add(i.ToString());
+                }
+
+                for ( int i = 0 ; i < fillCount ; i += 2 )
+                {
+                    KeysToGet.Add(i.ToString());
+                }
+
+                for ( int i = 0 ; i < fillCount ; i += 3 )
+                {
+                    KeysToGetOrAdd.Add(i.ToString());
+                }
+
+                for ( int i = 0 ; i < fillCount ; i += 4 )
+                {
+                    KeysToRemove.Add(i.ToString());
+                }
+            }
+        }
     }
 }
+
+#if false
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Hapil.UnitTests;
+
+namespace Hapil.Benchmarks
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var test = new AtomicDictionaryTests();
+
+            Console.WriteLine("PREPARING TEST FEED. . .");
+
+            var feedCount = 10000000;
+            var feed = new AtomicDictionaryTests.BenchmarkFeed(feedCount);
+
+            TimeSpan fillTime;
+            TimeSpan runTime;
+
+            Console.WriteLine("TEST FEED READY.");
+
+            GC.Collect();
+            Thread.Sleep(15000);
+
+            Console.WriteLine("RUNNING ConcurrentDictionary TEST. . .");
+
+            test.RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            test.RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            test.RunConcurrentDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+
+            Console.WriteLine("ConcurrentDictionary ({0} items) - Fill: {1}, Run: {2}", feedCount, fillTime, runTime);
+
+            GC.Collect();
+            Thread.Sleep(15000);
+
+            Console.WriteLine("RUNNING AtomicDictionary TEST. . .");
+
+            test.RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            test.RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+            test.RunAtomicDictionaryBenchmarkTestOnce(feed, out fillTime, out runTime);
+
+            Console.WriteLine("AtomicDictionary ({0} items) - Fill: {1}, Run: {2}", feedCount, fillTime, runTime);
+        }
+    }
+}
+
+#endif

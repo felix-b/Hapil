@@ -9,17 +9,35 @@ using System.Threading.Tasks;
 
 namespace Hapil
 {
-    public class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+    internal class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private readonly Hashtable m_Hashtable;
-        private readonly object m_WriterSyncRoot;
+        private readonly Hashtable[] m_Hashtables;
+        private readonly object[] m_WriterSyncRoots;
+        private readonly int m_MillisecondsValueFactoryTimeout;
+        private readonly int m_PartitionCount;
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public AtomicDictionary()
+            : this(valueFactoryTimeout: TimeSpan.FromSeconds(30), partitionCount: 8)
         {
-            m_Hashtable = new Hashtable();
-            m_WriterSyncRoot = new object();
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public AtomicDictionary(TimeSpan valueFactoryTimeout, int partitionCount)
+        {
+            m_PartitionCount = partitionCount;
+            m_Hashtables = new Hashtable[m_PartitionCount];
+            m_WriterSyncRoots = new object[m_PartitionCount];
+
+            for ( int i = 0 ; i < m_PartitionCount ; i++ )
+            {
+                m_Hashtables[i] = new Hashtable();
+                m_WriterSyncRoots[i] = new object();
+            }
+
+            m_MillisecondsValueFactoryTimeout = (int)valueFactoryTimeout.TotalMilliseconds;
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -28,13 +46,13 @@ namespace Hapil
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            var enumerable = m_Hashtable.Keys
+            var enumerable = m_Hashtables.SelectMany(hashtable => hashtable
                 .Cast<object>()
                 .Select(key => new KeyValuePair<TKey, TValue>(
-                    (TKey)key, 
-                    (TValue)m_Hashtable[key])
-                );
-
+                    (TKey)key,
+                    (TValue)hashtable[key])
+                ));
+            
             return enumerable.GetEnumerator();
         }
 
@@ -63,15 +81,18 @@ namespace Hapil
 
         public void Clear()
         {
-            AcquireWriterLockOrThrow();
+            for ( int i = 0 ; i < m_Hashtables.Length ; i++ )
+            {
+                AcquireWriterLockOrThrow(i);
 
-            try
-            {
-                m_Hashtable.Clear();
-            }
-            finally
-            {
-                ReleaseWriterLock();
+                try
+                {
+                    m_Hashtables[i].Clear();
+                }
+                finally
+                {
+                    ReleaseWriterLock(i);
+                }
             }
         }
 
@@ -79,11 +100,11 @@ namespace Hapil
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            var entry = (ValueEntry)m_Hashtable[item.Key];
+            var entry = (ValueEntry)m_Hashtables[GetPartitionIndex(item.Key)][item.Key];
 
             if ( entry != null )
             {
-                return ValuesAreEqual(entry.GetValue(item.Key), item.Value);
+                return ValuesAreEqual(entry.GetValue(item.Key, m_MillisecondsValueFactoryTimeout), item.Value);
             }
 
             return false;
@@ -107,23 +128,26 @@ namespace Hapil
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            var entry = (ValueEntry)m_Hashtable[item.Key];
+            var key = item.Key;
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            var entry = (ValueEntry)partitionHashtable[key];
 
-            if ( entry != null && ValuesAreEqual(entry.GetValue(item.Key), item.Value) )
+            if ( entry != null && ValuesAreEqual(entry.GetValue(key, m_MillisecondsValueFactoryTimeout), item.Value) )
             {
-                AcquireWriterLockOrThrow();
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    if ( m_Hashtable[item.Key] != null )
+                    if (partitionHashtable[key] != null)
                     {
-                        m_Hashtable.Remove(item.Key);
+                        partitionHashtable.Remove(key);
                         return true;
                     }
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
             }
 
@@ -134,14 +158,24 @@ namespace Hapil
 
         public int Count
         {
-            get { return m_Hashtable.Count; }
+            get
+            {
+                var totalCount = 0;
+
+                for ( int i = 0 ; i < m_Hashtables.Length ; i++ )
+                {
+                    totalCount += m_Hashtables[i].Count;
+                }
+
+                return totalCount;
+            }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         public bool IsReadOnly
         {
-            get { return m_Hashtable.IsReadOnly; }
+            get { return false; }
         }
 
         #endregion
@@ -152,7 +186,9 @@ namespace Hapil
 
         public bool ContainsKey(TKey key)
         {
-            return m_Hashtable.ContainsKey(key);
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            return partitionHashtable.ContainsKey(key);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -169,23 +205,25 @@ namespace Hapil
 
         public bool Remove(TKey key)
         {
-            var entry = (ValueEntry)m_Hashtable[key];
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            var entry = (ValueEntry)partitionHashtable[key];
 
             if ( entry != null )
             {
-                AcquireWriterLockOrThrow();
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    if ( m_Hashtable[key] != null )
+                    if (partitionHashtable[key] != null)
                     {
-                        m_Hashtable.Remove(key);
+                        partitionHashtable.Remove(key);
                         return true;
                     }
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
             }
 
@@ -196,11 +234,13 @@ namespace Hapil
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            var entry = (ValueEntry)m_Hashtable[key];
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            var entry = (ValueEntry)partitionHashtable[key];
 
             if ( entry != null )
             {
-                value = entry.GetValue(key);
+                value = entry.GetValue(key, m_MillisecondsValueFactoryTimeout);
                 return true;
             }
 
@@ -214,26 +254,31 @@ namespace Hapil
         {
             get
             {
-                var entry = (ValueEntry)m_Hashtable[key];
+                var partitionIndex = GetPartitionIndex(key);
+                var partitionHashtable = m_Hashtables[partitionIndex];
+                var entry = (ValueEntry)partitionHashtable[key];
 
                 if ( entry != null )
                 {
-                    return entry.GetValue(key);
+                    return entry.GetValue(key, m_MillisecondsValueFactoryTimeout);
                 }
 
                 throw new KeyNotFoundException("Specified key was not found in the dictionary: " + key.ToString());
             }
             set
             {
-                AcquireWriterLockOrThrow();
+                var partitionIndex = GetPartitionIndex(key);
+                var partitionHashtable = m_Hashtables[partitionIndex];
+                
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    m_Hashtable[key] = new ValueEntry(value);
+                    partitionHashtable[key] = new ValueEntry(value);
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
             }
         }
@@ -244,7 +289,7 @@ namespace Hapil
         {
             get
             {
-                var keys = m_Hashtable.Keys.Cast<TKey>().ToArray();
+                var keys = m_Hashtables.SelectMany(h => h.Keys.Cast<TKey>()).ToArray();
                 return keys;
             }
         }
@@ -317,23 +362,25 @@ namespace Hapil
 
         public bool TryAdd(TKey key, TValue value)
         {
-            var existingEntry = (ValueEntry)m_Hashtable[key];
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            var existingEntry = (ValueEntry)partitionHashtable[key];
 
             if ( existingEntry == null )
             {
-                AcquireWriterLockOrThrow();
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    if ( !m_Hashtable.ContainsKey(key) )
+                    if ( !partitionHashtable.ContainsKey(key) )
                     {
-                        m_Hashtable[key] = new ValueEntry(value);
+                        partitionHashtable[key] = new ValueEntry(value);
                         return true;
                     }
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
             }
 
@@ -344,29 +391,45 @@ namespace Hapil
 
         public bool TryUpdate(TKey key, TValue newValue, TValue comparisonValue)
         {
-            var existingEntry = (ValueEntry)m_Hashtable[key];
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+            var existingEntry = (ValueEntry)partitionHashtable[key];
 
-            if ( existingEntry != null && ValuesAreEqual(existingEntry.GetValue(key), comparisonValue) )
+            if ( existingEntry != null && ValuesAreEqual(existingEntry.GetValue(key, m_MillisecondsValueFactoryTimeout), comparisonValue) )
             {
-                AcquireWriterLockOrThrow();
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    existingEntry = (ValueEntry)m_Hashtable[key];
-                    
-                    if ( existingEntry != null && ValuesAreEqual(existingEntry.GetValue(key), comparisonValue) )
+                    existingEntry = (ValueEntry)partitionHashtable[key];
+
+                    if ( existingEntry != null && ValuesAreEqual(existingEntry.GetValue(key, m_MillisecondsValueFactoryTimeout), comparisonValue) )
                     {
-                        existingEntry.UpdateValue(key, newValue);
+                        existingEntry.UpdateValue(key, newValue, m_MillisecondsValueFactoryTimeout);
                         return true;
                     }
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
             }
 
             return false;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private int GetPartitionIndex(TKey key)
+        {
+            var hash = key.GetHashCode();
+
+            if ( hash < 0 )
+            {
+                hash *= -1;
+            }
+
+            return (hash % m_PartitionCount);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -377,26 +440,29 @@ namespace Hapil
             Func<TKey, TValue, TValue> optionalUpdateValueFactory,
             out bool wasAdded)
         {
+            var partitionIndex = GetPartitionIndex(key);
+            var partitionHashtable = m_Hashtables[partitionIndex];
+
             ValueEntry newEntry = null;
-            var existingEntry = (ValueEntry)m_Hashtable[key];
+            var existingEntry = (ValueEntry)partitionHashtable[key];
 
             if ( existingEntry == null )
             {
-                AcquireWriterLockOrThrow();
+                AcquireWriterLockOrThrow(partitionIndex);
 
                 try
                 {
-                    existingEntry = (ValueEntry)m_Hashtable[key];
+                    existingEntry = (ValueEntry)partitionHashtable[key];
 
                     if ( existingEntry == null )
                     {
                         newEntry = new ValueEntry();
-                        m_Hashtable[key] = newEntry;
+                        partitionHashtable[key] = newEntry;
                     }
                 }
                 finally
                 {
-                    ReleaseWriterLock();
+                    ReleaseWriterLock(partitionIndex);
                 }
 
                 if ( newEntry != null )
@@ -411,16 +477,16 @@ namespace Hapil
                     catch ( Exception e )
                     {
                         newEntry.SetValueConstructionFailure(key, e);
-                        
-                        AcquireWriterLockOrThrow();
+
+                        AcquireWriterLockOrThrow(partitionIndex);
                         
                         try
                         {
-                            m_Hashtable.Remove(key);
+                            partitionHashtable.Remove(key);
                         }
                         finally
                         {
-                            ReleaseWriterLock();
+                            ReleaseWriterLock(partitionIndex);
                         }
                         
                         throw;
@@ -435,38 +501,39 @@ namespace Hapil
 
             if ( optionalUpdateValueFactory != null )
             {
-                var updatedValue = optionalUpdateValueFactory(key, existingEntry.GetValue(key));
-                existingEntry.UpdateValue(key, updatedValue);
+                var updatedValue = optionalUpdateValueFactory(key, existingEntry.GetValue(key, m_MillisecondsValueFactoryTimeout));
+                existingEntry.UpdateValue(key, updatedValue, m_MillisecondsValueFactoryTimeout);
                 return updatedValue;
             }
 
-            return existingEntry.GetValue(key);
+            return existingEntry.GetValue(key, m_MillisecondsValueFactoryTimeout);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
         private void CopyKeyValueArrays(out TKey[] keys, out TValue[] values)
         {
-            keys = m_Hashtable.Keys.Cast<TKey>().ToArray();
+            keys = m_Hashtables.SelectMany(h => h.Keys.Cast<TKey>()).ToArray();
             values = new TValue[keys.Length];
 
             for (int i = 0; i < keys.Length; i++)
             {
                 var key = keys[i];
-                var entry = (ValueEntry)m_Hashtable[key];
+                var partitionIndex = GetPartitionIndex(key);
+                var entry = (ValueEntry)m_Hashtables[partitionIndex][key];
 
                 if (entry != null)
                 {
-                    values[i] = entry.GetValue(key);
+                    values[i] = entry.GetValue(key, m_MillisecondsValueFactoryTimeout);
                 }
             }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private void AcquireWriterLockOrThrow()
+        private void AcquireWriterLockOrThrow(int partitionIndex)
         {
-            if ( !Monitor.TryEnter(m_WriterSyncRoot, 30000) )
+            if (!Monitor.TryEnter(m_WriterSyncRoots[partitionIndex], 30000))
             {
                 throw new TimeoutException("Timed out waiting for exclusive writer lock on the atomic dictionary.");
             }
@@ -474,9 +541,9 @@ namespace Hapil
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private void ReleaseWriterLock()
+        private void ReleaseWriterLock(int partitionIndex)
         {
-            Monitor.Exit(m_WriterSyncRoot);
+            Monitor.Exit(m_WriterSyncRoots[partitionIndex]);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -569,17 +636,17 @@ namespace Hapil
         private class ValueEntry
         {
             private TValue m_Value;
-            private object m_ConstructionSyncRoot;
+            private bool m_ValueUnderConstruction;
             private Exception m_ValueFactoryException;
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public ValueEntry()
             {
-                m_ConstructionSyncRoot = new object();
+                m_ValueUnderConstruction = true;
                 m_Value = default(TValue);
 
-                Monitor.Enter(m_ConstructionSyncRoot);
+                Monitor.Enter(this);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -593,35 +660,35 @@ namespace Hapil
 
             public void SetConstructedValue(TKey key, TValue value)
             {
-                if ( m_ConstructionSyncRoot == null )
+                if (!m_ValueUnderConstruction)
                 {
                     throw new InvalidOperationException("Constructed value was already set. Key: " + key.ToString());
                 }
 
                 m_Value = value;
-                Monitor.Exit(m_ConstructionSyncRoot);
-                Volatile.Write(ref m_ConstructionSyncRoot, null);
+                Monitor.Exit(this);
+                Volatile.Write(ref m_ValueUnderConstruction, false);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
             public void SetValueConstructionFailure(TKey key, Exception valueFactoryException)
             {
-                if ( m_ConstructionSyncRoot == null )
+                if (!m_ValueUnderConstruction)
                 {
                     throw new InvalidOperationException("Constructed value was already set. Key: " + key.ToString());
                 }
 
                 m_ValueFactoryException = valueFactoryException;
-                Monitor.Exit(m_ConstructionSyncRoot);
-                Volatile.Write(ref m_ConstructionSyncRoot, null);
+                Monitor.Exit(this);
+                Volatile.Write(ref m_ValueUnderConstruction, false);
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            public void UpdateValue(TKey key, TValue value)
+            public void UpdateValue(TKey key, TValue value, int millisecondsTimeout)
             {
-                EnsureValueConstructed(key);
+                EnsureValueConstructed(key, millisecondsTimeout);
                 
                 m_Value = value;
                 m_ValueFactoryException = null;
@@ -629,26 +696,26 @@ namespace Hapil
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            public TValue GetValue(TKey key)
+            public TValue GetValue(TKey key, int millisecondsTimeout)
             {
-                EnsureValueConstructed(key);
+                EnsureValueConstructed(key, millisecondsTimeout);
                 return m_Value;
             }
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-            private void EnsureValueConstructed(TKey key)
+            private void EnsureValueConstructed(TKey key, int millisecondsTimeout)
             {
-                var constructionSyncRootSnapshot = Volatile.Read(ref m_ConstructionSyncRoot);
+                var constructionSyncRootSnapshot = Volatile.Read(ref m_ValueUnderConstruction);
 
-                if ( constructionSyncRootSnapshot != null )
+                if (constructionSyncRootSnapshot)
                 {
-                    if ( !Monitor.TryEnter(constructionSyncRootSnapshot, 30000) )
+                    if ( !Monitor.TryEnter(this, millisecondsTimeout) )
                     {
                         throw new TimeoutException("Timed out waiting for constructed value while in concurrent cache miss. Key: " + key.ToString());
                     }
 
-                    Monitor.Exit(constructionSyncRootSnapshot);
+                    Monitor.Exit(this);
                 }
 
                 if ( m_ValueFactoryException != null )
@@ -657,6 +724,16 @@ namespace Hapil
                         string.Format("Value construction failed for key: " + key.ToString()),
                         innerException: m_ValueFactoryException);
                 }
+            }
+        }
+
+        public void PrintPartitionCounts()
+        {
+            Console.WriteLine("-------------------");
+
+            for (int i = 0; i < m_Hashtables.Length; i++)
+            {
+                Console.WriteLine("{0:000} : {1}", i, m_Hashtables[i].Count);
             }
         }
     }
