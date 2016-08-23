@@ -9,13 +9,15 @@ namespace Hapil
 {
 	internal class UniqueNameSet
 	{
-		private readonly HashSet<string> m_NamesInUse;
+        private readonly object m_SyncRoot;
+        private readonly HashSet<string> m_NamesInUse;
 		private int m_UniqueNumericSuffix;
 
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 		public UniqueNameSet()
 		{
+            m_SyncRoot = new object();
 			m_NamesInUse = new HashSet<string>();
 			m_UniqueNumericSuffix = 0;
 		}
@@ -26,17 +28,20 @@ namespace Hapil
 		{
 			string uniqueName;
 
-			if ( m_NamesInUse.Add(proposedName) || mustUseThisName )
-			{
-				uniqueName = proposedName;
-			}
-			else
-			{
-				uniqueName = proposedName + Interlocked.Increment(ref m_UniqueNumericSuffix);
-				m_NamesInUse.Add(uniqueName);
-			}
+		    lock ( m_SyncRoot )
+		    {
+		        if ( m_NamesInUse.Add(proposedName) || mustUseThisName )
+		        {
+		            uniqueName = proposedName;
+		        }
+		        else
+		        {
+		            uniqueName = proposedName + Interlocked.Increment(ref m_UniqueNumericSuffix);
+		            m_NamesInUse.Add(uniqueName);
+		        }
+		    }
 
-			return uniqueName;
+		    return uniqueName;
 		}
 	}
 }
